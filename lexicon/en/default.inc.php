@@ -26,5 +26,7 @@
  * @subpackage lexicon
  */
 // Settings
-$_lang['something'] = 'The translation';
-
+$_lang['moxycart'] = 'MoxyCart';
+$_lang['moxycart.menu_desc'] = 'MODx + FoxyCart Ecommerce Solution';
+$_lang['product'] = 'Product';
+$_lang['create_product'] = 'Create Product';

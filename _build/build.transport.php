@@ -49,7 +49,7 @@ $menu->fromArray(array(
 
 $menu->addOne($action);
 
-$vehicle= $builder->createVehicle($menu,array (
+$vehicle = $builder->createVehicle($menu,array (
     xPDOTransport::PRESERVE_KEYS => true,
     xPDOTransport::UPDATE_OBJECT => true,
     xPDOTransport::UNIQUE_KEY => 'text',
@@ -83,4 +83,9 @@ $tend= explode(" ", microtime());
 $tend= $tend[1] + $tend[0];
 $totalTime= sprintf("%2.4f s",($tend - $tstart));
 $modx->log(modX::LOG_LEVEL_INFO,"\n<br />Package Built.<br />\nExecution time: {$totalTime}\n");
-exit ();
+
+echo '<br/>Package complete. Check your '.MODX_CORE_PATH . 'packages/ directory for the newly created package.';
+
+exit();
+
+/*EOF*/

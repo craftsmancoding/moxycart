@@ -1,8 +1,13 @@
 <?php
-require 'CurlClient.php';
+require_once('CurlClient.php');
 
 function getHeaders($content_type = 'application/vnd.foxycart.com+xml',$token = '') {
-	$headers = array('Accept: ' . $content_type, 'X-API-VERSION: 1');
+	//$headers = array('Accept: ' . $content_type, 'X-API-VERSION: 1');
+//	$headers = array('Accept: ' . $content_type, 'FOXYCART-API-VERSION: 1');
+	$headers = array('Accept: ' . $content_type); // , 'FOXYCART-API-VERSION: 1');
+
+	$headers[] = 'FOXYCART-API-VERSION: 1';
+	
 	if ($token) {
 		$headers[] = 'Authorization: Bearer '. $token;
 	}
@@ -85,7 +90,8 @@ class MyClient extends CurlClient
     public function getRel($rel) {
         $registered_link_relations_in_use = array('self','first','prev','next','last');
         if ($rel == 'rels') {
-            return 'https://api.foxycart.com/' . $rel;
+//            return 'https://api.foxycart.com/' . $rel;
+            return 'https://api-sandbox.foxycart.com/' . $rel;
         }
         if (!in_array($rel, $registered_link_relations_in_use)) {
             $rel = 'https://api.foxycart.com/rels/'.$rel;
@@ -127,6 +133,9 @@ if (isset($_GET['forwiki'])) {
 // home page
 $resp = $client->get($api_home_page,null,getHeaders($content_type));
 displayResult($client,$forwiki);
+
+
+/*
 $create_client_link = $client->getLink('create_client');
 $resources_link = $client->getLink('resources');
 $rel_link = $client->getLink('rels');
@@ -225,3 +234,4 @@ displayResult($client,$forwiki);
 if ($forwiki) {
 	print '</textarea>';
 }
+*/
