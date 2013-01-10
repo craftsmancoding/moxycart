@@ -1,6 +1,6 @@
 <?php
 
-namespace HyperClient\interfaces;
+//namespace HyperClient\interfaces;
 
 /**
  * An interface for defining the methods our HyperClient caching mechanisms should support.

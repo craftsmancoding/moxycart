@@ -1,6 +1,6 @@
 <?php
 
-namespace HyperClient\cache;
+//namespace HyperClient\cache;
 
 /**
  * A simple class for structuring the value we're going to serialize and cache

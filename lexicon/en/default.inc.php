@@ -30,3 +30,19 @@ $_lang['moxycart'] = 'MoxyCart';
 $_lang['moxycart.menu_desc'] = 'MODx + FoxyCart Ecommerce Solution';
 $_lang['product'] = 'Product';
 $_lang['create_product'] = 'Create Product';
+
+// Create Client Topic
+$_lang['authorization'] = 'Authorization';
+$_lang['authorization.desc'] = 'Authorization';
+$_lang['redirect_uri'] = 'Redirect URI';
+$_lang['redirect_uri.desc'] = '';
+$_lang['project_name'] = 'Project Name';
+$_lang['project_name.desc'] = '';
+$_lang['contact_name'] = 'Contact Name';
+$_lang['contact_name.desc'] = '';
+$_lang['contact_email'] = 'Contact Email';
+$_lang['contact_email.desc'] = '';
+$_lang['company_phone'] = 'Company Phone';
+$_lang['company_phone.desc'] = '';
+
+

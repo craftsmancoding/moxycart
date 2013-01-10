@@ -34,11 +34,11 @@ require_once MODX_CORE_PATH . 'model/modx/modrequest.class.php';
  */
 class MoxyCartRequest extends modRequest {
     /**
-     * A reference to the MoxyCart instance
-     * @var MoxyCart $MoxyCart
+     * Instance refs
      */
-    public $MoxyCart = null;
     public $modx = null;
+    private $MoxyCart = null;
+    private $Client = null;
     
     /**
      * The action key to use
@@ -63,20 +63,10 @@ class MoxyCartRequest extends modRequest {
 	 * @return string HTML
 	 */
 	function __call($name, $args) {
-		
 		$modx =& $this->modx;
-		$moxycart =& $this->MoxyCart;
-		
+		$MoxyCart =& $this->MoxyCart;		
 		$f = $this->MoxyCart->config['corePath'].'views/mgr/'.$name.'.php';
-		
-		if (is_file($f)) {
-			ob_start();
-			include $f;
-			return ob_get_clean();
-		}
-		else {
-			return 'Action not found: '.$f;
-		}
+		return $this->_load_file($f);
 	}
 
     /**
@@ -95,7 +85,7 @@ class MoxyCartRequest extends modRequest {
 	 *
 	 * @return string
 	 */
-	private function _load_file($file) {
+	private function _load_file($file, $data=array()) {
 		if (is_file($file)) {
 			ob_start();
 			include $file;
@@ -109,6 +99,37 @@ class MoxyCartRequest extends modRequest {
 	//------------------------------------------------------------------------------
 	//! Public Functions
 	//------------------------------------------------------------------------------
+	public function create_client() {
+		$modx =& $this->modx;
+		$MoxyCart =& $this->MoxyCart;		
+		$f = $this->MoxyCart->config['corePath'].'views/mgr/'.__FUNCTION__.'.php';
+
+		$Profile = $this->modx->user->getOne('Profile');
+		return 'asdf'.$this->Client->getLink('create_client');
+		// Defaults
+		$data = array();
+		$data['msg'] = '';
+		$data['redirect_uri'] = substr($this->modx->getOption('site_url'),0,-1) . MODX_MANAGER_URL .'?a='.$_GET['a'];
+		$data['project_name'] = $this->modx->getOption('site_name');
+		$data['contact_name'] = $Profile->get('fullname');
+		$data['contact_email'] = $Profile->get('email');
+		$data['company_phone'] = $Profile->get('phone');
+
+		// Submitted
+		if (!empty($_POST)) {
+			// Store
+			// ???
+			$resp = $this->Client->post($this->Client->getLink('create_client'),$_POST,
+				$this->MoxyCart->getHeaders());
+			$data['msg'] = print_r($resp,true);				
+//			$data['msg'] = $this->_load_file($this->MoxyCart->config['corePath'].'views/error_msg.php',
+//				array('content'=>'There was a problem'));
+			//return 'Saving...';
+		}
+		
+		return $this->_load_file($f,$data);	
+	}
+	
     /**
      * Extends modRequest::handleRequest and loads the proper error handler and
      * actionVar value.
@@ -116,9 +137,11 @@ class MoxyCartRequest extends modRequest {
      * @return string
      */
     public function handleRequest() {
+		    
         $this->loadErrorHandler();
-
-        /* save page to manager object. allow custom actionVar choice for extending classes. */
+		$this->sanitizeRequest();
+		
+        // save page to manager object. allow custom actionVar choice for extending classes.
         $action = isset($_REQUEST[$this->actionVar]) ? $_REQUEST[$this->actionVar] : $this->defaultAction;
 
 		// Avoid directory traversals etc.
@@ -126,31 +149,26 @@ class MoxyCartRequest extends modRequest {
 			return 'Invalid Action.';
 		}
 
+		$token = $this->modx->getOption('moxycart.token');
+		if (empty($token)) {
+			$action = 'create_client'; // gotta get the 
+		}
+
+		// setup caching
+		$Cache = new MODx_Cache($this->modx);
+		//return MoxyCart::$rel_base_uri; 
+		// setup client
+		$this->Client = new Client($Cache,MoxyCart::$rel_base_uri);
+//		return __LINE__;
+//		return $this->Client->getLink('create_client');
+//		return 'asdfadfasd';
+		
+		$resp = $this->Client->get(MoxyCart::$api_home_page,null,$this->MoxyCart->getHeaders());
+		// return print_r($resp,true);
+		// Add the header and footer to the action
 		$output = $this->_load_file($this->MoxyCart->config['corePath'].'views/header.php');
         $output .= $this->$action();
         $output .= $this->_load_file($this->MoxyCart->config['corePath'].'views/footer.php');
         return $output;
-    }
-
-    /**
-     * Prepares the MODx response to a mgr request that is being handled.
-     *
-     * @access public
-     * @return boolean True if the response is properly prepared.
-     */
-    private function _respond() {
-        $modx =& $this->modx;
-        $MoxyCart =& $this->MoxyCart;
-
-        // $viewHeader = include $this->MoxyCart->config['corePath'].'controllers/mgr/header.php';
-
-        $f = $this->MoxyCart->config['corePath'].'controllers/mgr/'.$this->action.'.php';
-        if (file_exists($f)) {
-            $viewOutput = include $f;
-        } else {
-            $viewOutput = 'Action not found: '.$f;
-        }
-
-        return $viewOutput;
     }
 }

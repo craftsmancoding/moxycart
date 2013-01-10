@@ -1,6 +1,6 @@
 <?php
 
-namespace HyperClient;
+//namespace HyperClient;
 
 /**
  * A Simple Curl based REST Client.
@@ -77,8 +77,9 @@ class Client
      * @param iCache $cache
      * @param string $rel_base_uri
      */
-    public function  __construct(\HyperClient\interfaces\iCache $cache, $rel_base_uri = '') {
+    public function  __construct(iCache $cache, $rel_base_uri = '') {
         $this->cache = $cache;
+        // print_r($this->cache); exit;
         $this->rel_base_uri = $rel_base_uri;
         $this->ch = curl_init();
         curl_setopt($this->ch, CURLOPT_AUTOREFERER, TRUE);
@@ -165,8 +166,8 @@ class Client
      *         headers (array of headers in a key => value format)
      *         data (parsed body either the results of json_decode or SimpleXMLElement)
      */
-    function go($method,$headers,$fields,$uri)
-    {
+    function go($method,$headers,$fields,$uri) {
+        
         $request_uri = $uri;
         $headers = !is_array($headers) ? array() : $headers;
         if (is_array($fields)) {
@@ -183,7 +184,7 @@ class Client
             }
             $fields = null;
         }
-         
+ 
         $this->last_request['method'] = $method;
         $this->last_request['headers'] = $headers;
         $this->last_request['data'] = $fields;
@@ -196,9 +197,11 @@ class Client
         if (!array_key_exists('If-None-Match', $headers)) {
             $cache_key = $this->getCacheKeyForLastRequest();
             if ($this->cache->exists($cache_key)) {
+             print __LINE__; exit; // EHG
                 $cached_response = $this->cache->fetch($cache_key);
                 $headers['If-None-Match'] = $cached_response->etag;
             }
+             print __LINE__; exit; // EHG
         }
 
         curl_setopt($this->ch, CURLOPT_URL, $request_uri);
@@ -237,6 +240,7 @@ class Client
 
         $this->last_response['result'] = $result;
 
+//		print_r($this->last_response); exit; // EHG
         return $result;
     }
 
@@ -332,9 +336,11 @@ class Client
                 $rel = $this->rel_base_uri . $rel;
             }
         }
-        $linkObj = new \stdClass();
+        $linkObj = new stdClass();
         $linkObj->href = '';
         $linkObj->type = '';
+//        print $rel; 
+//        print '...'.$this->last_response['header']; exit;
         if (preg_match('|(link: <)(.*?)(>;rel="' . $rel . '";)(.*?)(?:(;type=")(.*?)("))?|', $this->last_response['header'], $matches)) {
             $linkObj->href = $matches[2];
             if (isset($matches[6])) {
@@ -343,7 +349,7 @@ class Client
         } else {
             // TODO: Should we check the body response for hypermedia, though that would require a parser with format knowledge?
             // TODO: Should we create custom exception types?
-            throw new \Exception('Link relation ' . $rel . ' not found.');
+            throw new Exception('Link relation ' . $rel . ' not found.');
         }
         return $linkObj;
     }
@@ -363,7 +369,7 @@ class Client
             $location_href = trim($this->last_response['result']['headers']['location']);
         } else {
             // TODO: Should we create custom exception types?
-            throw new \Exception('Location header not found.');
+            throw new Exception('Location header not found.');
         }
         return $location_href;
 
@@ -398,8 +404,9 @@ class Client
         }
         if ($this->last_response['body'] != '') {
             if ($this->isXMLContentType()) {
-                $xmlObj = new \SimpleXMLElement($this->last_response['body']);
-                return $xmlObj;
+            	print 'xml?!?'; exit;
+                //$xmlObj = new \SimpleXMLElement($this->last_response['body']);
+                //return $xmlObj;
             }
             if ($this->isJSONContentType()) {
                 return json_decode($this->last_response['body']);
@@ -425,7 +432,7 @@ class Client
      */
     function cacheLastResponse($etag)
     {
-        $entry = new cache\Entry();
+        $entry = new Entry();
         $entry->etag = $etag;
         $entry->body = $this->last_response['body'];
         $entry->header = $this->last_response['header'];
