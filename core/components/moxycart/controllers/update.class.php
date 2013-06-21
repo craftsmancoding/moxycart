@@ -1,5 +1,5 @@
 <?php
-class ProductUpdateManagerController extends ResourceUpdateManagerController {
+class StoreUpdateManagerController extends ResourceUpdateManagerController {
     public function getLanguageTopics() {
         return array('resource','moxycart:default');
     }

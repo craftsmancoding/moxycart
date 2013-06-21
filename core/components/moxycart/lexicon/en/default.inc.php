@@ -24,3 +24,9 @@
 $_lang['product'] = 'Product';
 $_lang['products'] = 'Products';
 $_lang['product_create_here'] = 'Create a Product Here';
+$_lang['store'] = 'Store';
+$_lang['stores'] = 'Stores';
+$_lang['store_create_here'] = 'Create a Store Here';
+$_lang['store_new'] = 'New Store';
+
+$_lang['moxycart.container'] = 'Moxycart...';
