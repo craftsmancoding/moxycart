@@ -1,6 +1,6 @@
 <?php
 /**
- * en default topic lexicon file for moxycart extra
+ * ProductURLRouting plugin for moxycart extra
  *
  * Copyright 2013 by Everett Griffiths everett@craftsmancoding.com
  * Created on 07-05-2013
@@ -24,7 +24,7 @@
 /**
  * Description
  * -----------
- * en default topic lexicon strings
+ * Handles page requests
  *
  * Variables
  * ---------

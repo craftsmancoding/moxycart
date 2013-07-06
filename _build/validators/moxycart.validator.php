@@ -1,6 +1,6 @@
 <?php
 /**
- * en default topic lexicon file for moxycart extra
+ * Validator for moxycart extra
  *
  * Copyright 2013 by Everett Griffiths everett@craftsmancoding.com
  * Created on 07-05-2013
@@ -17,20 +17,30 @@
  * You should have received a copy of the GNU General Public License along with
  * moxycart; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA 02111-1307 USA
- *
  * @package moxycart
+ * @subpackage build
  */
 
-/**
- * Description
- * -----------
- * en default topic lexicon strings
- *
- * Variables
- * ---------
- * @var $modx modX
- * @var $scriptProperties array
- *
- * @package moxycart
- **/
+/* @var $object xPDOObject */
+/* @var $modx modX */
+/* @var array $options */
 
+if ($object->xpdo) {
+    $modx =& $object->xpdo;
+    switch ($options[xPDOTransport::PACKAGE_ACTION]) {
+        case xPDOTransport::ACTION_INSTALL:
+            /* return false if conditions are not met */
+
+            /* [[+code]] */
+            break;
+        case xPDOTransport::ACTION_UPGRADE:
+            /* return false if conditions are not met */
+            /* [[+code]] */
+            break;
+
+        case xPDOTransport::ACTION_UNINSTALL:
+            break;
+    }
+}
+
+return true;

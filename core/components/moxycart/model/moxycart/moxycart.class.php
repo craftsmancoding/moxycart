@@ -1,6 +1,6 @@
 <?php
 /**
- * en default topic lexicon file for moxycart extra
+ * moxycart class file for moxycart extra
  *
  * Copyright 2013 by Everett Griffiths everett@craftsmancoding.com
  * Created on 07-05-2013
@@ -21,16 +21,18 @@
  * @package moxycart
  */
 
-/**
- * Description
- * -----------
- * en default topic lexicon strings
- *
- * Variables
- * ---------
- * @var $modx modX
- * @var $scriptProperties array
- *
- * @package moxycart
- **/
 
+ class moxycart {
+    /** @var $modx modX */
+    public $modx;
+    /** @var $props array */
+    public $props;
+
+    function __construct(&$modx, &$config = array())
+    {
+        $this->modx =& $modx;
+        $this->props =& $config;
+    }
+
+
+}
