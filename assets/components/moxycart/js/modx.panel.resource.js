@@ -1,6 +1,9 @@
 //------------------------------------------------------------------------------
-//! BEGIN STORE
+//! BEGIN PRODUCT CONTAINER
 //------------------------------------------------------------------------------
+// Must wait, otherwise the Moxycart variables won't be available
+Ext.onReady(function(){
+
     // create the Data Store
     var store = new Ext.data.JsonStore({
         root: 'results',
@@ -17,11 +20,15 @@
         // load using script tags for cross domain, if the data in on the same domain as
         // this page, an HttpProxy would be better
         proxy: new Ext.data.HttpProxy({
-            url: '/store.php'
+//            url: '/store.php'
+            url: Moxycart.assets_url+'components/moxycart/connector.php?f=list_products'
         })
     });
-    store.setDefaultSort('id', 'ASC');
 
+    store.setDefaultSort('id', 'ASC');
+    // trigger the data store load
+    // NOTE: the parameter names here correspond to keys in $_POST
+    store.load({params:{start:0, limit:25}});
 
     var grid = new Ext.grid.GridPanel({
         width:1000,
@@ -61,9 +68,8 @@
         })
     });
 
-    // trigger the data store load
-    // NOTE: the parameter names here correspond to keys in $_POST
-    store.load({params:{start:0, limit:25}});
+
+
 //------------------------------------------------------------------------------
 //! END
 //------------------------------------------------------------------------------
@@ -367,7 +373,7 @@ Ext.extend(MODx.panel.Resource,MODx.FormPanel,{
     ,getPageHeader: function(config) {
         config = config || {record:{}};
         return {
-            html: '<h2>'+_('store_new')+'</h2>'
+            html: '<h2><img src="'+MODx.config.assets_url+'mycomponents/moxycart/assets/components/moxycart/images/cart.png" />'+_('container_new')+'</h2>'
             ,id: 'modx-resource-header'
             ,cls: 'modx-page-header'
             ,border: false
@@ -885,3 +891,6 @@ MODx.triggerRTEOnChange = function() {
 MODx.fireResourceFormChange = function(f,nv,ov) {
     Ext.getCmp('modx-panel-resource').fireEvent('fieldChange');
 };
+
+
+}); // end onready

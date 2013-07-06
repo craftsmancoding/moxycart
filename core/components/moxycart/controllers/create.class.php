@@ -8,13 +8,19 @@ class StoreCreateManagerController extends ResourceCreateManagerController {
     // Copied from parent
     public function loadCustomCssJs() {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
+        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         $this->addJavascript($mgrUrl.'assets/modext/util/datetime.js');
         $this->addJavascript($mgrUrl.'assets/modext/widgets/element/modx.panel.tv.renders.js');
         $this->addJavascript($mgrUrl.'assets/modext/widgets/resource/modx.grid.resource.security.local.js');
         $this->addJavascript($mgrUrl.'assets/modext/widgets/resource/modx.panel.resource.tv.js');
         $this->addJavascript($mgrUrl.'assets/modext/widgets/resource/modx.panel.resource.js');
         //$this->addJavascript($mgrUrl.'assets/modext/widgets/resource/modx.panel.resource.js');
-        $this->addJavascript('/assets/components/moxycart/js/modx.panel.resource.js');
+        $this->addJavascript($mgrUrl.'assets/modext/sections/resource/create.js');
+        $this->addJavascript($assetsUrl.'components/moxycart/js/moxycart.js');        
+        // 
+//        die($assetsUrl); 
+//        die($assetsUrl.'components/moxycart/js/modx.panel.resource.js');
+        $this->addJavascript($assetsUrl.'components/moxycart/js/modx.panel.resource.js');
 //        $this->addJavascript($mgrUrl.'assets/modext/sections/resource/create.js');
         $this->addHtml("
         <script type='text/javascript'>
@@ -81,10 +87,10 @@ Ext.extend(MODx.page.CreateResource,MODx.Component,{
         btns.push('-');
         btns.push({
             text: _('help_ex')
-            ,handler:  function(b) {
-        var url = 'http://google.com/'; //MODx.config.help_url;
-        if (!url) { return false; }
-        MODx.helpWindow = new Ext.Window({
+            , handler:  function(b) {
+                var url = 'http://craftsmancoding.com/'; //MODx.config.help_url;
+                if (!url) { return false; }
+                MODx.helpWindow = new Ext.Window({
             title: _('help')
             ,width: 850
             ,height: 500
@@ -97,18 +103,19 @@ Ext.extend(MODx.page.CreateResource,MODx.Component,{
         MODx.helpWindow.show(b);
         return true;
     }
-            ,id: 'modx-abtn-help'
-        });
-        return btns;
+    ,id: 'modx-abtn-help'
+    });
+    return btns;
     }
 });
 Ext.reg('modx-page-resource-create',MODx.page.CreateResource);        
         </script>");
-        
+        //        Moxycart.assets_url = "'.$assetsUrl.'";
          
         $this->addHtml('
         <script type="text/javascript">
         // <![CDATA[
+        Moxycart.assets_url = "'.$assetsUrl.'";
         MODx.config.publish_document = "'.$this->canPublish.'";
         MODx.onDocFormRender = "'.$this->onDocFormRender.'";
         MODx.ctx = "'.$this->ctx.'";
@@ -127,80 +134,10 @@ Ext.reg('modx-page-resource-create',MODx.page.CreateResource);
         /* load RTE */
         $this->loadRichTextEditor();
 
+        $this->addCss($assetsUrl.'components/moxycart/css/mgr.css');
+
     }
 
-    public function loadCustomCssJsxx() {
-        parent::loadCustomCssJs();
-        $this->addHtml('
-        <script type="text/javascript">
-        // <![CDATA[
-        Ext.onReady(function() {
-            Ext.MessageBox.alert("My Title","The DOM is ready...");
-            var title = "My Title";
-            var msg = "Your DOM is ready...";
-            Ext.MessageBox.alert(title,msg);
-        });
-        // ]]>
-        </script>');
-    }
-
-    public function loadCustomCssJsxxx() {
-        $this->prepareResource();
-        $managerUrl = $this->context->getOption('manager_url', MODX_MANAGER_URL, $this->modx->_userConfig);
-        $moxycartAssetsUrl = $this->modx->getOption('moxycart.assets_url',null,$this->modx->getOption('assets_url',null,MODX_ASSETS_URL).'components/moxycart/');
-        $connectorUrl = $moxycartAssetsUrl.'connector.php';
-        $moxycartJsUrl = $moxycartAssetsUrl.'js/';
-
-        $this->resourceArray['moxycart_container_settings'] = $this->resource->getContainerSettings();
-        $this->addJavascript($managerUrl.'assets/modext/util/datetime.js');
-        $this->addJavascript($managerUrl.'assets/modext/widgets/element/modx.panel.tv.renders.js');
-        $this->addJavascript($managerUrl.'assets/modext/widgets/resource/modx.grid.resource.security.js');
-        $this->addJavascript($managerUrl.'assets/modext/widgets/resource/modx.panel.resource.tv.js');
-        $this->addJavascript($managerUrl.'assets/modext/widgets/resource/modx.panel.resource.js');
-        $this->addJavascript($managerUrl.'assets/modext/sections/resource/create.js');
-        $this->addJavascript($moxycartJsUrl.'moxycart.js');
-        $this->addJavascript($moxycartJsUrl.'container/container.common.js');
-        $this->addJavascript($moxycartJsUrl.'container/container.moxycart.grid.js');
-        $this->addLastJavascript($moxycartJsUrl.'container/create.js');
-        $this->addHtml('
-        <script type="text/javascript">
-        // <![CDATA[
-        Moxycart.assets_url = "'.$moxycartAssetsUrl.'";
-        Moxycart.connector_url = "'.$connectorUrl.'";
-        MODx.config.publish_document = "'.$this->canPublish.'";
-        MODx.onDocFormRender = "'.$this->onDocFormRender.'";
-        MODx.ctx = "'.$this->resource->get('context_key').'";
-        Ext.onReady(function() {
-            MODx.load({
-                xtype: "moxycart-page-moxycart-container-create"
-                ,resource: "'.$this->resource->get('id').'"
-                ,record: '.$this->modx->toJSON($this->resourceArray).'
-                ,publish_document: "'.$this->canPublish.'"
-                ,canSave: '.($this->canSave ? 1 : 0).'
-                ,canEdit: '.($this->canEdit ? 1 : 0).'
-                ,canCreate: '.($this->canCreate ? 1 : 0).'
-                ,canDuplicate: '.($this->canDuplicate ? 1 : 0).'
-                ,canDelete: '.($this->canDelete ? 1 : 0).'
-                ,show_tvs: '.(!empty($this->tvCounts) ? 1 : 0).'
-                ,mode: "create"
-            });
-        });
-        // ]]>
-        </script>');
-        // load RTE
-        $this->loadRichTextEditor();
-    }
-
-
-/*
-    public function loadCustomCssJs() {
-        $managerUrl = $this->context->getOption('manager_url', MODX_MANAGER_URL, $this->modx->_userConfig);
-        $moxycartAssetsUrl = $this->modx->getOption('moxycart.assets_url',null,$this->modx->getOption('assets_url',null,MODX_ASSETS_URL).'components/moxycart/');
-        $connectorUrl = $moxycartAssetsUrl.'connector.php';
-        $moxycartJsUrl = $moxycartAssetsUrl.'js/';    
-        $this->addJavascript($moxycartJsUrl.'moxycart_test.js');
-    }
-*/
     
     
     public function getLanguageTopics() {
@@ -212,7 +149,7 @@ Ext.reg('modx-page-resource-create',MODx.page.CreateResource);
      * @return string
      */
     public function getPageTitle() {
-        return $this->modx->lexicon('store_new');
+        return $this->modx->lexicon('container_new');
     }
     /**
      * Used to set values on the resource record sent to the template for derivative classes
@@ -220,12 +157,13 @@ Ext.reg('modx-page-resource-create',MODx.page.CreateResource);
      * @return void
      */
     public function prepareResource() {
+/*
         $settings = $this->resource->getProperties('moxycart');
         if (empty($settings)) $settings = array();
         
         $defaultContainerTemplate = $this->modx->getOption('moxycart.default_container_template',$settings,false);
         if (empty($defaultContainerTemplate)) {
-            /** @var modTemplate $template */
+            // @var modTemplate $template 
             $template = $this->modx->getObject('modTemplate',array('templatename' => 'sample.ArticlesContainerTemplate'));
             if ($template) {
                 $defaultContainerTemplate = $template->get('id');
@@ -235,7 +173,7 @@ Ext.reg('modx-page-resource-create',MODx.page.CreateResource);
 
         $defaultArticleTemplate = $this->modx->getOption('moxycart.default_moxycart_template',$settings,false);
         if (empty($defaultArticleTemplate)) {
-            /** @var modTemplate $template */
+            // @var modTemplate $template
             $template = $this->modx->getObject('modTemplate',array('templatename' => 'sample.ArticleTemplate'));
             if ($template) {
                 $defaultArticleTemplate = $template->get('id');
@@ -246,5 +184,6 @@ Ext.reg('modx-page-resource-create',MODx.page.CreateResource);
         foreach ($settings as $k => $v) {
             $this->resourceArray['setting_'.$k] = $v;
         }
+*/
     }    
 }

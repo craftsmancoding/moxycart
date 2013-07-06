@@ -1,4 +1,8 @@
 <?php
+/**
+ * Here a Store is a product container.
+ *
+ */
 require_once MODX_CORE_PATH.'model/modx/modprocessor.class.php';
 require_once MODX_CORE_PATH.'model/modx/processors/resource/create.class.php';
 require_once MODX_CORE_PATH.'model/modx/processors/resource/update.class.php';
@@ -13,20 +17,20 @@ class Store extends modResource {
     }
     
     public static function getControllerPath(xPDO &$modx) {
-        return $modx->getOption('moxycart.core_path',null,$modx->getOption('core_path').'components/moxycart/').'controllers/';
+        return $modx->getOption('moxycart.core_path',null,$modx->getOption('core_path')).'components/moxycart/controllers/';
     }
     
     public function getContextMenuText() {
         $this->xpdo->lexicon->load('moxycart:default');
         return array(
-            'text_create' => $this->xpdo->lexicon('store'),
-            'text_create_here' => $this->xpdo->lexicon('store_create_here'),
+            'text_create' => $this->xpdo->lexicon('container'),
+            'text_create_here' => $this->xpdo->lexicon('container_create_here'),
         );
     }
  
     public function getResourceTypeName() {
         $this->xpdo->lexicon->load('moxycart:default');
-        return $this->xpdo->lexicon('store');
+        return $this->xpdo->lexicon('product_container');
     } 
 
     /**

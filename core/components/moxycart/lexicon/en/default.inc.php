@@ -34,3 +34,19 @@
  * @package moxycart
  **/
 
+$_lang['product'] = 'Product';
+$_lang['products'] = 'Products';
+$_lang['product_create_here'] = 'Create a Product Here';
+$_lang['store'] = 'Store';
+$_lang['stores'] = 'Stores';
+$_lang['store_create_here'] = 'Create a Store Here';
+$_lang['store_new'] = 'New Store';
+
+$_lang['container'] = 'Product Container';
+$_lang['containers'] = 'Product Containers';
+$_lang['container_create_here'] = 'Create a Product Container Here';
+$_lang['container_new'] = 'New Product Container';
+
+
+
+$_lang['moxycart.container'] = 'Moxycart...';

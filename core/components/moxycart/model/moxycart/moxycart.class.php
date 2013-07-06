@@ -2,6 +2,9 @@
 /**
  * moxycart class file for moxycart extra
  *
+ * This file retrieves data for various Moxycart functions, e.g. product lists,
+ * related products.  It is primarily accessed by the assets/components/moxycart/connector.php
+ * file, but really, any 3rd party could use it to retrieve data as well.
  * Copyright 2013 by Everett Griffiths everett@craftsmancoding.com
  * Created on 07-05-2013
  *
@@ -28,11 +31,98 @@
     /** @var $props array */
     public $props;
 
-    function __construct(&$modx, &$config = array())
-    {
+    /**
+     * Map a function name to a MODX permission, e.g. 
+     * 'edit_product' => 'edit_document'
+     */
+    private $perms = array(
+        'edit_product' => 'edit_document',
+    );
+    
+    /**
+     * This is the permission tested against if nothing is explicitly defined
+     * in the $perms array.
+     */
+    private $default_perm = 'view_document';
+
+    public function __construct(&$modx, &$config = array()) {
         $this->modx =& $modx;
         $this->props =& $config;
     }
+    
+    /**
+     * Catch all for bad function requests.
+     *
+     */
+    public function __call($name,$args) {
+        $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart] Invalid function name '.__FUNCTION__);
+        return false;
+    }
+    
+    /**
+     * Get a list of products.
+     *
+     * @param array arguents including limit, start, sort, dir
+     *
+     * @return mixed JSON-encoded string or PHP array (depends on $json flag). False on permissions error.
+     */
+    public function list_products($args,$json=true) {
+    
+        if (!$this->modx->hasPermission($this->modx->getOption(__FUNCTION__, $this->perms, $this->default_perm))) {
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart::'.__FUNCTION__.'] User does not have sufficient privileges.');
+            return false;
+        }
+        
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
+        
+        $criteria = $this->modx->newQuery('modResource');
+        //$criteria->where();
+        $total_pages = $this->modx->getCount('modResource',$criteria);
+        
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('modResource',$criteria);
+        
+        // Init our array
+        $data = array(
+            'results'=>array(),
+            'total' => $total_pages,
+        );
+        foreach ($pages as $p) {
+            $data['results'][] = $p->toArray();
+        }
 
+        if ($json) {
+            return json_encode($data);
+        }
+        else {
+            return $data;
+        }
+    
+    }
+    
+    /**
+     * A little helper function for developers debugging the Ajax requests.
+     *
+     */
+    public function help() {
+        if (!$this->modx->hasPermission($this->modx->getOption(__FUNCTION__, $this->perms, $this->default_perm))) {
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart::'.__FUNCTION__.'] User does not have sufficient privileges.');
+        }    
+        $methods = get_class_methods($this);
+        
+        $out = '<p>These are the following methods available to the Moxycart class.</p>
+        <ul>';
+        foreach ($methods as $m) {
+            if(substr($m, 1, 1) != '_') {
+                $out .= '<li>'.$m.'</li>';
+            }
+        }
+        $out .= '</ul>';
+        return $out;
+    }
 
 }

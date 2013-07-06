@@ -1,6 +1,5 @@
-.icon-moxycartcontainer .x-tree-node-icon {
-    // background-image: url(../images/cup.png) !important;
-    background-image: url(../images/clock.png) !important;
+.icon-store .x-tree-node-icon {
+    background-image: url(../images/cart.png) !important;
 }
 
 
