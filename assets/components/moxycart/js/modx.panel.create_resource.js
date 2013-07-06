@@ -4,70 +4,18 @@
 // Must wait, otherwise the Moxycart variables won't be available
 Ext.onReady(function(){
 
-    // create the Data Store
-    var store = new Ext.data.JsonStore({
-        root: 'results',
-        totalProperty: 'total',
-        idProperty: 'id',
-        remoteSort: true,
+    var intro_panel = new Ext.Panel({
 
-        fields: [
-            'pagetitle', 
-            'alias', 
-            {name: 'createdby', type: 'int'}
-        ],
-
-        // load using script tags for cross domain, if the data in on the same domain as
-        // this page, an HttpProxy would be better
-        proxy: new Ext.data.HttpProxy({
-//            url: '/store.php'
-            url: Moxycart.assets_url+'components/moxycart/connector.php?f=list_products'
-        })
+        height   : 500,
+        width    : 'auto',
+        title    : _('creating_product_container'),
+        //html     : 'This is my content',
+        frame    : true,
+        autoLoad: {
+            url : Moxycart.assets_url+'components/moxycart/connector.php?f=create_product_container'
+            , scripts : false
+        }
     });
-
-    store.setDefaultSort('id', 'ASC');
-    // trigger the data store load
-    // NOTE: the parameter names here correspond to keys in $_POST
-    store.load({params:{start:0, limit:25}});
-
-    var grid = new Ext.grid.GridPanel({
-        width:1000,
-        height:500,
-       // title:'MODExt - Browse Pages',
-        store: store,
-        trackMouseOver:true,  // will highlight rows on hover
-        disableSelection:true, // will allow you to select row(s)
-        loadMask: true,  // will generate a spinner icon
-
-        // grid columns
-        columns:[{
-            header: "Page Title",
-            dataIndex: 'pagetitle',
-            width: 420,
-            sortable: true
-        },{
-            header: "Alias",
-            dataIndex: 'alias',
-            width: 100,
-            sortable: true
-        },{
-            header: "Author",
-            dataIndex: 'createdby',
-            width: 80,
-            align: 'right',
-            sortable: true
-        }],
-
-        // paging bar on the bottom
-        bbar: new Ext.PagingToolbar({
-            pageSize: 25,
-            store: store,
-            displayInfo: true,
-            displayMsg: 'Displaying Records {0} - {1} of {2}',
-            emptyMsg: "No Records to display"
-        })
-    });
-
 
 
 //------------------------------------------------------------------------------
@@ -289,7 +237,8 @@ Ext.extend(MODx.panel.Resource,MODx.FormPanel,{
                 ,msgTarget: 'under'
                 ,width: 800
             }
-            ,items: grid // [] // this.getMainFields(config) // <-- form fields for this tab
+            ,items: intro_panel
+//            ,items: grid // [] // this.getMainFields(config) // <-- form fields for this tab
         });
 
 
@@ -545,7 +494,8 @@ Ext.extend(MODx.panel.Resource,MODx.FormPanel,{
         },{
             xtype: 'textfield'
             ,fieldLabel: _('resource_alias')
-            ,description: '<b>[[*alias]]</b><br />'+_('resource_alias_help')
+//            ,description: '<b>[[*alias]]</b><br />'+_('resource_alias_help')
+            ,description: '<b>[[*alias]]</b><br />'+_('moxycart.alias')
             ,name: 'alias'
             ,id: 'modx-resource-alias'
             ,maxLength: 100
@@ -633,6 +583,7 @@ Ext.extend(MODx.panel.Resource,MODx.FormPanel,{
             ,value: config.record.parent || 0
             ,anchor: '100%'
         },{
+/*
             xtype: 'modx-combo-class-derivatives'
             ,fieldLabel: _('resource_type')
             ,description: '<b>[[*class_key]]</b><br />'
@@ -643,6 +594,7 @@ Ext.extend(MODx.panel.Resource,MODx.FormPanel,{
             ,value: config.record.class_key || 'modDocument'
             ,anchor: '100%'
         },{
+*/
             xtype: 'modx-combo-content-type'
             ,fieldLabel: _('resource_content_type')
             ,description: '<b>[[*content_type]]</b><br />'+_('resource_content_type_help')
@@ -893,4 +845,4 @@ MODx.fireResourceFormChange = function(f,nv,ov) {
 };
 
 
-}); // end onready
+}); // end onReady

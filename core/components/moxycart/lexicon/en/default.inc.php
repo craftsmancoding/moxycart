@@ -50,3 +50,12 @@ $_lang['container_new'] = 'New Product Container';
 
 
 $_lang['moxycart.container'] = 'Moxycart...';
+
+
+$_lang['moxycart.alias'] = 'This is the URL segment that will prefix all of your product URLs in this container. The alias must be unique and friendly URLs must be enabled.';
+
+$_lang['creating_product_container'] = 'Creating a Product Container';
+
+// This may not translate well...
+$_lang['creating_product_container_video'] = '<iframe width="560" height="315" src="//www.youtube.com/embed/OCWj5xgu5Ng" frameborder="0" allowfullscreen></iframe>';
+$_lang['creating_product_container_content2'] = 'This explains how to do this.';

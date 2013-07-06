@@ -1,5 +1,5 @@
-Changelog for moxycart
+Changelog for Moxycart
 
-moxycart 1.0.0
+Moxycart 1.0.0
 ---------------------------------
-Initial Version
+Developing...

@@ -18,9 +18,7 @@ class StoreCreateManagerController extends ResourceCreateManagerController {
         $this->addJavascript($mgrUrl.'assets/modext/sections/resource/create.js');
         $this->addJavascript($assetsUrl.'components/moxycart/js/moxycart.js');        
         // 
-//        die($assetsUrl); 
-//        die($assetsUrl.'components/moxycart/js/modx.panel.resource.js');
-        $this->addJavascript($assetsUrl.'components/moxycart/js/modx.panel.resource.js');
+        $this->addJavascript($assetsUrl.'components/moxycart/js/modx.panel.create_resource.js');
 //        $this->addJavascript($mgrUrl.'assets/modext/sections/resource/create.js');
         $this->addHtml("
         <script type='text/javascript'>

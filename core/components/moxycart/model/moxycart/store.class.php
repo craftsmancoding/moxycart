@@ -30,7 +30,7 @@ class Store extends modResource {
  
     public function getResourceTypeName() {
         $this->xpdo->lexicon->load('moxycart:default');
-        return $this->xpdo->lexicon('product_container');
+        return $this->xpdo->lexicon('container');
     } 
 
     /**
