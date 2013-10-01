@@ -35,6 +35,9 @@ if ($object->xpdo) {
         case xPDOTransport::ACTION_INSTALL:
         case xPDOTransport::ACTION_UPGRADE:
             $modx->addExtensionPackage($package_name,"[[++core_path]]components/$package_name/model/");
+            $manager = $modx->getManager();
+            $manager->createObjectContainer('Product');
+            // etc...
             break;
 
         case xPDOTransport::ACTION_UNINSTALL:

@@ -82,7 +82,7 @@ MODx.panel.Resource = function(config) {
         url: MODx.config.connectors_url+'resource/index.php'
         ,baseParams: {}
         ,id: 'modx-panel-resource'
-        ,class_key: 'modDocument'
+        ,class_key: Moxycart.class_key
         ,resource: ''
         ,bodyStyle: ''
 		,cls: 'container form-with-labels'
@@ -372,7 +372,7 @@ Ext.extend(MODx.panel.Resource,MODx.FormPanel,{
     ,getPageHeader: function(config) {
         config = config || {record:{}};
         return {
-            html: '<h2><img src="'+MODx.config.assets_url+'mycomponents/moxycart/assets/components/moxycart/images/cart.png" />'+_('container_new')+'</h2>'
+            html: '<h2>'+_('container_new')+'</h2>'
             ,id: 'modx-resource-header'
             ,cls: 'modx-page-header'
             ,border: false

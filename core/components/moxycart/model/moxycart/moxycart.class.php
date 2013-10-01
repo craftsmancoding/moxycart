@@ -52,6 +52,7 @@
         $this->modx =& $modx;
         $this->props =& $config;
         $this->core_path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
+        $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
     }
     
     /**
@@ -75,7 +76,7 @@
         $uniqid = uniqid();
         $chunk = $this->modx->newObject('modChunk', array('name' => "{tmp}-{$uniqid}"));
         $chunk->setCacheable(false);
-         
+        $props['assets_url'] = $this->assets_url;    
         return $chunk->process($props, $tpl);    
     }
     

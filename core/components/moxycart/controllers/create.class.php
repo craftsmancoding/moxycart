@@ -13,23 +13,23 @@ class StoreCreateManagerController extends ResourceCreateManagerController {
         $this->addJavascript($mgrUrl.'assets/modext/widgets/element/modx.panel.tv.renders.js');
         $this->addJavascript($mgrUrl.'assets/modext/widgets/resource/modx.grid.resource.security.local.js');
         $this->addJavascript($mgrUrl.'assets/modext/widgets/resource/modx.panel.resource.tv.js');
-        $this->addJavascript($mgrUrl.'assets/modext/widgets/resource/modx.panel.resource.js');
         //$this->addJavascript($mgrUrl.'assets/modext/widgets/resource/modx.panel.resource.js');
-        $this->addJavascript($mgrUrl.'assets/modext/sections/resource/create.js');
+        ///$this->addJavascript($mgrUrl.'assets/modext/widgets/resource/modx.panel.resource.js');
+        //$this->addJavascript($mgrUrl.'assets/modext/sections/resource/create.js');
         $this->addJavascript($assetsUrl.'components/moxycart/js/moxycart.js');        
         // 
         $this->addJavascript($assetsUrl.'components/moxycart/js/modx.panel.create_resource.js');
-//        $this->addJavascript($mgrUrl.'assets/modext/sections/resource/create.js');
+///        $this->addJavascript($mgrUrl.'assets/modext/sections/resource/create.js');
         $this->addHtml("
         <script type='text/javascript'>
-/**
- * Loads the create resource page copied from manager/assets/modext/sections/resource/create.js
- * 
- * @class MODx.page.CreateResource
- * @extends MODx.Component
- * @param {Object} config An object of config properties
- * @xtype modx-page-resource-create
- */
+
+ // Loads the create resource page copied from manager/assets/modext/sections/resource/create.js
+ // 
+ // @class MODx.page.CreateResource
+ // @extends MODx.Component
+ // @param {Object} config An object of config properties
+ // @xtype modx-page-resource-create
+ //
 MODx.page.CreateResource = function(config) {
     config = config || {};
     Ext.applyIf(config,{
@@ -108,12 +108,12 @@ Ext.extend(MODx.page.CreateResource,MODx.Component,{
 });
 Ext.reg('modx-page-resource-create',MODx.page.CreateResource);        
         </script>");
-        //        Moxycart.assets_url = "'.$assetsUrl.'";
          
         $this->addHtml('
         <script type="text/javascript">
         // <![CDATA[
         Moxycart.assets_url = "'.$assetsUrl.'";
+        Moxycart.class_key = "Store";
         MODx.config.publish_document = "'.$this->canPublish.'";
         MODx.onDocFormRender = "'.$this->onDocFormRender.'";
         MODx.ctx = "'.$this->ctx.'";
@@ -129,7 +129,7 @@ Ext.reg('modx-page-resource-create',MODx.page.CreateResource);
         });
         // ]]>
         </script>');
-        /* load RTE */
+        // load RTE 
         $this->loadRichTextEditor();
 
         $this->addCss($assetsUrl.'components/moxycart/css/mgr.css');
@@ -154,7 +154,7 @@ Ext.reg('modx-page-resource-create',MODx.page.CreateResource);
      *
      * @return void
      */
-    public function prepareResource() {
+//    public function prepareResource() {
 /*
         $settings = $this->resource->getProperties('moxycart');
         if (empty($settings)) $settings = array();
@@ -183,5 +183,5 @@ Ext.reg('modx-page-resource-create',MODx.page.CreateResource);
             $this->resourceArray['setting_'.$k] = $v;
         }
 */
-    }    
+//    }    
 }

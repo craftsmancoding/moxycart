@@ -17,7 +17,9 @@ class Store extends modResource {
     }
     
     public static function getControllerPath(xPDO &$modx) {
-        return $modx->getOption('moxycart.core_path',null,$modx->getOption('core_path')).'components/moxycart/controllers/';
+        $x = $modx->getOption('moxycart.core_path',null,$modx->getOption('core_path')).'components/moxycart/controllers/';
+//        print $x;
+        return $x;
     }
     
     public function getContextMenuText() {
@@ -66,7 +68,27 @@ class Store extends modResource {
 
 }
 
+//------------------------------------------------------------------------------
+//! CreateProcessor
+//------------------------------------------------------------------------------
 class StoreCreateProcessor extends modResourceCreateProcessor {
+    /** @var ArticlesContainer $object */
+    public $object;
+    /**
+     * Override modResourceCreateProcessor::afterSave to provide custom functionality, saving the container settings to a
+     * custom field in the manager
+     * {@inheritDoc}
+     * @return boolean
+     */
+    public function afterSave() {
+        $this->modx->log(1, __FILE__ . print_r($this->object->toArray(), true));
+        $this->object->set('class_key','Store');
+        $this->object->set('cacheable',true);
+        $this->object->set('isfolder',true);
+        return parent::afterSave();
+    }
+
+
 }
 class StoreUpdateProcessor extends modResourceUpdateProcessor {
 }
