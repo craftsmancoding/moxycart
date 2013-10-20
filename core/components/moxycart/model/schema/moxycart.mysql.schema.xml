@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <model package="moxycart" version="1.0" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM">
 
-    <!-- ! Store -->
+    <!-- ! Store: a container for products -->
+    <!-- Additional properties:
+        default_template : which template is used for these products
+        track_inventory : 
+    -->
     <object class="Store" extends="modResource">
         <composite alias="Products" class="Product" local="id" foreign="parent" cardinality="many" owner="local" />
     </object>
@@ -19,7 +23,6 @@
 		</index>
 		
 		<composite alias="Products" class="Product" local="currency_id" foreign="currency_id" cardinality="many" owner="local" />
-		<composite alias="Subscription" class="Subscription" local="currency_id" foreign="currency_id" cardinality="many" owner="local" />
 	</object>
 
     <!-- ! Product -->
@@ -178,7 +181,7 @@
 	<!-- ! Variation Matrix -->
 	<!--
 	The mother lode: here is where we show what actually varies.
-	The tricky
+	The tricky bit is 
 	-->
 	<object class="ProductVariant" table="product_variants" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
@@ -229,6 +232,7 @@
 	</object>
     
     <!-- ! ProductTerms -->
+    <!-- for adding tags/categories to products -->
 	<object class="ProductTerms" table="product_terms" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="term_id" dbtype="int" precision="11" phptype="integer" null="false"/>
