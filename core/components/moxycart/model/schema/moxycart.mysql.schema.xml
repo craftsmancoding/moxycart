@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- http://www.anthropologie.com/anthro/product/shopsale-freshcuts/28810513.jsp?cm_sp=Fluid-_-28810513-_-Regular_1 -->
+<!-- http://www.urbanoutfitters.com/urban/catalog/productdetail.jsp?id=28741783x&parentid=SALE_M_CLOTHING_JACKETS -->
 <model package="moxycart" version="1.0" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM">
 
     <!-- ! Store: a container for products -->
@@ -16,6 +18,7 @@
 		<field key="code" dbtype="varchar" precision="10" phptype="string" null="false" />
 		<field key="name" dbtype="varchar" precision="256" phptype="string" null="false" />
 		<field key="symbol" dbtype="varchar" precision="4" phptype="string" null="true" />
+        <field key="active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
 		<field key="seq" dbtype="int" precision="3" phptype="integer" null="true" />
 
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
@@ -29,30 +32,29 @@
     <object class="Product" table="products" extends="xPDOObject">
         <field key="product_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
         <field key="store_id" dbtype="int" precision="11" phptype="integer" null="true" />
+        <field key="parent_id" dbtype="int" precision="11" phptype="integer" null="true" comment="children are for variations"/>
+        <field key="template_id" dbtype="int" precision="11" phptype="integer" null="true" />
         <field key="currency_id" dbtype="int" precision="4" phptype="integer" null="true" />
         <field key="name" dbtype="varchar" precision="60" phptype="string" null="false" />
         <field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
+        <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />
         <field key="type" dbtype="enum" precision="'regular','subscription','download'" phptype="string" null="true" />
         <field key="sku" dbtype="varchar" precision="20" phptype="string" null="false" />
+        <field key="vendor_sku" dbtype="varchar" precision="20" phptype="string" null="false" comment="SKU from your provider"/>
+        <field key="variant_matrix" dbtype="varchar" precision="255" phptype="string" null="false" comment="JSON hash to identify specific type:term combo(s)"/>
+        <field key="alias" dbtype="varchar" precision="20" phptype="string" null="false" />
 
-        <field key="track_inventory" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0"/>
+        <field key="track_inventory" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0" comment="Sum of child variants"/>
         <field key="inventory_qty" dbtype="int" precision="11" phptype="integer" null="false" />
         <field key="alert_qty" dbtype="int" precision="11" phptype="integer" null="false" />
 
+        <field key="strike_thru_price" dbtype="decimal" precision="8,2" phptype="float" null="true" comment="Eye candy only"/>
         <field key="price" dbtype="decimal" precision="8,2" phptype="float" null="true" />
-        <field key="category_id" dbtype="int" precision="11" phptype="integer" null="true" />
-
-        <!-- regular products (tangible) -->        
-        <field key="length" dbtype="decimal" precision="12,4" phptype="float" null="true" />
-        <field key="width" dbtype="decimal" precision="12,4" phptype="float" null="true" />
-        <field key="height" dbtype="decimal" precision="12,4" phptype="float" null="true" />
-        <field key="weight" dbtype="decimal" precision="12,4" phptype="float" null="true" />
-        <field key="volume" dbtype="decimal" precision="12,4" phptype="float" null="true" />
-        <field key="length_unit_id" dbtype="int" precision="11" phptype="integer" null="false" />
-        <field key="weight_unit_id" dbtype="int" precision="11" phptype="integer" null="false" />
-        <field key="volume_unit_id" dbtype="int" precision="11" phptype="integer" null="false" />
+        <field key="category" dbtype="varchar" precision="32" phptype="string" null="true" comment="Foxycart category (not a taxonomy)"/>
+        <field key="is_active" dbtype="tinyint" precision="1" phptype="integer" null="false" default="1" comment="Used to disable/enable products"/>
         
-        <!-- subscription/membership products -->
+        
+        <!-- subscription/membership products Only -->
         <field key="interval_unit" dbtype="enum" precision="'hours','days','weeks','years'" phptype="string" null="false" />
         <field key="billing_interval" dbtype="int" precision="3" phptype="integer" null="false" default="1"/>
         <field key="user_group_id" dbtype="int" precision="11" phptype="integer" null="true" />
@@ -70,22 +72,33 @@
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="product_id" collation="A" null="false" />
 		</index>
-        <index alias="sku" name="sku" primary="false" unique="true">
+		<!-- sku may not be unique if variations are used -->
+        <index alias="sku" name="sku" primary="false" unique="false">
 			<column key="sku" collation="A" null="true" />
 		</index>
-		
+        <index alias="factory_sku" name="factory_sku" primary="false" unique="false">
+			<column key="factory_sku" collation="A" null="true" />
+		</index>
+        <index alias="alias" name="alias" primary="false" unique="true">
+			<column key="alias" collation="A" null="true" />
+		</index>
+				
 		<aggregate alias="Store" class="Store" local="store_id" foreign="id" cardinality="one" owner="foreign" />
+		<aggregate alias="Template" class="modTemplate" local="template_id" foreign="id" cardinality="one" owner="foreign" />
 		<aggregate alias="Currency" class="Currency" local="currency_id" foreign="currency_id" cardinality="one" owner="foreign" />
-        <aggregate alias="WeightUnit" class="Unit" local="weight_unit_id" foreign="unit_id" cardinality="one" owner="foreign" />
-		<aggregate alias="LengthUnit" class="Unit" local="length_unit_id" foreign="unit_id" cardinality="one" owner="foreign" />
-		<aggregate alias="VolumeUnit" class="Unit" local="volume_unit_id" foreign="unit_id" cardinality="one" owner="foreign" />
 		<aggregate alias="Payload" class="modResource" local="payload_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Author" class="modUser" local="author_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="UserGroup" class="modUserGroup" local="user_group_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Role" class="modUserGroupRole" local="role_id" foreign="id" cardinality="one" owner="foreign" />
-		<aggregate alias="Category" class="Category" local="category_id" foreign="category_id" cardinality="one" owner="foreign" />
 
-        <composite alias="Variants" class="ProductVariant" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+        <!-- parent is the main product: children represent variants in all permutations -->
+        <composite alias="Parent" class="Product" local="parent_id" foreign="product_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Variant" class="Product" local="product_id" foreign="parent_id" cardinality="many" owner="local" />
+
+		<aggregate alias="VariantTerm" class="VariationTerm" local="vterm_id" foreign="vterm_id" cardinality="one" owner="foreign" />
+		
+		<composite alias="Terms" class="ProductTerms" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+        <composite alias="Specs" class="ProductSpecs" local="product_id" foreign="product_id" cardinality="many" owner="local" />
     </object>
 
 
@@ -98,12 +111,24 @@
 		<field key="type" dbtype="enum" precision="'mass','volume','length','area','other'" phptype="string" null="true" />
 
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="unit_id" collation="A" null="false" />
+			<column key="spec_id" collation="A" null="false" />
 		</index>
 		
-		<composite alias="Products" class="Product" local="unit_id" foreign="weight_unit_id" cardinality="many" owner="local" />
-		<composite alias="Products" class="Product" local="unit_id" foreign="length_unit_id" cardinality="many" owner="local" />
-		<composite alias="Products" class="Product" local="unit_id" foreign="volume_unit_id" cardinality="many" owner="local" />
+	</object>
+
+    <!-- ! ProductSpecs -->
+    <!-- for specifying height, weight etc. -->
+	<object class="ProductSpecs" table="product_specs" extends="xPDOSimpleObject">
+		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="unit_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="value" dbtype="decimal" precision="12,4" phptype="float" null="true" />
+		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />		
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="id" collation="A" null="false" />
+		</index>
+
+        <aggregate alias="Products" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Unit" class="Unit" local="spec_id" foreign="spec_id" cardinality="one" owner="foreign" />
 	</object>
 
 
@@ -141,7 +166,7 @@
 
 	<!-- ! Product Variation Types -->
 	<!-- 
-	e.g. says "this product varies by Color, Size, and Material 
+	e.g. says "this parent product varies by Color, Size, and Material 
 	is_variant: if 1, this means that price, qty, etc. will change for the product 
 	is_variant: if 0, then the options here are just aesthetic options
 	-->
@@ -151,7 +176,6 @@
         <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
         <field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
 		<field key="is_variant" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0" />
-		<!-- field key="variation_fields" dbtype="text" phptype="string" null="false" default="0" comment="List of fields that will vary"/-->
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" collation="A" null="false" />
 		</index>
@@ -178,23 +202,6 @@
         <aggregate alias="Term" class="Term" local="term_id" foreign="term_id" cardinality="one" owner="foreign" />
 	</object>
 	
-	<!-- ! Variation Matrix -->
-	<!--
-	The mother lode: here is where we show what actually varies.
-	The tricky bit is 
-	-->
-	<object class="ProductVariant" table="product_variants" extends="xPDOSimpleObject">
-		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-        <field key="criteria" dbtype="text" phptype="string" null="true" comment="contains a list of the vterm_ids"/>
-
-
-		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="id" collation="A" null="false" />
-		</index>
-
-        <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
-	</object>	
-	
 	<!-- ! Taxonomies -->
 	<!-- 
 	All for searching/finding our products
@@ -203,8 +210,8 @@
     	<field key="taxonomy_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
 		<field key="parent_id" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="true" />
 		<field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="is_hierarchical" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0"/> 
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
-		<field key="grp" dbtype="varchar" precision="16" phptype="string" null="true" />
 		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="taxonomy_id" collation="A" null="false" />
@@ -242,23 +249,12 @@
 		</index>
 
         <aggregate alias="Term" class="Term" local="term_id" foreign="term_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Products" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 	</object>
 	
 	
 	<!-- ! Coupons -->
 	
-	<!-- ! Categories (FoxyCart) -->
-	<object class="Category" table="categories" extends="xPDOObject">
-    	<field key="category_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-		<field key="description" dbtype="varchar" precision="255" phptype="string" null="false" />
-		<field key="code" dbtype="varchar" precision="255" phptype="string" null="false" />
-		<field key="data" dbtype="text" phptype="string" null="false" />
-		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="category_id" collation="A" null="false" />
-		</index>
-
-		<aggregate alias="Products" class="Product" local="category_id" foreign="category_id" cardinality="one" owner="foreign" />
-	</object>	
 	    
     <!-- ! Carts -->
     <!-- 
@@ -289,5 +285,26 @@
         
 	</object>
     
+
+	<!-- ! Image -->
+	<!-- Each Product can have multiple images -->
+	<object class="Image" table="images" extends="xPDOObject">
+    	<field key="image_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+    	<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		<field key="title" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="alt" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="url" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="path" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="width" dbtype="int" precision="4" phptype="integer" null="false" />
+		<field key="height" dbtype="int" precision="4" phptype="integer" null="false" />
+		<field key="seq" dbtype="int" precision="4" phptype="integer" null="false" />
+		
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="image_id" collation="A" null="false" />
+		</index>
+
+		<aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+	</object>
+
     
 </model>

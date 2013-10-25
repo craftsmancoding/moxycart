@@ -32,12 +32,24 @@
 if ($object->xpdo) {
     $modx =& $object->xpdo;
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
-        case xPDOTransport::ACTION_INSTALL:
         case xPDOTransport::ACTION_UPGRADE:
+        case xPDOTransport::ACTION_INSTALL:
             $modx->addExtensionPackage($package_name,"[[++core_path]]components/$package_name/model/");
             $manager = $modx->getManager();
+            $manager->createObjectContainer('Currency');
             $manager->createObjectContainer('Product');
-            // etc...
+            $manager->createObjectContainer('Unit');
+            $manager->createObjectContainer('VariationType'); 
+            $manager->createObjectContainer('VariationTerm');
+            $manager->createObjectContainer('ProductVariationTypes');
+            $manager->createObjectContainer('ProductVariantTerm');
+            $manager->createObjectContainer('Taxonomy');
+            $manager->createObjectContainer('Term');
+            $manager->createObjectContainer('ProductTerms');
+            $manager->createObjectContainer('Category');
+            $manager->createObjectContainer('Cart');
+            $manager->createObjectContainer('Image');            
+            
             break;
 
         case xPDOTransport::ACTION_UNINSTALL:
