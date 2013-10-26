@@ -12,6 +12,7 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
         // Add Required JS files here:
         // $this->addJavascript('/assets/components/moxycart/ ????.js');
         // $this->addJavascript('/assets/components/moxycart/ ????.js');
+        $this->addCss($assetsUrl.'components/moxycart/css/mgr.css');
     }
     
     
