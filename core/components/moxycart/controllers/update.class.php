@@ -4,8 +4,19 @@ require_once $modx->getOption('manager_path',null,MODX_MANAGER_PATH).'controller
 class StoreUpdateManagerController extends ResourceUpdateManagerController {
     public $resource;
 
-    // Copied from parent
+
     public function loadCustomCssJs() {
+        parent::loadCustomCssJs();
+        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
+        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
+        // Add Required JS files here:
+        // $this->addJavascript('/assets/components/moxycart/ ????.js');
+        // $this->addJavascript('/assets/components/moxycart/ ????.js');
+    }
+    
+    
+    // Copied from parent
+    public function __IGNORE___loadCustomCssJs() {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         $this->addJavascript($mgrUrl.'assets/modext/util/datetime.js');

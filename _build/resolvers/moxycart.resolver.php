@@ -33,6 +33,11 @@ if ($object->xpdo) {
     $modx =& $object->xpdo;
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_UPGRADE:
+            // $modx->addExtensionPackage($package_name,"[[++core_path]]components/$package_name/model/");
+            // $manager = $modx->getManager();
+            // Add a field to an existing container
+            // $modx->getManager()->addField('fieldname')     
+            break;
         case xPDOTransport::ACTION_INSTALL:
             $modx->addExtensionPackage($package_name,"[[++core_path]]components/$package_name/model/");
             $manager = $modx->getManager();
@@ -48,7 +53,7 @@ if ($object->xpdo) {
             $manager->createObjectContainer('ProductTerms');
             $manager->createObjectContainer('Category');
             $manager->createObjectContainer('Cart');
-            $manager->createObjectContainer('Image');            
+            $manager->createObjectContainer('Image');       
             
             break;
 

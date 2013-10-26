@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- http://wiki.foxycart.com/v/0.7.1/products -->
+<!-- http://www.cannonlewis.com/product.php?productid=177 -->
 <!-- http://www.anthropologie.com/anthro/product/shopsale-freshcuts/28810513.jsp?cm_sp=Fluid-_-28810513-_-Regular_1 -->
 <!-- http://www.urbanoutfitters.com/urban/catalog/productdetail.jsp?id=28741783x&parentid=SALE_M_CLOTHING_JACKETS -->
 <model package="moxycart" version="1.0" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM">
@@ -18,7 +20,7 @@
 		<field key="code" dbtype="varchar" precision="10" phptype="string" null="false" />
 		<field key="name" dbtype="varchar" precision="256" phptype="string" null="false" />
 		<field key="symbol" dbtype="varchar" precision="4" phptype="string" null="true" />
-        <field key="active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
+        <field key="is_active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
 		<field key="seq" dbtype="int" precision="3" phptype="integer" null="true" />
 
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
@@ -32,7 +34,7 @@
     <object class="Product" table="products" extends="xPDOObject">
         <field key="product_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
         <field key="store_id" dbtype="int" precision="11" phptype="integer" null="true" />
-        <field key="parent_id" dbtype="int" precision="11" phptype="integer" null="true" comment="children are for variations"/>
+        <field key="parent_id" dbtype="int" precision="11" phptype="integer" null="true" comment="variations are stored as children"/>
         <field key="template_id" dbtype="int" precision="11" phptype="integer" null="true" />
         <field key="currency_id" dbtype="int" precision="4" phptype="integer" null="true" />
         <field key="name" dbtype="varchar" precision="60" phptype="string" null="false" />
@@ -40,17 +42,19 @@
         <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />
         <field key="type" dbtype="enum" precision="'regular','subscription','download'" phptype="string" null="true" />
         <field key="sku" dbtype="varchar" precision="20" phptype="string" null="false" />
-        <field key="vendor_sku" dbtype="varchar" precision="20" phptype="string" null="false" comment="SKU from your provider"/>
+        <field key="sku_vendor" dbtype="varchar" precision="20" phptype="string" null="false" comment="SKU from your provider"/>
         <field key="variant_matrix" dbtype="varchar" precision="255" phptype="string" null="false" comment="JSON hash to identify specific type:term combo(s)"/>
         <field key="alias" dbtype="varchar" precision="20" phptype="string" null="false" />
 
         <field key="track_inventory" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0" comment="Sum of child variants"/>
-        <field key="inventory_qty" dbtype="int" precision="11" phptype="integer" null="false" />
-        <field key="alert_qty" dbtype="int" precision="11" phptype="integer" null="false" />
-
+        <field key="qty_inventory" dbtype="int" precision="11" phptype="integer" null="false" />
+        <field key="qty_alert" dbtype="int" precision="11" phptype="integer" null="false" comment="Stock count at which you need to reorder"/>
+        <field key="qty_min" dbtype="int" precision="11" phptype="integer" null="false" comment="Minimum quantity that should be allowed per product, per cart."/>
+        <field key="qty_max" dbtype="int" precision="11" phptype="integer" null="false" comment="Maximum quantity that should be allowed per product, per cart."/>
         <field key="strike_thru_price" dbtype="decimal" precision="8,2" phptype="float" null="true" comment="Eye candy only"/>
         <field key="price" dbtype="decimal" precision="8,2" phptype="float" null="true" />
         <field key="category" dbtype="varchar" precision="32" phptype="string" null="true" comment="Foxycart category (not a taxonomy)"/>
+        <field key="thumbnail_url" dbtype="varchar" precision="255" phptype="string" null="true" comment="For FoxyCart cart, local or abs"/>
         <field key="is_active" dbtype="tinyint" precision="1" phptype="integer" null="false" default="1" comment="Used to disable/enable products"/>
         
         
@@ -102,14 +106,16 @@
     </object>
 
 
-	<!-- ! Unit -->
-	<object class="Unit" table="units" extends="xPDOObject">
-		<field key="unit_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-		<field key="name" dbtype="varchar" precision="16" phptype="string" null="false" />
-		<field key="abbreviation" dbtype="varchar" precision="16" phptype="string" null="false" />
+	<!-- ! Specs -->
+	<!-- a la custom fields-->
+	<object class="Spec" table="specs" extends="xPDOObject">
+		<field key="spec_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+		<field key="name" dbtype="varchar" precision="32" phptype="string" null="false" />
 		<field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
-		<field key="type" dbtype="enum" precision="'mass','volume','length','area','other'" phptype="string" null="true" />
-
+		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
+		<field key="group" dbtype="varchar" precision="32" phptype="string" null="true" />
+		<!-- future use? -->
+		<field key="type" dbtype="varchar" precision="32" phptype="string" null="false" default="text"/>
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="spec_id" collation="A" null="false" />
 		</index>
@@ -117,18 +123,17 @@
 	</object>
 
     <!-- ! ProductSpecs -->
-    <!-- for specifying height, weight etc. -->
+    <!-- custom fields for specifying height, weight etc. -->
 	<object class="ProductSpecs" table="product_specs" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-        <field key="unit_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-        <field key="value" dbtype="decimal" precision="12,4" phptype="float" null="true" />
-		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />		
+        <field key="spec_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="value" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" collation="A" null="false" />
 		</index>
 
         <aggregate alias="Products" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
-        <aggregate alias="Unit" class="Unit" local="spec_id" foreign="spec_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Spec" class="Spec" local="spec_id" foreign="spec_id" cardinality="one" owner="foreign" />
 	</object>
 
 
@@ -298,7 +303,7 @@
 		<field key="width" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="height" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="false" />
-		
+		<field key="is_active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="image_id" collation="A" null="false" />
 		</index>
