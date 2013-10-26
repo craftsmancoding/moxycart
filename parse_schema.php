@@ -113,7 +113,7 @@ if(!$xpdo->addPackage('moxycart',MODX_CORE_PATH.'components/moxycart/model/',$my
 
 $manager->createObjectContainer('Currency');
 $manager->createObjectContainer('Product');
-$manager->createObjectContainer('Unit');
+$manager->createObjectContainer('Spec');
 $manager->createObjectContainer('VariationType'); 
 $manager->createObjectContainer('VariationTerm');
 $manager->createObjectContainer('ProductVariationTypes');
@@ -121,7 +121,7 @@ $manager->createObjectContainer('ProductVariantTerm');
 $manager->createObjectContainer('Taxonomy');
 $manager->createObjectContainer('Term');
 $manager->createObjectContainer('ProductTerms');
-$manager->createObjectContainer('Category');
+$manager->createObjectContainer('ProductSpecs');
 $manager->createObjectContainer('Cart');
 $manager->createObjectContainer('Image');
  
