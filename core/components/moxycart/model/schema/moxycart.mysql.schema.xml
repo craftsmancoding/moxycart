@@ -47,10 +47,12 @@
         <field key="alias" dbtype="varchar" precision="20" phptype="string" null="false" />
 
         <field key="track_inventory" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0" comment="Sum of child variants"/>
+        <!-- in stock -->
         <field key="qty_inventory" dbtype="int" precision="11" phptype="integer" null="false" />
         <field key="qty_alert" dbtype="int" precision="11" phptype="integer" null="false" comment="Stock count at which you need to reorder"/>
         <field key="qty_min" dbtype="int" precision="11" phptype="integer" null="false" comment="Minimum quantity that should be allowed per product, per cart."/>
         <field key="qty_max" dbtype="int" precision="11" phptype="integer" null="false" comment="Maximum quantity that should be allowed per product, per cart."/>
+        <!-- backorder_cap : how many units you can oversell -->
         <field key="strike_thru_price" dbtype="decimal" precision="8,2" phptype="float" null="true" comment="Eye candy only"/>
         <field key="price" dbtype="decimal" precision="8,2" phptype="float" null="true" />
         <field key="category" dbtype="varchar" precision="32" phptype="string" null="true" comment="Foxycart category (not a taxonomy)"/>
@@ -98,11 +100,10 @@
         <!-- parent is the main product: children represent variants in all permutations -->
         <composite alias="Parent" class="Product" local="parent_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Variant" class="Product" local="product_id" foreign="parent_id" cardinality="many" owner="local" />
-
-		<aggregate alias="VariantTerm" class="VariationTerm" local="vterm_id" foreign="vterm_id" cardinality="one" owner="foreign" />
 		
 		<composite alias="Terms" class="ProductTerms" local="product_id" foreign="product_id" cardinality="many" owner="local" />
         <composite alias="Specs" class="ProductSpecs" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+		<composite alias="Related" class="RelatedProducts" local="product_id" foreign="product_id" cardinality="many" owner="local" />
     </object>
 
 
@@ -189,24 +190,6 @@
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 	</object>
 	
-	<!-- ! Product Variants -->
-	<!-- 
-        use this to limit which terms are availabe for a given variation type 
-        e.g. maybe size only comes in L and XL
-	-->
-	<object class="ProductVariantTerm" table="product_variant_terms" extends="xPDOSimpleObject">
-		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-        <field key="vterm_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-		<field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
-		<field key="seq" dbtype="int" precision="11" phptype="integer" null="true" />
-
-		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="id" collation="A" null="false" />
-		</index>
-
-        <aggregate alias="Term" class="Term" local="term_id" foreign="term_id" cardinality="one" owner="foreign" />
-	</object>
-	
 	<!-- ! Taxonomies -->
 	<!-- 
 	All for searching/finding our products
@@ -290,6 +273,20 @@
         
 	</object>
     
+
+    <!-- ! RelatedProducts -->
+    <!-- for linking products together -->
+	<object class="RelatedProducts" table="related_products" extends="xPDOSimpleObject">
+		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="related_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />		
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="id" collation="A" null="false" />
+		</index>
+
+        <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Related" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+	</object>
 
 	<!-- ! Image -->
 	<!-- Each Product can have multiple images -->

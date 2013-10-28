@@ -2,6 +2,27 @@
 /**
  * moxycart class file for moxycart extra
  *
+ PLUGIN: 
+    request to product alias resolver
+
+ SNIPPET:
+    get product options
+    get product variants -- include qty counts
+    get product images / image gallery
+
+ CHUNKS:
+    FoxyCart form
+
+ TEMPLATES:
+    Sample Product Template
+        
+ dashboard widget: 
+    product inventory alerts
+    
+ SETTINGS
+    foxycart url
+    currency    
+ 
  * This file retrieves data for various Moxycart functions, e.g. product lists,
  * related products.  It is primarily accessed by the assets/components/moxycart/connector.php
  * file, but really, any 3rd party could use it to retrieve data as well.
