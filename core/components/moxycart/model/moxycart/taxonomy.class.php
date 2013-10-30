@@ -13,7 +13,7 @@ class Taxonomy extends modResource {
     function __construct(xPDO & $xpdo) {
         parent :: __construct($xpdo);
         $this->set('class_key','Taxonomy');
-        $this->set('hide_children_in_tree',true);
+        $this->set('hide_children_in_tree',false);
     }
     
     public static function getControllerPath(xPDO &$modx) {
@@ -64,6 +64,92 @@ class Taxonomy extends modResource {
     }
     
     */
+    /**
+     * This runs each time the tree is drawn.
+     * @param array $node
+     * @return array
+     */
+    public function prepareTreeNode(array $node = array()) {
+        $this->xpdo->lexicon->load('moxycart:default');
+        $menu = array();
+        $idNote = $this->xpdo->hasPermission('tree_show_resource_ids') ? ' <span dir="ltr">('.$this->id.')</span>' : '';
+        // Template ID should 1st default to the container settings for articleTemplate,
+        // then to system settings for articles.default_article_template.
+        // getContainerSettings() is not in scope here.
+		
+		// System Default
+		$template_id = $this->getOption('moxycart.default_taxonomy_template'); 
+		// Attempt to override for this container
+		$container = $this->xpdo->getObject('modResource', $this->id); 
+		if ($container) {
+			$props = $container->get('properties');
+			if ($props) {
+				if (isset($props['articles']['articleTemplate']) && !empty($props['articles']['articleTemplate'])) {
+					$template_id = $props['articles']['articleTemplate'];
+				}
+			}
+		}
+        $menu[] = array(
+            'text' => '<b>'.$this->get('pagetitle').'</b>'.$idNote,
+            'handler' => 'Ext.emptyFn',
+        );
+        $menu[] = '-';
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('articles.articles_manage'),
+            'handler' => 'this.editResource',
+        );
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('articles.articles_write_new'),
+            'handler' => "function(itm,e) { 
+				var at = this.cm.activeNode.attributes;
+		        var p = itm.usePk ? itm.usePk : at.pk;
+	
+	            Ext.getCmp('modx-resource-tree').loadAction(
+	                'a='+MODx.action['resource/create']
+	                + '&class_key='+itm.classKey
+	                + '&parent='+p
+	                + '&template=".$template_id."'
+	                + (at.ctx ? '&context_key='+at.ctx : '')
+                );
+        	}",
+        );
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('articles.container_duplicate'),
+            'handler' => 'function(itm,e) { itm.classKey = "ArticlesContainer"; this.duplicateResource(itm,e); }',
+        );
+        $menu[] = '-';
+        if ($this->get('published')) {
+            $menu[] = array(
+                'text' => $this->xpdo->lexicon('articles.container_unpublish'),
+                'handler' => 'this.unpublishDocument',
+            );
+        } else {
+            $menu[] = array(
+                'text' => $this->xpdo->lexicon('articles.container_publish'),
+                'handler' => 'this.publishDocument',
+            );
+        }
+        if ($this->get('deleted')) {
+            $menu[] = array(
+                'text' => $this->xpdo->lexicon('articles.container_undelete'),
+                'handler' => 'this.undeleteDocument',
+            );
+        } else {
+            $menu[] = array(
+                'text' => $this->xpdo->lexicon('articles.container_delete'),
+                'handler' => 'this.deleteDocument',
+            );
+        }
+        $menu[] = '-';
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('articles.articles_view'),
+            'handler' => 'this.preview',
+        );
+
+        $node['menu'] = array('items' => $menu);
+        $node['hasChildren'] = true;
+        return $node;
+    }
 
 }
 
@@ -88,6 +174,37 @@ class TaxonomyCreateProcessor extends modResourceCreateProcessor {
     }
 
 
+    public function beforeSave() {
+        $afterSave = parent::beforeSave();
+
+        // Make sure this is not saved anywhere it shouldn't be
+        $parent = $this->modx->getObject('modResource',$this->object->get('parent'));
+        if ($parent) {
+            $this->modx->log(1, print_r($parent->toArray(),true));
+        }
+/*
+        if ($parent) {
+            $this->object->setProperties($container->getProperties('articles'),'articles');
+        }
+*/
+
+//        $this->isPublishing = $this->object->isDirty('published') && $this->object->get('published');
+        return $afterSave;
+    }
+
 }
 class TaxonomyUpdateProcessor extends modResourceUpdateProcessor {
+    public function beforeSave() {
+        $afterSave = parent::beforeSave();
+
+        // Make sure this is not saved anywhere it shouldn't be
+        $parent = $this->modx->getObject('modResource',$this->object->get('parent'));
+        if ($parent) {
+            $this->modx->log(1, print_r($parent->toArray(),true));
+        }
+        else {
+                $this->modx->log(1, 'No Parent!');
+        }
+        
+    }
 }

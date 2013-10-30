@@ -183,12 +183,9 @@ $components = array(
 
         ),
         'plugins' => array(
-            'Plugin1' => array( /* minimal moxycart */
-                'category' => 'moxycart',
-            ),
-            'ProductURLRouting' => array( /* moxycart with static, events, and property sets */
+            'MoxyCart' => array( /* moxycart with static, events, and property sets */
                 'category' => 'Moxycart',
-                'description' => 'Handles page requests',
+                'description' => "Swiss Army Knife for all of MoxyCart's needs",
                 'static' => false,
 /*
                 'propertySets' => array(

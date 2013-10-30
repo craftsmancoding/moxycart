@@ -13,26 +13,25 @@ class Term extends modResource {
     function __construct(xPDO & $xpdo) {
         parent :: __construct($xpdo);
         $this->set('class_key','Term');
-        $this->set('hide_children_in_tree',true);
+        $this->set('hide_children_in_tree',false);
     }
     
     public static function getControllerPath(xPDO &$modx) {
         $x = $modx->getOption('moxycart.core_path',null,$modx->getOption('core_path')).'components/moxycart/controllers/term/';
-//        print $x;
         return $x;
     }
     
     public function getContextMenuText() {
         $this->xpdo->lexicon->load('moxycart:default');
         return array(
-            'text_create' => $this->xpdo->lexicon('Term'),
-            'text_create_here' => $this->xpdo->lexicon('Term_create_here'),
+            'text_create' => $this->xpdo->lexicon('term'),
+            'text_create_here' => $this->xpdo->lexicon('term_create_here'),
         );
     }
  
     public function getResourceTypeName() {
         $this->xpdo->lexicon->load('moxycart:default');
-        return $this->xpdo->lexicon('Term');
+        return $this->xpdo->lexicon('term');
     } 
 
     /**

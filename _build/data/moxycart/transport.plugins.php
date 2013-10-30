@@ -28,9 +28,9 @@ $plugins = array();
 $plugins[1] = $modx->newObject('modPlugin');
 $plugins[1]->fromArray(array(
     'id' => '1',
-    'description' => 'Handles page requests',
-    'name' => 'ProductURLRouting',
+    'description' => "Swiss Army Knife for all of MoxyCart's needs",
+    'name' => 'MoxyCart',
 ), '', true, true);
-$plugins[1]->setContent(file_get_contents($sources['source_core'] . '/elements/plugins/producturlrouting.plugin.php'));
+$plugins[1]->setContent(file_get_contents($sources['source_core'] . '/elements/plugins/moxycart.plugin.php'));
 
 return $plugins;
