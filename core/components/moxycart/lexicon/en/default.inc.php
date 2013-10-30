@@ -113,6 +113,11 @@ $_lang['term_unpublish'] = 'Unpublish Term';
 $_lang['term_view'] = 'View Term';
 
 
+$_lang['manage_inventory'] = 'Manage Inventory';
+$_lang['set_manual_sort_order'] = 'Set Manual Sort Order';
+
+
+
 $_lang['manage'] = 'Manage';
 
 $_lang['moxycart.container'] = 'Moxycart...';

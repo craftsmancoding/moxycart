@@ -19,13 +19,16 @@
     <!-- Taxonomy: a container for Terms -->
     <object class="Taxonomy" extends="modResource">
         <composite alias="Terms" class="Term" local="id" foreign="parent" cardinality="many" owner="local" />
+        <validation>
+            <rule field="parent" name="parent" type="xPDOValidationRule" rule="TaxonomyParents" message="Invalid parent" />
+        </validation>
     </object>
     <!-- Terms: tags, categories, etc -->
     <object class="Term" extends="modResource">
         <aggregate alias="Taxonomy" class="Taxonomy" local="parent" foreign="id" cardinality="one" owner="foreign" />
         <!-- children terms of terms? -->
         <validation>
-            <rule field="parent" name="parent" type="xPDOValidationRule" rule="ValidParents" message="Invalid parent" />
+            <rule field="parent" name="parent" type="xPDOValidationRule" rule="TermParents" message="Invalid parent" />
         </validation>
     </object>
     

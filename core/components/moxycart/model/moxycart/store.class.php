@@ -111,6 +111,33 @@ class Store extends modResource {
         	}",
         );        
         $menu[] = '-'; // equiv. to <hr/>
+
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('manage_inventory'),
+            'handler' => "function(itm,e) { 
+				var at = this.cm.activeNode.attributes;
+		        var p = itm.usePk ? itm.usePk : at.pk;
+	            Ext.getCmp('modx-resource-tree').loadAction(
+	                'a='+MODx.action['moxycart:index']
+	                + '&parent='+p
+	                + '&f=manage_inventory'
+                );
+        	}",
+        );
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('set_manual_sort_order'),
+            'handler' => "function(itm,e) { 
+				var at = this.cm.activeNode.attributes;
+		        var p = itm.usePk ? itm.usePk : at.pk;
+	            Ext.getCmp('modx-resource-tree').loadAction(
+	                'a='+MODx.action['moxycart:index']
+	                + '&parent='+p
+	                + '&f=set_manual_sort_order'
+                );
+        	}",
+        );        
+        $menu[] = '-'; // equiv. to <hr/>
+        
         $menu[] = array(
             'text' => $this->xpdo->lexicon('container_duplicate'),
             'handler' => 'function(itm,e) { itm.classKey = "Term"; this.duplicateResource(itm,e); }',

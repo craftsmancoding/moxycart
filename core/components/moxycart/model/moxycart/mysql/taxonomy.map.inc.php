@@ -20,4 +20,19 @@ $xpdo_meta_map['Taxonomy']= array (
       'owner' => 'local',
     ),
   ),
+  'validation' => 
+  array (
+    'rules' => 
+    array (
+      'parent' => 
+      array (
+        'parent' => 
+        array (
+          'type' => 'xPDOValidationRule',
+          'rule' => 'TaxonomyParents',
+          'message' => 'Invalid parent',
+        ),
+      ),
+    ),
+  ),
 );

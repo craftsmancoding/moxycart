@@ -20,4 +20,19 @@ $xpdo_meta_map['Term']= array (
       'owner' => 'foreign',
     ),
   ),
+  'validation' => 
+  array (
+    'rules' => 
+    array (
+      'parent' => 
+      array (
+        'parent' => 
+        array (
+          'type' => 'xPDOValidationRule',
+          'rule' => 'TermParents',
+          'message' => 'Invalid parent',
+        ),
+      ),
+    ),
+  ),
 );
