@@ -1,13 +1,14 @@
 <?php
-$xpdo_meta_map['ProductVariant']= array (
+$xpdo_meta_map['ProductTaxonomy']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'product_variants',
+  'table' => 'product_taxonomies',
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
     'product_id' => NULL,
-    'criteria' => NULL,
+    'taxonomy_id' => NULL,
+    'seq' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -18,12 +19,19 @@ $xpdo_meta_map['ProductVariant']= array (
       'phptype' => 'integer',
       'null' => false,
     ),
-    'criteria' => 
+    'taxonomy_id' => 
     array (
-      'dbtype' => 'text',
-      'phptype' => 'string',
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => false,
+    ),
+    'seq' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '3',
+      'phptype' => 'integer',
       'null' => true,
-      'comment' => 'contains a list of the vterm_ids',
     ),
   ),
   'indexes' => 
@@ -45,7 +53,15 @@ $xpdo_meta_map['ProductVariant']= array (
   ),
   'aggregates' => 
   array (
-    'Product' => 
+    'Taxonomy' => 
+    array (
+      'class' => 'Taxonomy',
+      'local' => 'taxonomy_id',
+      'foreign' => 'id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
+    'Products' => 
     array (
       'class' => 'Product',
       'local' => 'product_id',

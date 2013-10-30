@@ -2,27 +2,6 @@
 /**
  * moxycart class file for moxycart extra
  *
- PLUGIN: 
-    request to product alias resolver
-
- SNIPPET:
-    get product options
-    get product variants -- include qty counts
-    get product images / image gallery
-
- CHUNKS:
-    FoxyCart form
-
- TEMPLATES:
-    Sample Product Template
-        
- dashboard widget: 
-    product inventory alerts
-    
- SETTINGS
-    foxycart url
-    currency    
- 
  * This file retrieves data for various Moxycart functions, e.g. product lists,
  * related products.  It is primarily accessed by the assets/components/moxycart/connector.php
  * file, but really, any 3rd party could use it to retrieve data as well.
@@ -123,6 +102,115 @@
         return $this->_get_panel($props);
     }
     
+    public function create_product() {
+        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
+        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
+        // Add Required JS files here:
+        //$this->addJavascript('/assets/components/moxycart/test.js');
+        
+        return 'Hello there...';
+    }
+    
+    /**
+    
+    */
+    public function get_templates() {
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
+        
+        $criteria = $this->modx->newQuery('modTemplate');
+        //$criteria->where();
+        $total_pages = $this->modx->getCount('modTemplate',$criteria);
+        
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('modTemplate',$criteria);
+        
+        // Init our array
+        $data = array(
+            'results'=>array(),
+            'total' => $total_pages,
+        );
+        foreach ($pages as $p) {
+            $data['results'][] = $p->toArray();
+        }
+
+        if ($json) {
+            return json_encode($data);
+        }
+        else {
+            return $data;
+        }
+    
+    }
+    
+    public function get_specs() {
+
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
+        
+        $criteria = $this->modx->newQuery('Spec');
+        //$criteria->where();
+        $total_pages = $this->modx->getCount('Spec',$criteria);
+        
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('Spec',$criteria);
+        
+        // Init our array
+        $data = array(
+            'results'=>array(),
+            'total' => $total_pages,
+        );
+        foreach ($pages as $p) {
+            $data['results'][] = $p->toArray();
+        }
+
+        if ($json) {
+            return json_encode($data);
+        }
+        else {
+            return $data;
+        }
+        
+    }
+    
+    public function get_taxonomies() {
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
+        
+        $criteria = $this->modx->newQuery('Taxonomy');
+        //$criteria->where();
+        $total_pages = $this->modx->getCount('Taxonomy',$criteria);
+        
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('Taxonomy',$criteria);
+        
+        // Init our array
+        $data = array(
+            'results'=>array(),
+            'total' => $total_pages,
+        );
+        foreach ($pages as $p) {
+            $data['results'][] = $p->toArray();
+        }
+
+        if ($json) {
+            return json_encode($data);
+        }
+        else {
+            return $data;
+        }
+        
+    }
+    
     /**
      * Get a list of products.
      *
@@ -130,7 +218,7 @@
      *
      * @return mixed JSON-encoded string or PHP array (depends on $json flag). False on permissions error.
      */
-    public function list_products($args,$json=true) {
+    public function get_products($args,$json=true) {
     
         if (!$this->modx->hasPermission($this->modx->getOption(__FUNCTION__, $this->perms, $this->default_perm))) {
             $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart::'.__FUNCTION__.'] User does not have sufficient privileges.');

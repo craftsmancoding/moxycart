@@ -1,44 +1,35 @@
 <?php
-$xpdo_meta_map['Category']= array (
+$xpdo_meta_map['ProductSpecs']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'categories',
-  'extends' => 'xPDOObject',
+  'table' => 'product_specs',
+  'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
-    'category_id' => NULL,
-    'description' => NULL,
-    'code' => NULL,
-    'data' => NULL,
+    'product_id' => NULL,
+    'spec_id' => NULL,
+    'value' => NULL,
   ),
   'fieldMeta' => 
   array (
-    'category_id' => 
+    'product_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
-      'index' => 'pk',
-      'generated' => 'native',
     ),
-    'description' => 
+    'spec_id' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => false,
+    ),
+    'value' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '255',
-      'phptype' => 'string',
-      'null' => false,
-    ),
-    'code' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '255',
-      'phptype' => 'string',
-      'null' => false,
-    ),
-    'data' => 
-    array (
-      'dbtype' => 'text',
       'phptype' => 'string',
       'null' => false,
     ),
@@ -52,7 +43,7 @@ $xpdo_meta_map['Category']= array (
       'unique' => true,
       'columns' => 
       array (
-        'category_id' => 
+        'id' => 
         array (
           'collation' => 'A',
           'null' => false,
@@ -65,8 +56,16 @@ $xpdo_meta_map['Category']= array (
     'Products' => 
     array (
       'class' => 'Product',
-      'local' => 'category_id',
-      'foreign' => 'category_id',
+      'local' => 'product_id',
+      'foreign' => 'product_id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
+    'Spec' => 
+    array (
+      'class' => 'Spec',
+      'local' => 'spec_id',
+      'foreign' => 'spec_id',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),

@@ -1,20 +1,21 @@
 <?php
-$xpdo_meta_map['Unit']= array (
+$xpdo_meta_map['Spec']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'units',
+  'table' => 'specs',
   'extends' => 'xPDOObject',
   'fields' => 
   array (
-    'unit_id' => NULL,
+    'spec_id' => NULL,
     'name' => NULL,
-    'abbreviation' => NULL,
     'description' => NULL,
-    'type' => NULL,
+    'seq' => NULL,
+    'group' => NULL,
+    'type' => 'text',
   ),
   'fieldMeta' => 
   array (
-    'unit_id' => 
+    'spec_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -26,14 +27,7 @@ $xpdo_meta_map['Unit']= array (
     'name' => 
     array (
       'dbtype' => 'varchar',
-      'precision' => '16',
-      'phptype' => 'string',
-      'null' => false,
-    ),
-    'abbreviation' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '16',
+      'precision' => '32',
       'phptype' => 'string',
       'null' => false,
     ),
@@ -44,12 +38,27 @@ $xpdo_meta_map['Unit']= array (
       'phptype' => 'string',
       'null' => true,
     ),
-    'type' => 
+    'seq' => 
     array (
-      'dbtype' => 'enum',
-      'precision' => '\'mass\',\'volume\',\'length\',\'area\',\'other\'',
+      'dbtype' => 'tinyint',
+      'precision' => '3',
+      'phptype' => 'integer',
+      'null' => true,
+    ),
+    'group' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '32',
       'phptype' => 'string',
       'null' => true,
+    ),
+    'type' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '32',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => 'text',
     ),
   ),
   'indexes' => 
@@ -61,23 +70,12 @@ $xpdo_meta_map['Unit']= array (
       'unique' => true,
       'columns' => 
       array (
-        'unit_id' => 
+        'spec_id' => 
         array (
           'collation' => 'A',
           'null' => false,
         ),
       ),
-    ),
-  ),
-  'composites' => 
-  array (
-    'Products' => 
-    array (
-      'class' => 'Product',
-      'local' => 'unit_id',
-      'foreign' => 'volume_unit_id',
-      'cardinality' => 'many',
-      'owner' => 'local',
     ),
   ),
 );

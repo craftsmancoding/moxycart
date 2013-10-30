@@ -1,4 +1,6 @@
 <?php
+require_once '../../../config.core.php';
+require_once MODX_CORE_PATH . 'config/config.inc.php';
 // http://rtfm.modx.com/display/revolution20/Creating+a+Resource+Class
 /**
  * Parses a MODX XML schema file in order to create the corresponding PHP classes
@@ -24,28 +26,30 @@ $regenerate_classes = true;
  
 $my_table_prefix='moxy_';
 
+//$adjusted_core_path = MODX_CORE_PATH;
+$adjusted_core_path = MODX_BASE_PATH.'assets/mycomponents/moxycart/core/';
+
 //------------------------------------------------------------------------------
 //  DO NOT TOUCH BELOW THIS LINE
 //------------------------------------------------------------------------------
-require_once 'config.core.php';
  
 if (!defined('MODX_CORE_PATH')) {
     print_msg('<h1>Parsing Error</h1>
         <p>MODX_CORE_PATH not defined! Did you include the correct config file?</p>');
     exit;
 }
-require_once MODX_CORE_PATH . 'config/config.inc.php';
+
 
 $xpdo_path = strtr(MODX_CORE_PATH . 'xpdo/xpdo.class.php', '\\', '/');
 include_once ( $xpdo_path );
   
 // A few definitions of files/folders:
-$package_dir = MODX_CORE_PATH . "components/$package_name/";
-$model_dir = MODX_CORE_PATH . "components/$package_name/model/";
-$class_dir = MODX_CORE_PATH . "components/$package_name/model/$package_name";
-$schema_dir = MODX_CORE_PATH . "components/$package_name/model/schema";
-$mysql_class_dir = MODX_CORE_PATH . "components/$package_name/model/$package_name/mysql";
-$xml_schema_file = MODX_CORE_PATH . "components/$package_name/model/schema/$package_name.mysql.schema.xml";
+$package_dir = $adjusted_core_path . "components/$package_name/";
+$model_dir = $adjusted_core_path . "components/$package_name/model/";
+$class_dir = $adjusted_core_path . "components/$package_name/model/$package_name";
+$schema_dir = $adjusted_core_path . "components/$package_name/model/schema";
+$mysql_class_dir = $adjusted_core_path . "components/$package_name/model/$package_name/mysql";
+$xml_schema_file = $adjusted_core_path . "components/$package_name/model/schema/$package_name.mysql.schema.xml";
   
 // A few variables used to track execution times.
 $mtime= microtime();
@@ -101,7 +105,7 @@ $generator = $manager->getGenerator();
 // Use this to generate classes and maps from your schema
 if ($regenerate_classes) { 
     print_msg('<br/>Attempting to remove/regenerate class files...');
-    delete_class_files($class_dir);
+    //delete_class_files($class_dir);
     delete_class_files($mysql_class_dir);
 }
  
@@ -117,9 +121,7 @@ $manager->createObjectContainer('Spec');
 $manager->createObjectContainer('VariationType'); 
 $manager->createObjectContainer('VariationTerm');
 $manager->createObjectContainer('ProductVariationTypes');
-$manager->createObjectContainer('ProductVariantTerm');
-$manager->createObjectContainer('Taxonomy');
-$manager->createObjectContainer('Term');
+$manager->createObjectContainer('ProductTaxonomy');
 $manager->createObjectContainer('ProductTerms');
 $manager->createObjectContainer('ProductSpecs');
 $manager->createObjectContainer('Cart');

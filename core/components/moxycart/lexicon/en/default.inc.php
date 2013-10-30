@@ -42,10 +42,21 @@ $_lang['stores'] = 'Stores';
 $_lang['store_create_here'] = 'Create a Store Here';
 $_lang['store_new'] = 'New Store';
 
+// CRCs
 $_lang['container'] = 'Product Container';
 $_lang['containers'] = 'Product Containers';
 $_lang['container_create_here'] = 'Create a Product Container Here';
 $_lang['container_new'] = 'New Product Container';
+
+$_lang['taxonomy'] = 'Taxonomy';
+$_lang['taxonomies'] = 'Taxonomies';
+$_lang['taxonomy_create_here'] = 'Create a Taxonomy Here';
+$_lang['taxonomy_new'] = 'New Taxonomy';
+
+$_lang['term'] = 'Term';
+$_lang['terms'] = 'Terms';
+$_lang['term_create_here'] = 'Create a Term Here';
+$_lang['term_new'] = 'New Term';
 
 
 

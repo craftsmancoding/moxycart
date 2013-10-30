@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- http://wiki.foxycart.com/v/0.7.1/products -->
+<!-- http://wiki.foxycart.com/v/1.1/coupons_and_discounts#discount_types -->
 <!-- http://www.cannonlewis.com/product.php?productid=177 -->
 <!-- http://www.anthropologie.com/anthro/product/shopsale-freshcuts/28810513.jsp?cm_sp=Fluid-_-28810513-_-Regular_1 -->
 <!-- http://www.urbanoutfitters.com/urban/catalog/productdetail.jsp?id=28741783x&parentid=SALE_M_CLOTHING_JACKETS -->
+
 <model package="moxycart" version="1.0" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM">
 
     <!-- ! Store: a container for products -->
@@ -12,6 +14,16 @@
     -->
     <object class="Store" extends="modResource">
         <composite alias="Products" class="Product" local="id" foreign="parent" cardinality="many" owner="local" />
+    </object>
+
+    <!-- Taxonomy: a container for Terms -->
+    <object class="Taxonomy" extends="modResource">
+        <composite alias="Terms" class="Term" local="id" foreign="parent" cardinality="many" owner="local" />
+    </object>
+    <!-- Terms: tags, categories, etc -->
+    <object class="Term" extends="modResource">
+        <aggregate alias="Taxonomy" class="Taxonomy" local="parent" foreign="id" cardinality="one" owner="foreign" />
+        <!-- children terms of terms? -->
     </object>
     
     <!-- ! Currencies -->    
@@ -61,8 +73,12 @@
         
         
         <!-- subscription/membership products Only -->
-        <field key="interval_unit" dbtype="enum" precision="'hours','days','weeks','years'" phptype="string" null="false" />
+        <field key="billing_unit" dbtype="enum" precision="'hours','days','weeks','months','years'" phptype="string" null="false" />
         <field key="billing_interval" dbtype="int" precision="3" phptype="integer" null="false" default="1"/>
+
+        <field key="duration_unit" dbtype="enum" precision="'hours','days','weeks','months','years'" phptype="string" null="false" />
+        <field key="duration_interval" dbtype="int" precision="3" phptype="integer" null="false" default="1"/>
+
         <field key="user_group_id" dbtype="int" precision="11" phptype="integer" null="true" />
         <field key="role_id" dbtype="int" precision="11" phptype="integer" null="true" />
 
@@ -73,7 +89,7 @@
 		<field key="timestamp_created" dbtype="timestamp" phptype="timestamp" null="true" default="CURRENT_TIMESTAMP" />
 		<field key="timestamp_modified" dbtype="timestamp" phptype="timestamp" null="true" />
         
-        
+        <field key="seq" dbtype="int" precision="3" phptype="integer" null="true" />
         
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="product_id" collation="A" null="false" />
@@ -190,42 +206,20 @@
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 	</object>
 	
-	<!-- ! Taxonomies -->
-	<!-- 
-	All for searching/finding our products
-	-->
-	<object class="Taxonomy" table="taxonomies" extends="xPDOObject">
-    	<field key="taxonomy_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-		<field key="parent_id" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="true" />
-		<field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
-		<field key="is_hierarchical" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0"/> 
-		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
-		
+    <!-- ! ProductTaxonomy -->
+    <!-- for enabling taxonomies at the product level -->
+	<object class="ProductTaxonomy" table="product_taxonomies" extends="xPDOSimpleObject">
+		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="taxonomy_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="taxonomy_id" collation="A" null="false" />
+			<column key="id" collation="A" null="false" />
 		</index>
 
-		<aggregate alias="Parent" class="Taxonomy" local="parent_id" foreign="taxonomy_id" cardinality="one" owner="foreign" />
-		<aggregate alias="Children" class="Taxonomy" local="taxonomy_id" foreign="parent_id" cardinality="many" owner="local" />
-		<composite alias="Terms" class="Term" local="taxonomy_id" foreign="taxonomy_id" cardinality="many" owner="local" />
+        <aggregate alias="Taxonomy" class="Taxonomy" local="taxonomy_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="Products" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 	</object>
-    
-    
-    <!-- ! Terms -->
-	<object class="Term" table="terms" extends="xPDOObject">
-    	<field key="term_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-		<field key="taxonomy_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-		<field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
-		<field key="slug" dbtype="varchar" precision="255" phptype="string" null="false" comment="URL-friendly"/>
-		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
-		
-		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="taxonomy_id" collation="A" null="false" />
-		</index>
-
-        <aggregate alias="Taxonomy" class="Taxonomy" local="taxonomy_id" foreign="taxonomy_id" cardinality="one" owner="foreign" />
-	</object>
-    
+	    
     <!-- ! ProductTerms -->
     <!-- for adding tags/categories to products -->
 	<object class="ProductTerms" table="product_terms" extends="xPDOSimpleObject">
@@ -236,7 +230,7 @@
 			<column key="id" collation="A" null="false" />
 		</index>
 
-        <aggregate alias="Term" class="Term" local="term_id" foreign="term_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Term" class="Term" local="term_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Products" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 	</object>
 	
@@ -265,7 +259,7 @@
 
 		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="taxonomy_id" collation="A" null="false" />
+			<column key="cart_id" collation="A" null="false" />
 		</index>
 
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
@@ -292,7 +286,7 @@
 	<!-- Each Product can have multiple images -->
 	<object class="Image" table="images" extends="xPDOObject">
     	<field key="image_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-    	<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+    	<field key="product_id" dbtype="int" precision="11" phptype="integer" null="true"/>
 		<field key="title" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="alt" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="url" dbtype="varchar" precision="255" phptype="string" null="false" />

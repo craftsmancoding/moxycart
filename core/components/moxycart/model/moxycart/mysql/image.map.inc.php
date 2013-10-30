@@ -1,24 +1,25 @@
 <?php
-$xpdo_meta_map['Cart']= array (
+$xpdo_meta_map['Image']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'carts',
+  'table' => 'images',
   'extends' => 'xPDOObject',
   'fields' => 
   array (
-    'cart_id' => NULL,
+    'image_id' => NULL,
     'product_id' => NULL,
-    'price' => NULL,
-    'currency_id' => NULL,
-    'qty' => 0,
-    'info' => NULL,
-    'author_id' => NULL,
-    'timestamp_created' => 'CURRENT_TIMESTAMP',
-    'timestamp_modified' => NULL,
+    'title' => NULL,
+    'alt' => NULL,
+    'url' => NULL,
+    'path' => NULL,
+    'width' => NULL,
+    'height' => NULL,
+    'seq' => NULL,
+    'is_active' => 1,
   ),
   'fieldMeta' => 
   array (
-    'cart_id' => 
+    'image_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -32,57 +33,65 @@ $xpdo_meta_map['Cart']= array (
       'dbtype' => 'int',
       'precision' => '11',
       'phptype' => 'integer',
-      'null' => false,
-    ),
-    'price' => 
-    array (
-      'dbtype' => 'decimal',
-      'precision' => '8,2',
-      'phptype' => 'float',
       'null' => true,
     ),
-    'currency_id' => 
+    'title' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => false,
+    ),
+    'alt' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => false,
+    ),
+    'url' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => false,
+    ),
+    'path' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => false,
+    ),
+    'width' => 
     array (
       'dbtype' => 'int',
       'precision' => '4',
       'phptype' => 'integer',
-      'null' => true,
+      'null' => false,
     ),
-    'qty' => 
+    'height' => 
     array (
       'dbtype' => 'int',
-      'precision' => '11',
+      'precision' => '4',
       'phptype' => 'integer',
       'null' => false,
-      'default' => 0,
     ),
-    'info' => 
-    array (
-      'dbtype' => 'text',
-      'phptype' => 'string',
-      'null' => true,
-      'comment' => 'JSON data including varations/options',
-    ),
-    'author_id' => 
+    'seq' => 
     array (
       'dbtype' => 'int',
-      'precision' => '11',
+      'precision' => '4',
       'phptype' => 'integer',
-      'null' => true,
-      'comment' => 'user may not be logged in',
+      'null' => false,
     ),
-    'timestamp_created' => 
+    'is_active' => 
     array (
-      'dbtype' => 'timestamp',
-      'phptype' => 'timestamp',
-      'null' => true,
-      'default' => 'CURRENT_TIMESTAMP',
-    ),
-    'timestamp_modified' => 
-    array (
-      'dbtype' => 'timestamp',
-      'phptype' => 'timestamp',
-      'null' => true,
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'attributes' => 'unsigned',
+      'phptype' => 'boolean',
+      'null' => false,
+      'default' => 1,
     ),
   ),
   'indexes' => 
@@ -94,7 +103,7 @@ $xpdo_meta_map['Cart']= array (
       'unique' => true,
       'columns' => 
       array (
-        'cart_id' => 
+        'image_id' => 
         array (
           'collation' => 'A',
           'null' => false,
@@ -109,14 +118,6 @@ $xpdo_meta_map['Cart']= array (
       'class' => 'Product',
       'local' => 'product_id',
       'foreign' => 'product_id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
-    'Author' => 
-    array (
-      'class' => 'modUser',
-      'local' => 'author_id',
-      'foreign' => 'id',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),

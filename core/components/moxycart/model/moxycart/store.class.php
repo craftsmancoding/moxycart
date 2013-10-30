@@ -17,8 +17,7 @@ class Store extends modResource {
     }
     
     public static function getControllerPath(xPDO &$modx) {
-        $x = $modx->getOption('moxycart.core_path',null,$modx->getOption('core_path')).'components/moxycart/controllers/';
-//        print $x;
+        $x = $modx->getOption('moxycart.core_path',null,$modx->getOption('core_path')).'components/moxycart/controllers/store/';
         return $x;
     }
     

@@ -8,32 +8,38 @@ $xpdo_meta_map['Product']= array (
   array (
     'product_id' => NULL,
     'store_id' => NULL,
+    'parent_id' => NULL,
+    'template_id' => NULL,
     'currency_id' => NULL,
     'name' => NULL,
     'description' => NULL,
+    'content' => '',
     'type' => NULL,
     'sku' => NULL,
+    'sku_vendor' => NULL,
+    'variant_matrix' => NULL,
+    'alias' => NULL,
     'track_inventory' => 0,
-    'inventory_qty' => NULL,
-    'alert_qty' => NULL,
+    'qty_inventory' => NULL,
+    'qty_alert' => NULL,
+    'qty_min' => NULL,
+    'qty_max' => NULL,
+    'strike_thru_price' => NULL,
     'price' => NULL,
-    'category_id' => NULL,
-    'length' => NULL,
-    'width' => NULL,
-    'height' => NULL,
-    'weight' => NULL,
-    'volume' => NULL,
-    'length_unit_id' => NULL,
-    'weight_unit_id' => NULL,
-    'volume_unit_id' => NULL,
-    'interval_unit' => NULL,
+    'category' => NULL,
+    'thumbnail_url' => NULL,
+    'is_active' => 1,
+    'billing_unit' => NULL,
     'billing_interval' => 1,
+    'duration_unit' => NULL,
+    'duration_interval' => 1,
     'user_group_id' => NULL,
     'role_id' => NULL,
     'payload_id' => NULL,
     'author_id' => NULL,
     'timestamp_created' => 'CURRENT_TIMESTAMP',
     'timestamp_modified' => NULL,
+    'seq' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -47,6 +53,21 @@ $xpdo_meta_map['Product']= array (
       'generated' => 'native',
     ),
     'store_id' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => true,
+    ),
+    'parent_id' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => true,
+      'comment' => 'variations are stored as children',
+    ),
+    'template_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -74,6 +95,13 @@ $xpdo_meta_map['Product']= array (
       'phptype' => 'string',
       'null' => true,
     ),
+    'content' => 
+    array (
+      'dbtype' => 'mediumtext',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+    ),
     'type' => 
     array (
       'dbtype' => 'enum',
@@ -88,6 +116,29 @@ $xpdo_meta_map['Product']= array (
       'phptype' => 'string',
       'null' => false,
     ),
+    'sku_vendor' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '20',
+      'phptype' => 'string',
+      'null' => false,
+      'comment' => 'SKU from your provider',
+    ),
+    'variant_matrix' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => false,
+      'comment' => 'JSON hash to identify specific type:term combo(s)',
+    ),
+    'alias' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '20',
+      'phptype' => 'string',
+      'null' => false,
+    ),
     'track_inventory' => 
     array (
       'dbtype' => 'tinyint',
@@ -95,20 +146,46 @@ $xpdo_meta_map['Product']= array (
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
+      'comment' => 'Sum of child variants',
     ),
-    'inventory_qty' => 
+    'qty_inventory' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
     ),
-    'alert_qty' => 
+    'qty_alert' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
+      'comment' => 'Stock count at which you need to reorder',
+    ),
+    'qty_min' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => false,
+      'comment' => 'Minimum quantity that should be allowed per product, per cart.',
+    ),
+    'qty_max' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => false,
+      'comment' => 'Maximum quantity that should be allowed per product, per cart.',
+    ),
+    'strike_thru_price' => 
+    array (
+      'dbtype' => 'decimal',
+      'precision' => '8,2',
+      'phptype' => 'float',
+      'null' => true,
+      'comment' => 'Eye candy only',
     ),
     'price' => 
     array (
@@ -117,77 +194,54 @@ $xpdo_meta_map['Product']= array (
       'phptype' => 'float',
       'null' => true,
     ),
-    'category_id' => 
+    'category' => 
     array (
-      'dbtype' => 'int',
-      'precision' => '11',
-      'phptype' => 'integer',
+      'dbtype' => 'varchar',
+      'precision' => '32',
+      'phptype' => 'string',
       'null' => true,
+      'comment' => 'Foxycart category (not a taxonomy)',
     ),
-    'length' => 
+    'thumbnail_url' => 
     array (
-      'dbtype' => 'decimal',
-      'precision' => '12,4',
-      'phptype' => 'float',
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
       'null' => true,
+      'comment' => 'For FoxyCart cart, local or abs',
     ),
-    'width' => 
+    'is_active' => 
     array (
-      'dbtype' => 'decimal',
-      'precision' => '12,4',
-      'phptype' => 'float',
-      'null' => true,
-    ),
-    'height' => 
-    array (
-      'dbtype' => 'decimal',
-      'precision' => '12,4',
-      'phptype' => 'float',
-      'null' => true,
-    ),
-    'weight' => 
-    array (
-      'dbtype' => 'decimal',
-      'precision' => '12,4',
-      'phptype' => 'float',
-      'null' => true,
-    ),
-    'volume' => 
-    array (
-      'dbtype' => 'decimal',
-      'precision' => '12,4',
-      'phptype' => 'float',
-      'null' => true,
-    ),
-    'length_unit_id' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '11',
+      'dbtype' => 'tinyint',
+      'precision' => '1',
       'phptype' => 'integer',
       'null' => false,
+      'default' => 1,
+      'comment' => 'Used to disable/enable products',
     ),
-    'weight_unit_id' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '11',
-      'phptype' => 'integer',
-      'null' => false,
-    ),
-    'volume_unit_id' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '11',
-      'phptype' => 'integer',
-      'null' => false,
-    ),
-    'interval_unit' => 
+    'billing_unit' => 
     array (
       'dbtype' => 'enum',
-      'precision' => '\'hours\',\'days\',\'weeks\',\'years\'',
+      'precision' => '\'hours\',\'days\',\'weeks\',\'months\',\'years\'',
       'phptype' => 'string',
       'null' => false,
     ),
     'billing_interval' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '3',
+      'phptype' => 'integer',
+      'null' => false,
+      'default' => 1,
+    ),
+    'duration_unit' => 
+    array (
+      'dbtype' => 'enum',
+      'precision' => '\'hours\',\'days\',\'weeks\',\'months\',\'years\'',
+      'phptype' => 'string',
+      'null' => false,
+    ),
+    'duration_interval' => 
     array (
       'dbtype' => 'int',
       'precision' => '3',
@@ -236,6 +290,13 @@ $xpdo_meta_map['Product']= array (
       'phptype' => 'timestamp',
       'null' => true,
     ),
+    'seq' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '3',
+      'phptype' => 'integer',
+      'null' => true,
+    ),
   ),
   'indexes' => 
   array (
@@ -257,7 +318,7 @@ $xpdo_meta_map['Product']= array (
     array (
       'alias' => 'sku',
       'primary' => false,
-      'unique' => true,
+      'unique' => false,
       'columns' => 
       array (
         'sku' => 
@@ -267,12 +328,64 @@ $xpdo_meta_map['Product']= array (
         ),
       ),
     ),
+    'factory_sku' => 
+    array (
+      'alias' => 'factory_sku',
+      'primary' => false,
+      'unique' => false,
+      'columns' => 
+      array (
+        'factory_sku' => 
+        array (
+          'collation' => 'A',
+          'null' => true,
+        ),
+      ),
+    ),
+    'alias' => 
+    array (
+      'alias' => 'alias',
+      'primary' => false,
+      'unique' => true,
+      'columns' => 
+      array (
+        'alias' => 
+        array (
+          'collation' => 'A',
+          'null' => true,
+        ),
+      ),
+    ),
   ),
   'composites' => 
   array (
-    'Variants' => 
+    'Parent' => 
     array (
-      'class' => 'ProductVariant',
+      'class' => 'Product',
+      'local' => 'parent_id',
+      'foreign' => 'product_id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
+    'Terms' => 
+    array (
+      'class' => 'ProductTerms',
+      'local' => 'product_id',
+      'foreign' => 'product_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
+    ),
+    'Specs' => 
+    array (
+      'class' => 'ProductSpecs',
+      'local' => 'product_id',
+      'foreign' => 'product_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
+    ),
+    'Related' => 
+    array (
+      'class' => 'RelatedProducts',
       'local' => 'product_id',
       'foreign' => 'product_id',
       'cardinality' => 'many',
@@ -289,35 +402,19 @@ $xpdo_meta_map['Product']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
+    'Template' => 
+    array (
+      'class' => 'modTemplate',
+      'local' => 'template_id',
+      'foreign' => 'id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
     'Currency' => 
     array (
       'class' => 'Currency',
       'local' => 'currency_id',
       'foreign' => 'currency_id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
-    'WeightUnit' => 
-    array (
-      'class' => 'Unit',
-      'local' => 'weight_unit_id',
-      'foreign' => 'unit_id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
-    'LengthUnit' => 
-    array (
-      'class' => 'Unit',
-      'local' => 'length_unit_id',
-      'foreign' => 'unit_id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
-    'VolumeUnit' => 
-    array (
-      'class' => 'Unit',
-      'local' => 'volume_unit_id',
-      'foreign' => 'unit_id',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
@@ -353,13 +450,13 @@ $xpdo_meta_map['Product']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
-    'Category' => 
+    'Variant' => 
     array (
-      'class' => 'Category',
-      'local' => 'category_id',
-      'foreign' => 'category_id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
+      'class' => 'Product',
+      'local' => 'product_id',
+      'foreign' => 'parent_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
     ),
   ),
 );
