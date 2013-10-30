@@ -64,7 +64,90 @@ class Store extends modResource {
     }
     
     */
+    public function prepareTreeNode(array $node = array()) {
+        $this->xpdo->lexicon->load('moxycart:default');
+        $menu = array();
+        $idNote = $this->xpdo->hasPermission('tree_show_resource_ids') ? ' <span dir="ltr">('.$this->id.')</span>' : '';
 
+        $menu[] = array(
+            'text' => '<b>'.$this->get('pagetitle').'</b>'.$idNote,
+            'handler' => 'Ext.emptyFn',
+        );
+        $menu[] = '-'; // equiv. to <hr/>
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('product_create_here'),
+            'handler' => "function(itm,e) { 
+				var at = this.cm.activeNode.attributes;
+		        var p = itm.usePk ? itm.usePk : at.pk;
+	            Ext.getCmp('modx-resource-tree').loadAction(
+	                'a='+MODx.action['moxycart:product_create']
+	                + '&parent='+p
+	                + '&type=regular'
+                );
+        	}",
+        );
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('download_create_here'),
+            'handler' => "function(itm,e) { 
+				var at = this.cm.activeNode.attributes;
+		        var p = itm.usePk ? itm.usePk : at.pk;
+	            Ext.getCmp('modx-resource-tree').loadAction(
+	                'a='+MODx.action['moxycart:product_create']
+	                + '&parent='+p
+	                + '&type=download'
+                );
+        	}",
+        );
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('subscription_create_here'),
+            'handler' => "function(itm,e) { 
+				var at = this.cm.activeNode.attributes;
+		        var p = itm.usePk ? itm.usePk : at.pk;
+	            Ext.getCmp('modx-resource-tree').loadAction(
+	                'a='+MODx.action['moxycart:product_create']
+	                + '&parent='+p
+	                + '&type=subscription'
+                );
+        	}",
+        );        
+        $menu[] = '-'; // equiv. to <hr/>
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('container_duplicate'),
+            'handler' => 'function(itm,e) { itm.classKey = "Term"; this.duplicateResource(itm,e); }',
+        );
+        
+        if ($this->get('published')) {
+            $menu[] = array(
+                'text' => $this->xpdo->lexicon('container_unpublish'),
+                'handler' => 'this.unpublishDocument',
+            );
+        } else {
+            $menu[] = array(
+                'text' => $this->xpdo->lexicon('container_publish'),
+                'handler' => 'this.publishDocument',
+            );
+        }
+        if ($this->get('deleted')) {
+            $menu[] = array(
+                'text' => $this->xpdo->lexicon('container_undelete'),
+                'handler' => 'this.undeleteDocument',
+            );
+        } else {
+            $menu[] = array(
+                'text' => $this->xpdo->lexicon('container_delete'),
+                'handler' => 'this.deleteDocument',
+            );
+        }
+        $menu[] = '-';
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('container_view'),
+            'handler' => 'this.preview',
+        );
+
+        $node['menu'] = array('items' => $menu);
+        $node['hasChildren'] = false;
+        return $node;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -83,7 +166,7 @@ class StoreCreateProcessor extends modResourceCreateProcessor {
         $this->modx->log(1, __FILE__ . print_r($this->object->toArray(), true));
         $this->object->set('class_key','Store');
         $this->object->set('cacheable',true);
-        $this->object->set('isfolder',true);
+        $this->object->set('isfolder',false);
         return parent::afterSave();
     }
 

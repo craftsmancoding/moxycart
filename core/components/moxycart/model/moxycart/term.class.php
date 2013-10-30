@@ -65,6 +65,87 @@ class Term extends modResource {
     
     */
 
+    /**
+     * This runs each time the tree is drawn.
+     * @param array $node
+     * @return array
+     */
+    public function prepareTreeNode(array $node = array()) {
+        $this->xpdo->lexicon->load('moxycart:default');
+        $menu = array();
+        $idNote = $this->xpdo->hasPermission('tree_show_resource_ids') ? ' <span dir="ltr">('.$this->id.')</span>' : '';
+		
+		// System Default
+		$template_id = $this->getOption('moxycart.default_taxonomy_template'); 
+		// Or, see if this Taxonomy node sets its own default...
+		$container = $this->xpdo->getObject('modResource', $this->id); 
+		if ($container) {
+			$props = $container->get('properties');
+			if ($props) {
+				if (isset($props['taxonomy']['default_template']) && !empty($props['taxonomy']['default_template'])) {
+					$template_id = $props['taxonomy']['default_template'];
+				}
+			}
+		}
+        $menu[] = array(
+            'text' => '<b>'.$this->get('pagetitle').'</b>'.$idNote,
+            'handler' => 'Ext.emptyFn',
+        );
+        $menu[] = '-'; // equiv. to <hr/>
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('term_create_here'),
+            'handler' => "function(itm,e) { 
+				var at = this.cm.activeNode.attributes;
+		        var p = itm.usePk ? itm.usePk : at.pk;
+	
+	            Ext.getCmp('modx-resource-tree').loadAction(
+	                'a='+MODx.action['resource/create']
+	                + '&class_key=Term'
+	                + '&parent='+p
+	                + '&template=".$template_id."'
+	                + (at.ctx ? '&context_key='+at.ctx : '')
+                );
+        	}",
+        );
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('term_duplicate'),
+            'handler' => 'function(itm,e) { itm.classKey = "Term"; this.duplicateResource(itm,e); }',
+        );
+        $menu[] = '-';
+        if ($this->get('published')) {
+            $menu[] = array(
+                'text' => $this->xpdo->lexicon('term_unpublish'),
+                'handler' => 'this.unpublishDocument',
+            );
+        } else {
+            $menu[] = array(
+                'text' => $this->xpdo->lexicon('term_publish'),
+                'handler' => 'this.publishDocument',
+            );
+        }
+        if ($this->get('deleted')) {
+            $menu[] = array(
+                'text' => $this->xpdo->lexicon('term_undelete'),
+                'handler' => 'this.undeleteDocument',
+            );
+        } else {
+            $menu[] = array(
+                'text' => $this->xpdo->lexicon('term_delete'),
+                'handler' => 'this.deleteDocument',
+            );
+        }
+        $menu[] = '-';
+        $menu[] = array(
+            'text' => $this->xpdo->lexicon('term_view'),
+            'handler' => 'this.preview',
+        );
+
+        $node['menu'] = array('items' => $menu);
+        $node['hasChildren'] = true;
+        return $node;
+    }
+
+
 }
 
 //------------------------------------------------------------------------------

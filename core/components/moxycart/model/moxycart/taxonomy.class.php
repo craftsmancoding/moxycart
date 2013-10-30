@@ -73,19 +73,16 @@ class Taxonomy extends modResource {
         $this->xpdo->lexicon->load('moxycart:default');
         $menu = array();
         $idNote = $this->xpdo->hasPermission('tree_show_resource_ids') ? ' <span dir="ltr">('.$this->id.')</span>' : '';
-        // Template ID should 1st default to the container settings for articleTemplate,
-        // then to system settings for articles.default_article_template.
-        // getContainerSettings() is not in scope here.
 		
 		// System Default
 		$template_id = $this->getOption('moxycart.default_taxonomy_template'); 
-		// Attempt to override for this container
+		// Or, see if this Taxonomy sets its own default...
 		$container = $this->xpdo->getObject('modResource', $this->id); 
 		if ($container) {
 			$props = $container->get('properties');
 			if ($props) {
-				if (isset($props['articles']['articleTemplate']) && !empty($props['articles']['articleTemplate'])) {
-					$template_id = $props['articles']['articleTemplate'];
+				if (isset($props['taxonomy']['default_template']) && !empty($props['taxonomy']['default_template'])) {
+					$template_id = $props['taxonomy']['default_template'];
 				}
 			}
 		}
@@ -93,20 +90,16 @@ class Taxonomy extends modResource {
             'text' => '<b>'.$this->get('pagetitle').'</b>'.$idNote,
             'handler' => 'Ext.emptyFn',
         );
-        $menu[] = '-';
+        $menu[] = '-'; // equiv. to <hr/>
         $menu[] = array(
-            'text' => $this->xpdo->lexicon('articles.articles_manage'),
-            'handler' => 'this.editResource',
-        );
-        $menu[] = array(
-            'text' => $this->xpdo->lexicon('articles.articles_write_new'),
+            'text' => $this->xpdo->lexicon('term_create_here'),
             'handler' => "function(itm,e) { 
 				var at = this.cm.activeNode.attributes;
 		        var p = itm.usePk ? itm.usePk : at.pk;
 	
 	            Ext.getCmp('modx-resource-tree').loadAction(
 	                'a='+MODx.action['resource/create']
-	                + '&class_key='+itm.classKey
+	                + '&class_key=Term'
 	                + '&parent='+p
 	                + '&template=".$template_id."'
 	                + (at.ctx ? '&context_key='+at.ctx : '')
@@ -114,35 +107,35 @@ class Taxonomy extends modResource {
         	}",
         );
         $menu[] = array(
-            'text' => $this->xpdo->lexicon('articles.container_duplicate'),
-            'handler' => 'function(itm,e) { itm.classKey = "ArticlesContainer"; this.duplicateResource(itm,e); }',
+            'text' => $this->xpdo->lexicon('taxonomy_duplicate'),
+            'handler' => 'function(itm,e) { itm.classKey = "Taxonomy"; this.duplicateResource(itm,e); }',
         );
         $menu[] = '-';
         if ($this->get('published')) {
             $menu[] = array(
-                'text' => $this->xpdo->lexicon('articles.container_unpublish'),
+                'text' => $this->xpdo->lexicon('taxonomy_unpublish'),
                 'handler' => 'this.unpublishDocument',
             );
         } else {
             $menu[] = array(
-                'text' => $this->xpdo->lexicon('articles.container_publish'),
+                'text' => $this->xpdo->lexicon('taxonomy_publish'),
                 'handler' => 'this.publishDocument',
             );
         }
         if ($this->get('deleted')) {
             $menu[] = array(
-                'text' => $this->xpdo->lexicon('articles.container_undelete'),
+                'text' => $this->xpdo->lexicon('taxonomy_undelete'),
                 'handler' => 'this.undeleteDocument',
             );
         } else {
             $menu[] = array(
-                'text' => $this->xpdo->lexicon('articles.container_delete'),
+                'text' => $this->xpdo->lexicon('taxonomy_delete'),
                 'handler' => 'this.deleteDocument',
             );
         }
         $menu[] = '-';
         $menu[] = array(
-            'text' => $this->xpdo->lexicon('articles.articles_view'),
+            'text' => $this->xpdo->lexicon('taxonomy_view'),
             'handler' => 'this.preview',
         );
 

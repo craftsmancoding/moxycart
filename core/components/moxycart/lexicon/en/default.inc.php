@@ -42,23 +42,78 @@ $_lang['stores'] = 'Stores';
 $_lang['store_create_here'] = 'Create a Store Here';
 $_lang['store_new'] = 'New Store';
 
+// Product types
+$_lang['product'] = 'Product';
+$_lang['products'] = 'Products';
+$_lang['product_create_here'] = 'Create a Product Here';
+$_lang['product_new'] = 'New Product';
+$_lang['product_duplicate'] = 'Duplicate Product';
+$_lang['product_delete'] = 'Delete Product';
+$_lang['product_undelete'] = 'Undelete Product';
+$_lang['product_publish'] = 'Publish Product';
+$_lang['product_unpublish'] = 'Unpublish Product';
+$_lang['product_view'] = 'View Product';
+
+$_lang['download'] = 'Download';
+$_lang['downloads'] = 'Downloads';
+$_lang['download_create_here'] = 'Create a Download Here';
+$_lang['download_new'] = 'New Download';
+$_lang['download_duplicate'] = 'Duplicate Download';
+$_lang['download_delete'] = 'Delete Download';
+$_lang['download_undelete'] = 'Undelete Download';
+$_lang['download_publish'] = 'Publish Download';
+$_lang['download_unpublish'] = 'Unpublish Download';
+$_lang['download_view'] = 'View Download';
+
+$_lang['subscription'] = 'Subscription';
+$_lang['subscriptions'] = 'Subscriptions';
+$_lang['subscription_create_here'] = 'Create a Subscription Here';
+$_lang['subscription_new'] = 'New Subscription';
+$_lang['subscription_duplicate'] = 'Duplicate Subscription';
+$_lang['subscription_delete'] = 'Delete Subscription';
+$_lang['subscription_undelete'] = 'Undelete Subscription';
+$_lang['subscription_publish'] = 'Publish Subscription';
+$_lang['subscription_unpublish'] = 'Unpublish Subscription';
+$_lang['subscription_view'] = 'View Subscription';
+
+
 // CRCs
 $_lang['container'] = 'Product Container';
 $_lang['containers'] = 'Product Containers';
 $_lang['container_create_here'] = 'Create a Product Container Here';
 $_lang['container_new'] = 'New Product Container';
+$_lang['container_duplicate'] = 'Duplicate Product Container';
+$_lang['container_delete'] = 'Delete Product Container';
+$_lang['container_undelete'] = 'Undelete Product Container';
+$_lang['container_publish'] = 'Publish Product Container';
+$_lang['container_unpublish'] = 'Unpublish Product Container';
+$_lang['container_view'] = 'View Product Container';
+
 
 $_lang['taxonomy'] = 'Taxonomy';
 $_lang['taxonomies'] = 'Taxonomies';
 $_lang['taxonomy_create_here'] = 'Create a Taxonomy Here';
 $_lang['taxonomy_new'] = 'New Taxonomy';
+$_lang['taxonomy_duplicate'] = 'Duplicate Taxonomy';
+$_lang['taxonomy_delete'] = 'Delete Taxonomy';
+$_lang['taxonomy_undelete'] = 'Undelete Taxonomy';
+$_lang['taxonomy_publish'] = 'Publish Taxonomy';
+$_lang['taxonomy_unpublish'] = 'Unpublish Taxonomy';
+$_lang['taxonomy_view'] = 'View Taxonomy';
 
 $_lang['term'] = 'Term';
 $_lang['terms'] = 'Terms';
 $_lang['term_create_here'] = 'Create a Term Here';
 $_lang['term_new'] = 'New Term';
+$_lang['term_duplicate'] = 'Duplicate Term';
+$_lang['term_delete'] = 'Delete Term';
+$_lang['term_undelete'] = 'Undelete Term';
+$_lang['term_publish'] = 'Publish Term';
+$_lang['term_unpublish'] = 'Unpublish Term';
+$_lang['term_view'] = 'View Term';
 
 
+$_lang['manage'] = 'Manage';
 
 $_lang['moxycart.container'] = 'Moxycart...';
 

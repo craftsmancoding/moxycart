@@ -24,6 +24,9 @@
     <object class="Term" extends="modResource">
         <aggregate alias="Taxonomy" class="Taxonomy" local="parent" foreign="id" cardinality="one" owner="foreign" />
         <!-- children terms of terms? -->
+        <validation>
+            <rule field="parent" name="parent" type="xPDOValidationRule" rule="ValidParents" message="Invalid parent" />
+        </validation>
     </object>
     
     <!-- ! Currencies -->    
