@@ -94,13 +94,13 @@ $generator = $manager->getGenerator();
 // Use this to generate classes and maps from your schema
 if ($regenerate_classes) { 
     print_msg('<br/>Attempting to remove/regenerate class files...');
-    //delete_class_files($class_dir);
+    delete_class_files($class_dir);
     delete_class_files($mysql_class_dir);
 }
- 
+
 $generator->parseSchema($xml_schema_file,$model_dir);
 
-if(!$xpdo->addPackage('moxycart',MODX_CORE_PATH.'components/moxycart/model/',$my_table_prefix)) {
+if(!$xpdo->addPackage('moxycart',$adjusted_core_path.'components/moxycart/model/',$my_table_prefix)) {
     return 'Package Error.';
 }            
 
@@ -156,7 +156,7 @@ else {
 }
 
 $specs = include $data_src_dir . 'transport.specs.php';
-if (is_array($currencies)) {
+if (is_array($specs)) {
     print '<h4>Table: specs</h4>';
     foreach($specs as $s) {
         $Spec = $xpdo->newObject('Spec');
@@ -174,7 +174,7 @@ else {
 }
 
 $variation_types = include $data_src_dir . 'transport.variationtypes.php';
-if (is_array($currencies)) {
+if (is_array($variation_types)) {
     print '<h4>Table: variation_types</h4>';
     foreach($variation_types as $v) {
         $VT = $xpdo->newObject('VariationType');
@@ -193,7 +193,7 @@ else {
     
 
 $variation_terms = include $data_src_dir . 'transport.variationterms.php';
-if (is_array($currencies)) {
+if (is_array($variation_terms)) {
     print '<h4>Table: variation_terms</h4>';
     foreach($variation_terms as $v) {
         $VT = $xpdo->newObject('VariationTerm');
@@ -209,7 +209,47 @@ if (is_array($currencies)) {
 else {
     print 'ERROR: $variation_terms not an array.<br/>';
 }
-    
+
+$products = include $data_src_dir . 'transport.products.php';
+if (is_array($products)) {
+    print '<h4>Table: products</h4>';
+    foreach($products as $p) {
+        $Product = $xpdo->newObject('Product');
+        $Product->fromArray($p);
+        if (!$Product->save()) {
+            print "Error saving product {$p['name']}!<br/>";
+        }
+        else {
+            print "Product created {$p['name']}<br/>";
+        }
+    }
+}
+else {
+    print 'ERROR: $products not an array.<br/>';
+}
+
+$images = include $data_src_dir . 'transport.images.php';
+if (is_array($images)) {
+    print '<h4>Table: images</h4>';
+    foreach($images as $i) {
+        $Img = $xpdo->newObject('Image');
+        $Img->fromArray($i);
+        if (!$Img->save()) {
+            print "Error saving image {$i['title']}!<br/>";
+        }
+        else {
+            print "Image created {$i['title']}<br/>";
+        }
+    }
+}
+else {
+    print 'ERROR: $images not an array.<br/>';
+}
+
+
+
+
+
 $mtime= microtime();
 $mtime= explode(" ", $mtime);
 $mtime= $mtime[1] + $mtime[0];
@@ -235,7 +275,13 @@ function delete_class_files($dir) {
   
     $all_files = scandir($dir);
     foreach ( $all_files as $f ) {
+
         if ( preg_match('#\.class\.php$#i', $f) || preg_match('#\.map\.inc\.php$#i', $f)) {
+            if (in_array(basename($f),array('moxycart.class.php','taxonomyparents.class.php',
+                'termparents.class.php','store.class.php','taxonomy.class.php','term.class.php'))) {
+                continue; // skip
+            } 
+
             if ( unlink("$dir/$f") ) {
                 if ($verbose) {
                     print_msg( sprintf('<br/>Deleted file: <code>%s/%s</code>',$dir,$f) );

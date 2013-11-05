@@ -25,10 +25,13 @@ $xpdo_meta_map['Product']= array (
     'qty_alert' => NULL,
     'qty_min' => NULL,
     'qty_max' => NULL,
-    'strike_thru_price' => NULL,
     'price' => NULL,
+    'price_strike_thru' => NULL,
+    'price_sale' => NULL,
+    'sale_start' => NULL,
+    'sale_end' => NULL,
     'category' => NULL,
-    'thumbnail_url' => NULL,
+    'image_id' => NULL,
     'is_active' => 1,
     'billing_unit' => NULL,
     'billing_interval' => 1,
@@ -187,7 +190,14 @@ $xpdo_meta_map['Product']= array (
       'null' => false,
       'comment' => 'Maximum quantity that should be allowed per product, per cart.',
     ),
-    'strike_thru_price' => 
+    'price' => 
+    array (
+      'dbtype' => 'decimal',
+      'precision' => '8,2',
+      'phptype' => 'float',
+      'null' => true,
+    ),
+    'price_strike_thru' => 
     array (
       'dbtype' => 'decimal',
       'precision' => '8,2',
@@ -195,12 +205,23 @@ $xpdo_meta_map['Product']= array (
       'null' => true,
       'comment' => 'Eye candy only',
     ),
-    'price' => 
+    'price_sale' => 
     array (
       'dbtype' => 'decimal',
       'precision' => '8,2',
       'phptype' => 'float',
       'null' => true,
+      'comment' => 'Used when on sale',
+    ),
+    'sale_start' => 
+    array (
+      'dbtype' => 'datetime',
+      'phptype' => 'datetime',
+    ),
+    'sale_end' => 
+    array (
+      'dbtype' => 'datetime',
+      'phptype' => 'datetime',
     ),
     'category' => 
     array (
@@ -210,13 +231,13 @@ $xpdo_meta_map['Product']= array (
       'null' => true,
       'comment' => 'Foxycart category (not a taxonomy)',
     ),
-    'thumbnail_url' => 
+    'image_id' => 
     array (
-      'dbtype' => 'varchar',
-      'precision' => '255',
-      'phptype' => 'string',
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
       'null' => true,
-      'comment' => 'For FoxyCart cart, local or abs',
+      'comment' => 'Thumbnail image',
     ),
     'is_active' => 
     array (
@@ -232,7 +253,7 @@ $xpdo_meta_map['Product']= array (
       'dbtype' => 'enum',
       'precision' => '\'hours\',\'days\',\'weeks\',\'months\',\'years\'',
       'phptype' => 'string',
-      'null' => false,
+      'null' => true,
     ),
     'billing_interval' => 
     array (
@@ -385,6 +406,20 @@ $xpdo_meta_map['Product']= array (
         ),
       ),
     ),
+    'image_id' => 
+    array (
+      'alias' => 'image_id',
+      'primary' => false,
+      'unique' => false,
+      'columns' => 
+      array (
+        'image_id' => 
+        array (
+          'collation' => 'A',
+          'null' => true,
+        ),
+      ),
+    ),
   ),
   'composites' => 
   array (
@@ -476,6 +511,14 @@ $xpdo_meta_map['Product']= array (
       'class' => 'modUserGroupRole',
       'local' => 'role_id',
       'foreign' => 'id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
+    'Thumbnail' => 
+    array (
+      'class' => 'Image',
+      'local' => 'image_id',
+      'foreign' => 'image_id',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),

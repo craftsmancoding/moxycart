@@ -72,15 +72,19 @@
         <field key="qty_min" dbtype="int" precision="11" phptype="integer" null="false" comment="Minimum quantity that should be allowed per product, per cart."/>
         <field key="qty_max" dbtype="int" precision="11" phptype="integer" null="false" comment="Maximum quantity that should be allowed per product, per cart."/>
         <!-- backorder_cap : how many units you can oversell -->
-        <field key="strike_thru_price" dbtype="decimal" precision="8,2" phptype="float" null="true" comment="Eye candy only"/>
         <field key="price" dbtype="decimal" precision="8,2" phptype="float" null="true" />
+        <field key="price_strike_thru" dbtype="decimal" precision="8,2" phptype="float" null="true" comment="Eye candy only"/>
+        <field key="price_sale" dbtype="decimal" precision="8,2" phptype="float" null="true" comment="Used when on sale"/>
+        <field key="sale_start" dbtype="datetime" phptype="datetime" />
+        <field key="sale_end" dbtype="datetime" phptype="datetime" />
+        
         <field key="category" dbtype="varchar" precision="32" phptype="string" null="true" comment="Foxycart category (not a taxonomy)"/>
-        <field key="thumbnail_url" dbtype="varchar" precision="255" phptype="string" null="true" comment="For FoxyCart cart, local or abs"/>
+        <field key="image_id" dbtype="int" precision="11" phptype="integer" null="true" comment="Thumbnail image"/>
         <field key="is_active" dbtype="tinyint" precision="1" phptype="integer" null="false" default="1" comment="Used to disable/enable products"/>
         
         
         <!-- subscription/membership products Only -->
-        <field key="billing_unit" dbtype="enum" precision="'hours','days','weeks','months','years'" phptype="string" null="false" />
+        <field key="billing_unit" dbtype="enum" precision="'hours','days','weeks','months','years'" phptype="string" null="true" />
         <field key="billing_interval" dbtype="int" precision="3" phptype="integer" null="false" default="1"/>
 
         <field key="duration_unit" dbtype="enum" precision="'hours','days','weeks','months','years'" phptype="string" null="false" />
@@ -117,6 +121,9 @@
 			<column key="uri" collation="A" null="false" />
 		</index>
 
+        <index alias="image_id" name="image_id" primary="false" unique="false">
+			<column key="image_id" collation="A" null="true" />
+		</index>
 				
 		<aggregate alias="Store" class="Store" local="store_id" foreign="id" cardinality="one" owner="foreign" />
 		<aggregate alias="Template" class="modTemplate" local="template_id" foreign="id" cardinality="one" owner="foreign" />
@@ -125,7 +132,8 @@
         <aggregate alias="Author" class="modUser" local="author_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="UserGroup" class="modUserGroup" local="user_group_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Role" class="modUserGroupRole" local="role_id" foreign="id" cardinality="one" owner="foreign" />
-
+        <aggregate alias="Thumbnail" class="Image" local="image_id" foreign="image_id" cardinality="one" owner="foreign" />
+        
         <!-- parent is the main product: children represent variants in all permutations -->
         <composite alias="Parent" class="Product" local="parent_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Variant" class="Product" local="product_id" foreign="parent_id" cardinality="many" owner="local" />
@@ -306,7 +314,7 @@
 		<field key="title" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="alt" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="url" dbtype="varchar" precision="255" phptype="string" null="false" />
-		<field key="path" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="path" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="width" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="height" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="false" />

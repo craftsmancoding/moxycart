@@ -61,7 +61,7 @@ $xpdo_meta_map['Image']= array (
       'dbtype' => 'varchar',
       'precision' => '255',
       'phptype' => 'string',
-      'null' => false,
+      'null' => true,
     ),
     'width' => 
     array (

@@ -494,41 +494,6 @@
     
     }
 
-    /**
-     *
-     */
-    public function json_templates() {
-
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'id');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
-        
-        $criteria = $this->modx->newQuery('modTemplate');
-        //$criteria->where();
-        $total_pages = $this->modx->getCount('modTemplate',$criteria);
-        
-        $criteria->limit($limit, $start); 
-        $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('modTemplate',$criteria);
-        
-        // Init our array
-        $data = array(
-            'results'=>array(),
-            'total' => $total_pages,
-        );
-        foreach ($pages as $p) {
-            // $data['results'][] = $p->toArray(); // <-- too much info!
-            $data['results'][] = array(
-                'id' => $p->get('id'),
-                'name' => $p->get('templatename')
-            );
-        }
-        
-        return json_encode($data);
-    
-    }
-
     public function json_currencies() {
 
         $limit = (int) $this->modx->getOption('limit',$_POST,10);
@@ -595,7 +560,7 @@
      *
      * @return mixed JSON-encoded string or PHP array (depends on $json flag). False on permissions error.
      */
-    public function json_products($args,$json=true) {
+    public function json_products() {
     
         if (!$this->modx->hasPermission($this->modx->getOption(__FUNCTION__, $this->perms, $this->default_perm))) {
             $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart::'.__FUNCTION__.'] User does not have sufficient privileges.');
@@ -614,14 +579,25 @@
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
         $pages = $this->modx->getCollection('Product',$criteria);
-        // return $criteria->toSQL(); <-- useful for debugging
+        //return $criteria->toSQL(); //<-- useful for debugging
         // Init our array
         $data = array(
             'results'=>array(),
             'total' => $total_pages,
         );
         foreach ($pages as $p) {
-            $data['results'][] = $p->toArray();
+            $data['results'][] = array(
+                'id' => $p->get('id'),
+                'name' => $p->get('name'),
+                'sku' => $p->get('sku'),
+                'type' => $p->get('type'),
+                'qty_inventory' => $p->get('qty_inventory'),
+                'qty_alert' => $p->get('qty_alert'), 
+                'price' => $p->get('price'),
+                'category' => $p->get('category'),
+                'uri' => $p->get('uri'),
+                'is_active' => $p->get('is_active'), 
+            );
         }
 
         return json_encode($data);
@@ -634,12 +610,27 @@
      * Return: spec.name, value, spec.description
      */
     public function json_product_specs() {
-        return 'TODO';
-        $product_id = (int) $this->modx->getOption('product_id');
+        $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
+        $spec_id = (int) $this->modx->getOption('spec_id',$_REQUEST);
+        
+        $limit = (int) $this->modx->getOption('limit',$_POST,10);
+        $start = (int) $this->modx->getOption('start',$_POST,0);
+        $sort = $this->modx->getOption('sort',$_POST,'id');
+        $dir = $this->modx->getOption('dir',$_POST,'ASC');
         
         $criteria = $this->modx->newQuery('ProductSpecs');
         
-//        $criteria->sortby($sort,$dir);
+        if ($product_id) {
+            $criteria->where(array('product_id'=>$product_id));
+        }
+        if ($spec_id) {
+            $criteria->where(array('spec_id'=>$spec_id));
+        }
+                
+        $total_pages = $this->modx->getCount('ProductSpecs',$criteria);
+        
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
         $pages = $this->modx->getCollection('ProductSpecs',$criteria);
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
@@ -659,12 +650,23 @@
      * Return: taxonomy.pagetitle, value (1|0)
      */
     public function json_product_taxonomies() {
-        return 'TODO';
-        $product_id = (int) $this->modx->getOption('product_id');
+        $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
+        
+        $limit = (int) $this->modx->getOption('limit',$_POST,10);
+        $start = (int) $this->modx->getOption('start',$_POST,0);
+        $sort = $this->modx->getOption('sort',$_POST,'id');
+        $dir = $this->modx->getOption('dir',$_POST,'ASC');
         
         $criteria = $this->modx->newQuery('ProductTaxonomy');
         
-//        $criteria->sortby($sort,$dir);
+        if ($product_id) {
+            $criteria->where(array('product_id'=>$product_id));
+        }
+                
+        $total_pages = $this->modx->getCount('ProductTaxonomy',$criteria);
+        
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
         $pages = $this->modx->getCollection('ProductTaxonomy',$criteria);
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
@@ -673,7 +675,10 @@
             'total' => $total_pages,
         );
         foreach ($pages as $p) {
-            $data['results'][] = $p->toArray();
+            $data['results'][] = array(
+                'id' => $p->get('id'),
+                'pagetitle' => $p->get('pagetitle'),
+            );
         }
 
         return json_encode($data);
@@ -708,14 +713,25 @@
      * product_id ?
      * Return: ???
      */
-    public function json_product_images() {
-        return 'TODO';
-        $product_id = (int) $this->modx->getOption('product_id');
+    public function json_images() {
+        $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
         
-        $criteria = $this->modx->newQuery('ProductTaxonomy');
+        $limit = (int) $this->modx->getOption('limit',$_POST,10);
+        $start = (int) $this->modx->getOption('start',$_POST,0);
+        $sort = $this->modx->getOption('sort',$_POST,'image_id');
+        $dir = $this->modx->getOption('dir',$_POST,'ASC');
         
-//        $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('ProductTaxonomy',$criteria);
+        $criteria = $this->modx->newQuery('Image');
+        
+        if ($product_id) {
+            $criteria->where(array('product_id'=>$product_id));
+        }
+                
+        $total_pages = $this->modx->getCount('Image',$criteria);
+        
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('Image',$criteria);
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
         $data = array(
@@ -733,7 +749,7 @@
      * product_id or store_id
      * Return: ???
      */
-    public function json_product_inventory() {
+    public function json_inventory() {
         return 'TODO';
         $product_id = (int) $this->modx->getOption('product_id');
         
@@ -879,11 +895,11 @@
     public function json_taxonomies() {
         $limit = (int) $this->modx->getOption('limit',$_POST,10);
         $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'taxonomy_id');
+        $sort = $this->modx->getOption('sort',$_POST,'id');
         $dir = $this->modx->getOption('dir',$_POST,'ASC');
         
         $criteria = $this->modx->newQuery('Taxonomy');
-        //$criteria->where();
+        $criteria->where(array('class_key'=>'Taxonomy'));
         $total_pages = $this->modx->getCount('Taxonomy',$criteria);
         
         $criteria->limit($limit, $start); 
@@ -896,12 +912,52 @@
             'total' => $total_pages,
         );
         foreach ($pages as $p) {
-            $data['results'][] = $p->toArray();
+            $data['results'][] = array(
+                'id' => $p->get('id'),
+                'pagetitle' => $p->get('pagetitle')
+            );
         }
 
         return json_encode($data);
         
     }
+
+    /**
+     *
+     */
+    public function json_templates() {
+
+        $limit = (int) $this->modx->getOption('limit',$_POST,10);
+        $start = (int) $this->modx->getOption('start',$_POST,0);
+        $sort = $this->modx->getOption('sort',$_POST,'id');
+        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+        
+        $criteria = $this->modx->newQuery('modTemplate');
+        //$criteria->where();
+        $total_pages = $this->modx->getCount('modTemplate',$criteria);
+        
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('modTemplate',$criteria);
+        
+        // Init our array
+        $data = array(
+            'results'=>array(),
+            'total' => $total_pages,
+        );
+        foreach ($pages as $p) {
+            // $data['results'][] = $p->toArray(); // <-- too much info!
+            $data['results'][] = array(
+                'id' => $p->get('id'),
+                'name' => $p->get('templatename')
+            );
+        }
+        
+        return json_encode($data);
+    
+    }
+
+
     
     public function json_variations() {
         $limit = (int) $this->modx->getOption('limit',$_POST,10);
@@ -930,9 +986,14 @@
         
     }
     
+    /**
+     * Biggest problem here is caching... it's too slow to retrieve hierarchical data.
+     *
+     * taxonomy_id 
+     */
     public function json_variation_terms() {
         return 'TODO';
-        $product_id = (int) $this->modx->getOption('product_id');
+        $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
         
         $criteria = $this->modx->newQuery('ProductTaxonomy');
         
