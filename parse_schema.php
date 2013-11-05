@@ -103,6 +103,7 @@ $generator->parseSchema($xml_schema_file,$model_dir);
 if(!$xpdo->addPackage('moxycart',$adjusted_core_path.'components/moxycart/model/',$my_table_prefix)) {
     return 'Package Error.';
 }            
+$modx->addExtensionPackage('moxycart',"{$adjusted_core_path}components/$package_name/model/");
 
 // Clear out Tables
 print '<h3>Dropping Tables...</h3>';
