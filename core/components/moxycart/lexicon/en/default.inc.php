@@ -33,6 +33,7 @@
  *
  * @package moxycart
  **/
+$_lang['menu_desc'] = 'Your turn-key eCommerce solution.';
 
 $_lang['product'] = 'Product';
 $_lang['products'] = 'Products';
@@ -130,3 +131,11 @@ $_lang['creating_product_container'] = 'Creating a Product Container';
 // This may not translate well...
 $_lang['creating_product_container_video'] = '<iframe width="560" height="315" src="//www.youtube.com/embed/OCWj5xgu5Ng" frameborder="0" allowfullscreen></iframe>';
 $_lang['creating_product_container_content2'] = 'This explains how to do this.';
+
+
+
+// Settings...
+
+$_lang['default_product_template'] = 'Default Product Template';
+// foxycart_store_url
+//

@@ -10,9 +10,18 @@ class StoreCreateManagerController extends ResourceCreateManagerController {
         parent::loadCustomCssJs();
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
-        // Add Required JS files here:
-        // $this->addJavascript('/assets/components/moxycart/ ????.js');
-        // $this->addJavascript('/assets/components/moxycart/ ????.js');
+
+		//Add below for customization
+        $this->addJavascript($assetsUrl . 'components/moxycart/js/productcontainer.js');
+        $this->addHtml('
+			<script type="text/javascript">
+				isProductContainerCreate = true;
+				
+				Ext.onReady(function(){
+					renderProductContainer(isProductContainerCreate, MODx.config);
+				});
+			</script>');
+			
         $this->addCss($assetsUrl.'components/moxycart/css/mgr.css');
     }    
     

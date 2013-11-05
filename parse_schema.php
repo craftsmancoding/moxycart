@@ -1,19 +1,8 @@
 <?php
+// Built to live inside assets/mycomponents/moxycart/ :
 require_once '../../../config.core.php';
 require_once MODX_CORE_PATH . 'config/config.inc.php';
 // http://rtfm.modx.com/display/revolution20/Creating+a+Resource+Class
-/**
- * Parses a MODX XML schema file in order to create the corresponding PHP classes
- * and (optionally) database tables.  Use this script when you are editing a MODX XML
- * schema file and you are using it as your basis for creating PHP classes.  Do not
- * use this script if you are trying to reverse-engineer existing database tables!
- *
- * See http://rtfm.modx.com/display/revolution20/Creating+a+Resource+Class
- * 
- * USAGE:
- * 1. Create this file in the docroot (webroot) of your MODX installation.
- * 2. Execute the file by visiting it in a browser, e.g. http://yoursite.com/parse_schema.php
- */
 //------------------------------------------------------------------------------
 //! CONFIGURATION
 //------------------------------------------------------------------------------
@@ -115,6 +104,22 @@ if(!$xpdo->addPackage('moxycart',MODX_CORE_PATH.'components/moxycart/model/',$my
     return 'Package Error.';
 }            
 
+// Clear out Tables
+print '<h3>Dropping Tables...</h3>';
+$manager->removeObjectContainer('Currency');
+$manager->removeObjectContainer('Product');
+$manager->removeObjectContainer('Spec');
+$manager->removeObjectContainer('VariationType'); 
+$manager->removeObjectContainer('VariationTerm');
+$manager->removeObjectContainer('ProductVariationTypes');
+$manager->removeObjectContainer('ProductTaxonomy');
+$manager->removeObjectContainer('ProductTerms');
+$manager->removeObjectContainer('ProductSpecs');
+$manager->removeObjectContainer('Cart');
+$manager->removeObjectContainer('Image');
+
+// Re-create them
+print '<h3>Creating Tables...<h3>';
 $manager->createObjectContainer('Currency');
 $manager->createObjectContainer('Product');
 $manager->createObjectContainer('Spec');
@@ -126,7 +131,85 @@ $manager->createObjectContainer('ProductTerms');
 $manager->createObjectContainer('ProductSpecs');
 $manager->createObjectContainer('Cart');
 $manager->createObjectContainer('Image');
- 
+
+
+// Seed Data
+$data_src_dir = '_build/data/moxycart/';
+print '<h3>Seeding Data...</h3>';
+
+$currencies = include $data_src_dir . 'transport.currencies.php';
+if (is_array($currencies)) {
+    print '<h4>Table: currencies</h4>';
+    foreach($currencies as $c) {
+        $Currency = $xpdo->newObject('Currency');
+        $Currency->fromArray($c);
+        if (!$Currency->save()) {
+            print "Error saving currency {$c['code']}!<br/>";
+        }
+        else {
+            print "Currency created {$c['code']}<br/>";
+        }
+    }
+}
+else {
+    print 'ERROR: $currencies not an array.<br/>';
+}
+
+$specs = include $data_src_dir . 'transport.specs.php';
+if (is_array($currencies)) {
+    print '<h4>Table: specs</h4>';
+    foreach($specs as $s) {
+        $Spec = $xpdo->newObject('Spec');
+        $Spec->fromArray($s);
+        if (!$Spec->save()) {
+            print "Error saving spec {$s['name']}!<br/>";
+        }
+        else {
+            print "Spec created {$s['name']}<br/>";
+        }
+    }
+}
+else {
+    print 'ERROR: $specs not an array.<br/>';
+}
+
+$variation_types = include $data_src_dir . 'transport.variationtypes.php';
+if (is_array($currencies)) {
+    print '<h4>Table: variation_types</h4>';
+    foreach($variation_types as $v) {
+        $VT = $xpdo->newObject('VariationType');
+        $VT->fromArray($v);
+        if (!$VT->save()) {
+            print "Error saving variation_type {$v['name']}!<br/>";
+        }
+        else {
+            print "Variation Type created {$v['name']}<br/>";
+        }
+    }
+}
+else {
+    print 'ERROR: $variation_types not an array.<br/>';
+}
+    
+
+$variation_terms = include $data_src_dir . 'transport.variationterms.php';
+if (is_array($currencies)) {
+    print '<h4>Table: variation_terms</h4>';
+    foreach($variation_terms as $v) {
+        $VT = $xpdo->newObject('VariationTerm');
+        $VT->fromArray($v);
+        if (!$VT->save()) {
+            print "Error saving variation_term {$v['name']}!<br/>";
+        }
+        else {
+            print "Variation Term created {$v['name']}<br/>";
+        }
+    }
+}
+else {
+    print 'ERROR: $variation_terms not an array.<br/>';
+}
+    
 $mtime= microtime();
 $mtime= explode(" ", $mtime);
 $mtime= $mtime[1] + $mtime[0];

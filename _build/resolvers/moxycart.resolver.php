@@ -58,6 +58,17 @@ if ($object->xpdo) {
             break;
 
         case xPDOTransport::ACTION_UNINSTALL:
+            $manager->removeObjectContainer('Currency');
+            $manager->removeObjectContainer('Product');
+            $manager->removeObjectContainer('Spec');
+            $manager->removeObjectContainer('VariationType'); 
+            $manager->removeObjectContainer('VariationTerm');
+            $manager->removeObjectContainer('ProductVariationTypes');
+            $manager->removeObjectContainer('ProductTaxonomy');
+            $manager->removeObjectContainer('ProductTerms');
+            $manager->removeObjectContainer('ProductSpecs');
+            $manager->removeObjectContainer('Cart');
+            $manager->removeObjectContainer('Image');        
             $modx->removeExtensionPackage($package_name);
             break;
     }

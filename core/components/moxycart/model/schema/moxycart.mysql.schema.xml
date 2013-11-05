@@ -16,14 +16,14 @@
         <composite alias="Products" class="Product" local="id" foreign="parent" cardinality="many" owner="local" />
     </object>
 
-    <!-- Taxonomy: a container for Terms -->
+    <!-- ! Taxonomy: a container for Terms -->
     <object class="Taxonomy" extends="modResource">
         <composite alias="Terms" class="Term" local="id" foreign="parent" cardinality="many" owner="local" />
         <validation>
             <rule field="parent" name="parent" type="xPDOValidationRule" rule="TaxonomyParents" message="Invalid parent" />
         </validation>
     </object>
-    <!-- Terms: tags, categories, etc -->
+    <!-- ! Terms: tags, categories, etc -->
     <object class="Term" extends="modResource">
         <aggregate alias="Taxonomy" class="Taxonomy" local="parent" foreign="id" cardinality="one" owner="foreign" />
         <!-- children terms of terms? -->
@@ -62,7 +62,8 @@
         <field key="sku" dbtype="varchar" precision="20" phptype="string" null="false" />
         <field key="sku_vendor" dbtype="varchar" precision="20" phptype="string" null="false" comment="SKU from your provider"/>
         <field key="variant_matrix" dbtype="varchar" precision="255" phptype="string" null="false" comment="JSON hash to identify specific type:term combo(s)"/>
-        <field key="alias" dbtype="varchar" precision="20" phptype="string" null="false" />
+        <field key="alias" dbtype="varchar" precision="255" phptype="string" null="false" />
+        <field key="uri" dbtype="varchar" precision="255" phptype="string" null="false" />
 
         <field key="track_inventory" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0" comment="Sum of child variants"/>
         <!-- in stock -->
@@ -107,9 +108,15 @@
         <index alias="factory_sku" name="factory_sku" primary="false" unique="false">
 			<column key="factory_sku" collation="A" null="true" />
 		</index>
-        <index alias="alias" name="alias" primary="false" unique="true">
+        <index alias="alias" name="alias" primary="false" unique="true"  type="BTREE">
+			<column key="store_id" collation="A" null="true" />
 			<column key="alias" collation="A" null="true" />
 		</index>
+
+        <index alias="uri" name="uri" primary="false" unique="true"  type="BTREE">
+			<column key="uri" collation="A" null="false" />
+		</index>
+
 				
 		<aggregate alias="Store" class="Store" local="store_id" foreign="id" cardinality="one" owner="foreign" />
 		<aggregate alias="Template" class="modTemplate" local="template_id" foreign="id" cardinality="one" owner="foreign" />
@@ -171,6 +178,9 @@
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="variation_id" collation="A" null="false" />
 		</index>
+        <index alias="name" name="name" primary="false" unique="true">
+			<column key="name" collation="A" null="true" />
+		</index>		
 		
 		<composite alias="Terms" class="VariationTerm" local="vtype_id" foreign="vtype_id" cardinality="many" owner="local" />
 	</object>

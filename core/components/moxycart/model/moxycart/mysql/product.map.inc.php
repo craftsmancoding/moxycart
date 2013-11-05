@@ -19,6 +19,7 @@ $xpdo_meta_map['Product']= array (
     'sku_vendor' => NULL,
     'variant_matrix' => NULL,
     'alias' => NULL,
+    'uri' => NULL,
     'track_inventory' => 0,
     'qty_inventory' => NULL,
     'qty_alert' => NULL,
@@ -135,7 +136,14 @@ $xpdo_meta_map['Product']= array (
     'alias' => 
     array (
       'dbtype' => 'varchar',
-      'precision' => '20',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => false,
+    ),
+    'uri' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
       'phptype' => 'string',
       'null' => false,
     ),
@@ -347,12 +355,33 @@ $xpdo_meta_map['Product']= array (
       'alias' => 'alias',
       'primary' => false,
       'unique' => true,
+      'type' => 'BTREE',
       'columns' => 
       array (
+        'store_id' => 
+        array (
+          'collation' => 'A',
+          'null' => true,
+        ),
         'alias' => 
         array (
           'collation' => 'A',
           'null' => true,
+        ),
+      ),
+    ),
+    'uri' => 
+    array (
+      'alias' => 'uri',
+      'primary' => false,
+      'unique' => true,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'uri' => 
+        array (
+          'collation' => 'A',
+          'null' => false,
         ),
       ),
     ),
