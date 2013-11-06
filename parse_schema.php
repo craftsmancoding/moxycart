@@ -107,16 +107,13 @@ $generator->parseSchema($xml_schema_file,$model_dir);
 
 if(!$xpdo->addPackage('moxycart',$adjusted_core_path.'components/moxycart/model/',$my_table_prefix)) {
     return 'Package Error.';
-<<<<<<< HEAD
+
 }       
 
 
-//$xpdo->addExtensionPackage('moxycart',"{$adjusted_core_path}components/$package_name/model/");
-=======
-}            
+//$modx->addExtensionPackage('moxycart',"{$adjusted_core_path}components/$package_name/model/");        
 
-// $xpdo->addExtensionPackage('moxycart',"{$adjusted_core_path}components/$package_name/model/");
->>>>>>> 407599d99b884f604bf10ae7dc64545dc23c17f6
+
 
 // Clear out Tables
 print '<h3>Dropping Tables...</h3>';
@@ -303,7 +300,7 @@ else {
 }
 
 
-
+$specs = include $data_src_dir . 'transport.product_taxonomies.php';
 
 $mtime= microtime();
 $mtime= explode(" ", $mtime);
