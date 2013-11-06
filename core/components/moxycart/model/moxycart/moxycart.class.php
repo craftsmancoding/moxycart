@@ -522,36 +522,6 @@
         
     }
     
-    /**
-     *
-     */
-    public function json_specs() {
-
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'spec_id');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
-        
-        $criteria = $this->modx->newQuery('Spec');
-        //$criteria->where();
-        $total_pages = $this->modx->getCount('Spec',$criteria);
-        
-        $criteria->limit($limit, $start); 
-        $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('Spec',$criteria);
-        // return $criteria->toSQL(); <-- useful for debugging
-        // Init our array
-        $data = array(
-            'results'=>array(),
-            'total' => $total_pages,
-        );
-        foreach ($pages as $p) {
-            $data['results'][] = $p->toArray();
-        }
-
-        return json_encode($data);
-        
-    }
 
     /**
      * Get a list of products.
@@ -770,6 +740,37 @@
         return json_encode($data);
     }
 
+    /**
+     *
+     */
+    public function json_specs() {
+
+        $limit = (int) $this->modx->getOption('limit',$_POST,10);
+        $start = (int) $this->modx->getOption('start',$_POST,0);
+        $sort = $this->modx->getOption('sort',$_POST,'spec_id');
+        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+        
+        $criteria = $this->modx->newQuery('Spec');
+        //$criteria->where();
+        $total_pages = $this->modx->getCount('Spec',$criteria);
+        
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('Spec',$criteria);
+        // return $criteria->toSQL(); <-- useful for debugging
+        // Init our array
+        $data = array(
+            'results'=>array(),
+            'total' => $total_pages,
+        );
+        foreach ($pages as $p) {
+            $data['results'][] = $p->toArray();
+        }
+
+        return json_encode($data);
+        
+    }
+
 
     public function json_stores() {
 
@@ -779,7 +780,7 @@
         $dir = $this->modx->getOption('dir',$_POST,'ASC');
         
         $criteria = $this->modx->newQuery('Store');
-        //$criteria->where();
+        $criteria->where(array('class_key'=>'Store'));
         $total_pages = $this->modx->getCount('Store',$criteria);
         
         $criteria->limit($limit, $start); 
@@ -803,21 +804,29 @@
     }
 
     /**
+     * PARAMS:
      * store_id (id)
      *
      * Gathers all available specs from the db, then gathers page's list of checked specs
      * and returns a list of all specs and a 1|0 value for each.
      *
+     * 
      * Return: spec.name, value (1|0)
      */
     public function json_store_specs() {
-        return 'TODO';
-        $product_id = (int) $this->modx->getOption('product_id');
+        $limit = (int) $this->modx->getOption('limit',$_POST,10);
+        $start = (int) $this->modx->getOption('start',$_POST,0);
+        $sort = $this->modx->getOption('sort',$_POST,'spec_id');
+        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+        $store_id = (int) $this->modx->getOption('store_id',$_POST);
+                
+        $criteria = $this->modx->newQuery('Spec');
+        //$criteria->where();
+        $total_pages = $this->modx->getCount('Spec',$criteria);
         
-        $criteria = $this->modx->newQuery('ProductTaxonomy');
-        
-//        $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('ProductTaxonomy',$criteria);
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('Spec',$criteria);
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
         $data = array(
@@ -825,9 +834,15 @@
             'total' => $total_pages,
         );
         foreach ($pages as $p) {
-            $data['results'][] = $p->toArray();
+            $vals = $p->toArray();
+            $vals['is_checked'] = 0; // normalize
+            $data['results'][] = $vals;
         }
 
+        $Store = $this->modx->getObject('Store', $store_id);
+        if ($Store) {
+            $properties = $Store->get('properties');
+        }
         return json_encode($data);
     }
 
@@ -922,6 +937,38 @@
         
     }
 
+    public function json_terms() {
+
+        $limit = (int) $this->modx->getOption('limit',$_POST,10);
+        $start = (int) $this->modx->getOption('start',$_POST,0);
+        $sort = $this->modx->getOption('sort',$_POST,'menuindex');
+        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+        
+        $criteria = $this->modx->newQuery('Term');
+        $criteria->where(array('class_key'=>'Term'));
+        $total_pages = $this->modx->getCount('Term',$criteria);
+        
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('Term',$criteria);
+        // return $criteria->toSQL(); <-- useful for debugging
+        // Init our array
+        $data = array(
+            'results'=>array(),
+            'total' => $total_pages,
+        );
+        foreach ($pages as $p) {
+            $data['results'][] = array(
+                'id' => $p->get('id'),
+                'name' => $p->get('pagetitle')
+            );
+        }
+
+        return json_encode($data);
+        
+    }
+    
+    
     /**
      *
      */

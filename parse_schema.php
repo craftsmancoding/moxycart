@@ -2,6 +2,8 @@
 // Built to live inside assets/mycomponents/moxycart/ :
 require_once '../../../config.core.php';
 require_once MODX_CORE_PATH . 'config/config.inc.php';
+require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
+
 // http://rtfm.modx.com/display/revolution20/Creating+a+Resource+Class
 //------------------------------------------------------------------------------
 //! CONFIGURATION
@@ -103,6 +105,7 @@ $generator->parseSchema($xml_schema_file,$model_dir);
 if(!$xpdo->addPackage('moxycart',$adjusted_core_path.'components/moxycart/model/',$my_table_prefix)) {
     return 'Package Error.';
 }            
+
 // $xpdo->addExtensionPackage('moxycart',"{$adjusted_core_path}components/$package_name/model/");
 
 // Clear out Tables
@@ -245,6 +248,25 @@ if (is_array($images)) {
 }
 else {
     print 'ERROR: $images not an array.<br/>';
+}
+
+
+$taxonomies = include $data_src_dir . 'transport.taxonomies.php';
+if (is_array($taxonomies)) {
+    print '<h4>Table: modx_site_content</h4>';
+    foreach($taxonomies as $i) {
+        $taxonomy = $xpdo->newObject('modResource');
+        $taxonomy->fromArray($i);
+        if (!$taxonomy->save()) {
+            print "Error saving Taxonomy {$i['pagetitle']}!<br/>";
+        }
+        else {
+            print "Taxonomy created {$i['pagetitle']}<br/>";
+        }
+    }
+}
+else {
+    print 'ERROR: $taxonomies not an array.<br/>';
 }
 
 
