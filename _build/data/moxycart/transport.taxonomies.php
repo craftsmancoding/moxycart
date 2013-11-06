@@ -21,19 +21,19 @@ $taxonomies[] = array(
     'pagetitle' => 'Categories',
     'description' => 'Hierarchical list of categories',
     'alias' => 'category',
-    'published' => 'true',
+    'published' => 1,
     'template'  => '1',
-    'class_ley' => 'Taxonomy',
-    'hide_menu' => '1'
+    'class_key' => 'Taxonomy',
+    'hide_menu' => 1
 );
 
 $taxonomies[] = array(
     'pagetitle' => 'Tags',
     'alias' => 'tag',
-    'published' => 'true',
+    'published' => 1,
     'template'  => '1',
-    'class_ley' => 'Taxonomy',
-    'hide_menu' => '1'
+    'class_key' => 'Taxonomy',
+    'hide_menu' => 1
 );
 
 return $taxonomies;

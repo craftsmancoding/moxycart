@@ -4,6 +4,8 @@ require_once '../../../config.core.php';
 require_once MODX_CORE_PATH . 'config/config.inc.php';
 require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
 
+$modx = new modx();
+
 // http://rtfm.modx.com/display/revolution20/Creating+a+Resource+Class
 //------------------------------------------------------------------------------
 //! CONFIGURATION
@@ -104,7 +106,9 @@ $generator->parseSchema($xml_schema_file,$model_dir);
 
 if(!$xpdo->addPackage('moxycart',$adjusted_core_path.'components/moxycart/model/',$my_table_prefix)) {
     return 'Package Error.';
-}            
+}       
+
+
 //$xpdo->addExtensionPackage('moxycart',"{$adjusted_core_path}components/$package_name/model/");
 
 // Clear out Tables
@@ -136,9 +140,12 @@ $manager->createObjectContainer('Cart');
 $manager->createObjectContainer('Image');
 
 
+
 // Seed Data
 $data_src_dir = '_build/data/moxycart/';
 print '<h3>Seeding Data...</h3>';
+
+
 
 $currencies = include $data_src_dir . 'transport.currencies.php';
 if (is_array($currencies)) {
@@ -250,11 +257,12 @@ else {
 }
 
 
+
 $taxonomies = include $data_src_dir . 'transport.taxonomies.php';
 if (is_array($taxonomies)) {
     print '<h4>Table: modx_site_content</h4>';
     foreach($taxonomies as $i) {
-        $taxonomy = $xpdo->newObject('modResource');
+        $taxonomy = $modx->newObject('modResource');
         $taxonomy->fromArray($i);
         if (!$taxonomy->save()) {
             print "Error saving Taxonomy {$i['pagetitle']}!<br/>";
@@ -268,6 +276,24 @@ else {
     print 'ERROR: $taxonomies not an array.<br/>';
 }
 
+
+$terms = include $data_src_dir . 'transport.terms.php';
+if (is_array($terms)) {
+    print '<h4>Table: modx_site_content</h4>';
+    foreach($terms as $i) {
+        $term = $modx->newObject('modResource');
+        $term->fromArray($i);
+        if (!$term->save()) {
+            print "Error saving Term {$i['pagetitle']}!<br/>";
+        }
+        else {
+            print "Term created {$i['pagetitle']}<br/>";
+        }
+    }
+}
+else {
+    print 'ERROR: $terms not an array.<br/>';
+}
 
 
 
