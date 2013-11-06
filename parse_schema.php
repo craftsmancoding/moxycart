@@ -2,6 +2,8 @@
 // Built to live inside assets/mycomponents/moxycart/ :
 require_once '../../../config.core.php';
 require_once MODX_CORE_PATH . 'config/config.inc.php';
+require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
+
 // http://rtfm.modx.com/display/revolution20/Creating+a+Resource+Class
 //------------------------------------------------------------------------------
 //! CONFIGURATION
