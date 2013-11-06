@@ -6,6 +6,7 @@ require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
 
 $modx = new modx();
 
+
 // http://rtfm.modx.com/display/revolution20/Creating+a+Resource+Class
 //------------------------------------------------------------------------------
 //! CONFIGURATION
@@ -145,7 +146,7 @@ $manager->createObjectContainer('Image');
 $data_src_dir = '_build/data/moxycart/';
 print '<h3>Seeding Data...</h3>';
 
-
+//$product_taxonomies = include $data_src_dir . 'transport.product_taxonomies.php'; 
 
 $currencies = include $data_src_dir . 'transport.currencies.php';
 if (is_array($currencies)) {

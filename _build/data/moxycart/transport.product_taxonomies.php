@@ -2,7 +2,7 @@
 $product_taxonomies = array();
 
     $c = $modx->newQuery('modResource');
-    $query->where( array('wheels:>=' => 3) );
+    $query->where( array('class_key' => 'Taxonomy') );
     $pages = $modx->getCollection('modResource',$c);
         
         echo '<pre>';
