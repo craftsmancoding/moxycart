@@ -13,28 +13,24 @@
 /* @var $sources array */
 /* @var xPDOObject[] $terms */
 
-
 $terms = array();
 
+$taxonomies = $modx->getCollection('Taxonomy',array('class_key'=>'Taxonomy'));
+if($taxonomies) {
+    foreach ($taxonomies as $tax) {
+        $parent = $tax->get('id');
+        $terms[] = array(
+            'pagetitle' => 'Sample Term ' . $parent,
+            'description' => 'Some Term ' . $parent . ' Category',
+            'alias' => 'sample-term-'.$parent,
+            'published' => 1,
+            'template'  => '1',
+            'class_key' => 'Term',
+            'hide_menu' => 1,
+            'parent'    => $parent
+        );
 
-$terms[] = array(
-    'pagetitle' => 'Some Category',
-    'description' => 'Some Category',
-    'alias' => 'some-category',
-    'published' => 1,
-    'template'  => '1',
-    'class_key' => 'Term',
-    'hide_menu' => 1
-);
-
-$terms[] = array(
-     'pagetitle' => 'Other Category',
-    'description' => 'Other Category',
-    'alias' => 'other-category',
-    'published' => 1,
-    'template'  => '1',
-    'class_key' => 'Term',
-    'hide_menu' => 1
-);
+    }
+}
 
 return $terms;

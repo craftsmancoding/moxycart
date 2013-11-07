@@ -285,46 +285,15 @@ else {
 }
 
 
-
 $taxonomies = include $data_src_dir . 'transport.taxonomies.php';
-if (is_array($taxonomies)) {
-    print '<h4>Table: modx_site_content</h4>';
-    foreach($taxonomies as $i) {
-        $taxonomy = $modx->newObject('modResource');
-        $taxonomy->fromArray($i);
-        if (!$taxonomy->save()) {
-            print "Error saving Taxonomy {$i['pagetitle']}!<br/>";
-        }
-        else {
-            print "Taxonomy created {$i['pagetitle']}<br/>";
-        }
-    }
-}
-else {
-    print 'ERROR: $taxonomies not an array.<br/>';
-}
+print '<h4>Table: modx_site_content</h4>';
+insert_records($taxonomies,'Taxonomy');
 
 
 $terms = include $data_src_dir . 'transport.terms.php';
-if (is_array($terms)) {
-    print '<h4>Table: modx_site_content</h4>';
-    foreach($terms as $i) {
-        $term = $modx->newObject('modResource');
-        $term->fromArray($i);
-        if (!$term->save()) {
-            print "Error saving Term {$i['pagetitle']}!<br/>";
-        }
-        else {
-            print "Term created {$i['pagetitle']}<br/>";
-        }
-    }
-}
-else {
-    print 'ERROR: $terms not an array.<br/>';
-}
-
-
-$product_taxonomies = include $data_src_dir . 'transport.product_taxonomies.php';
+print '<h4>Table: modx_site_content</h4>';
+insert_records($terms,'Term');
+//$product_taxonomies = include $data_src_dir . 'transport.product_taxonomies.php';
 
 $mtime= microtime();
 $mtime= explode(" ", $mtime);
@@ -386,4 +355,32 @@ function print_msg($msg) {
         $msg = strip_tags($msg) . "\n";
     }
     print $msg;
+}
+
+/**
+ * Insert Records on respective tables
+ *
+ * @param array $items to be printed
+ * @param string $tbl to be printed
+ * @param string $crc to be printed
+ * @return print message
+ */
+function insert_records($items, $crc) {
+    global $modx;
+    if (is_array($items)) {
+        foreach($items as $i) {
+            $item = $modx->newObject('modResource');
+            $item->fromArray($i);
+            if (!$item->save()) {
+                print "Error saving $crc {$i['pagetitle']}!<br/>";
+            }
+            else {
+
+                print "$crc created {$i['pagetitle']}<br/>";
+            }
+        }
+    }
+    else {
+        print "ERROR: $crc not an array.<br/>";
+    }
 }
