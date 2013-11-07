@@ -128,6 +128,31 @@ $manager->removeObjectContainer('ProductSpecs');
 $manager->removeObjectContainer('Cart');
 $manager->removeObjectContainer('Image');
 
+print '<h3>Removing Taxonomy and Term Records on modx_site_content Tables...</h3>';
+//Removing Taxonomies
+$taxonomies = $modx->getCollection('Taxonomy',array('class_key'=>'Taxonomy'));
+if($taxonomies) {
+    foreach ($taxonomies as $page) {
+        if ($page->remove() == false) {
+           echo 'An error occurred while trying to remove Taxonomy ' . $page->get('pagetitle') . '<br>';
+        } else {
+             echo $page->get('pagetitle') . ' Taxonomy Deleted. <br>' ;
+        }
+    }
+}
+//Removing Terms
+$terms = $modx->getCollection('Term',array('class_key'=>'Term'));
+if($terms) {
+    foreach ($terms as $page) {
+        if ($page->remove() == false) {
+           echo 'An error occurred while trying to remove Term ' . $page->get('pagetitle') . '<br>';
+        } else {
+             echo $page->get('pagetitle') . ' Term Deleted. <br>' ;
+        }
+    }
+}
+
+
 // Re-create them
 print '<h3>Creating Tables...<h3>';
 $manager->createObjectContainer('Currency');
