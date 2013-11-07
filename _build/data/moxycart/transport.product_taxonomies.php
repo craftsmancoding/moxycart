@@ -1,13 +1,19 @@
 <?php
 $product_taxonomies = array();
 
-    $c = $modx->newQuery('modResource');
-    $query->where( array('class_key' => 'Taxonomy') );
-    $pages = $modx->getCollection('modResource',$c);
+    $pages = $modx->getCollection('modResource',array('class_key'=>'Taxonomy'));
         
         echo '<pre>';
         print_r($pages);
         die();
+
+/*
+$results = $modx->query("SELECT * FROM modx_site_content WHERE class_key='Taxonomy'");
+while ($r = $results->fetch(PDO::FETCH_ASSOC)) {
+     echo '<pre>';
+        print_r($r);
+}
+die();*/
 
 $product_taxonomies[] = array(
     'product_id' => '',
