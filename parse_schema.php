@@ -4,7 +4,9 @@ require_once '../../../config.core.php';
 require_once MODX_CORE_PATH . 'config/config.inc.php';
 require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
 
-$modx = new modx();
+$modx = new modX();
+
+
 
 
 // http://rtfm.modx.com/display/revolution20/Creating+a+Resource+Class
@@ -13,7 +15,9 @@ $modx = new modx();
 //------------------------------------------------------------------------------
 // Your package shortname:
 $package_name = 'moxycart';
- 
+
+
+
 // Set this to false if you've started to customize the PHP classes, otherwise
 // your changes will be overwritten!
 $regenerate_classes = true;
@@ -111,7 +115,7 @@ if(!$xpdo->addPackage('moxycart',$adjusted_core_path.'components/moxycart/model/
 }       
 
 
-//$modx->addExtensionPackage('moxycart',"{$adjusted_core_path}components/$package_name/model/");        
+//$xpdo->addExtensionPackage('moxycart',"{$adjusted_core_path}components/$package_name/model/");        
 
 
 
@@ -300,7 +304,7 @@ else {
 }
 
 
-$specs = include $data_src_dir . 'transport.product_taxonomies.php';
+$product_taxonomies = include $data_src_dir . 'transport.product_taxonomies.php';
 
 $mtime= microtime();
 $mtime= explode(" ", $mtime);
