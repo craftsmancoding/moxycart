@@ -1,7 +1,7 @@
 <?php
 $product_taxonomies = array();
 
-    $pages = $modx->getCollection('modResource',array('class_key'=>'Taxonomy'));
+    $pages = $modx->getCollection('Taxonomy',array('class_key'=>'Taxonomy'));
         
         echo '<pre>';
         print_r($pages);
