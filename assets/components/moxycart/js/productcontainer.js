@@ -85,7 +85,7 @@ function renderProduct(){
             ,items: getVariationsFields()//[]
         };	
 		
-		tabPanel.insert(0, variationsTab);		
+		tabPanel.insert(0, variationsTab);
 		
 		//Setting tab configuration
 		
@@ -103,10 +103,10 @@ function renderProduct(){
                 ,msgTarget: 'under'
                 ,width: 400
             }
-            ,items: getProductSettingsFields()//[]
+            ,items: getProductSettingsFields()
         };	
 		
-		tabPanel.insert(0, settingsTab);	
+		tabPanel.insert(0, settingsTab);
 		
 		//Product tab configuration
 		var productTab = {
@@ -121,15 +121,13 @@ function renderProduct(){
             ,defaults: {
                 border: false
                 ,msgTarget: 'under'
-                ,width: 400
             }
-            ,items: getProductsTabFields()//[]
+            ,items: getProductsTabFields()
         };	
 		
 		tabPanel.insert(0, productTab);
 		tabPanel.setActiveTab(0);
 		tabPanel.doLayout();
-		
 	}
 }
 function renderProductContainer(isProductContainerCreate, config){
@@ -426,12 +424,104 @@ function getProductSettingsFields(){
 			]
   }];
 }
+
+function getSpecs(container){
+	Ext.Ajax.request({
+		url: connector_url+'json_specs',
+		success: function(response, opts) {
+			var obj = Ext.decode(response.responseText);
+			if(obj && obj.results){
+				for(n in obj.results){
+					if(obj.results[n].spec_id) container.add({ xtype : 'checkbox', boxLabel : obj.results[n].name });
+				}
+			}
+		}
+	});
+}
+
+function getTaxonomies(container){
+	Ext.Ajax.request({
+		url: connector_url+'json_store_taxonomies',
+		success: function(response, opts) {
+			if(response.responseText === 'TODO'){
+				Ext.MessageBox.alert('Warning', 'Could not load product taxonomies checkboxes');
+				return;
+			}
+			var obj = Ext.decode(response.responseText);
+			if(obj && obj.results){
+				for(n in obj.results){
+					if(obj.results[n].id) container.add({ xtype : 'checkbox', boxLabel : obj.results[n].name });
+				}
+			}
+		}
+	});
+}
+
+
+function getVariations(container){
+	Ext.Ajax.request({
+		url: connector_url+'json_variations',
+		success: function(response, opts) {
+			var obj = Ext.decode(response.responseText);
+			if(obj && obj.results){
+				for(n in obj.results){
+					if(obj.results[n].vtype_id) {
+						container.add({ xtype: 'label', text: obj.results[n].name })
+						container.add({
+							xtype : 'combo',
+							fieldLabel: obj.results[n].name,
+							displayField:'name',
+							valueField:'value',
+							triggerAction: 'all',
+							mode: 'local',
+							value : 'off',
+							store:new Ext.data.ArrayStore({
+								autoDestroy: true,
+								fields: [
+								   {name: 'name'},
+								   {name: 'value'}
+								],
+								data:[['Off', 'off'], ['Option Only', 'option'], ['Variant', 'variant']]
+							})
+						});
+					}
+				}
+			}
+		}
+	});
+}
+
 function getStoreSettingsFields(config){
-       config = config || {record:{}};
+		config = config || {record:{}};
+		var defaultStore = new Ext.data.Store({
+			fields: ['id', 'name'],
+			autoLoad : true,
+			storeId : 'defaultTemplates',
+			reader : new Ext.data.JsonReader({
+			    idProperty: 'id',
+			    root: 'results',
+			    totalProperty: 'total',
+			    fields: [
+			        {name: 'id'},
+			        {name: 'name'}
+			    ]
+			}),
+			proxy : new Ext.data.HttpProxy({
+			    method: 'GET',
+			    prettyUrls: false,
+			    url: connector_url+'json_templates',
+			}),
+			listeners : {
+				load : function(){
+					var dt =  Ext.getCmp('defaultTemplates');
+					dt.setValue(default_template);
+				}
+			}
+		});
         return [{
             anchor: '100%',
 			border:false
-			,layout:'form'			
+			,layout:'form'
             ,id: 'modx-resource-storesettings-columns'
 			,style: 'border:0px'
             ,defaults: {
@@ -450,12 +540,8 @@ function getStoreSettingsFields(config){
 						style: 'border:0px',
 						layoutConfig:{
 							tableAttrs:{
-								cellspacing:8,								
-								style: {
-									//padding: '3px',									
-									//border:0
-								}
-							},								            			
+								cellspacing:8
+							},
 							columns:4
 						},
 						items:[
@@ -473,78 +559,137 @@ function getStoreSettingsFields(config){
 							},
 							{
 								xtype: 'label',
-								text: 'Product type'
+								text: 'Product Type'
 							},
-							new Ext.form.ComboBox({fieldLabel: 'Product type',editable: true}),
+							new Ext.form.ComboBox({
+								fieldLabel: 'Product Type',
+								editable: false,
+								triggerAction: 'all',
+								mode: 'local',
+								typeAhead: true,
+								width : 280,
+								displayField:'name',
+								valueField:'value',
+								value:'regular',
+								store:new Ext.data.ArrayStore({
+									autoDestroy: true,
+									fields: [
+									   {name: 'name'},
+									   {name: 'value'}
+									],
+									data:[['Regular', 'regular'], ['Subscription', 'subscription'], ['Download', 'download']]
+								})
+							}),
 							{
 								colspan:2
 							},
 							{
 								xtype: 'label',
 								text: 'Default template'
-							},
-							new Ext.form.ComboBox({fieldLabel: 'Default template',editable: true}),
-							{
+							}, {
+								xtype : 'combo',
+								fieldLabel: 'Default Template',
+								editable: true,
+								id : 'defaultTemplates',
+								mode : 'remote',
+								pageSize : 10,
+								width : 280,
+								typeAhead: false,
+								triggerAction: 'all',
+								lastQuery: '',
+								displayField : 'name',
+								valueField : 'id',
+								store: 'defaultTemplates'
+							},{
 								colspan:2
 							},
 							{
 								xtype: 'label',
 								text: 'Track Inventory'
 							},
-							new Ext.form.ComboBox({fieldLabel: 'Track Inventory',editable: true}),
+							new Ext.form.ComboBox({
+								fieldLabel: 'Track Inventory',
+								editable: false,
+								triggerAction: 'all',
+								mode: 'local',
+								typeAhead: true,
+								width : 280,
+								displayField:'name',
+								valueField:'value',
+								value : 0,
+								store:new Ext.data.ArrayStore({
+									autoDestroy: true,
+									fields: [
+									   {name: 'name'},
+									   {name: 'value'}
+									],
+									data:[['Yes', 1], ['No', 0]]
+								})
+							}),
+							{
+								colspan:2
+							},
+							{
+								xtype: 'label',
+								text: 'Default Sort Order'
+							},
+							new Ext.form.ComboBox({
+								fieldLabel: 'Default Sort Order',
+								editable: false,
+								triggerAction: 'all',
+								mode: 'local',
+								typeAhead: true,
+								width : 280,
+								displayField:'name',
+								valueField:'value',
+								value:'sku',
+								store:new Ext.data.ArrayStore({
+									autoDestroy: true,
+									fields: [
+									   {name: 'name'},
+									   {name: 'value'}
+									],
+									data:[['Product Name', 'name'], ['SKU', 'sku'], ['Last Modified', 'timestamp_modified'], ['Manual Sort Order', 'seq']]
+								})
+							}),
+							{
+								colspan:2
+							},
+							{
+								xtype: 'label',
+								text: 'Default Inventory Alert Level'
+							},
+							{
+								xtype : 'textfield',
+								fieldLabel: 'Default Inventory Alert Level',
+								width : 280
+							},
 							{
 								colspan:2
 							},
 							{
 								colspan:4,
 								height:10
-							},							
+							},
 							{
 								xtype: 'label',
-								text: 'Units',
+								text: 'Specs',
 								style: 'margin-top:20px',
 								ctCls:'v-align-top'
 							},
 							{
-								//colspan:2,
 								layout:'column',
 								border:false,
 								columns:4,
-								//region:'north',
-								items:[												
-										
-										{
-											 layout:'fit',
-											 border: false,
-											 items: [
-												{
-													xtype: 'checkbox',
-													boxLabel: 'Weight',
-												},
-												{
-													height:10
-												},
-												{
-													xtype: 'checkbox',
-													boxLabel: 'Length'
-												},
-												{
-													height:10
-												},
-												{
-													xtype: 'checkbox',
-													boxLabel: 'width'
-												},
-												{
-													height:10
-												},
-												{
-													xtype: 'checkbox',
-													boxLabel: 'Volume'
-												}
-											]
-										}										
-									]
+								items:[{
+									 layout:'fit',
+									 border: false,
+									 listeners : {
+									 	afterrender : function(f){
+									 		getSpecs(f);
+									 	}
+									 }
+								}]
 							},
 							{
 								xtype: 'label',
@@ -552,31 +697,18 @@ function getStoreSettingsFields(config){
 								ctCls:'v-align-top'
 							},
 							{
-								//colspan:2,
 								layout:'column',
 								border:false,
 								columns:4,
-								//region:'north',
-								items:[										
-										
-										{
-											layout:'fit',
-											border: false,
-											items: [
-											{
-												xtype: 'xcheckbox',
-												boxLabel: 'Tags'
-											},
-											{
-													height:10
-											},
-											{
-												xtype: 'xcheckbox',
-												boxLabel: 'Category'
-											}
-											]
-										}
-									]
+								items:[{
+									 layout:'fit',
+									 border: false,
+									 listeners : {
+									 	afterrender : function(f){
+									 		getTaxonomies(f);
+									 	}
+									 }
+								}]
 							 },
 							 {
 								colspan:4,
@@ -589,44 +721,29 @@ function getStoreSettingsFields(config){
 							 },
 							 {
 								 colspan:3,
-								 layout:'column',								 
+								 layout:'column',
 								 border:false,
 								 items: [
 								 {
 									layout:'table',
-									width:'100%',									
+									width:'100%',
 									layoutConfig:{
 										tableAttrs:{
-											cellspacing:8,								
+											cellspacing:8,
 											style: {
-												
 											}
-										},								            			
+										},
 										columns:2
 									},
-									items:[
-										{
-											xtype: 'label',
-											text: 'Size'
-										},
-										new Ext.form.ComboBox({fieldLabel: 'Size', editable: true}),
-										{
-											xtype: 'label',
-											text: 'Color'
-										},
-										new Ext.form.ComboBox({fieldLabel: 'Color',editable: true}),
-										{
-											xtype: 'label',
-											text: 'Material'
-										},
-										new Ext.form.ComboBox({fieldLabel: 'Material',editable: true})
-									]										
-								 }]				   
+									listeners : {
+										afterrender : function(f){
+											getVariations(f);
+										}
+									}
+								 }]
 							   }
 						]
-				   }	
-				   
-				   
+				   }
 				]
 		}];
 }
@@ -659,171 +776,295 @@ function getCreateProductFields(config){
 						padding:5,
 						html:'<b>Welcome to moxycart.</b></br> This video will walks you through the steps required to setup your store.'
 					}
-				]					
+				]
 			}
 		]
 	}];
 }
+
+
+
+
 function getProductsTabFields(){
 	return [{
-				layout:'form'
-				,anchor: '100%'
-				,id: 'modx-resource-products-columns'
-				,defaults: {
-					labelSeparator: ''
-					,labelAlign: 'top'
-					,border: false
-					,msgTarget: 'under'
-				},
-				items:[{
-						layout:'column',
-						columns:4,
-						height:50,
-						xtype:'panel',
-						items:[{
-						    xtype: 'label',
-							text: 'Name'
-						},{
-						   xtype: 'textfield',
-							flex:1,
-						   fieldLabel:'Name'
-						},{
-						    xtype: 'label',
-							text: 'Active?'
-						},new Ext.form.ComboBox({fieldLabel: 'Active?',editable: true,flex:1,width:60})]
-					},{
-						region:'north',
-						layout:'column',
-						columns:4,
-						height:50,
-						xtype:'panel',
-						items:[{
-						    xtype: 'label',
-							text: 'SKU'
-						},{
-						   xtype: 'textfield',
-						   flex:1,
-						   fieldLabel:'SKU'
-						},{
-						    xtype: 'label',
-							text: 'Vendor SKU'
-						},{
-						   xtype: 'textfield',
-						   flex:1,
-						   fieldLabel:'Vendor SKU'
-						}]
-				},{
-				    xtype: 'textarea',
-					 anchor: '100%',
-				    fieldLabel:'Description'
-				},{
-					xtype: 'textfield',
-					fieldLabel:'Price'
-				},{
-					 xtype: 'textfield',
-					fieldLabel:'Strike Through Price'
-				},new Ext.form.ComboBox({fieldLabel: 'Category',editable: true,width:60}),
-				{
-						region:'north',
-						layout:'column',
-						columns:4,
-						height:50,
-						xtype:'panel',
-						items:[{
-						    xtype: 'label',
-							text: 'Inventory'
-						},{
-						   xtype: 'textfield',
-						   fieldLabel:'Inventory'
-						},{
-						    xtype: 'label',
-							text: 'Qty Min.'
-						},{
-						   xtype: 'textfield',
-						   fieldLabel:'Qty Min.'
-						}]
-				},{
-					region:'north',
-					layout:'column',
-					columns:4,
-					height:50,
-					xtype:'panel',
-					items:[{
-						    xtype: 'label',
-							text: 'Alert Qty'
-						},{
-						xtype: 'textfield',
-						fieldLabel:'Alert Qty'
-					},{
-						    xtype: 'label',
-							text: 'Qty Max.'
-						},{
-						 xtype: 'textfield',
-						fieldLabel:'Qty Max.'
-					}]
-				},{
-					xtype: 'textarea',
-					 anchor: '100%',
-				    fieldLabel:'Content'
-				}] 
-	  }];
+		xtype : 'panel',
+		layout:'table',
+		id: 'modx-resource-products-columns',
+		defaults: {
+			labelSeparator: '',
+			border: false,
+			msgTarget: 'under'
+		},
+		layoutConfig: {
+			columns: 4,
+			tableAttrs: {
+				cellspacing : 8,
+				style: {
+					width: '100%'
+				}
+			},
+		},
+		items : [{
+			xtype: 'label',
+			width : 150,
+			cls : 'product-form-label',
+			text: 'Name'
+		},{
+			xtype: 'textfield',
+			width : 205
+		},{
+			xtype: 'label',
+			style : 'color : silver; float: right; padding-top: 8px; margin-right: 8px;',
+			text: 'Active?'
+		},{
+			xtype : 'combo',
+			editable: true,
+			width:60
+		},
+
+
+		{
+			xtype: 'label',
+			width : 150,
+			cls : 'product-form-label',
+			text: 'SKU'
+		},{
+			xtype: 'textfield',
+			width : 205
+		},{
+			xtype: 'label',
+			cls : 'product-form-label',
+			text: 'Vendor SKU'
+		},{
+			xtype: 'textfield',
+			width : 205
+		},
+
+
+		{
+			xtype: 'label',
+			width : 150,
+			cls : 'product-form-label',
+			text: 'Description'
+		},{
+			xtype: 'textarea',
+			anchor: '100%',
+			colspan : 3,
+			width : 592
+		},
+
+
+		{
+			xtype: 'label',
+			width : 150,
+			cls : 'product-form-label',
+			text: 'Price'
+		},{
+			xtype: 'textfield',
+			width : 205
+		},{
+			xtype: 'label',
+			cls : 'product-form-label',
+			text: 'Sale Price'
+		},{
+			xtype: 'textfield',
+			width : 205
+		},
+
+
+		{
+			xtype: 'label',
+			width : 150,
+			cls : 'product-form-label',
+			html: 'Strike-<br>Through Price'
+		},{
+			xtype: 'textfield',
+			width : 205
+		},{
+			xtype: 'label',
+			cls : 'product-form-label',
+			text: 'Sale Start'
+		},{
+			xtype: 'datefield',
+			width : 205
+		},
+
+
+		{
+			xtype: 'label',
+			width : 150,
+			cls : 'product-form-label',
+			text: 'Category'
+		},{
+			xtype : 'combo',
+			width:60
+		},{
+			xtype: 'label',
+			cls : 'product-form-label',
+			text: 'Sale End'
+		},{
+			xtype: 'datefield',
+			width : 205
+		},
+
+
+		{
+			xtype: 'label',
+			width : 150,
+			cls : 'product-form-label',
+			text: 'Inventory'
+		},{
+			xtype: 'textfield',
+			width : 205
+		},{
+			xtype: 'label',
+			cls : 'product-form-label',
+			text: 'Qty Min'
+		},{
+			xtype: 'textfield',
+			width : 205
+		},
+
+
+		{
+			xtype: 'label',
+			width : 150,
+			cls : 'product-form-label',
+			text: 'Alert Qty'
+		},{
+			xtype: 'textfield',
+			width : 205
+		},{
+			xtype: 'label',
+			cls : 'product-form-label',
+			text: 'Qty Max'
+		},{
+			xtype: 'textfield',
+			width : 205
+		},
+
+
+		{
+			xtype: 'label',
+			width : 150,
+			cls : 'product-form-label',
+			text: 'Backorder Cap'
+		},{
+			xtype: 'textfield',
+			width : 205,
+			colspan : 3
+		},
+
+
+		{
+			xtype: 'label',
+			width : 150,
+			cls : 'product-form-label',
+			text: 'Content'
+		},{
+			xtype: 'htmleditor',
+			width : 592,
+			colspan : 3
+		}]
+
+	}];
 }
 
+
+
 function getProductsFields(config){
-	var store = new Ext.data.Store();
-    
-    var cm = new Ext.grid.ColumnModel([
-      {
-        header:'Name',
-        resizable: false,
-        dataIndex: 'state',
-        sortable: true
-      },
-      {
-        header: 'SKU',
-        dataIndex: 'filename',
-        sortable: true
-      },
-      {
-        header: 'Category',
-        dataIndex: 'note',
-        sortable: true
-      },
-      {
-          xtype: 'actioncolumn',
-         items: [ {
-                xtype: 'button',
-               text:'Edit'
-          },
-          {
-                 xtype: 'button',
-               text:'View'
-           }
-        ]
-      }
-    ]);
-    this.productsGrid_panel = new Ext.grid.GridPanel({
-         ds: store,
-         cm: cm,
-         layout:'fit',
-         region:'center',
-         border: true,
-         viewConfig: {
-           autoFill: true,
-           forceFit: true
-         },
-         bbar : new Ext.Toolbar({
-            pageSize: 25,
-            store: store,
-            displayInfo: true,
-            displayMsg: 'Displaying Records {0} - {1} of {2}',
-            emptyMsg: "No Records to display"
-           })
-        });
-	return [{ 
-			layout:'card',
-			activeItem:0,
-			id: 'modx-resource-products-columns',
+	var store = new Ext.data.Store({
+		fields: ['id', 'name', 'sku', 'category'],
+		autoLoad : true,
+		storeId : 'productStore',
+		reader : new Ext.data.JsonReader({
+			idProperty: 'id',
+			root: 'results',
+			totalProperty: 'total',
+			fields: [
+				{name: 'id'},
+				{name: 'name'},
+				{name: 'sku'},
+				{name: 'category'}
+			]
+		}),
+		proxy : new Ext.data.HttpProxy({
+			method: 'GET',
+			prettyUrls: false,
+			url: connector_url+'json_products'
+		})
+	});
+
+	var cm = new Ext.grid.ColumnModel([{
+			header:'Name',
+			resizable: false,
+			dataIndex: 'name',
+			sortable: true
+		},{
+			header: 'SKU',
+			dataIndex: 'sku',
+			sortable: true
+		},{
+			header: 'Category',
+			dataIndex: 'category',
+			sortable: true
+		},{
+			header : 'Action',
+			dataIndex: 'id',
+			sortable: true,
+			renderer : function(value, metaData, record, rowIndex, colIndex, store) {
+			  return '<button role="edit" class="x-btn">Edit</button><button role="view" class="x-btn">View</button>';
+			}
+		}
+	]);
+
+	this.productsGrid_panel = new Ext.grid.GridPanel({
+		ds: store,
+		cm: cm,
+		layout:'fit',
+		region:'center',
+		border: true,
+		viewConfig: {
+			autoFill: true,
+			forceFit: true
+		},
+		listeners : {
+			afterrender : function(){
+				this.getStore().load();
+			},
+			cellclick : function(grid, rowIndex, columnIndex, e) {
+				var record = grid.getStore().getAt(rowIndex),
+					fieldName = grid.getColumnModel().getDataIndex(columnIndex);
+				if(fieldName === 'id'){
+					if(e.target.innerHTML === 'Edit'){
+
+					} else if(e.target.innerHTML === 'View'){
+
+					}
+				}
+			}
+		},
+		bbar: new Ext.PagingToolbar({
+			store: store,
+			displayInfo: true,
+			pageSize: 30,
+			prependButtons: true
+		})
+	});
+
+	return [{
+		layout:'card',
+		activeItem:0,
+		id: 'modx-resource-products-columns',
+		defaults: {
+			labelSeparator: ''
+			,labelAlign: 'top'
+			,border: false
+			,msgTarget: 'under'
+		},
+		items:[{
+			layout:'border',
+			id: 'modx-resource-productsList-columns',
 			defaults: {
 				labelSeparator: ''
 				,labelAlign: 'top'
@@ -831,160 +1072,163 @@ function getProductsFields(config){
 				,msgTarget: 'under'
 			},
 			items:[{
-				 layout:'border',
-			     id: 'modx-resource-productsList-columns'
-				,defaults: {
-					labelSeparator: ''
-					,labelAlign: 'top'
-					,border: false
-					,msgTarget: 'under'
-				},
-				items:[
-					{
-						region:'north',
-						layout:'column',
-						columns:6,
-						height:60,
-						xtype:'panel',
-						items:[
-							{
-								xtype: 'button',
-							   text:'Add Product',
-							   listeners: {
-									'click': {fn: function(){
-										document.location='index.php?id=2&a=79&parent=2&type=regular';
-									}, scope: this}
-								}
-							 },{
-								xtype: 'button',
-								text:'Manage Inventory'
-							 },{
-								border:false,
-								xtype: 'displayfield',
-								value:'&nbsp;',
-								columnWidth:.20
-							},{
-								xtype: 'textfield',
-								emptyText:'Search..'
-							},{
-								xtype: 'button',
-							   text:'Filter'
-						    },{
-								xtype: 'button',
-								 text:'Show All'
-							 }
-						]
-					},
-					this.productsGrid_panel
-				] 
-		   },{
-				layout:'form'
-				,anchor: '100%'
-				,id: 'modx-resource-Addproducts-columns'
-				,defaults: {
-					labelSeparator: ''
-					,labelAlign: 'top'
-					,border: false
-					,msgTarget: 'under'
-				},
+				region:'north',
+				layout:'column',
+				columns:6,
+				height:60,
+				xtype:'panel',
 				items:[{
-						layout:'column',
-						columns:4,
-						height:50,
-						xtype:'panel',
-						items:[{
-						    xtype: 'label',
-							text: 'Name'
-						},{
-						   xtype: 'textfield',
-							flex:1,
-						   fieldLabel:'Name'
-						},{xtype:'spacer',anchor:'100%',width:'100%'},{
-						    xtype: 'label',
-							text: 'Active?'
-						},new Ext.form.ComboBox({fieldLabel: 'Active?',editable: true,flex:1,width:60})]
+					xtype: 'button',
+					text:'Add Product',
+					listeners: {
+						'click': {fn: function(){
+							MODx.loadPage(MODx.action['moxycart:product_create'], '?f=product_create');
+						}, scope: this}
+					}
 				},{
-						region:'north',
-						layout:'column',
-						columns:4,
-						height:50,
-						xtype:'panel',
-						items:[{
-						    xtype: 'label',
-							text: 'SKU'
-						},{
-						   xtype: 'textfield',
-						   flex:1,
-						   fieldLabel:'SKU'
-						},{
-						    xtype: 'label',
-							text: 'Vendor SKU'
-						},{
-						   xtype: 'textfield',
-						   flex:1,
-						   fieldLabel:'Vendor SKU'
-						}]
+					xtype: 'button',
+					text:'Manage Inventory'
 				},{
-				    xtype: 'textarea',
-					 anchor: '100%',
-				    fieldLabel:'Description'
+					xtype: 'button',
+					padding : 0,
+					cls : 'divided-btn',
+					width : 95,
+					text:'Set Manual<br>Sort Order'
+				},{
+					border:false,
+					xtype: 'displayfield',
+					value:'&nbsp;',
+					columnWidth:.20
 				},{
 					xtype: 'textfield',
-					fieldLabel:'Price'
+					emptyText:'Search..'
 				},{
-					 xtype: 'textfield',
-					fieldLabel:'Strike Through Price'
-				},new Ext.form.ComboBox({fieldLabel: 'Category',editable: true,width:60}),
-				{
-						region:'north',
-						layout:'column',
-						columns:4,
-						height:50,
-						xtype:'panel',
-						items:[{
-						    xtype: 'label',
-							text: 'Inventory'
-						},{
-						   xtype: 'textfield',
-						   fieldLabel:'Inventory'
-						},{
-						    xtype: 'label',
-							text: 'Qty Min.'
-						},{
-						   xtype: 'textfield',
-						   fieldLabel:'Qty Min.'
-						}]
+					xtype: 'button',
+					text:'Filter'
 				},{
-					region:'north',
-					layout:'column',
-					columns:4,
-					height:50,
-					xtype:'panel',
-					items:[{
-						    xtype: 'label',
-							text: 'Alert Qty'
-						},{
-						xtype: 'textfield',
-						fieldLabel:'Alert Qty'
-					},{
-						    xtype: 'label',
-							text: 'Qty Max.'
-						},{
-						 xtype: 'textfield',
-						fieldLabel:'Qty Max.'
-					}]
+					xtype: 'button',
+					text:'Show All'
+				}]
+			},
+			this.productsGrid_panel]
+		},{
+			layout:'form',
+			anchor: '100%',
+			id: 'modx-resource-Addproducts-columns',
+			defaults: {
+				labelSeparator: '',
+				labelAlign: 'top',
+				border: false,
+				msgTarget: 'under'
+			},
+			items:[{
+				layout:'column',
+				columns:4,
+				height:50,
+				xtype:'panel',
+				items:[{
+					xtype: 'label',
+					text: 'Name'
 				},{
-					xtype: 'textarea'
-					,name: 'textProduct'
-					,id: 'textProduct'
-					,hideLabel: true
-					,anchor: '100%'
-					,height: 400
-					,grow: false
-				}] 
-		   }]
-	  }];
+					xtype: 'textfield',
+					flex:1,
+					fieldLabel:'Name'
+				},{
+					xtype:'spacer',anchor:'100%',width:'100%'},{
+					xtype: 'label',
+					text: 'Active?'
+				},new Ext.form.ComboBox({fieldLabel: 'Active?',editable: true,flex:1,width:60})]
+			},{
+				region:'north',
+				layout:'column',
+				columns:4,
+				height:50,
+				xtype:'panel',
+				items:[{
+					xtype: 'label',
+					text: 'SKU'
+				},{
+					xtype: 'textfield',
+					flex:1,
+					fieldLabel:'SKU'
+				},{
+					xtype: 'label',
+					text: 'Vendor SKU'
+				},{
+					xtype: 'textfield',
+					flex:1,
+					fieldLabel:'Vendor SKU'
+				}]
+			},{
+				xtype: 'textarea',
+				anchor: '100%',
+				fieldLabel:'Description'
+			},{
+				xtype: 'textfield',
+				fieldLabel:'Price'
+			},{
+				 xtype: 'textfield',
+				fieldLabel:'Strike Through Price'
+			},new Ext.form.ComboBox({fieldLabel: 'Category',editable: true,width:60}),
+			{
+				region:'north',
+				layout:'column',
+				columns:4,
+				height:50,
+				xtype:'panel',
+				items:[{
+				    xtype: 'label',
+					text: 'Inventory'
+				},{
+				   xtype: 'textfield',
+				   fieldLabel:'Inventory'
+				},{
+				    xtype: 'label',
+					text: 'Qty Min.'
+				},{
+				   xtype: 'textfield',
+				   fieldLabel:'Qty Min.'
+				}]
+			},{
+				region:'north',
+				layout:'column',
+				columns:4,
+				height:50,
+				xtype:'panel',
+				items:[{
+					xtype: 'label',
+					text: 'Alert Qty'
+				},{
+					xtype: 'textfield',
+					fieldLabel:'Alert Qty'
+				},{
+					xtype: 'label',
+					text: 'Qty Max.'
+				},{
+					xtype: 'textfield',
+					fieldLabel:'Qty Max.'
+				}]
+			},{
+				xtype: 'textarea'
+				,name: 'textProduct'
+				,id: 'textProduct'
+				,hideLabel: true
+				,anchor: '100%'
+				,height: 400
+				,grow: false
+			}]
+		}]
+	}];
 }
+
+
+
+
+
+
+
+
+
 var triggerDirtyField = function(fld) {
     Ext.getCmp('modx-panel-resource').fieldChangeEvent(fld);
 };
