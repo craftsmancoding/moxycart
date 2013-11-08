@@ -71,6 +71,6 @@ if ($modx->event->name == 'OnPageNotFound') {
             $out = $modx->resource->process();
             $modx->cacheManager->set($fingerprint, $out, $lifetime, $cache_opts);
         }
-
-        $modx->resource->_content = $out;
+        echo $out;
+        die();
 }
