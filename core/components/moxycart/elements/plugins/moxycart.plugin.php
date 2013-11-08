@@ -33,6 +33,9 @@
  *
  * @package moxycart
  **/
+
+$cache_dir = 'moxycart';
+
 if ($modx->event->name == 'OnPageNotFound') {
         $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
@@ -42,7 +45,6 @@ if ($modx->event->name == 'OnPageNotFound') {
         $Product = $modx->getObject('Product',array('uri'=>$uri)); // ??? how can you tell the requested URI?
 
         $lifetime = 0;
-        $cache_dir = 'moxycart';
         $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
 
         if (!$Product) {
@@ -73,4 +75,17 @@ if ($modx->event->name == 'OnPageNotFound') {
         }
         echo $out;
         die();
+}
+
+if ($modx->event->name == 'OnBeforeCacheUpdate') {
+    $dir = MODX_CORE_PATH .'cache/'.$cache_dir;
+    $objects = scandir($dir);
+    foreach ($objects as $object) {
+        if ($object != '.' && $object != '..') {
+            if (filetype($dir.'/'.$object) != 'dir') {
+                @unlink($dir.'/'.$object);
+            } 
+        }
+    }
+    reset($objects);
 }
