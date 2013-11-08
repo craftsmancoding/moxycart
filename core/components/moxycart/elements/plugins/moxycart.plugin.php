@@ -34,19 +34,16 @@
  * @package moxycart
  **/
 if ($modx->event->name == 'OnPageNotFound') {
+        $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
+        $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
-        $pages = $modx->getCollection('Product');
-         if (!$pages) {
-            return;  // it's a real 404
-        } 
-
-        $modx->log(MODX_LOG_LEVEL_ERROR, 'Not Found Product Test: ' . print_r($Product,true));
-        die();
-        $uri = $_SERVER['REQUEST_URI'];
-
+        $uri = substr($_SERVER['REQUEST_URI'], 1);
         $refresh = false; // used if you want to turn off caching (good for testing)
+        $Product = $modx->getObject('Product',array('uri'=>$uri)); // ??? how can you tell the requested URI?
 
-        $Product = $modx->getObject('Product',array('uri'=> ltrim($uri))); // ??? how can you tell the requested URI?
+        $lifetime = 0;
+        $cache_dir = 'moxycart';
+        $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
 
         if (!$Product) {
             return;  // it's a real 404
@@ -76,6 +73,4 @@ if ($modx->event->name == 'OnPageNotFound') {
         }
 
         $modx->resource->_content = $out;
-
-        
 }
