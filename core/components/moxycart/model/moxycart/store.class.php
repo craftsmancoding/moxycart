@@ -190,7 +190,7 @@ class StoreCreateProcessor extends modResourceCreateProcessor {
      * @return boolean
      */
     public function afterSave() {
-        $this->modx->log(1, __FILE__ . print_r($this->object->toArray(), true));
+        //$this->modx->log(1, __FILE__ . print_r($this->object->toArray(), true));
         $this->object->set('class_key','Store');
         $this->object->set('cacheable',true);
         $this->object->set('isfolder',false);

@@ -5,7 +5,7 @@ class TermParents extends xPDOValidationRule {
         $result = false;
         $obj=& $this->validator->object;
         $xpdo=& $obj->xpdo;
-        $xpdo->log(1, 'Running TermParents Validation rule');
+
         $validParentClasses = array('Taxonomy', 'Term');
         if ($obj->Parent && in_array($obj->Parent->class_key, $validParentClasses)) {
            $result = true; 

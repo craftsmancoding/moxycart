@@ -5,7 +5,7 @@ class TaxonomyParents extends xPDOValidationRule {
         $result = false;
         $obj=& $this->validator->object;
         $xpdo=& $obj->xpdo;
-                $xpdo->log(1, 'Running TaxonomyParents Validation rule');
+
         $validParentClasses = array('modDocument', 'modWebLink', 'modSymLink', 'modStaticResource');
         if ($obj->get('parent') === 0 || ($obj->Parent && in_array($obj->Parent->class_key, $validParentClasses))) {
            $result = true; 

@@ -93,7 +93,7 @@
      * Hosts the "Manage Currencies" page
      *
      */
-    public function currencies_manage() {
+    public function currencies_manage($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -104,7 +104,7 @@
     /**
      *
      */
-    public function currency_create() {
+    public function currency_create($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -115,7 +115,7 @@
     /**
      * currency_id
      */
-    public function currency_update() {
+    public function currency_update($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -127,7 +127,7 @@
     /**
      * @param int currency_id
      */
-    public function currency_delete() {
+    public function currency_delete($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -141,7 +141,7 @@
     /**
      *
      */
-    public function images_manage() {
+    public function images_manage($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -152,7 +152,7 @@
     /**
      *
      */
-    public function image_create() {
+    public function image_create($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -163,7 +163,7 @@
     /**
      * image_id
      */
-    public function image_update() {
+    public function image_update($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -175,7 +175,7 @@
     /**
      * @param int image_id
      */
-    public function image_delete() {
+    public function image_delete($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -192,7 +192,7 @@
      *
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
-    public function product_create() {
+    public function product_create($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -205,7 +205,7 @@
      *
      * @param int product_id (from $_GET). Defines the id of the product
      */
-    public function product_update() {
+    public function product_update($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -218,7 +218,7 @@
      *
      * @param int product_id (from $_GET). Defines the id of the product
      */
-    public function product_delete() {
+    public function product_delete($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -233,7 +233,7 @@
      * @param int parent (from $_GET). Defines the id of the parent page.
      * @param int product_id (from $_GET) defines the product_id
      */
-    public function product_inventory() {
+    public function product_inventory($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -246,7 +246,7 @@
      *
      * @param int product_id (from $_GET) defines the product_id
      */
-    public function product_images() {
+    public function product_images($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -260,7 +260,7 @@
      *
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
-    public function product_sort_order() {
+    public function product_sort_order($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -272,7 +272,7 @@
      * Handles editing of a single product spec
      * @param int id (from $_GET).
      */
-    public function product_specs_update() {
+    public function product_specs_update($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -286,7 +286,7 @@
     /**
      * Hosts the "Manage Variation Terms" page
      */
-    public function specs_manage() {
+    public function specs_manage($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -298,7 +298,7 @@
      * Hosts the "Create Variation Term" page
      * @param int vterm_id
      */
-    public function spec_create() {
+    public function spec_create($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -310,7 +310,7 @@
      * Hosts the "Delete Variation Term" page
      * @param int vterm_id
      */
-    public function spec_delete() {
+    public function spec_delete($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -327,7 +327,7 @@
      *
      * @param int product_id (from $_GET). Defines the id of the parent product.
      */
-    public function variation_create() {
+    public function variation_create($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -340,7 +340,7 @@
      *
      * @param int product_id (from $_GET). Defines the id of the product
      */
-    public function variation_update() {
+    public function variation_update($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -353,7 +353,7 @@
      *
      * @param int product_id (from $_GET). Defines the id of the product
      */
-    public function variation_delete() {
+    public function variation_delete($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -369,7 +369,7 @@
     /**
      * Hosts the "Manage Variation Terms" page
      */
-    public function variation_terms_manage() {
+    public function variation_terms_manage($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -381,7 +381,7 @@
      * Hosts the "Create Variation Term" page
      * @param int vterm_id
      */
-    public function variation_term_create() {
+    public function variation_term_create($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -393,7 +393,7 @@
      * Hosts the "Delete Variation Term" page
      * @param int vterm_id
      */
-    public function variation_term_delete() {
+    public function variation_term_delete($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -408,7 +408,7 @@
      * Hosts the "Manage Variation Types" page
      *
      */
-    public function variation_types_manage() {
+    public function variation_types_manage($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -420,7 +420,7 @@
      * Hosts the "Manage Variation Types" page
      *
      */
-    public function variation_type_create() {
+    public function variation_type_create($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -432,7 +432,7 @@
      * Hosts the "Manage Variation Terms" page
      * @param int vtype_id
      */
-    public function variation_type_delete() {
+    public function variation_type_delete($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -449,7 +449,7 @@
      * Hosts the "Delete Variation Term" page
      * @param int vterm_id
      */
-    public function welcome() {
+    public function welcome($args) {
         $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
@@ -463,12 +463,12 @@
     /**
      * FoxyCart Categories... TODO: query the API!
      */
-    public function json_categories() {
+    public function json_categories($args) {
 
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'name');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'name');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
         
         //$criteria = $this->modx->newQuery('modTemplate');
         //$criteria->where();
@@ -494,12 +494,12 @@
     
     }
 
-    public function json_currencies() {
+    public function json_currencies($args) {
 
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'currency_id');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'currency_id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('Currency');
         //$criteria->where();
@@ -530,17 +530,17 @@
      *
      * @return mixed JSON-encoded string or PHP array (depends on $json flag). False on permissions error.
      */
-    public function json_products() {
+    public function json_products($args) {
     
         if (!$this->modx->hasPermission($this->modx->getOption(__FUNCTION__, $this->perms, $this->default_perm))) {
             $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart::'.__FUNCTION__.'] User does not have sufficient privileges.');
             return false;
         }
         
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'product_id');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'product_id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('Product');
         //$criteria->where();
@@ -579,14 +579,14 @@
      
      * Return: spec.name, value, spec.description
      */
-    public function json_product_specs() {
+    public function json_product_specs($args) {
         $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
         $spec_id = (int) $this->modx->getOption('spec_id',$_REQUEST);
         
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'id');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('ProductSpecs');
         
@@ -619,13 +619,13 @@
      * product_id ?  if not set, then its for a store     
      * Return: taxonomy.pagetitle, value (1|0)
      */
-    public function json_product_taxonomies() {
+    public function json_product_taxonomies($args) {
         $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
         
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'id');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('ProductTaxonomy');
         
@@ -655,17 +655,27 @@
     }
 
     /**
-     * product_id ?  if not set, then its for a store     
+     * Should show all terms for the given taxonomy. If the product has an association,
+     * then is_checked goes to 1.
+     * This could be used on a product page to show a tag-cloud, or in the manager
      * Return: taxonomy.pagetitle, value (1|0)
      */
-    public function json_product_terms() {
-        return 'TODO';
-        $product_id = (int) $this->modx->getOption('product_id');
+    public function json_product_terms($args) {
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
+        $product_id = (int) $this->modx->getOption('product_id',$args);
+        $term_id = (int) $this->modx->getOption('term_id',$args);
+        $taxonomy_id = (int) $this->modx->getOption('taxonomy_id',$args);
         
-        $criteria = $this->modx->newQuery('ProductTaxonomy');
+        $criteria = $this->modx->newQuery('ProductTerms');
+        // $criteria->where(array('class_key'=>'Term'));
+        $total_pages = $this->modx->getCount('ProductTerms',$criteria);
         
-//        $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('ProductTaxonomy',$criteria);
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('Term',$criteria);
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
         $data = array(
@@ -673,7 +683,10 @@
             'total' => $total_pages,
         );
         foreach ($pages as $p) {
-            $data['results'][] = $p->toArray();
+            $data['results'][] = array(
+                'id' => $p->get('id'),
+                'name' => $p->get('pagetitle')
+            );
         }
 
         return json_encode($data);
@@ -683,13 +696,13 @@
      * product_id ?
      * Return: ???
      */
-    public function json_images() {
+    public function json_images($args) {
         $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
         
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'image_id');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'image_id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('Image');
         
@@ -719,7 +732,7 @@
      * product_id or store_id
      * Return: ???
      */
-    public function json_inventory() {
+    public function json_inventory($args) {
         return 'TODO';
         $product_id = (int) $this->modx->getOption('product_id');
         
@@ -743,12 +756,12 @@
     /**
      *
      */
-    public function json_specs() {
+    public function json_specs($args) {
 
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'spec_id');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'spec_id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('Spec');
         //$criteria->where();
@@ -772,12 +785,11 @@
     }
 
 
-    public function json_stores() {
-
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'menuindex');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+    public function json_stores($args) {
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'menuindex');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('Store');
         $criteria->where(array('class_key'=>'Store'));
@@ -808,18 +820,28 @@
      * store_id (id)
      *
      * Gathers all available specs from the db, then gathers page's list of checked specs
-     * and returns a list of all specs and a 1|0 value for each.
+     * and returns a list of all specs and a 1|0 value for each. 
+     * Returns a recordset.
      *
+     * In the store
      * 
-     * Return: spec.name, value (1|0)
+     * Return: as json_specs, but with a 0|1 value set for 'is_checked' added
      */
-    public function json_store_specs() {
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'spec_id');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
-        $store_id = (int) $this->modx->getOption('store_id',$_POST);
-                
+    public function json_store_specs($args) {
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'spec_id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
+        $store_id = (int) $this->modx->getOption('store_id',$args);
+
+        $Store = $this->modx->getObject('Store', $store_id);
+        if (!$Store) {
+            $this->modx->log(xPDO::LOG_LEVEL_ERROR, 'Store not found: '.$store_id);
+            return 'Invalid store. Include valid store_id'; 
+        }
+        $properties = $Store->get('properties');
+        $specs = $this->modx->getOption('specs',$properties);
+        
         $criteria = $this->modx->newQuery('Spec');
         //$criteria->where();
         $total_pages = $this->modx->getCount('Spec',$criteria);
@@ -835,14 +857,17 @@
         );
         foreach ($pages as $p) {
             $vals = $p->toArray();
-            $vals['is_checked'] = 0; // normalize
+            if (isset($specs[$p->get('spec_id')])) {
+                $vals['is_checked'] = 1; 
+            }
+            else {
+                $vals['is_checked'] = 0; 
+            }
+            
             $data['results'][] = $vals;
         }
 
-        $Store = $this->modx->getObject('Store', $store_id);
-        if ($Store) {
-            $properties = $Store->get('properties');
-        }
+
         return json_encode($data);
     }
 
@@ -851,18 +876,32 @@
      * store_id (id)
      *
      * Gathers all available taxonomies from db, then gathers page's list of checked taxonomies
-     * and returns a list of all taxonomies and a 1|0 value for each.
+     * and returns a list of all taxonomies and a 1|0 value for each. is_checked
      *
      * Return: taxonomy.pagetitle, taxonomy.id, value (1|0)
      */
-    public function json_store_taxonomies() {
-        return 'TODO';
-        $product_id = (int) $this->modx->getOption('product_id');
+    public function json_store_taxonomies($args) {
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
+        $store_id = (int) $this->modx->getOption('store_id',$args);
+
+        $Store = $this->modx->getObject('Store', $store_id);
+        if (!$Store) {
+            $this->modx->log(xPDO::LOG_LEVEL_ERROR, 'Store not found: '.$store_id);
+            return 'Invalid store. Include valid store_id'; 
+        }
+        $properties = $Store->get('properties');
+        $taxonomies = $this->modx->getOption('taxonomies',$properties);
+                
+        $criteria = $this->modx->newQuery('Taxonomy');
+        $criteria->where(array('class_key'=>'Taxonomy'));
+        $total_pages = $this->modx->getCount('Taxonomy',$criteria);
         
-        $criteria = $this->modx->newQuery('ProductTaxonomy');
-        
-//        $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('ProductTaxonomy',$criteria);
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('Taxonomy',$criteria);
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
         $data = array(
@@ -870,7 +909,15 @@
             'total' => $total_pages,
         );
         foreach ($pages as $p) {
-            $data['results'][] = $p->toArray();
+            $is_checked = 0;
+            if (isset($taxonomies[$p->get('id')])) {
+                $is_checked = 1;    
+            }
+            $data['results'][] = array(
+                'id' => $p->get('id'),
+                'pagetitle' => $p->get('pagetitle'),
+                'is_checked' => $is_checked
+            );
         }
 
         return json_encode($data);
@@ -885,14 +932,28 @@
      *
      * Return: variation_type.name, taxonomy.id, value (1|0)
      */
-    public function json_store_variation_types() {
-        return 'TODO';
-        $product_id = (int) $this->modx->getOption('product_id');
+    public function json_store_variation_types($args) {
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'vtype_id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
+        $store_id = (int) $this->modx->getOption('store_id',$args);
+
+        $Store = $this->modx->getObject('Store', $store_id);
+        if (!$Store) {
+            $this->modx->log(xPDO::LOG_LEVEL_ERROR, 'Store not found: '.$store_id);
+            return 'Invalid store. Include valid store_id'; 
+        }
+        $properties = $Store->get('properties');
+        $specs = $this->modx->getOption('variation_types',$properties);
         
-        $criteria = $this->modx->newQuery('ProductTaxonomy');
+        $criteria = $this->modx->newQuery('VariationType');
+        //$criteria->where();
+        $total_pages = $this->modx->getCount('VariationType',$criteria);
         
-//        $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('ProductTaxonomy',$criteria);
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('VariationType',$criteria);
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
         $data = array(
@@ -900,18 +961,27 @@
             'total' => $total_pages,
         );
         foreach ($pages as $p) {
-            $data['results'][] = $p->toArray();
+            $vals = $p->toArray();
+            if (isset($specs[$p->get('vtype_id')])) {
+                $vals['is_checked'] = 1; 
+            }
+            else {
+                $vals['is_checked'] = 0; 
+            }
+            
+            $data['results'][] = $vals;
         }
+
 
         return json_encode($data);
     }
 
     
-    public function json_taxonomies() {
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'id');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+    public function json_taxonomies($args) {
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('Taxonomy');
         $criteria->where(array('class_key'=>'Taxonomy'));
@@ -937,12 +1007,12 @@
         
     }
 
-    public function json_terms() {
+    public function json_terms($args) {
 
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'menuindex');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'menuindex');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('Term');
         $criteria->where(array('class_key'=>'Term'));
@@ -972,12 +1042,12 @@
     /**
      *
      */
-    public function json_templates() {
+    public function json_templates($args) {
 
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'id');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('modTemplate');
         //$criteria->where();
@@ -1006,11 +1076,11 @@
 
 
     
-    public function json_variations() {
-        $limit = (int) $this->modx->getOption('limit',$_POST,10);
-        $start = (int) $this->modx->getOption('start',$_POST,0);
-        $sort = $this->modx->getOption('sort',$_POST,'vtype_id');
-        $dir = $this->modx->getOption('dir',$_POST,'ASC');
+    public function json_variation_types($args) {
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'vtype_id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('VariationType');
         //$criteria->where();
@@ -1038,7 +1108,7 @@
      *
      * taxonomy_id 
      */
-    public function json_variation_terms() {
+    public function json_variation_terms($args) {
         return 'TODO';
         $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
         
