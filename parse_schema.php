@@ -8,6 +8,12 @@ $modx = new modX();
 $modx->initialize('mgr');
 
 
+ 
+
+
+        
+
+
 
 // http://rtfm.modx.com/display/revolution20/Creating+a+Resource+Class
 //------------------------------------------------------------------------------
@@ -112,6 +118,7 @@ $generator->parseSchema($xml_schema_file,$model_dir);
 if(!$xpdo->addPackage('moxycart',$adjusted_core_path.'components/moxycart/model/',$my_table_prefix)) {
     return 'Package Error.';
 }
+
 
 
 // Clear out Tables

@@ -531,7 +531,7 @@
      * @return mixed JSON-encoded string or PHP array (depends on $json flag). False on permissions error.
      */
     public function json_products($args) {
-    
+        
         if (!$this->modx->hasPermission($this->modx->getOption(__FUNCTION__, $this->perms, $this->default_perm))) {
             $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart::'.__FUNCTION__.'] User does not have sufficient privileges.');
             return false;
