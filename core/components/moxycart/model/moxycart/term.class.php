@@ -207,6 +207,7 @@ class Term extends modResource {
             if ($PrevParent) {
                 $prev_parent_props = $PrevParent->get('properties');
                 unset($prev_parent_props['children'][$this->get('id')]);
+                unset($prev_parent_props['children_ids'][$this->get('id')]);
                 $PrevParent->set('properties',$prev_parent_props);
                 if (!$PrevParent->save()) { // <-- this may ripple up
                     $this->xpdo->log(xPDO::LOG_LEVEL_DEBUG, $this->get('id').': Error saving previous parent '.$prev_parent,'',__CLASS__,basename(__FILE__),__LINE__); 
@@ -231,6 +232,7 @@ class Term extends modResource {
             'menuindex' => $this->get('menuindex'),
             'children' => $children // out of date... arg...
         );
+        $parent_props['children_ids'][$this->get('id')] = true;
         $Parent->set('properties', $parent_props);
         if (!$Parent->save()) { // <-- this may ripple up
             $this->xpdo->log(xPDO::LOG_LEVEL_ERROR, $this->get('id').': Error saving parent '.$this->get('parent'),'',__CLASS__,basename(__FILE__),__LINE__);

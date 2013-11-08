@@ -542,8 +542,16 @@
         $sort = $this->modx->getOption('sort',$args,'product_id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
         
+        $parent_id = (int) $this->modx->getOption('parent_id',$args);
+        $store_id = (int) $this->modx->getOption('store_id',$args);
+        
         $criteria = $this->modx->newQuery('Product');
-        //$criteria->where();
+        if ($parent_id) {
+            $criteria->where(array('parent_id'=>$parent_id));
+        }
+        if ($store_id) {
+            $criteria->where(array('store_id'=>$store_id));
+        } 
         $total_pages = $this->modx->getCount('Product',$criteria);
         
         $criteria->limit($limit, $start); 
@@ -655,22 +663,42 @@
     }
 
     /**
-     * Should show all terms for the given taxonomy. If the product has an association,
-     * then is_checked goes to 1.
-     * This could be used on a product page to show a tag-cloud, or in the manager
-     * Return: taxonomy.pagetitle, value (1|0)
+     * Shows all the terms for the given product, filtered by taxonomy_id or by product_id.
+     * Taxonomy_id is special: you can use it to retrieve hierarchical terms... taxonomy_id
+     * can be a term_id. 
      */
     public function json_product_terms($args) {
+             
         $limit = (int) $this->modx->getOption('limit',$args,10);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
+
         $product_id = (int) $this->modx->getOption('product_id',$args);
         $term_id = (int) $this->modx->getOption('term_id',$args);
-        $taxonomy_id = (int) $this->modx->getOption('taxonomy_id',$args);
+        $taxonomy_id = (int) $this->modx->getOption('taxonomy_id',$args); // trickier
         
         $criteria = $this->modx->newQuery('ProductTerms');
-        // $criteria->where(array('class_key'=>'Term'));
+        
+        if ($product_id) {
+            $criteria->where(array('product_id'=>$product_id));
+        }
+        if ($term_id) {
+            $criteria->where(array('term_id'=>$term_id));
+        }
+        if ($taxonomy_id) {
+            $Tax = $this->modx->getObject('modResource', array('id'=>$taxonomy_id, 'class_key'=>'Taxonomy'));
+            
+            if ($Tax) {
+                $properties = $Tax->get('properties');
+                $children_ids = $Tax->getOption('children_ids',$properties,array());
+                $criteria->where(array('term_id:IN'=>$children_ids));
+            }
+            else {
+                $this->modx->log(xPDO::LOG_LEVEL_ERROR, 'Taxonomy not found: '.$taxonomy_id);
+            }
+        }
+
         $total_pages = $this->modx->getCount('ProductTerms',$criteria);
         
         $criteria->limit($limit, $start); 
@@ -728,30 +756,6 @@
         return json_encode($data);
     }
 
-    /**
-     * product_id or store_id
-     * Return: ???
-     */
-    public function json_inventory($args) {
-        return 'TODO';
-        $product_id = (int) $this->modx->getOption('product_id');
-        
-        $criteria = $this->modx->newQuery('ProductTaxonomy');
-        
-//        $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('ProductTaxonomy',$criteria);
-        // return $criteria->toSQL(); <-- useful for debugging
-        // Init our array
-        $data = array(
-            'results'=>array(),
-            'total' => $total_pages,
-        );
-        foreach ($pages as $p) {
-            $data['results'][] = $p->toArray();
-        }
-
-        return json_encode($data);
-    }
 
     /**
      *
@@ -1104,29 +1108,41 @@
     }
     
     /**
-     * Biggest problem here is caching... it's too slow to retrieve hierarchical data.
+     * 
      *
-     * taxonomy_id 
+     * vtype_id
      */
     public function json_variation_terms($args) {
-        return 'TODO';
-        $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
+        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'vterm_id');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
         
-        $criteria = $this->modx->newQuery('ProductTaxonomy');
+        $vtype_id = (int) $this->modx->getOption('vtype_id',$args);
         
-//        $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('ProductTaxonomy',$criteria);
-        // return $criteria->toSQL(); <-- useful for debugging
+        $criteria = $this->modx->newQuery('VariationTerm');
+        if ($vtype_id) {
+            $criteria->where(array('vtype_id'=>$parent_id));
+        }
+
+        $total_pages = $this->modx->getCount('VariationTerm',$criteria);
+        
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollectionGraph('VariationTerm','{"Type":{}}',$criteria);
+        //return $criteria->toSQL(); //<-- useful for debugging
         // Init our array
         $data = array(
             'results'=>array(),
             'total' => $total_pages,
         );
         foreach ($pages as $p) {
-            $data['results'][] = $p->toArray();
+            $val = $p->toArray();
+            $val['variation_type'] = $p->Type->get('name');
+            $data['results'][] = $val;
         }
 
-        return json_encode($data);
+        return json_encode($data);    
     }
 
 
