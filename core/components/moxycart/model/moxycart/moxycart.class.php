@@ -456,6 +456,7 @@
         //$this->addJavascript($assetsUrl'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Welcome page!</div>';
     }
+
    
     //------------------------------------------------------------------------------
     //! AJAX Store stuff
@@ -588,9 +589,8 @@
      * Return: spec.name, value, spec.description
      */
     public function json_product_specs($args) {
-        $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
-        $spec_id = (int) $this->modx->getOption('spec_id',$_REQUEST);
-        
+        $product_id = (int) $this->modx->getOption('product_id',$args);
+        $spec_id = (int) $this->modx->getOption('spec_id',$args);
         $limit = (int) $this->modx->getOption('limit',$args,10);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
@@ -610,14 +610,17 @@
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
         $pages = $this->modx->getCollection('ProductSpecs',$criteria);
+
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
         $data = array(
             'results'=>array(),
             'total' => $total_pages,
         );
-        foreach ($pages as $p) {
-            $data['results'][] = $p->toArray();
+        if($pages) {
+            foreach ($pages as $p) {
+                $data['results'][] = $p->toArray();
+            }
         }
 
         return json_encode($data);

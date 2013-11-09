@@ -1,6 +1,6 @@
 <?php
 /**
- * getProducts snippet for moxycart extra
+ * gettaxonomies snippet for moxycart extra
  *
  * Copyright 2013 by Everett Griffiths everett@craftsmancoding.com
  * Created on 07-05-2013
@@ -24,12 +24,12 @@
 /**
  * Description
  * -----------
- * Returns a list of products.
+ * Returns a list of taxonomies.
  *
  * Parameters
  * -----------------------------
- * @param string $outerTpl Format the Outer Wrapper of List
- * @param string $innerTpl Format the Inner Item of List
+ * @param string $outerTpl Format the Outer Wrapper of  List
+ * @param string $innerTpl Format the Inner Item of  List
  *
  * Variables
  * ---------
@@ -42,12 +42,13 @@ $outerTpl = $modx->getOption('outerTpl',$scriptProperties,'MoxyOuterTpl');
 $innerTpl = $modx->getOption('innerTpl',$scriptProperties,'MoxyInnerTpl');
 
 $modx->getService('moxycart');
-$products = $modx->moxycart->json_products($scriptProperties, true);
-$products = json_decode($products,true);
+$taxonomies = $modx->moxycart->json_taxonomies($scriptProperties, true);
+$taxonomies = json_decode($taxonomies,true);
+
 $innerOut = '';
 $output = '';
-if (isset($products['results']) && is_array($products['results'])) {
-	foreach ($products['results'] as $row) {
+if (isset($taxonomies['results']) && is_array($taxonomies['results'])) {
+	foreach ($taxonomies['results'] as $row) {
    		$innerOut .= $modx->getChunk($innerTpl,$row);
 	}
 }
