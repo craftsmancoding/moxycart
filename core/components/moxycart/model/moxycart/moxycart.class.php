@@ -426,6 +426,7 @@
         //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Welcome page!</div>';
     }
+
    
     //------------------------------------------------------------------------------
     //! AJAX Store stuff
@@ -503,6 +504,7 @@
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
+
     public function json_products($args,$raw=false) {
     
 /*
@@ -567,9 +569,13 @@
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
+
     public function json_product_specs($args,$raw=false) {
         
+        $product_id = (int) $this->modx->getOption('product_id',$args);
+        $spec_id = (int) $this->modx->getOption('spec_id',$args);
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
+
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -590,15 +596,19 @@
         
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
+
         $pages = $this->modx->getCollectionGraph('ProductSpec','{"Spec":{}}',$criteria);
+
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
         $data = array(
             'results'=>array(),
             'total' => $total_pages,
         );
-        foreach ($pages as $p) {
-            $data['results'][] = $p->toArray();
+        if($pages) {
+            foreach ($pages as $p) {
+                $data['results'][] = $p->toArray();
+            }
         }
 
         if ($raw) {
