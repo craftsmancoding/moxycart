@@ -1,3 +1,21 @@
+function getQueryParams(qs) {
+    qs = qs.split("+").join(" ");
+
+    var params = {}, tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])]
+            = decodeURIComponent(tokens[2]);
+    }
+    return params;
+}
+
+var connector_url = "http://future.thefutureforward.com/~knives/assets/components/moxycart/connector.php?f=",
+	query = getQueryParams(document.location.search),
+	pid = query.id;
+
+
 function renderProduct(){
 	var tabPanel = Ext.getCmp("modx-resource-tabs");
 	
@@ -127,7 +145,14 @@ function renderProduct(){
 		
 		tabPanel.insert(0, productTab);
 		tabPanel.setActiveTab(0);
+		var tabs = tabPanel.items.items, delTabs = false, ids = [];
+		for(n in tabs) {
+			if(delTabs) ids.push(tabs[n].id);
+			if(!delTabs && tabs[n].title === 'Taxonomies') delTabs = true;
+		}
+		for(i in ids) tabPanel.remove(Ext.getCmp(ids[i]));
 		tabPanel.doLayout();
+		Ext.getCmp('modx-resource-content').hide();
 	}
 }
 function renderProductContainer(isProductContainerCreate, config){
@@ -442,15 +467,19 @@ function getSpecs(container){
 function getTaxonomies(container){
 	Ext.Ajax.request({
 		url: connector_url+'json_store_taxonomies',
+		params : {
+			store_id : pid
+		},
+		method : 'GET',
 		success: function(response, opts) {
-			if(response.responseText === 'TODO'){
-				Ext.MessageBox.alert('Warning', 'Could not load product taxonomies checkboxes');
+			if(response.responseText === 'Invalid store. Include valid store_id'){
+				///Ext.MessageBox.alert('Warning', 'Could not load product taxonomies checkboxes');
 				return;
 			}
 			var obj = Ext.decode(response.responseText);
 			if(obj && obj.results){
 				for(n in obj.results){
-					if(obj.results[n].id) container.add({ xtype : 'checkbox', boxLabel : obj.results[n].name });
+					if(obj.results[n].id) container.add({ xtype : 'checkbox', boxLabel : obj.results[n].pagetitle, checked : obj.results[n].is_checked });
 				}
 			}
 		}
@@ -460,7 +489,11 @@ function getTaxonomies(container){
 
 function getVariations(container){
 	Ext.Ajax.request({
-		url: connector_url+'json_variations',
+		url: connector_url+'json_store_variation_types',
+		params : {
+			store_id : pid
+		},
+		method : 'GET',
 		success: function(response, opts) {
 			var obj = Ext.decode(response.responseText);
 			if(obj && obj.results){
@@ -786,6 +819,31 @@ function getCreateProductFields(config){
 
 
 function getProductsTabFields(){
+	var categoryStore = new Ext.data.Store({
+		fields: ['id', 'name'],
+		autoLoad : true,
+		storeId : 'categories',
+		reader : new Ext.data.JsonReader({
+		    idProperty: 'id',
+		    root: 'results',
+		    totalProperty: 'total',
+		    fields: [
+		        {name: 'id'},
+		        {name: 'name'}
+		    ]
+		}),
+		proxy : new Ext.data.HttpProxy({
+		    method: 'GET',
+		    prettyUrls: false,
+		    url: connector_url+'json_categories',
+		}),
+		listeners : {
+			load : function(){
+				var dt =  Ext.getCmp('categories');
+				dt.setValue(this.getAt(0).data.name);
+			}
+		}
+	});
 	return [{
 		xtype : 'panel',
 		layout:'table',
@@ -819,7 +877,22 @@ function getProductsTabFields(){
 		},{
 			xtype : 'combo',
 			editable: true,
-			width:60
+			width:60,
+			editable: false,
+			triggerAction: 'all',
+			mode: 'local',
+			typeAhead: true,
+			displayField:'name',
+			valueField:'value',
+			value : 1,
+			store:new Ext.data.ArrayStore({
+				autoDestroy: true,
+				fields: [
+				   {name: 'name'},
+				   {name: 'value'}
+				],
+				data:[['Yes', 1], ['No', 0]]
+			})
 		},
 
 
@@ -897,7 +970,16 @@ function getProductsTabFields(){
 			text: 'Category'
 		},{
 			xtype : 'combo',
-			width:60
+			editable: true,
+			id : 'categories',
+			mode : 'remote',
+			width : 205,
+			typeAhead: false,
+			triggerAction: 'all',
+			lastQuery: '',
+			displayField : 'name',
+			valueField : 'name',
+			store: 'categories'
 		},{
 			xtype: 'label',
 			cls : 'product-form-label',
@@ -1082,7 +1164,7 @@ function getProductsFields(config){
 					text:'Add Product',
 					listeners: {
 						'click': {fn: function(){
-							MODx.loadPage(MODx.action['moxycart:product_create'], '?f=product_create');
+							MODx.loadPage(MODx.action['moxycart:index'], 'f=product_create');
 						}, scope: this}
 					}
 				},{

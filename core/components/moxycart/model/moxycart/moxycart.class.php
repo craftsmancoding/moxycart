@@ -33,7 +33,9 @@
 
     private $core_path;
     private $assets_url;
-
+    private $mgr_url;
+    private $default_limit;
+    
     /**
      * Map a function name to a MODX permission, e.g. 
      * 'edit_product' => 'edit_document'
@@ -48,12 +50,13 @@
      */
     private $default_perm = 'view_document';
 
-    public function __construct(&$modx, &$config = array()) {
+    public function __construct(&$modx) {
         $this->modx =& $modx;
-        $this->props =& $config;
         $this->core_path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
         $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
+        $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $this->modx->addPackage('moxycart',$this->core_path.'components/moxycart/model/','moxy_');
+        $this->default_limit = $this->modx->getOption('default_per_page'); // TODO: read from a MC setting?
     }
     
     /**
@@ -94,10 +97,8 @@
      *
      */
     public function currencies_manage($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Manage Currencies here.</div>';
     }
 
@@ -105,10 +106,8 @@
      *
      */
     public function currency_create($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Create a Currency here.</div>';
     }
 
@@ -116,10 +115,8 @@
      * currency_id
      */
     public function currency_update($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Update a Currency here.</div>';
     }
 
@@ -128,10 +125,8 @@
      * @param int currency_id
      */
     public function currency_delete($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Delete Currency here</div>';
     }
  
@@ -142,10 +137,8 @@
      *
      */
     public function images_manage($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Manage Images here.</div>';
     }
 
@@ -153,10 +146,8 @@
      *
      */
     public function image_create($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Upload an image here.</div>';
     }
 
@@ -164,10 +155,8 @@
      * image_id
      */
     public function image_update($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Update an image here.</div>';
     }
 
@@ -176,10 +165,8 @@
      * @param int image_id
      */
     public function image_delete($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Delete Image here</div>';
     } 
     
@@ -193,11 +180,32 @@
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
     public function product_create($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
-        // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">This is the Create Product Page.</div>';
+    	
+    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/util/datetime.js');
+    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/element/modx.panel.tv.renders.js');
+    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.grid.resource.security.local.js');	
+    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.tv.js');
+    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.js');
+        $this->modx->regClientStartupScript($this->mgr_url.'assets/modext/sections/resource/create.js');	
+    	$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
+    	
+    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+    		Ext.onReady(function() {
+    
+    			MODx.load({
+    				xtype: "modx-page-resource-create",
+    				canSave:true,
+    				mode:"create"
+    			});
+    		
+    			renderProduct();
+    		
+    		});
+    		</script>
+    	');	
+    
+        return '<div id="modx-panel-resource-div"> </div>';
+    
     }
 
     /**
@@ -206,10 +214,8 @@
      * @param int product_id (from $_GET). Defines the id of the product
      */
     public function product_update($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">This is the Update Product Page.</div>';
     }
 
@@ -219,10 +225,8 @@
      * @param int product_id (from $_GET). Defines the id of the product
      */
     public function product_delete($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Delete Product Page.</div>';
     }
 
@@ -234,10 +238,8 @@
      * @param int product_id (from $_GET) defines the product_id
      */
     public function product_inventory($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Manage your inventory here.</div>';
     }
 
@@ -247,10 +249,8 @@
      * @param int product_id (from $_GET) defines the product_id
      */
     public function product_images($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Handles Product Image updates</div>';
     }
 
@@ -261,10 +261,8 @@
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
     public function product_sort_order($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Sort your products manually, using drag-and-drop.</div>';
     }
 
@@ -273,10 +271,8 @@
      * @param int id (from $_GET).
      */
     public function product_specs_update($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Update Product spec</div>';
     }
 
@@ -287,10 +283,8 @@
      * Hosts the "Manage Variation Terms" page
      */
     public function specs_manage($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Manage your Specs.</div>';
     }
 
@@ -299,10 +293,8 @@
      * @param int vterm_id
      */
     public function spec_create($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Create spec.</div>';
     }
 
@@ -311,10 +303,8 @@
      * @param int vterm_id
      */
     public function spec_delete($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Delete spec</div>';
     }
 
@@ -328,10 +318,8 @@
      * @param int product_id (from $_GET). Defines the id of the parent product.
      */
     public function variation_create($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">This is the Create Variation Page.</div>';
     }
 
@@ -341,10 +329,8 @@
      * @param int product_id (from $_GET). Defines the id of the product
      */
     public function variation_update($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">This is the Update Variation Page.</div>';
     }
 
@@ -354,10 +340,8 @@
      * @param int product_id (from $_GET). Defines the id of the product
      */
     public function variation_delete($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Delete Variation Page.</div>';
     }
     
@@ -370,10 +354,8 @@
      * Hosts the "Manage Variation Terms" page
      */
     public function variation_terms_manage($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Manage your Variation Terms here.</div>';
     }
 
@@ -382,10 +364,8 @@
      * @param int vterm_id
      */
     public function variation_term_create($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Create variation term.</div>';
     }
 
@@ -394,10 +374,8 @@
      * @param int vterm_id
      */
     public function variation_term_delete($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Delete variation term.</div>';
     }
 
@@ -409,10 +387,8 @@
      *
      */
     public function variation_types_manage($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Manage your Variation Types here.</div>';
     }
 
@@ -421,10 +397,8 @@
      *
      */
     public function variation_type_create($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Create a Variation Type here.</div>';
     }
 
@@ -433,10 +407,8 @@
      * @param int vtype_id
      */
     public function variation_type_delete($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Delete a Variation Type here</div>';
     }
 
@@ -450,10 +422,8 @@
      * @param int vterm_id
      */
     public function welcome($args) {
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         // Add Required JS files here:
-        //$this->addJavascript($assetsUrl'components/moxycart/test.js');
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Welcome page!</div>';
     }
 
@@ -463,41 +433,39 @@
     //------------------------------------------------------------------------------
     /**
      * FoxyCart Categories... TODO: query the API!
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_categories($args) {
+    public function json_categories($args,$raw=false) {
 
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'name');
         $dir = $this->modx->getOption('dir',$args,'ASC');
         
-        //$criteria = $this->modx->newQuery('modTemplate');
-        //$criteria->where();
-        //$total_pages = $this->modx->getCount('modTemplate',$criteria);
         $total_pages = 1;
-        //$criteria->limit($limit, $start); 
-        //$criteria->sortby($sort,$dir);
-        //$pages = $this->modx->getCollection('modTemplate',$criteria);
         
         // Init our array
         $data = array(
             'results'=>array(array('name'=>'Default')),
             'total' => $total_pages,
         );
-        //foreach ($pages as $p) {
-            // $data['results'][] = $p->toArray(); // <-- too much info!
-        //    $data['results'][] = array(
-        //        'name' => 'Default'
-        //    );
-        //}
-        
-        return json_encode($data);
-    
+
+        if ($raw) {
+            return $data;
+        }
+        return json_encode($data);    
     }
 
-    public function json_currencies($args) {
+    /**
+     *
+     *
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
+     */
+    public function json_currencies($args,$raw=false) {
 
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'currency_id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -519,7 +487,11 @@
             $data['results'][] = $p->toArray();
         }
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
         
     }
     
@@ -529,16 +501,20 @@
      *
      * @param array arguents including limit, start, sort, dir
      *
-     * @return mixed JSON-encoded string or PHP array (depends on $json flag). False on permissions error.
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_products($args) {
-        
+
+    public function json_products($args,$raw=false) {
+    
+/*
         if (!$this->modx->hasPermission($this->modx->getOption(__FUNCTION__, $this->perms, $this->default_perm))) {
             $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart::'.__FUNCTION__.'] User does not have sufficient privileges.');
             return false;
         }
+*/
         
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'product_id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -558,7 +534,7 @@
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
         $pages = $this->modx->getCollection('Product',$criteria);
-        //return $criteria->toSQL(); //<-- useful for debugging
+        // return $criteria->toSQL(); //<-- useful for debugging
         // Init our array
         $data = array(
             'results'=>array(),
@@ -579,33 +555,46 @@
             );
         }
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
     
     }
 
     /**
      * product_id
      
-     * Return: spec.name, value, spec.description
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_product_specs($args) {
+
+    public function json_product_specs($args,$raw=false) {
+        
         $product_id = (int) $this->modx->getOption('product_id',$args);
+
         $limit = (int) $this->modx->getOption('limit',$args,10);
+
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
-        
-        $criteria = $this->modx->newQuery('ProductSpecs');
+
+        $product_id = (int) $this->modx->getOption('product_id',$args);
+        $spec_id = (int) $this->modx->getOption('spec_id',$args);
+                
+        $criteria = $this->modx->newQuery('ProductSpec');
         
         if ($product_id) {
             $criteria->where(array('product_id'=>$product_id));
         }
                 
-        $total_pages = $this->modx->getCount('ProductSpecs',$criteria);
+        $total_pages = $this->modx->getCount('ProductSpec',$criteria);
         
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('ProductSpecs',$criteria);
+
+        $pages = $this->modx->getCollectionGraph('ProductSpec','{"Spec":{}}',$criteria);
 
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
@@ -626,17 +615,22 @@
             }
         }
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
     }
 
     /**
      * product_id ?  if not set, then its for a store     
-     * Return: taxonomy.pagetitle, value (1|0)
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_product_taxonomies($args) {
+    public function json_product_taxonomies($args,$raw=false) {
         $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
         
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -665,17 +659,23 @@
             );
         }
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
     }
 
     /**
      * Shows all the terms for the given product, filtered by taxonomy_id or by product_id.
      * Taxonomy_id is special: you can use it to retrieve hierarchical terms... taxonomy_id
      * can be a term_id. 
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)     
      */
-    public function json_product_terms($args) {
+    public function json_product_terms($args,$raw=false) {
              
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -697,7 +697,7 @@
             
             if ($Tax) {
                 $properties = $Tax->get('properties');
-                $children_ids = $Tax->getOption('children_ids',$properties,array());
+                $children_ids = array_keys($Tax->getOption('children_ids',$properties,array()));
                 $criteria->where(array('term_id:IN'=>$children_ids));
             }
             else {
@@ -724,17 +724,23 @@
             );
         }
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
     }
 
     /**
      * product_id ?
-     * Return: ???
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
+
     public function json_images($args) {
         $product_id = (int) $this->modx->getOption('product_id',$args);
         
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'image_id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -760,16 +766,21 @@
             $data['results'][] = $p->toArray();
         }
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
     }
 
 
     /**
-     *
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_specs($args) {
+    public function json_specs($args,$raw=false) {
 
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'spec_id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -791,13 +802,21 @@
             $data['results'][] = $p->toArray();
         }
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
         
     }
 
-
-    public function json_stores($args) {
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+    /**
+     *
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
+     */
+    public function json_stores($args,$raw=false) {
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'menuindex');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -822,7 +841,11 @@
             );
         }
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
         
     }
 
@@ -837,9 +860,11 @@
      * In the store
      * 
      * Return: as json_specs, but with a 0|1 value set for 'is_checked' added
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_store_specs($args) {
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+    public function json_store_specs($args,$raw=false) {
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'spec_id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -879,7 +904,11 @@
         }
 
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
     }
 
 
@@ -890,9 +919,11 @@
      * and returns a list of all taxonomies and a 1|0 value for each. is_checked
      *
      * Return: taxonomy.pagetitle, taxonomy.id, value (1|0)
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)     
      */
-    public function json_store_taxonomies($args) {
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+    public function json_store_taxonomies($args,$raw=false) {
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -931,7 +962,11 @@
             );
         }
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
     }
 
 
@@ -942,9 +977,11 @@
      * and returns a list of all taxonomies and a 1|0 value for each.
      *
      * Return: variation_type.name, taxonomy.id, value (1|0)
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)     
      */
-    public function json_store_variation_types($args) {
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+    public function json_store_variation_types($args,$raw=false) {
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'vtype_id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -984,12 +1021,22 @@
         }
 
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
     }
 
-    
-    public function json_taxonomies($args) {
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+
+    /**
+     *
+     *
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
+     */         
+    public function json_taxonomies($args,$raw=false) {
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -1014,13 +1061,22 @@
             );
         }
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
         
     }
 
-    public function json_terms($args) {
+    /**
+     *
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
+     */     
+    public function json_terms($args,$raw=false) {
 
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'menuindex');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -1045,17 +1101,22 @@
             );
         }
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
         
     }
     
     
     /**
-     *
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_templates($args) {
+    public function json_templates($args,$raw=false) {
 
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -1081,14 +1142,21 @@
             );
         }
         
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
     
     }
 
 
-    
-    public function json_variation_types($args) {
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+    /**
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
+     */    
+    public function json_variation_types($args,$raw=false) {
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'vtype_id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -1110,17 +1178,22 @@
             $data['results'][] = $p->toArray();
         }
 
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
+
         
     }
     
     /**
      * 
      *
-     * vtype_id
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_variation_terms($args) {
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+    public function json_variation_terms($args,$raw=false) {
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'vterm_id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -1149,7 +1222,11 @@
             $data['results'][] = $val;
         }
 
-        return json_encode($data);    
+        if ($raw) {
+            return $data;
+        }
+        return json_encode($data);
+    
     }
 
 
@@ -1167,8 +1244,8 @@
         $out = '<p>These are the following methods available to the Moxycart class. Some of these functions supply JSON 
         data for Ajax data stores, some of these functions are intended to create Ext JS forms in the manager.</p>
         <ul>';
-        $assetsUrl = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
-        $mgrUrl = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
+        $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
+        $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         
         foreach ($methods as $m) {
             if(substr($m, 0, 1) != '_') {
@@ -1176,15 +1253,15 @@
                     $a = (int) $_GET['a'];
                     
                     if (substr($m, 0, 4) == 'json') {
-                        $out .= '<li>'.$m.' <a href="'.$assetsUrl.'components/moxycart/connector.php?f='.$m.'">(Ajax)</a></li>';
+                        $out .= '<li>'.$m.' <a href="'.$this->assets_url.'components/moxycart/connector.php?f='.$m.'">(Ajax)</a></li>';
                     }
                     else {
-                        $out .= '<li>'.$m.' <a href="'.$mgrUrl.'?a='.$a.'&f='.$m.'">(Manager Page)</a></li>';
+                        $out .= '<li>'.$m.' <a href="'.$this->mgr_url.'?a='.$a.'&f='.$m.'">(Manager Page)</a></li>';
                     }                                             
                 }
                 else {
                     if (substr($m, 0, 4) == 'json') {
-                        $out .= '<li>'.$m.' <a href="'.$assetsUrl.'components/moxycart/connector.php?f='.$m.'">(Ajax)</a></li>';
+                        $out .= '<li>'.$m.' <a href="'.$this->assets_url.'components/moxycart/connector.php?f='.$m.'">(Ajax)</a></li>';
                     }                
                 }
             }

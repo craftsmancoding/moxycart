@@ -47,11 +47,8 @@ $product_id = (int) $modx->getOption('product_id',$scriptProperties);
 
 $modx->getService('moxycart');
 $product_terms = $modx->moxycart->json_product_terms($scriptProperties, true);
-$product_terms = json_decode($product_terms,true);
 
-echo '<pre>';
-print_r($product_terms);
-die();
+
 $innerOut = '';
 $output = '';
 if (isset($product_terms['results']) && is_array($product_terms['results'])) {

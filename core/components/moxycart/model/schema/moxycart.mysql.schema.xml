@@ -162,7 +162,7 @@
 
     <!-- ! ProductSpecs -->
     <!-- custom fields for specifying height, weight etc. -->
-	<object class="ProductSpecs" table="product_specs" extends="xPDOSimpleObject">
+	<object class="ProductSpec" table="product_specs" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="spec_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="value" dbtype="varchar" precision="255" phptype="string" null="false" />
