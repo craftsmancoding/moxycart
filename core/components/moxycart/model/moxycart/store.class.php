@@ -1,26 +1,68 @@
 <?php
-/**
- * Here a Store is a product container.
- *
- */
+/*
+Here a Store is a Product Container.
+
+It has custom properties (stored as JSON). In other scenarios this data might be stored in 
+related tables, but this data is mostly optional, overrideable, and presented as a convenience,
+so the data structure is stored locally with the specific record.  
+
+The properites include the following attributes:
+
+Array (
+    'product_type'      => regular|subscription|download,
+    'default_template'  => template id,
+    'sort_order'        => name
+    'qty_alert'         =>
+    'track_inventory'   => 1|0 boolean
+    'spec' => Array (
+        1 => true
+        2 => true
+        ... etc...
+    ),
+    'variations' => Array(
+        1 => true
+        2 => true
+        ... etc...    
+    ),
+    'taxonomies' => Array(
+        1 => true
+        2 => true
+        ... etc...    
+    )
+ 
+)
+*/
 require_once MODX_CORE_PATH.'model/modx/modprocessor.class.php';
 require_once MODX_CORE_PATH.'model/modx/processors/resource/create.class.php';
 require_once MODX_CORE_PATH.'model/modx/processors/resource/update.class.php';
 
 class Store extends modResource {
-   public $showInContextMenu = true;
 
+    public $showInContextMenu = true;
+
+    /**
+     *
+     * @return string
+     */ 
     function __construct(xPDO & $xpdo) {
         parent :: __construct($xpdo);
         $this->set('class_key','Store');
         $this->set('hide_children_in_tree',true);
     }
-    
+
+    /**
+     *
+     * @return string
+     */     
     public static function getControllerPath(xPDO &$modx) {
         $x = $modx->getOption('moxycart.core_path',null,$modx->getOption('core_path')).'components/moxycart/controllers/store/';
         return $x;
     }
     
+    /**
+     *
+     * @return array
+     */     
     public function getContextMenuText() {
         $this->xpdo->lexicon->load('moxycart:default');
         return array(
@@ -28,42 +70,49 @@ class Store extends modResource {
             'text_create_here' => $this->xpdo->lexicon('container_create_here'),
         );
     }
- 
+
+    /**
+     *
+     * @return string
+     */ 
     public function getResourceTypeName() {
         $this->xpdo->lexicon->load('moxycart:default');
         return $this->xpdo->lexicon('container');
     } 
 
     /**
+     * Override the parent function to get our special properties.
+     * @param string $namespace
      * @return array
      */
-    public function getContainerSettings() {
-        return array();
-/*
-        $settings = $this->getProperties('moxycart');
-        // @var ArticlesContainer $container
-        $container = $this->getOne('Container');
-        if ($container) {
-            $settings = $container->getContainerSettings();
+    public function getProperties($namespace='core') {
+        $properties = parent::getProperties($namespace);
+        $this->xpdo->log(1, print_r($properties,true));
+        if (!empty($properties)) {
+            return $properties;
         }
-        return is_array($settings) ? $settings : array();
-*/
+
+        // Properties defaults
+        $properties = array (
+            'product_type'      => 'regular',
+            'product_template'  => $this->xpdo->getOption(
+                'moxycart.default_product_template','',
+                $this->xpdo->getOption('default_template')
+            ),
+            'sort_order'        => 'name',
+            'qty_alert'         => 0,
+            'track_inventory'   => 0,
+            'spec' => array (),
+            'variations' =>   array(),
+            'taxonomies' => array()
+        );
+        
+        return $properties;
     }
+
     /**
-     * Checks to see if the Resource has children or not. Returns the number of
-     * children.
      *
-     * @access public
-     * @return integer The number of children of the Resource
-         public function hasChildren() {
-        $c = $this->xpdo->newQuery('modResource');
-        $c->where(array(
-            'parent' => $this->get('id'),
-        ));
-        return $this->xpdo->getCount('modResource',$c);
-    }
-    
-    */
+     */
     public function prepareTreeNode(array $node = array()) {
         $this->xpdo->lexicon->load('moxycart:default');
         $menu = array();
@@ -181,8 +230,11 @@ class Store extends modResource {
 //! CreateProcessor
 //------------------------------------------------------------------------------
 class StoreCreateProcessor extends modResourceCreateProcessor {
-    /** @var ArticlesContainer $object */
+    /** 
+     * @var Store $object 
+     */
     public $object;
+    
     /**
      * Override modResourceCreateProcessor::afterSave to provide custom functionality, saving the container settings to a
      * custom field in the manager
@@ -197,7 +249,62 @@ class StoreCreateProcessor extends modResourceCreateProcessor {
         return parent::afterSave();
     }
 
+    /**
+     * Override modResourceUpdateProcessor::beforeSave to provide custom functionality, saving settings for the container
+     * to a custom field in the DB
+     * {@inheritDoc}
+     * @return boolean
+     */
+    public function beforeSave() {
+        $raw = $this->getProperties(); // <-- this will have raw values
+        $properties = $this->object->getProperties('moxycart'); //<-- we need to update these values
+        $this->modx->log(1,'beforeSave raw values: '.print_r($raw,true));
+        // TODO: re-order the array inputs.
+        foreach ($raw as $k => $v) {
+            $properties[$k] = $v;       
+        }
+        $this->object->setProperties($properties,'moxycart');
+        return parent::beforeSave();
+    }
 
 }
+
 class StoreUpdateProcessor extends modResourceUpdateProcessor {
+    /** 
+     * @var Store $object 
+     */
+    public $object;
+    
+    /**
+     * Override modResourceCreateProcessor::afterSave to provide custom functionality, saving the container settings to a
+     * custom field in the manager
+     * {@inheritDoc}
+     * @return boolean
+     */
+    public function afterSave() {
+        //$this->modx->log(1, __FILE__ . print_r($this->object->toArray(), true));
+        $this->object->set('class_key','Store');
+        $this->object->set('cacheable',true);
+        $this->object->set('isfolder',false);
+        return parent::afterSave();
+    }
+
+    /**
+     * Override modResourceUpdateProcessor::beforeSave to provide custom functionality, saving settings for the container
+     * to a custom field in the DB
+     * {@inheritDoc}
+     * @return boolean
+     */
+    public function beforeSave() {
+        $raw = $this->getProperties(); // <-- this will have raw values
+        $properties = $this->object->getProperties('moxycart'); //<-- we need to update these values
+        $this->modx->log(1,'beforeSave raw values: '.print_r($raw,true));
+        // TODO: re-order the array inputs.
+        foreach ($raw as $k => $v) {
+            $properties[$k] = $v;       
+        }
+        $this->object->setProperties($properties,'moxycart');
+        return parent::beforeSave();
+    }
+
 }

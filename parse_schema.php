@@ -285,6 +285,26 @@ else {
 }
 
 
+$product_specs = include $data_src_dir . 'transport.product_specs.php';
+if (is_array($product_specs)) {
+    print '<h4>Table: images</h4>';
+    foreach($product_specs as $ps) {
+        $PS = $xpdo->newObject('ProductSpec');
+        $PS->fromArray($ps);
+        if (!$PS->save()) {
+            print "Error saving product_spec!<br/>";
+        }
+        else {
+            print "Product spec created.<br/>";
+        }
+    }
+}
+else {
+    print 'ERROR: $product_specs not an array.<br/>';
+}
+
+
+/*
 $taxonomies = include $data_src_dir . 'transport.taxonomies.php';
 print '<h4>Table: modx_site_content</h4>';
 insert_records($taxonomies,'Taxonomy');
@@ -293,6 +313,8 @@ insert_records($taxonomies,'Taxonomy');
 $terms = include $data_src_dir . 'transport.terms.php';
 print '<h4>Table: modx_site_content</h4>';
 insert_records($terms,'Term');
+*/
+
 //$product_taxonomies = include $data_src_dir . 'transport.product_taxonomies.php';
 
 $mtime= microtime();

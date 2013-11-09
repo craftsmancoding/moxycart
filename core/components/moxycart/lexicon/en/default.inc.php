@@ -137,5 +137,11 @@ $_lang['creating_product_container_content2'] = 'This explains how to do this.';
 // Settings...
 
 $_lang['default_product_template'] = 'Default Product Template';
+
+$_lang['moxycart.default_product_template'] = 'Default Product Template';
+$_lang['moxycart.default_taxonomy_template'] = 'Default Taxonomy Template';
+$_lang['moxycart.default_term_template'] = 'Default Term Template';
+$_lang['moxycart.default_product_type'] = 'Default Term Template';
+
 // foxycart_store_url
 //

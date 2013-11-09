@@ -21,6 +21,16 @@ $args = array_merge($_POST,$_GET); // skip the cookies, more explicit than $_REQ
 $function = $modx->getOption('f',$_GET,'help');
 
 $results = $modx->moxycart->$function($args);
+
+// It doesn't work to try and disable smarty:
+// $modx->smarty->assign('maincssjs','');
+// $this->registerBaseScripts(false);
+// Nor this:
+//foreach ($this->placeholders as $k => $v) {
+//    $this->modx->smarty->assign($k,'');
+//}
+// The result?  The MODX manager URLs seem to ALWAYS include the base scripts/html. Boo.
+
 $modx->setLogLevel($old_level);
 return $results;
 /*EOF*/

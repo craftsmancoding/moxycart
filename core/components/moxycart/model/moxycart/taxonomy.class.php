@@ -1,6 +1,30 @@
 <?php
 /**
- * Here a Taxonomy is a product container.
+ * Here a Taxonomy is a container of terms (hierarchical or not).
+ * It's left to the user as to whether or not the Taxonomy represents hiearchical
+ * classifications (such as categories) or flat classifications (such as tags).
+ *
+ * The Taxonomy stores extra data in its properties attribute.
+ Here is the structure of the properties array that exists in *every* Term:
+
+Array(
+        // Representing the Terms beneath it:
+        'children_ids' => Array(
+            123 => true,
+            456 => true,
+            ... etc...
+        ),
+        'children' => Array(        
+            $page_id => Array( 
+                'alias' => $alias
+                'pagetitle' => $pagetitle
+                'published' => $published
+                'menuindex' => $menuindex
+                'children' => Array(**RECURSION of the $page_id array**)
+             ),
+        )
+    )
+
  *
  */
 require_once MODX_CORE_PATH.'model/modx/modprocessor.class.php';
