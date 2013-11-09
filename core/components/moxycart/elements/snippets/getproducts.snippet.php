@@ -26,6 +26,11 @@
  * -----------
  * Returns a list of products.
  *
+ * Parameters
+ * -----------------------------
+ * @param string $outerTpl Format the Outer Wrapper of Product List
+ * @param string $innerTpl Format the Inner Item of Product List
+ *
  * Variables
  * ---------
  * @var $modx modX
@@ -33,3 +38,20 @@
  *
  * @package moxycart
  **/
+$outerTpl = $modx->getOption('outerTpl',$scriptProperties,'MoxyProductsOuterTpl');
+$innerTpl = $modx->getOption('innerTpl',$scriptProperties,'MoxyProductInnerTpl');
+
+$modx->getService('moxycart');
+$products = $modx->moxycart->json_products($scriptProperties, true);
+$products = json_decode($products,true);
+$innerOut = '';
+$output = '';
+if (isset($products['results']) && is_array($products['results'])) {
+	foreach ($products['results'] as $row) {
+   		$innerOut .= $modx->getChunk($innerTpl,$row);
+	}
+}
+
+$innerPlaceholder = array('moxy.items' => $innerOut);
+$output = $modx->getChunk($outerTpl,$innerPlaceholder); 
+return $output;
