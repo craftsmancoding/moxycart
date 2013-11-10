@@ -36,7 +36,15 @@
 
 $cache_dir = 'moxycart';
 
-if ($modx->event->name == 'OnPageNotFound') {
+switch ($modx->event->name) {
+
+    case 'OnManagerPageInit':
+        $assetsUrl = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
+        $modx->regClientCSS($assetsUrl.'components/moxycart/css/mgr.css');
+        break;
+        
+    //------------------------------------------------------------------------------
+    case 'OnPageNotFound':
         $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
@@ -73,19 +81,21 @@ if ($modx->event->name == 'OnPageNotFound') {
             $out = $modx->resource->process();
             $modx->cacheManager->set($fingerprint, $out, $lifetime, $cache_opts);
         }
-        echo $out;
+        print $out;
         die();
-}
+        break;
 
-if ($modx->event->name == 'OnBeforeCacheUpdate') {
-    $dir = MODX_CORE_PATH .'cache/'.$cache_dir;
-    $objects = scandir($dir);
-    foreach ($objects as $object) {
-        if ($object != '.' && $object != '..') {
-            if (filetype($dir.'/'.$object) != 'dir') {
-                @unlink($dir.'/'.$object);
-            } 
+    //------------------------------------------------------------------------------
+    case 'OnBeforeCacheUpdate':
+        $dir = MODX_CORE_PATH .'cache/'.$cache_dir;
+        $objects = scandir($dir);
+        foreach ($objects as $object) {
+            if ($object != '.' && $object != '..') {
+                if (filetype($dir.'/'.$object) != 'dir') {
+                    @unlink($dir.'/'.$object);
+                } 
+            }
         }
-    }
-    reset($objects);
+        reset($objects);
+        break;
 }

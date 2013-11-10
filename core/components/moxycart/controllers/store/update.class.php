@@ -14,15 +14,19 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
         
 		//Add below for customization
         $this->addJavascript($assets_url . 'components/moxycart/js/productcontainer.js');
-        $this->addHtml('
+    	$moxycart_connector_url = MODX_ASSETS_URL.'components/moxycart/connector.php';
+
+    	$this->addHtml('
 			<script type="text/javascript">
+
+                var moxycart_connector_url = "'.$moxycart_connector_url.'";
+
 				isProductContainerCreate = false;
 				
 				Ext.onReady(function(){
 					renderProductContainer(isProductContainerCreate, MODx.config);
 				    MODx.load({
                         xtype: "articles-page-articles-container-create"
-                        ,record: '.json_encode($this->resource->getProperties('moxycart')).'
                     });
 
 				});
@@ -49,6 +53,8 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
      * @return void
      */
     public function prepareResource() {
+//        $this->resourceArray['template'] = 3;
+//        $this->resourceArray['qty_alert'] = 666;
 /*
         $settings = $this->resource->getProperties('moxycart');
         if (empty($settings)) $settings = array();

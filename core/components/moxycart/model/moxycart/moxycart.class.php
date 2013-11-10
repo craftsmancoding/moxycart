@@ -189,7 +189,9 @@
         $this->modx->regClientStartupScript($this->mgr_url.'assets/modext/sections/resource/create.js');	
     	$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
     	
+    	$moxycart_connector_url = MODX_ASSETS_URL.'components/moxycart/connector.php';
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            var moxycart_connector_url = "'.$moxycart_connector_url.'";
     		Ext.onReady(function() {
     
     			MODx.load({

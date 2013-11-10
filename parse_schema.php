@@ -135,6 +135,7 @@ $manager->removeObjectContainer('ProductSpecs');
 $manager->removeObjectContainer('Cart');
 $manager->removeObjectContainer('Image');
 
+/*
 print '<h3>Removing Taxonomy and Term Records on modx_site_content Tables...</h3>';
 //Removing Taxonomies
 $taxonomies = $modx->getCollection('Taxonomy',array('class_key'=>'Taxonomy'));
@@ -158,6 +159,7 @@ if($terms) {
         }
     }
 }
+*/
 
 
 // Re-create them

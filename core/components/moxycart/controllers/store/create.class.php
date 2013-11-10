@@ -14,8 +14,10 @@ class StoreCreateManagerController extends ResourceCreateManagerController {
         
 		//Add below for customization
         $this->addJavascript($assets_url . 'components/moxycart/js/productcontainer.js');
-        $this->addHtml('
+    	$moxycart_connector_url = MODX_ASSETS_URL.'components/moxycart/connector.php';
+    	$this->addHtml('<script type="text/javascript">
 			<script type="text/javascript">
+                var moxycart_connector_url = "'.$moxycart_connector_url.'";
 				isProductContainerCreate = true;
 				
 				Ext.onReady(function(){
