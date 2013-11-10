@@ -1,6 +1,6 @@
 <?php
 /**
- * getProductSpecs snippet for moxycart extra
+ * getProductImages snippet for moxycart extra
  *
  * Copyright 2013 by Everett Griffiths everett@craftsmancoding.com
  * Created on 07-05-2013
@@ -24,11 +24,11 @@
 /**
  * Description
  * -----------
- * Returns a list of product_specs.
+ * Returns a list of product_images.
  *
  * Parameters
  * -----------------------------
- * @param int $product_id 
+ * @param int $product_id Format the Outer Wrapper of  List
  * @param string $outerTpl Format the Outer Wrapper of  List
  * @param string $innerTpl Format the Inner Item of  List
  *
@@ -46,13 +46,13 @@ $product_id = (int) $modx->getOption('product_id',$scriptProperties);
 
 
 $modx->getService('moxycart');
-$product_specs = $modx->moxycart->json_product_specs($scriptProperties, true);
-$product_specs = json_decode($product_specs,true);
+$product_images = $modx->moxycart->json_images($scriptProperties, true);
+$product_images = json_decode($product_images,true);
 
 $innerOut = '';
 $output = '';
-if (isset($product_specs['results']) && is_array($product_specs['results'])) {
-	foreach ($product_specs['results'] as $row) {
+if (isset($product_images['results']) && is_array($product_images['results'])) {
+	foreach ($product_images['results'] as $row) {
    		$innerOut .= $modx->getChunk($innerTpl,$row);
 	}
 }

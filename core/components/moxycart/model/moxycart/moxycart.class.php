@@ -575,8 +575,8 @@
     public function json_product_specs($args,$raw=false) {
         
         $product_id = (int) $this->modx->getOption('product_id',$args);
-        $spec_id = (int) $this->modx->getOption('spec_id',$args);
-        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
+
+        $limit = (int) $this->modx->getOption('limit',$args,10);
 
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
@@ -589,9 +589,6 @@
         
         if ($product_id) {
             $criteria->where(array('product_id'=>$product_id));
-        }
-        if ($spec_id) {
-            $criteria->where(array('spec_id'=>$spec_id));
         }
                 
         $total_pages = $this->modx->getCount('ProductSpec',$criteria);
@@ -607,9 +604,16 @@
             'results'=>array(),
             'total' => $total_pages,
         );
+
         if($pages) {
             foreach ($pages as $p) {
-                $data['results'][] = $p->toArray();
+                $product = $this->modx->getObject('Product',array('product_id'=>$p->get('product_id')));
+                $spec = $this->modx->getObject('Spec',array('spec_id'=>$p->get('spec_id')));
+               $data['results'][] = array(
+                'product' => ($product) ? $product->get('name') : '',
+                'spec' => ($spec) ? $spec->get('name') : '',
+                'value' => $p->get('value'),
+               );
             }
         }
 
@@ -708,6 +712,7 @@
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
         $pages = $this->modx->getCollection('Term',$criteria);
+   
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
         $data = array(
@@ -733,8 +738,9 @@
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_images($args,$raw=false) {
-        $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
+
+    public function json_images($args) {
+        $product_id = (int) $this->modx->getOption('product_id',$args);
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
