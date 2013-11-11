@@ -59,8 +59,8 @@ switch ($modx->event->name) {
             return;  // it's a real 404
         } 
 
-        //$modx->log(MODX_LOG_LEVEL_ERROR, 'Not Found Product Test: ' . print_r($Product,true));
-        $fingerprint = $Product->get('product_id');
+        $modx->log(MODX_LOG_LEVEL_DEBUG, 'Found product at '.$uri);
+        $fingerprint = 'product_'.$Product->get('product_id');
 
         $out = $modx->cacheManager->get($fingerprint, $cache_opts);
 
@@ -88,14 +88,17 @@ switch ($modx->event->name) {
     //------------------------------------------------------------------------------
     case 'OnBeforeCacheUpdate':
         $dir = MODX_CORE_PATH .'cache/'.$cache_dir;
-        $objects = scandir($dir);
-        foreach ($objects as $object) {
-            if ($object != '.' && $object != '..') {
-                if (filetype($dir.'/'.$object) != 'dir') {
-                    @unlink($dir.'/'.$object);
-                } 
+        if (file_exists($dir) && is_dir($dir)) {
+            
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != '.' && $object != '..') {
+                    if (filetype($dir.'/'.$object) != 'dir') {
+                        @unlink($dir.'/'.$object);
+                    } 
+                }
             }
-        }
-        reset($objects);
+            reset($objects);
+        }        
         break;
 }

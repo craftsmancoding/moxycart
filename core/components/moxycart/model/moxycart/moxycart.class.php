@@ -130,6 +130,13 @@
         return '<div id="moxycart_canvas">Delete Currency here</div>';
     }
  
+    /**
+     * Post data here to save it
+     */
+    public function currency_save() {
+        // $_POST... todo
+    }
+    
     //------------------------------------------------------------------------------
     //! Images
     //------------------------------------------------------------------------------
@@ -169,7 +176,13 @@
         //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
         return '<div id="moxycart_canvas">Delete Image here</div>';
     } 
-    
+
+    /**
+     * Post data here to save it
+     */
+    public function image_save() {
+        // $_POST... todo
+    }    
        
     //------------------------------------------------------------------------------
     //! Products
@@ -278,6 +291,13 @@
         return '<div id="moxycart_canvas">Update Product spec</div>';
     }
 
+    /**
+     * Post data here to save it
+     */
+    public function product_save() {
+        // $_POST... todo
+    }
+    
     //------------------------------------------------------------------------------
     //! Specs
     //------------------------------------------------------------------------------
@@ -287,7 +307,19 @@
     public function specs_manage($args) {
         // Add Required JS files here:
         //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Manage your Specs.</div>';
+		
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/specs.js');
+
+		$moxycart_connector_url = MODX_ASSETS_URL.'components/moxycart/connector.php';
+    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            var moxycart_connector_url = "'.$moxycart_connector_url.'";
+    		Ext.onReady(function() {   		
+    			renderManageSpecs();
+    		});
+    		</script>
+    	');	
+		
+        return '<div id="moxycart_canvas"></div>';
     }
 
     /**
@@ -310,7 +342,12 @@
         return '<div id="moxycart_canvas">Delete spec</div>';
     }
 
-  
+    /**
+     * Post data here to save it
+     */
+    public function spec_save() {
+        // $_POST... todo
+    }  
  
     //------------------------------------------------------------------------------`
     //! Variation
@@ -347,7 +384,12 @@
         return '<div id="moxycart_canvas">Delete Variation Page.</div>';
     }
     
-  
+    /**
+     * Post data here to save it
+     */
+    public function variation_save() {
+        // $_POST... todo
+    }  
     
     //------------------------------------------------------------------------------
     //! Variation Terms
@@ -381,6 +423,13 @@
         return '<div id="moxycart_canvas">Delete variation term.</div>';
     }
 
+    /**
+     * Post data here to save it
+     */
+    public function variation_term_save() {
+        // $_POST... todo
+    }
+    
     //------------------------------------------------------------------------------
     //! Variation Types
     //------------------------------------------------------------------------------
@@ -414,6 +463,12 @@
         return '<div id="moxycart_canvas">Delete a Variation Type here</div>';
     }
 
+    /**
+     * Post data here to save it
+     */
+    public function variation_type_save() {
+        // $_POST... todo
+    }
 
     //------------------------------------------------------------------------------
     //!
@@ -575,8 +630,8 @@
     public function json_product_specs($args,$raw=false) {
         
         $product_id = (int) $this->modx->getOption('product_id',$args);
-
-        $limit = (int) $this->modx->getOption('limit',$args,10);
+        $spec_id = (int) $this->modx->getOption('spec_id',$args);
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
 
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
@@ -589,6 +644,9 @@
         
         if ($product_id) {
             $criteria->where(array('product_id'=>$product_id));
+        }
+        if ($spec_id) {
+            $criteria->where(array('spec_id'=>$spec_id));
         }
                 
         $total_pages = $this->modx->getCount('ProductSpec',$criteria);
@@ -604,16 +662,9 @@
             'results'=>array(),
             'total' => $total_pages,
         );
-
         if($pages) {
             foreach ($pages as $p) {
-                $product = $this->modx->getObject('Product',array('product_id'=>$p->get('product_id')));
-                $spec = $this->modx->getObject('Spec',array('spec_id'=>$p->get('spec_id')));
-               $data['results'][] = array(
-                'product' => ($product) ? $product->get('name') : '',
-                'spec' => ($spec) ? $spec->get('name') : '',
-                'value' => $p->get('value'),
-               );
+                $data['results'][] = $p->toArray();
             }
         }
 
@@ -712,7 +763,6 @@
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
         $pages = $this->modx->getCollection('Term',$criteria);
-   
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
         $data = array(
@@ -738,9 +788,8 @@
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-
-    public function json_images($args) {
-        $product_id = (int) $this->modx->getOption('product_id',$args);
+    public function json_images($args,$raw=false) {
+        $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
