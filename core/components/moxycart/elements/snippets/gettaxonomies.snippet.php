@@ -43,7 +43,7 @@ $innerTpl = $modx->getOption('innerTpl',$scriptProperties,'MoxyInnerTpl');
 
 $modx->getService('moxycart');
 $taxonomies = $modx->moxycart->json_taxonomies($scriptProperties, true);
-$taxonomies = json_decode($taxonomies,true);
+
 
 $innerOut = '';
 $output = '';

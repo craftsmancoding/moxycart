@@ -674,6 +674,10 @@
              }
          }
       
+
+        if($raw) {
+            return $data;
+        }
         return json_encode($data);
        
 
@@ -724,10 +728,8 @@
     }
 
     /**
-     * Shows all the terms for the given product, filtered by taxonomy_id or by product_id.
-     * Taxonomy_id is special: you can use it to retrieve hierarchical terms... taxonomy_id
-     * can be a term_id. 
-     * @param boolean $raw if true, results are returned as PHP array default: false
+     * Shows all the terms for the given product, filtered by product_id.
+        * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)     
      */
     public function json_product_terms($args,$raw=false) {
@@ -757,10 +759,12 @@
             'results'=>array(),
             'total' => $total_pages,
         );
+
         foreach ($pages as $p) {
+            $term = $this->modx->getObject('modResource',array('id'=>$p->get('term_id')));
             $data['results'][] = array(
                 'id' => $p->get('id'),
-                'name' => $p->get('pagetitle')
+                'term' => ($term) ? $term->get('pagetitle') : '',
             );
         }
 
@@ -777,7 +781,7 @@
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
     public function json_images($args,$raw=false) {
-        $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
+        $product_id = (int) $this->modx->getOption('product_id',$args);
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
@@ -808,6 +812,7 @@
         if ($raw) {
             return $data;
         }
+
         return json_encode($data);
 
     }

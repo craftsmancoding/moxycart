@@ -47,7 +47,6 @@ $product_id = (int) $modx->getOption('product_id',$scriptProperties);
 
 $modx->getService('moxycart');
 $product_specs = $modx->moxycart->json_product_specs($scriptProperties, true);
-$product_specs = json_decode($product_specs,true);
 
 $innerOut = '';
 $output = '';
