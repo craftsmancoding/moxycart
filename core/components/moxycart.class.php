@@ -663,19 +663,15 @@
             'total' => $total_pages,
         );
         if($pages) {
-             foreach ($pages as $p) {
-                $product = $this->modx->getObject('Product',array('product_id'=>$p->get('product_id')));
-                $spec = $this->modx->getObject('Spec',array('spec_id'=>$p->get('spec_id')));
-               $data['results'][] = array(
-                'product' => ($product) ? $product->get('name') : '',
-                'spec' => ($spec) ? $spec->get('name') : '',
-                'value' => $p->get('value'),
-               );
-             }
-         }
-      
+            foreach ($pages as $p) {
+                $data['results'][] = $p->toArray();
+            }
+        }
+
+        if ($raw) {
+            return $data;
+        }
         return json_encode($data);
-       
 
     }
 
@@ -738,14 +734,30 @@
         $dir = $this->modx->getOption('dir',$args,'ASC');
 
         $product_id = (int) $this->modx->getOption('product_id',$args);
-       
+        $term_id = (int) $this->modx->getOption('term_id',$args);
+        $taxonomy_id = (int) $this->modx->getOption('taxonomy_id',$args); // trickier
         
         $criteria = $this->modx->newQuery('ProductTerms');
         
         if ($product_id) {
             $criteria->where(array('product_id'=>$product_id));
         }
-        
+        if ($term_id) {
+            $criteria->where(array('term_id'=>$term_id));
+        }
+        if ($taxonomy_id) {
+            $Tax = $this->modx->getObject('modResource', array('id'=>$taxonomy_id, 'class_key'=>'Taxonomy'));
+            
+            if ($Tax) {
+                $properties = $Tax->get('properties');
+                $children_ids = array_keys($Tax->getOption('children_ids',$properties,array()));
+                $criteria->where(array('term_id:IN'=>$children_ids));
+            }
+            else {
+                $this->modx->log(xPDO::LOG_LEVEL_ERROR, 'Taxonomy not found: '.$taxonomy_id);
+            }
+        }
+
         $total_pages = $this->modx->getCount('ProductTerms',$criteria);
         
         $criteria->limit($limit, $start); 

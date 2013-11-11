@@ -57,7 +57,6 @@ if (isset($product_terms['results']) && is_array($product_terms['results'])) {
 	}
 }
 
-
 $innerPlaceholder = array('moxy.items' => $innerOut);
 $output = $modx->getChunk($outerTpl,$innerPlaceholder); 
 return $output;
