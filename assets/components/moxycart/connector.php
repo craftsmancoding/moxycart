@@ -45,14 +45,14 @@ $args = array_merge($_POST,$_GET); // skip the cookies, more explicit than $_REQ
 $modx->log(MODX_LOG_LEVEL_DEBUG, print_r($args,true),'','',__FILE__,__LINE__);
 
 
+$core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);
+require_once($core_path.'components/moxycart/model/moxycart/moxycart.class.php');
 
-if (!$modx->getService('moxycart')) {
-   die('Unable to load moxycart service.'); 
-}
+$Moxycart = new Moxycart($modx);
 
 $function = $modx->getOption('f',$_GET,'help');
 
-$results = $modx->moxycart->$function($args);
+$results = $Moxycart->$function($args);
 
 if ($results===false) {
     header('HTTP/1.0 401 Unauthorized');

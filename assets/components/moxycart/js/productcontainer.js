@@ -7,8 +7,7 @@ function getQueryParams(qs) {
 	return params;
 }
 
-var connector_url = "http://future.thefutureforward.com/~knives/assets/components/moxycart/connector.php?f=",
-	query = getQueryParams(document.location.search),
+var query = getQueryParams(document.location.search),
 	pid = query.id;
 
 
@@ -667,9 +666,15 @@ function getStoreSettingsFields(config){
 	return [{
 		anchor: '100%',
 		border:false,
+		monitorValid:true,
 		layout:'form',
 		id: 'modx-resource-storesettings-columns',
 		style: 'border:0px',
+		listeners : {
+			clientvalidation: function(){
+				console.log('validate');
+			}
+		},
 		defaults: {
 			labelSeparator: '',
 			labelAlign: 'top',
@@ -688,6 +693,20 @@ function getStoreSettingsFields(config){
 					cellspacing:8
 				},
 				columns:4
+			},
+			defaults : {
+				enableKeyEvents : true,
+				listeners : {
+					keypress : function(){
+						Ext.getCmp('modx-abtn-save').enable(true);
+					},
+					change : function(){
+						Ext.getCmp('modx-abtn-save').enable(true);
+					},
+					select : function(){
+						Ext.getCmp('modx-abtn-save').enable(true);
+					}
+				}
 			},
 			items:[
 				{
@@ -882,6 +901,7 @@ function getStoreSettingsFields(config){
 						listeners : {
 							afterrender : function(f){
 								getVariations(f);
+								Ext.getCmp('modx-abtn-save').disable(true);
 							}
 						}
 					}]
@@ -889,6 +909,7 @@ function getStoreSettingsFields(config){
 					colspan:3,
 					layout:'column',
 					border:false,
+					hidden : true,
 					items: [{
 						xtype : 'button',
 						text : 'Save',

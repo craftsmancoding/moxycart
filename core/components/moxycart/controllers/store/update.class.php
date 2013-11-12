@@ -14,12 +14,12 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
         
 		//Add below for customization
         $this->addJavascript($assets_url . 'components/moxycart/js/productcontainer.js');
-    	$moxycart_connector_url = MODX_ASSETS_URL.'components/moxycart/connector.php';
+    	$moxycart_connector_url = $assets_url.'components/moxycart/connector.php';
 
     	$this->addHtml('
 			<script type="text/javascript">
 
-                var moxycart_connector_url = "'.$moxycart_connector_url.'";
+                var connector_url = "'.$moxycart_connector_url.'";
 
 				isProductContainerCreate = false;
 				

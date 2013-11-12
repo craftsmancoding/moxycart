@@ -9,18 +9,18 @@
  *  @param string f function name inside of moxycart.class.php where request gets routed
  *      default: help
  */
-if (!$modx->getService('moxycart')) {
-    $modx->log(MODX_LOG_LEVEL_ERROR, 'Unable to load MoxyCart service.','','',__FILE__,__LINE__);
-    die('Unable to load moxycart service.'); 
-}
-$log_level = $modx->getOption('log_level',$_GET, $modx->getOption('log_level'));
+$core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);
+require_once($core_path.'components/moxycart/model/moxycart/moxycart.class.php');
+
+$Moxycart = new Moxycart($modx);
+
 $old_level = $modx->setLogLevel($log_level);
 
 $args = array_merge($_POST,$_GET); // skip the cookies, more explicit than $_REQUEST
 
 $function = $modx->getOption('f',$_GET,'help');
 
-$results = $modx->moxycart->$function($args);
+$results = $Moxycart->$function($args);
 
 // It doesn't work to try and disable smarty:
 // $modx->smarty->assign('maincssjs','');

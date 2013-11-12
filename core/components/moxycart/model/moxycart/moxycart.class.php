@@ -85,7 +85,11 @@
         return $chunk->process($props, $tpl);    
     }
 */
-    
+    private function _send401() {
+        header('HTTP/1.0 401 Unauthorized');
+        print 'Unauthorized';
+        exit;
+    }
     //------------------------------------------------------------------------------
     //! Public
     //------------------------------------------------------------------------------
@@ -202,9 +206,9 @@
         $this->modx->regClientStartupScript($this->mgr_url.'assets/modext/sections/resource/create.js');	
     	$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
     	
-    	$moxycart_connector_url = MODX_ASSETS_URL.'components/moxycart/connector.php';
+    	$moxycart_connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-            var moxycart_connector_url = "'.$moxycart_connector_url.'";
+            var connector_url = "'.$moxycart_connector_url.'";
     		Ext.onReady(function() {
     
     			MODx.load({
@@ -306,19 +310,15 @@
      */
     public function specs_manage($args) {
         // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-		
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/specs.js');
-
-		$moxycart_connector_url = MODX_ASSETS_URL.'components/moxycart/connector.php';
+		$moxycart_connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-            var moxycart_connector_url = "'.$moxycart_connector_url.'";
+            var connector_url = "'.$moxycart_connector_url.'";
     		Ext.onReady(function() {   		
     			renderManageSpecs();
     		});
     		</script>
-    	');	
-		
+    	');
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/specs.js');
         return '<div id="moxycart_canvas"></div>';
     }
 
@@ -346,7 +346,58 @@
      * Post data here to save it
      */
     public function spec_save() {
-        // $_POST... todo
+        if (!is_object($this->modx->user)) {
+            $this->modx->log(1,'spec_save 401 '.print_r($_POST,true));
+            return $this->_send401();
+        }
+        $out = array(
+            'success' => true,
+            'msg' => '',
+        );
+        
+        $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
+        if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
+            $this->modx->log(1,'spec_save FAILED. Invalid token: '.print_r($_POST,true));
+            $out['success'] = false;
+            $out['msg'] = 'Invalid token';
+        }
+        
+        $action = $this->modx->getOption('action', $_POST);
+        
+        switch ($action) {
+            case 'update':
+                $Spec = $this->modx->getObject('Spec',$this->modx->getOption('spec_id', $_POST));
+                $Spec->fromArray($_POST);
+                if (!$Spec->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to update Spec.';    
+                }
+                $out['msg'] = 'Spec updated successfully.';    
+                break;
+            case 'delete':
+                $Spec = $this->modx->getObject('Spec',$this->modx->getOption('spec_id', $_POST));
+                if (!$Spec->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to delete Spec.';    
+                }
+                $out['msg'] = 'Spec deleted successfully.';    
+                break;
+            case 'create':
+            default:
+                $Spec = $this->modx->newObject('Spec');    
+                $Spec->fromArray($_POST);
+                if (!$Spec->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to save Spec.';    
+                }
+                $out['msg'] = 'Spec created successfully.';    
+        }
+                
+        return json_encode($out);        
+		//Here code will go to add data in the database
+
+		//JSON response will look like below. We will consider below as standard, but we can add more attributes later if we need.
+		return '{"success":true, msg:"Operation done successfully."}';
     }  
  
     //------------------------------------------------------------------------------`
@@ -400,7 +451,22 @@
     public function variation_terms_manage($args) {
         // Add Required JS files here:
         //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Manage your Variation Terms here.</div>';
+
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/variation_terms.js');
+
+		$vtype_id = (int) $this->modx->getOption('vtype_id',$args);
+		
+		$moxycart_connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
+    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            var connector_url = "'.$moxycart_connector_url.'";
+			var vtype_id = ' . $vtype_id . ';
+    		Ext.onReady(function() {   		
+    			renderVariationTerms(vtype_id);
+    		});
+    		</script>
+    	');	
+		
+        return '<div id="moxycart_canvas"></div>';
     }
 
     /**
@@ -440,7 +506,20 @@
     public function variation_types_manage($args) {
         // Add Required JS files here:
         //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Manage your Variation Types here.</div>';
+
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/variation_types.js');
+
+		$moxycart_connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
+    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            var connector_url = "'.$moxycart_connector_url.'";
+    		Ext.onReady(function() {   		
+    			renderVariationTypes();
+    		});
+    		</script>
+    	');	
+		
+        return '<div id="moxycart_canvas"></div>';		
+		
     }
 
     /**
@@ -1295,7 +1374,7 @@
         $out = '<p>These are the following methods available to the Moxycart class. Some of these functions supply JSON 
         data for Ajax data stores, some of these functions are intended to create Ext JS forms in the manager.</p>
         <ul>';
-        $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
+        $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, $this->assets_url);
         $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         
         foreach ($methods as $m) {
