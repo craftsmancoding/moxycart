@@ -1,6 +1,6 @@
 <?php
 /**
- * gettaxonomies snippet for moxycart extra
+ * getTaxonomies snippet for moxycart extra
  *
  * Copyright 2013 by Everett Griffiths everett@craftsmancoding.com
  * Created on 07-05-2013
@@ -25,11 +25,16 @@
  * Description
  * -----------
  * Returns a list of taxonomies.
- *
+ * 
+ * Available Placeholders
+ * ---------------------------------------
+ * id, pagetitle
+ * use as [[+pagetitle]] on Template Parameters
+ * 
  * Parameters
  * -----------------------------
- * @param string $outerTpl Format the Outer Wrapper of  List
- * @param string $innerTpl Format the Inner Item of  List
+ * @param string $outerTpl Format the Outer Wrapper of List
+ * @param string $innerTpl Format the Inner Item of List
  *
  * Variables
  * ---------
@@ -38,21 +43,12 @@
  *
  * @package moxycart
  **/
-$outerTpl = $modx->getOption('outerTpl',$scriptProperties,'MoxyOuterTpl');
-$innerTpl = $modx->getOption('innerTpl',$scriptProperties,'MoxyInnerTpl');
 
-$modx->getService('moxycart');
-$taxonomies = $modx->moxycart->json_taxonomies($scriptProperties, true);
-$taxonomies = json_decode($taxonomies,true);
+$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
+$class_path = $core_path . 'components/moxycart/model/moxycart/moxycart.snippets.class.php';
+require_once($class_path);
 
-$innerOut = '';
-$output = '';
-if (isset($taxonomies['results']) && is_array($taxonomies['results'])) {
-	foreach ($taxonomies['results'] as $row) {
-   		$innerOut .= $modx->getChunk($innerTpl,$row);
-	}
-}
+$moxySnippet = new MoxycartSnippet($modx);
+$out = $moxySnippet->execute('json_taxonomies',$scriptProperties);
+return $out;
 
-$innerPlaceholder = array('moxy.items' => $innerOut);
-$output = $modx->getChunk($outerTpl,$innerPlaceholder); 
-return $output;

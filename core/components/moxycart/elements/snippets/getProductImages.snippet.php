@@ -25,12 +25,16 @@
  * Description
  * -----------
  * Returns a list of product_images.
- *
+ * 
+ * Available Placeholders
+ * ---------------------------------------
+ * images_id, product_id, title, alt, url, path, width, height, seq, is_active
+ * use as [[+url]] on Template Parameters
+ * 
  * Parameters
  * -----------------------------
- * @param int $product_id Format the Outer Wrapper of  List
- * @param string $outerTpl Format the Outer Wrapper of  List
- * @param string $innerTpl Format the Inner Item of  List
+ * @param string $outerTpl Format the Outer Wrapper of List
+ * @param string $innerTpl Format the Inner Item of List
  *
  * Variables
  * ---------
@@ -40,23 +44,11 @@
  * @package moxycart
  **/
 
-$outerTpl = $modx->getOption('outerTpl',$scriptProperties,'MoxyOuterTpl');
-$innerTpl = $modx->getOption('innerTpl',$scriptProperties,'MoxyInnerTpl');
-$product_id = (int) $modx->getOption('product_id',$scriptProperties);
+$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
+$class_path = $core_path . 'components/moxycart/model/moxycart/moxycart.snippets.class.php';
+require_once($class_path);
 
+$moxySnippet = new MoxycartSnippet($modx);
+$out = $moxySnippet->execute('json_images',$scriptProperties);
+return $out;
 
-$modx->getService('moxycart');
-$product_images = $modx->moxycart->json_images($scriptProperties, true);
-$product_images = json_decode($product_images,true);
-
-$innerOut = '';
-$output = '';
-if (isset($product_images['results']) && is_array($product_images['results'])) {
-	foreach ($product_images['results'] as $row) {
-   		$innerOut .= $modx->getChunk($innerTpl,$row);
-	}
-}
-
-$innerPlaceholder = array('moxy.items' => $innerOut);
-$output = $modx->getChunk($outerTpl,$innerPlaceholder); 
-return $output;
