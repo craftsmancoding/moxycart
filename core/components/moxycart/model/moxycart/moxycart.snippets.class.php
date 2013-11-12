@@ -22,6 +22,10 @@ class MoxycartSnippet {
     	$outerTpl = $this->modx->getOption('outerTpl',$args,'MoxyOuterTpl');
 		$innerTpl = $this->modx->getOption('innerTpl',$args,'MoxyInnerTpl');
 		$records = $this->modx->moxycart->$method($args, true);
+		
+		if($records['total'] == 0) {
+			return 'No Record Found.';
+		}
 
 		$innerOut = '';
 		$output = '';
