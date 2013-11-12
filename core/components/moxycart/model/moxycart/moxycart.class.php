@@ -319,27 +319,8 @@
     		</script>
     	');
 		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/specs.js');
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
         return '<div id="moxycart_canvas"></div>';
-    }
-
-    /**
-     * Hosts the "Create Variation Term" page
-     * @param int vterm_id
-     */
-    public function spec_create($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Create spec.</div>';
-    }
-
-    /**
-     * Hosts the "Delete Variation Term" page
-     * @param int vterm_id
-     */
-    public function spec_delete($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Delete spec</div>';
     }
 
     /**
@@ -376,9 +357,9 @@
                 break;
             case 'delete':
                 $Spec = $this->modx->getObject('Spec',$this->modx->getOption('spec_id', $_POST));
-                if (!$Spec->save()) {
+                if (!$Spec->remove()) {
                     $out['success'] = false;
-                    $out['msg'] = 'Failed to delete Spec.';    
+                    $out['msg'] = 'Failed to delete spec.';    
                 }
                 $out['msg'] = 'Spec deleted successfully.';    
                 break;
@@ -394,10 +375,7 @@
         }
                 
         return json_encode($out);        
-		//Here code will go to add data in the database
 
-		//JSON response will look like below. We will consider below as standard, but we can add more attributes later if we need.
-		return '{"success":true, msg:"Operation done successfully."}';
     }  
  
     //------------------------------------------------------------------------------`
