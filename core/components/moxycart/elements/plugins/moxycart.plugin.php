@@ -48,30 +48,55 @@ switch ($modx->event->name) {
         $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
+        $refresh = false; // used if you want to turn off caching (good for testing)
         $uri = substr($_SERVER['REQUEST_URI'], 1);
-        $refresh = true; // used if you want to turn off caching (good for testing)
-        $Product = $modx->getObject('Product',array('uri'=>$uri)); // ??? how can you tell the requested URI?
-
-        $lifetime = 0;
+        $cache_key = str_replace('/', '_', $uri);
         $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
+        $fingerprint = 'product_'.$cache_key;
 
-        if (!$Product) {
-            return;  // it's a real 404
-        } 
-
-        $modx->log(MODX_LOG_LEVEL_DEBUG, 'Found product at '.$uri);
-        $fingerprint = 'product_'.$Product->get('product_id');
 
         $out = $modx->cacheManager->get($fingerprint, $cache_opts);
 
+
         // Cache our custom browser-specific version of the page.
         if ($refresh || empty($out)) {
-           // $modx->log(MODX_LOG_LEVEL_ERROR, 'Moxycart Template INIT...');
-            // Create our new "fake" resource.  ??? how does this handle TVs? B/c products don't have the same attributes as resources
+
+            
+            $Product = $modx->getObject('Product',array('uri'=>$uri)); // ??? how can you tell the requested URI?
+            if (!$Product) {
+                return;  // it's a real 404
+            } 
+             // Create our new "fake" resource.  ??? how does this handle TVs? B/c products don't have the same attributes as resources
             $modx->resource = $modx->newObject('modResource');
             $product_attributes = $Product->toArray();
-           //$modx->log(MODX_LOG_LEVEL_ERROR, 'template placeholders' . print_r($product_attributes,true));
+
+            // set date and time (unix)
+            $now = strtotime(date('Y-m-d H:i:s'));
+            $sale_start = strtotime($product_attributes['sale_start']);
+            $sale_end = strtotime($product_attributes['sale_end']);
+            $lifetime = 30;
+
+
+           
+           
+            // set default value for calculated_price
+            $calculated_price = $product_attributes['price'];
+
+            // if on sale use price sale
+            if($sale_start <= $now && $sale_end >= $now) {
+                 $calculated_price = $product_attributes['price_sale'];
+            }
+           
+            
+          /*  $modx->log(MODX_LOG_LEVEL_ERROR, 'Sale Start ' . strtotime($product_attributes['sale_start']));
+            $modx->log(MODX_LOG_LEVEL_ERROR, 'Sale End ' .  strtotime($product_attributes['sale_end']));
+            $modx->log(MODX_LOG_LEVEL_ERROR, 'Today ' .  $now);*/
+
+            // add calculated_price field
+            $product_attributes['calculated_price'] = $calculated_price;
+
             $modx->setPlaceholders($product_attributes,'moxycart.');
+
             // or?
             $modx->resource->set('template', $Product->get('template_id'));    
 
@@ -79,6 +104,7 @@ switch ($modx->event->name) {
             $modx->resource->set('cacheable',false);
             $out = $modx->resource->process();
             $modx->cacheManager->set($fingerprint, $out, $lifetime, $cache_opts);
+            //1384300800 >= 1384313156
         }
         print $out;
         die();
