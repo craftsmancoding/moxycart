@@ -49,7 +49,7 @@ switch ($modx->event->name) {
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
         $uri = substr($_SERVER['REQUEST_URI'], 1);
-        $refresh = false; // used if you want to turn off caching (good for testing)
+        $refresh = true; // used if you want to turn off caching (good for testing)
         $Product = $modx->getObject('Product',array('uri'=>$uri)); // ??? how can you tell the requested URI?
 
         $lifetime = 0;
@@ -66,13 +66,12 @@ switch ($modx->event->name) {
 
         // Cache our custom browser-specific version of the page.
         if ($refresh || empty($out)) {
-
+           // $modx->log(MODX_LOG_LEVEL_ERROR, 'Moxycart Template INIT...');
             // Create our new "fake" resource.  ??? how does this handle TVs? B/c products don't have the same attributes as resources
             $modx->resource = $modx->newObject('modResource');
             $product_attributes = $Product->toArray();
-            foreach ($product_attributes as $k => $v) {
-                $modx->resource->set($k, $v);    
-            }
+           //$modx->log(MODX_LOG_LEVEL_ERROR, 'template placeholders' . print_r($product_attributes,true));
+            $modx->setPlaceholders($product_attributes,'moxycart.');
             // or?
             $modx->resource->set('template', $Product->get('template_id'));    
 
