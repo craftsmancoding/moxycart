@@ -78,7 +78,7 @@ switch ($modx->event->name) {
             $sale_start = strtotime($product_attributes['sale_start']);
             $sale_end = strtotime($product_attributes['sale_end']);
         
-            $lifetime = 0; // cache 
+            $lifetime = 3600; // cache 
         
              $calculated_price = $product_attributes['price'];
             // if on sale use price sale
