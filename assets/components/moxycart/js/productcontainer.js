@@ -8,7 +8,11 @@ function getQueryParams(qs) {
 }
 
 var query = getQueryParams(document.location.search),
-	pid = query.id;
+	pid = query.id,
+	/* Getting value loaded to the page through MODx 
+	 * Asuming here that his path is always set by MODx.
+	 */
+	activeRecord = {};
 
 
 function renderProduct(){
@@ -901,7 +905,9 @@ function getStoreSettingsFields(config){
 						listeners : {
 							afterrender : function(f){
 								getVariations(f);
-								Ext.getCmp('modx-abtn-save').disable(true);
+								var save = Ext.getCmp('modx-abtn-save');
+								activeRecord = MODx.activePage.config.record.properties.moxycart;
+								if(save) save.disable(true);
 							}
 						}
 					}]
@@ -1330,8 +1336,8 @@ function getProductsFields(config){
 					xtype: 'button',
 					padding : 0,
 					cls : 'divided-btn',
-					width : 95,
-					text:'Set Manual<br>Sort Order'
+					width : 55,
+					text:'Sort'
 				},{
 					border:false,
 					xtype: 'displayfield',
