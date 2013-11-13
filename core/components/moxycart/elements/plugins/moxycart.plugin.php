@@ -70,23 +70,27 @@ switch ($modx->event->name) {
             $modx->resource = $modx->newObject('modResource');
             $product_attributes = $Product->toArray();
 
+            // set default value for calculated_price
+            
+        
             // set date and time (unix)
             $now = strtotime(date('Y-m-d H:i:s'));
             $sale_start = strtotime($product_attributes['sale_start']);
             $sale_end = strtotime($product_attributes['sale_end']);
-            $lifetime = 30;
-
-
-           
-           
-            // set default value for calculated_price
-            $calculated_price = $product_attributes['price'];
-
+        
+            $lifetime = 0; // cache 
+        
+             $calculated_price = $product_attributes['price'];
             // if on sale use price sale
             if($sale_start <= $now && $sale_end >= $now) {
-                 $calculated_price = $product_attributes['price_sale'];
+                $calculated_price = $product_attributes['price_sale'];
+                $lifetime = $sale_end - $now;
+            } 
+
+            if($sale_start >= $now) {
+                $lifetime = $sale_start - $now;
             }
-           
+         
             
           /*  $modx->log(MODX_LOG_LEVEL_ERROR, 'Sale Start ' . strtotime($product_attributes['sale_start']));
             $modx->log(MODX_LOG_LEVEL_ERROR, 'Sale End ' .  strtotime($product_attributes['sale_end']));

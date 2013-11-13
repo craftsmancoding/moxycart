@@ -4,7 +4,7 @@
 <base href="[[++site_url]]" />
 </head>
 <body>
-<h1>Welcome to my Store</h1>
+<h1>Welcome to my Stores</h1>
 
 <!-- form example -->
 <form action="https://danieledano.foxycart.com/cart" method="post" accept-charset="utf-8">
