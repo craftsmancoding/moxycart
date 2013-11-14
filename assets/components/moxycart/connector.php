@@ -14,7 +14,7 @@
  *  @param string 
  */
 
-// Dammit why can't this be easier... it's hard to find stuff when you're developing
+// It's hard to find stuff when you're developing
 // We climb up the dir structure looking for config.core.php...
 $docroot = dirname(dirname(dirname(dirname(__FILE__))));
 while (!file_exists($docroot.'/config.core.php')) {
@@ -38,40 +38,21 @@ include_once MODX_CORE_PATH . 'model/modx/modx.class.php';
 $modx = new modX();
 $modx->initialize('mgr');
 
-// Get parameters sent here from the Grid controls
-// The limit and start parameters are configurable,
-// but the sort and dir are less so (?)
-$args = array();
-$args['limit'] = (int) $modx->getOption('limit',$_POST,10);
-$args['start'] = (int) $modx->getOption('start',$_POST,0);
-$args['sort'] = $modx->getOption('sort',$_POST,'id');
-$args['dir'] = $modx->getOption('dir',$_POST,'ASC');
+$log_level = $modx->getOption('log_level',$_GET, $modx->getOption('log_level'));
+$old_level = $modx->setLogLevel($log_level);
 
-$debug = false;
+$args = array_merge($_POST,$_GET); // skip the cookies, more explicit than $_REQUEST
+$modx->log(MODX_LOG_LEVEL_DEBUG, print_r($args,true),'','',__FILE__,__LINE__);
 
-//$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
 
-// Being explicit about the path makes this fail.  WTF?
-//$modx->getService('moxycart','moxycart', $core_path.'components/moxycart/model/');
-// Yet this works.
-if (!$modx->getService('moxycart')) {
-   die('Unable to load moxycart service.'); 
-}
+$core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);
+require_once($core_path.'components/moxycart/model/moxycart/moxycart.class.php');
+
+$Moxycart = new Moxycart($modx);
 
 $function = $modx->getOption('f',$_GET,'help');
 
-// Use the log for debugging Ajax
-if ($debug) {
-    $args['function'] = $function;
-    $modx->log(MODX_LOG_LEVEL_ERROR,print_r($args,true));
-}
-
-// Blacklist any functions whose name begins with "_" (underscore)
-if (substr($function, 1, 1) == '_') {
-    die('Function not allowed.');
-}
-
-$results = $modx->moxycart->$function($args);
+$results = $Moxycart->$function($args);
 
 if ($results===false) {
     header('HTTP/1.0 401 Unauthorized');
@@ -79,28 +60,6 @@ if ($results===false) {
     exit;
 }
 
+$modx->setLogLevel($old_level);
 print $results;
-
-/*
-$criteria = $modx->newQuery('modResource');
-//$criteria->where();
-$total_pages = $modx->getCount('modResource',$criteria);
-
-$criteria->limit($limit, $start); 
-$criteria->sortby($sort,$dir);
-$pages = $modx->getCollection('modResource',$criteria);
-
-// Init our array
-$data = array(
-    'results'=>array(),
-    'total' => $total_pages,
-);
-foreach ($pages as $p) {
-    $data['results'][] = $p->toArray();
-}
-// Use the log for debugging Ajax
-$modx->log(1,print_r($_POST,true));
-print json_encode($data);
-*/
-
 /*EOF*/

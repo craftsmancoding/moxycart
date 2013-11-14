@@ -10,6 +10,7 @@ $xpdo_meta_map['Currency']= array (
     'code' => NULL,
     'name' => NULL,
     'symbol' => NULL,
+    'is_active' => 1,
     'seq' => NULL,
   ),
   'fieldMeta' => 
@@ -44,6 +45,15 @@ $xpdo_meta_map['Currency']= array (
       'phptype' => 'string',
       'null' => true,
     ),
+    'is_active' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'attributes' => 'unsigned',
+      'phptype' => 'boolean',
+      'null' => false,
+      'default' => 1,
+    ),
     'seq' => 
     array (
       'dbtype' => 'int',
@@ -74,14 +84,6 @@ $xpdo_meta_map['Currency']= array (
     'Products' => 
     array (
       'class' => 'Product',
-      'local' => 'currency_id',
-      'foreign' => 'currency_id',
-      'cardinality' => 'many',
-      'owner' => 'local',
-    ),
-    'Subscription' => 
-    array (
-      'class' => 'Subscription',
       'local' => 'currency_id',
       'foreign' => 'currency_id',
       'cardinality' => 'many',

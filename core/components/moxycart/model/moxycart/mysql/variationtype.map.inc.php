@@ -60,6 +60,20 @@ $xpdo_meta_map['VariationType']= array (
         ),
       ),
     ),
+    'name' => 
+    array (
+      'alias' => 'name',
+      'primary' => false,
+      'unique' => true,
+      'columns' => 
+      array (
+        'name' => 
+        array (
+          'collation' => 'A',
+          'null' => true,
+        ),
+      ),
+    ),
   ),
   'composites' => 
   array (

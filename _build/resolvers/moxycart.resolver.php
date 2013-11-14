@@ -32,15 +32,43 @@
 if ($object->xpdo) {
     $modx =& $object->xpdo;
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
-        case xPDOTransport::ACTION_INSTALL:
         case xPDOTransport::ACTION_UPGRADE:
+            // $modx->addExtensionPackage($package_name,"[[++core_path]]components/$package_name/model/");
+            // $manager = $modx->getManager();
+            // Add a field to an existing container
+            // $modx->getManager()->addField('fieldname')     
+            break;
+        case xPDOTransport::ACTION_INSTALL:
             $modx->addExtensionPackage($package_name,"[[++core_path]]components/$package_name/model/");
             $manager = $modx->getManager();
+            $manager->createObjectContainer('Currency');
             $manager->createObjectContainer('Product');
-            // etc...
+            $manager->createObjectContainer('Unit');
+            $manager->createObjectContainer('VariationType'); 
+            $manager->createObjectContainer('VariationTerm');
+            $manager->createObjectContainer('ProductVariationTypes');
+            $manager->createObjectContainer('ProductVariantTerm');
+            $manager->createObjectContainer('Taxonomy');
+            $manager->createObjectContainer('Term');
+            $manager->createObjectContainer('ProductTerms');
+            $manager->createObjectContainer('Category');
+            $manager->createObjectContainer('Cart');
+            $manager->createObjectContainer('Image');       
+            
             break;
 
         case xPDOTransport::ACTION_UNINSTALL:
+            $manager->removeObjectContainer('Currency');
+            $manager->removeObjectContainer('Product');
+            $manager->removeObjectContainer('Spec');
+            $manager->removeObjectContainer('VariationType'); 
+            $manager->removeObjectContainer('VariationTerm');
+            $manager->removeObjectContainer('ProductVariationTypes');
+            $manager->removeObjectContainer('ProductTaxonomy');
+            $manager->removeObjectContainer('ProductTerms');
+            $manager->removeObjectContainer('ProductSpecs');
+            $manager->removeObjectContainer('Cart');
+            $manager->removeObjectContainer('Image');        
             $modx->removeExtensionPackage($package_name);
             break;
     }

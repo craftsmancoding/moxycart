@@ -94,7 +94,7 @@ $xpdo_meta_map['Cart']= array (
       'unique' => true,
       'columns' => 
       array (
-        'taxonomy_id' => 
+        'cart_id' => 
         array (
           'collation' => 'A',
           'null' => false,
