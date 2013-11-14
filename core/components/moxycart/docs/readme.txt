@@ -1,5 +1,11 @@
 Moxycart
 
+This is an add-on for MODX Revolution 2.x that integrates the FoxyCart API, making MODX into a turnkey eCommerce solution.
+
+Notes on the architecture:
+
+A MODX page with class_key Store acts as the parent container for products.
+
 
 Authors: 
 
