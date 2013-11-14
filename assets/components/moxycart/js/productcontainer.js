@@ -158,6 +158,7 @@ function renderProductContainer(isProductContainerCreate, config){
 		//Add store setting tab
 		var storeSettingsTab = {
 			title: 'Store Settings',
+			//xtype : 'form',
 			id: 'modx-resource-StoreSettings',
 			cls: 'modx-resource-tab',
 			layout: 'form',
@@ -1235,7 +1236,7 @@ function getProductsFields(config){
 		proxy : new Ext.data.HttpProxy({
 			method: 'GET',
 			prettyUrls: false,
-			url: connector_url+'json_products'
+			url: connector_url+'json_products&store_id='+pid
 		})
 	});
 
@@ -1270,7 +1271,8 @@ function getProductsFields(config){
 		border: true,
 		viewConfig: {
 			autoFill: true,
-			forceFit: true
+			forceFit: true,
+			emptyText : 'You don\'t have any products yet.'
 		},
 		listeners : {
 			afterrender : function(){
@@ -1331,13 +1333,19 @@ function getProductsFields(config){
 					}
 				},{
 					xtype: 'button',
-					text:'Manage Inventory'
+					text:'Manage Inventory',
+					handler : function(){
+						location.href = connector_url + 'product_inventory&store_id=' + pid;
+					}
 				},{
 					xtype: 'button',
 					padding : 0,
 					cls : 'divided-btn',
 					width : 55,
-					text:'Sort'
+					text:'Sort',
+					handler : function(){
+						location.href = connector_url + 'product_sort_order&store_id=' + pid;
+					}
 				},{
 					border:false,
 					xtype: 'displayfield',

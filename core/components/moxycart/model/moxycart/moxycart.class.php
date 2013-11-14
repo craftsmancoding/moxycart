@@ -320,7 +320,29 @@
     	');
 		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/specs.js');
 		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
+		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');
+		
         return '<div id="moxycart_canvas"></div>';
+    }
+
+    /**
+     * Hosts the "Create Variation Term" page
+     * @param int vterm_id
+     */
+    public function spec_create($args) {
+        // Add Required JS files here:
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
+        return '<div id="moxycart_canvas">Create spec.</div>';
+    }
+
+    /**
+     * Hosts the "Delete Variation Term" page
+     * @param int vterm_id
+     */
+    public function spec_delete($args) {
+        // Add Required JS files here:
+        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
+        return '<div id="moxycart_canvas">Delete spec</div>';
     }
 
     /**
@@ -345,6 +367,7 @@
         
         $action = $this->modx->getOption('action', $_POST);
         
+        
         switch ($action) {
             case 'update':
                 $Spec = $this->modx->getObject('Spec',$this->modx->getOption('spec_id', $_POST));
@@ -359,7 +382,7 @@
                 $Spec = $this->modx->getObject('Spec',$this->modx->getOption('spec_id', $_POST));
                 if (!$Spec->remove()) {
                     $out['success'] = false;
-                    $out['msg'] = 'Failed to delete spec.';    
+                    $out['msg'] = 'Failed to delete Spec.';    
                 }
                 $out['msg'] = 'Spec deleted successfully.';    
                 break;
@@ -375,7 +398,10 @@
         }
                 
         return json_encode($out);        
+		//Here code will go to add data in the database
 
+		//JSON response will look like below. We will consider below as standard, but we can add more attributes later if we need.
+		return '{"success":true, msg:"Operation done successfully."}';
     }  
  
     //------------------------------------------------------------------------------`
@@ -437,12 +463,14 @@
 		$moxycart_connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
             var connector_url = "'.$moxycart_connector_url.'";
-			var vtype_id = ' . $vtype_id . ';
     		Ext.onReady(function() {   		
-    			renderVariationTerms(vtype_id);
+    			renderVariationTerms(' . $vtype_id . ');
     		});
     		</script>
     	');	
+		
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
+		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');		
 		
         return '<div id="moxycart_canvas"></div>';
     }
@@ -471,7 +499,55 @@
      * Post data here to save it
      */
     public function variation_term_save() {
-        // $_POST... todo
+        if (!is_object($this->modx->user)) {
+            $this->modx->log(1,'variation_term_save 401 '.print_r($_POST,true));
+            return $this->_send401();
+        }
+        $out = array(
+            'success' => true,
+            'msg' => '',
+        );
+        
+        $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
+        if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
+            $this->modx->log(1,'variation_term_save FAILED. Invalid token: '.print_r($_POST,true));
+            $out['success'] = false;
+            $out['msg'] = 'Invalid token';
+        }
+        
+        $action = $this->modx->getOption('action', $_POST);
+        
+        
+        switch ($action) {
+            case 'update':
+                $VariationTerm = $this->modx->getObject('VariationTerm',$this->modx->getOption('vterm_id', $_POST));
+                $VariationTerm->fromArray($_POST);
+                if (!$VariationTerm->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to update Variation Term.';    
+                }
+                $out['msg'] = 'Variation Term updated successfully.';    
+                break;
+            case 'delete':
+                $VariationTerm = $this->modx->getObject('VariationTerm',$this->modx->getOption('vterm_id', $_POST));
+                if (!$VariationTerm->remove()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to delete Variation Term.';    
+                }
+                $out['msg'] = 'Variation Term deleted successfully.';    
+                break;
+            case 'create':
+            default:
+                $VariationTerm = $this->modx->newObject('VariationTerm');    
+                $VariationTerm->fromArray($_POST);
+                if (!$VariationTerm->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to save Variation Term.';    
+                }
+                $out['msg'] = 'Variation Term created successfully.';    
+        }
+                
+        return json_encode($out);  
     }
     
     //------------------------------------------------------------------------------
@@ -495,6 +571,9 @@
     		});
     		</script>
     	');	
+		
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
+		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');
 		
         return '<div id="moxycart_canvas"></div>';		
 		
@@ -524,7 +603,55 @@
      * Post data here to save it
      */
     public function variation_type_save() {
-        // $_POST... todo
+        if (!is_object($this->modx->user)) {
+            $this->modx->log(1,'variation_type_save 401 '.print_r($_POST,true));
+            return $this->_send401();
+        }
+        $out = array(
+            'success' => true,
+            'msg' => '',
+        );
+        
+        $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
+        if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
+            $this->modx->log(1,'variation_type_save FAILED. Invalid token: '.print_r($_POST,true));
+            $out['success'] = false;
+            $out['msg'] = 'Invalid token';
+        }
+        
+        $action = $this->modx->getOption('action', $_POST);
+        
+        
+        switch ($action) {
+            case 'update':
+                $VariationType = $this->modx->getObject('VariationType',$this->modx->getOption('vtype_id', $_POST));
+                $VariationType->fromArray($_POST);
+                if (!$VariationType->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to update Variation Type.';    
+                }
+                $out['msg'] = 'Variation Type updated successfully.';    
+                break;
+            case 'delete':
+                $VariationType = $this->modx->getObject('VariationType',$this->modx->getOption('vtype_id', $_POST));
+                if (!$VariationType->remove()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to delete Variation Type.';    
+                }
+                $out['msg'] = 'Variation Type deleted successfully.';    
+                break;
+            case 'create':
+            default:
+                $VariationType = $this->modx->newObject('VariationType');    
+                $VariationType->fromArray($_POST);
+                if (!$VariationType->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to save Variation Type.';    
+                }
+                $out['msg'] = 'Variation Type created successfully.';    
+        }
+                
+        return json_encode($out);   
     }
 
     //------------------------------------------------------------------------------
@@ -1303,7 +1430,7 @@
         
         $criteria = $this->modx->newQuery('VariationTerm');
         if ($vtype_id) {
-            $criteria->where(array('vtype_id'=>$parent_id));
+            $criteria->where(array('vtype_id'=>$vtype_id));
         }
 
         $total_pages = $this->modx->getCount('VariationTerm',$criteria);

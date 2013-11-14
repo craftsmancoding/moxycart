@@ -3,6 +3,10 @@ function renderVariationTypes(){
 	var variationTypesStore = new Ext.data.Store({
 		autoLoad:true,
 		url: connector_url + 'json_variation_types',
+		sortInfo:{
+			field:'seq',
+			direction: 'ASC'
+		},		
 		reader:new Ext.data.JsonReader({
 			idProperty: 'vtype_id',
 			root: 'results',
