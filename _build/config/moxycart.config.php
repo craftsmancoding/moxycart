@@ -76,6 +76,7 @@ $components = array(
         )
     ),
 
+
     /* ************************ NAMESPACE(S) ************************* */
     /* (optional) Typically, there's only one namespace which is set
      * to the $packageNameLower value. Paths should end in a slash

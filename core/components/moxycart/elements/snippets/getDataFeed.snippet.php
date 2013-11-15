@@ -18,23 +18,21 @@ $class_path = $core_path . 'components/moxycart/model/moxycart/rc4crypt.class.ph
 require_once($class_path);
 
 $rc4crypt = new rc4crypt();
-
-
 // ======================================================================================
 // CHANGE THIS DATA:
 // Set the key you entered in your FoxyCart.com admin.
 // ======================================================================================
-$api_key = 'fsGnHyMEe1efkAYbLWkGTixU1BgD66BgscuZAbzI2DNd8GiKxxlhFI6wecZb'; // your foxy cart datafeed key
+$api_key = $modx->getOption('moxycart.api_key'); // your foxy cart datafeed key
 
 
 // The filename that you'd like to write to.
-$folder = 'moxycart_data/';
-
+$cache_dir = 'moxycart_datafeed';
+$lifetime = 0;
+$cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
 
 // You can change the following data if you want to customize what data gets written.
 if($modx->getOption('FoxyData', $_POST)) {
 	// Get the raw data and initialize variables
-	$output = '';
 	$FoxyData_encrypted = urldecode($_POST["FoxyData"]);
 	$FoxyData_decrypted = $rc4crypt->decrypt($api_key,$FoxyData_encrypted);
 	$xml = new SimpleXMLElement($FoxyData_decrypted);
@@ -55,24 +53,42 @@ if($modx->getOption('FoxyData', $_POST)) {
 			if ($product_code == '') {
 				$product_code = $product_name;
 			}
+			/*
+			* Processed the data here 
+			* Store to DB tbl etc
+			*/
+			/*
 			$output .= 'Customer: ' . $transaction_customer_name . "\n";
 			$output .= 'QTY: ' .  $product_quantity. "\n";
 			$output .= 'Product Name: ' .  $product_name. "\n";
 			$output .= 'Product Code: ' .  $product_code. "\n";
 			$output .= '--------------------------------------------' . "\n";
+			*/
 		}
 	}
 
-	// Write it to a file for now
-	$fh = fopen($folder . time() . '.txt', 'a') or die("Couldn't open file for writing. Check your file and folder ownerships and permissions."); 
-	fwrite($fh, $output);
-	fclose($fh);
+
+	// store files on local dir
+	$dom = new DOMDocument('1.0');
+	$dom->preserveWhiteSpace = false;
+	$dom->formatOutput = true;
+	$dom->loadXML($xml->asXML());
+	
+    $encrypted_cache_key = 'encrypted_txn_'.$transaction_id;
+    $modx->cacheManager->set($encrypted_cache_key, $FoxyData_encrypted, $lifetime, $cache_opts);
+
+    $decrypted_cache_key = 'decrypted_txn_'.$transaction_id;
+    $modx->cacheManager->set($decrypted_cache_key, $dom->saveXML(), $lifetime, $cache_opts);
 
 	return 'foxy';
 
 } else {
-	$fh = fopen($folder . 'errors.txt', 'a') or die("Couldn't open $file for writing!"); 
-	fwrite($fh, 'error occurred on ' . time());
-	fclose($fh);
+	$log_target = array(
+	    'target'=>'FILE',
+	    'options' => array(
+	        'filename'=>'foxycart.log'
+	    )
+	); 
+	$modx->log(xPDO::LOG_LEVEL_ERROR,'Failed to Proccessed Data Feed. Please check Error Logs on Foxycart Admin',$log_target);
 	return 'error';
 }
