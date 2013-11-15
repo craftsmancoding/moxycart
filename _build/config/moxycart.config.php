@@ -64,6 +64,15 @@ $components = array(
             'xtype' => 'textfield',
             'value' => '',
             'area' => 'api',
+        ),
+        'moxycart_system_setting1' => array( // key
+            'key' => 'moxycart.api_key',
+            'name' => 'Foxycart API Key',
+            'description' => 'APi Key for your Foxycart store.',
+            'namespace' => 'moxycart',
+            'xtype' => 'textfield',
+            'value' => '',
+            'area' => 'api',
         )
     ),
 

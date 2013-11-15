@@ -32,7 +32,7 @@ $folder = 'moxycart_data/';
 
 
 // You can change the following data if you want to customize what data gets written.
-if (isset($_POST["FoxyData"])) {
+if($modx->getOption('FoxyData', $_POST)) {
 	// Get the raw data and initialize variables
 	$output = '';
 	$FoxyData_encrypted = urldecode($_POST["FoxyData"]);
