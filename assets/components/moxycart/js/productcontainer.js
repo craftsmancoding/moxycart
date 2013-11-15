@@ -8,7 +8,11 @@ function getQueryParams(qs) {
 }
 
 var query = getQueryParams(document.location.search),
-	pid = query.id;
+	pid = query.id,
+	/* Getting value loaded to the page through MODx 
+	 * Asuming here that his path is always set by MODx.
+	 */
+	activeRecord = {};
 
 
 function renderProduct(){
@@ -154,6 +158,7 @@ function renderProductContainer(isProductContainerCreate, config){
 		//Add store setting tab
 		var storeSettingsTab = {
 			title: 'Store Settings',
+			//xtype : 'form',
 			id: 'modx-resource-StoreSettings',
 			cls: 'modx-resource-tab',
 			layout: 'form',
@@ -901,7 +906,9 @@ function getStoreSettingsFields(config){
 						listeners : {
 							afterrender : function(f){
 								getVariations(f);
-								Ext.getCmp('modx-abtn-save').disable(true);
+								var save = Ext.getCmp('modx-abtn-save');
+								activeRecord = MODx.activePage.config.record.properties.moxycart;
+								if(save) save.disable(true);
 							}
 						}
 					}]
@@ -1229,7 +1236,7 @@ function getProductsFields(config){
 		proxy : new Ext.data.HttpProxy({
 			method: 'GET',
 			prettyUrls: false,
-			url: connector_url+'json_products'
+			url: connector_url+'json_products&store_id='+pid
 		})
 	});
 
@@ -1264,7 +1271,8 @@ function getProductsFields(config){
 		border: true,
 		viewConfig: {
 			autoFill: true,
-			forceFit: true
+			forceFit: true,
+			emptyText : 'You don\'t have any products yet.'
 		},
 		listeners : {
 			afterrender : function(){
@@ -1325,13 +1333,19 @@ function getProductsFields(config){
 					}
 				},{
 					xtype: 'button',
-					text:'Manage Inventory'
+					text:'Manage Inventory',
+					handler : function(){
+						location.href = connector_url + 'product_inventory&store_id=' + pid;
+					}
 				},{
 					xtype: 'button',
 					padding : 0,
 					cls : 'divided-btn',
-					width : 95,
-					text:'Set Manual<br>Sort Order'
+					width : 55,
+					text:'Sort',
+					handler : function(){
+						location.href = connector_url + 'product_sort_order&store_id=' + pid;
+					}
 				},{
 					border:false,
 					xtype: 'displayfield',

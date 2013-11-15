@@ -43,7 +43,10 @@ function renderManageSpecs(){
 				ddGroup:'specDDGroup',
 				viewConfig: {
 					autoFill: true,
-					forceFit: true
+					forceFit: true,
+					getRowClass:function(record, rowIndex, rp, ds){
+						return 'moxycart-grid-row';
+					}
 				},				
 				cm:new Ext.grid.ColumnModel([
 					  {
@@ -66,12 +69,12 @@ function renderManageSpecs(){
 						width:100,
 						align:'center',
 						renderer:function(value, metaData, record, rowIndex, colIndex, store){
-							var html =  '<input type="button" value="Edit" class="x-btn x-btn-noicon x-box-item" style="height:30px;width:90px;" onclick="return onSpecsEdit(' + record.get('spec_id') + ');"/>';
+							var html =  '<input type="button" value="Edit" class="x-btn x-btn-noicon x-box-item" style="height:25px;width:90px;" onclick="return onSpecsEdit(' + record.get('spec_id') + ');"/>';
 							
 							html += '&nbsp;&nbsp;';
 							
-							html += '<input type="button" value="Delete" class="x-btn x-btn-noicon x-box-item" style="height:30px;width:90px;" onclick="return onSpecsDelete(' + record.get('spec_id') + ');"/>';
-							
+							html += '<input type="button" value="Delete" class="x-btn x-btn-noicon x-box-item" style="height:25px;width:90px;" onclick="return onSpecsDelete(' + record.get('spec_id') + ');"/>';
+												
 							return html;
 						}
 					  }

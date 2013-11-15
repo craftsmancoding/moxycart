@@ -6,7 +6,7 @@ It has custom properties (stored as JSON). In other scenarios this data might be
 related tables, but this data is mostly optional, overrideable, and presented as a convenience,
 so the data structure is stored locally with the specific record.  
 
-The properites include the following attributes:
+The properites include the following attributes (see getProperties() function below):
 
 Array (
     'product_type'      => regular|subscription|download,
@@ -14,7 +14,7 @@ Array (
     'sort_order'        => name
     'qty_alert'         =>
     'track_inventory'   => 1|0 boolean
-    'spec' => Array (
+    'specs' => Array (
         1 => true
         2 => true
         ... etc...
@@ -102,7 +102,7 @@ class Store extends modResource {
             'sort_order'        => 'name',
             'qty_alert'         => 0,
             'track_inventory'   => 0,
-            'spec' => array (),
+            'specs' => array (),
             'variations' =>   array(),
             'taxonomies' => array()
         );
@@ -259,6 +259,7 @@ class StoreCreateProcessor extends modResourceCreateProcessor {
         $raw = $this->getProperties(); // <-- this will have raw values
         $properties = $this->object->getProperties('moxycart'); //<-- we need to update these values
         $this->modx->log(1,'beforeSave raw values: '.print_r($raw,true));
+        $this->modx->log(1,'beforeSave raw POST values: '.print_r($_POST,true));
         
         $properties['product_type'] = $this->modx->getOption('product_type',$raw);
         $properties['product_template'] = $this->modx->getOption('product_template',$raw);
@@ -295,7 +296,19 @@ class StoreUpdateProcessor extends modResourceUpdateProcessor {
 
     /**
      * Override modResourceUpdateProcessor::beforeSave to provide custom functionality, saving settings for the container
-     * to a custom field in the DB
+     * to a custom field in the DB.
+     *
+     * The Post data comes thru flattened (boo)
+     *
+            [specs_4] => on
+            [specs_12] => on
+            [taxonomies_3] => on
+            [taxonomies_4] => on
+            [variations_1] => Option Only
+            [variations_2] => Variant
+            [variations_3]
+     * On the flip side, it should be available in JS via this path: MODx.activePage.config.record.properties.moxycart
+     *
      * {@inheritDoc}
      * @return boolean
      */
@@ -303,6 +316,8 @@ class StoreUpdateProcessor extends modResourceUpdateProcessor {
         $raw = $this->getProperties(); // <-- this will have raw values
         $properties = $this->object->getProperties('moxycart'); //<-- we need to update these values
         $this->modx->log(1,'beforeSave raw values: '.print_r($raw,true));
+        //$this->modx->log(1,'existing values: '.print_r($properties,true));
+        $this->modx->log(1,'beforeSave raw POST values: '.print_r($_POST,true));
         
         $properties['product_type'] = $this->modx->getOption('product_type',$raw);
         $properties['product_template'] = $this->modx->getOption('product_template',$raw);
@@ -310,8 +325,30 @@ class StoreUpdateProcessor extends modResourceUpdateProcessor {
         $properties['sort_order'] = $this->modx->getOption('sort_order',$raw);
         $properties['qty_alert'] = $this->modx->getOption('qty_alert',$raw);
 
+        // Fresh start...
+        $properties['specs'] = array();
+        $properties['taxonomies'] = array();
+        $properties['variations'] = array();
+        foreach ($raw as $k => $v) {
+            $len = strlen($k);
+            if ($this->starts_with($k,'specs')) {
+                $properties['specs'][substr($k,(6 - $len))] = true;
+            }
+            if ($this->starts_with($k,'taxonomies')) {
+                $properties['taxonomies'][substr($k,(11 - $len))] = true;
+            }
+            if ($this->starts_with($k,'variations')) {
+                $properties['variations'][substr($k,(11 - $len))] = $v;
+            } 
+        }
+
         $this->object->setProperties($properties,'moxycart');
         return parent::beforeSave();
+    }
+
+    // http://stackoverflow.com/questions/834303/php-startswith-and-endswith-functions
+    private function starts_with($haystack, $needle) {
+        return $needle === "" || strpos($haystack, $needle) === 0;
     }
 
 }
