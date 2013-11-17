@@ -5,11 +5,8 @@
 * --------------------------------------------------
 * This file will decrypt the posted data from Foxycart Data Feed URL
 * Set on your foxycart store dashboard
-* and processed the decrypted data to store on database tables
+* and return the decrypted data as an array 
 *
-* For testing, this class will also create a cache files like
-* decrypted and encrypted data files so that we can easily pass this cache key 
-* and processed the data without going through foxycart Ecommerce Process
 * --------------------------------------------------
 **/
 
@@ -39,8 +36,10 @@ class FC_Datafeed {
     * parse_xml function
     * Parsed and Processed the passed xml data
     * @param xml $xml
+    * @return array $transactions
     **/
     public function parseXML($xml) {
+    	$transactions = array();
     	foreach ($xml->transactions->transaction as $transaction) {
 
 			// Loop through to get the product code, name, customer name, date, and transaction ID
@@ -49,7 +48,6 @@ class FC_Datafeed {
 			$transaction_date = $transaction->date;
 			$transaction_id = $transaction->id;
 			foreach ($transaction->transaction_details->transaction_detail as $product) {
-
 				// Get the product details
 				$product_code = $product->product_code;
 				$product_name = $product->product_name;
@@ -57,19 +55,17 @@ class FC_Datafeed {
 				if ($product_code == '') {
 					$product_code = $product_name;
 				}
-				/*
-				* Processed the data here 
-				* Store to DB tbl etc
-				*/
-				/*
-				$output .= 'Customer: ' . $transaction_customer_name . "\n";
-				$output .= 'QTY: ' .  $product_quantity. "\n";
-				$output .= 'Product Name: ' .  $product_name. "\n";
-				$output .= 'Product Code: ' .  $product_code. "\n";
-				$output .= '--------------------------------------------' . "\n";
-				*/
+				$transactions[] = array(
+					'transaction_id'	=> $transaction_id,
+					'first_name'	=> $transaction->customer_first_name,
+					'last_name'	=> $transaction->customer_last_name,
+					'product_code'	=> $product->product_code,
+					'product_name'	=> $product->product_name,
+					'product_quantity'	=> $product->product_quantity,
+				);
 			}
 		}
+		return $transactions;
     }
 
 }
