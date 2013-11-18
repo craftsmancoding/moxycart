@@ -123,19 +123,19 @@ if(!$xpdo->addPackage('moxycart',$adjusted_core_path.'components/moxycart/model/
 
 // Clear out Tables
 print '<h3>Dropping Tables...</h3>';
-$manager->removeObjectContainer('Currency');
-$manager->removeObjectContainer('Product');
-$manager->removeObjectContainer('Spec');
-$manager->removeObjectContainer('VariationType'); 
-$manager->removeObjectContainer('VariationTerm');
-$manager->removeObjectContainer('ProductVariationTypes');
-$manager->removeObjectContainer('ProductTaxonomy');
-$manager->removeObjectContainer('ProductTerm');
-//$manager->removeObjectContainer('ProductTerms'); // whoops
-$manager->removeObjectContainer('ProductSpec');
-//$manager->removeObjectContainer('ProductSpecs'); // whoops
-$manager->removeObjectContainer('Cart');
-$manager->removeObjectContainer('Image');
+@$manager->removeObjectContainer('Currency');
+@$manager->removeObjectContainer('Product');
+@$manager->removeObjectContainer('Spec');
+@$manager->removeObjectContainer('VariationType'); 
+@$manager->removeObjectContainer('VariationTerm');
+@$manager->removeObjectContainer('ProductVariationTypes');
+@$manager->removeObjectContainer('ProductTaxonomy');
+@$manager->removeObjectContainer('ProductTerm');
+@$manager->removeObjectContainer('ProductTerms'); // whoops
+@$manager->removeObjectContainer('ProductSpec');
+@$manager->removeObjectContainer('ProductSpecs'); // whoops
+@$manager->removeObjectContainer('Cart');
+@$manager->removeObjectContainer('Image');
 
 /*
 print '<h3>Removing Taxonomy and Term Records on modx_site_content Tables...</h3>';

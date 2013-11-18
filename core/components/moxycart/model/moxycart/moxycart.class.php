@@ -303,7 +303,7 @@
      * @param int product_id (from $_GET). Defines the id of the product
      */
     public function product_update($args) {
-    
+        
     	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/util/datetime.js');
 //    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/element/modx.panel.tv.renders.js');
     	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.grid.resource.security.local.js');	
