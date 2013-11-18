@@ -329,6 +329,11 @@
         return '<div id="modx-panel-resource-div"> </div>';
     }
 
+    public function product_update2($args) {
+        $data = array();
+        return load_view('product_update.php', $data);
+    }
+
     /**
      * Hosts the "Update Variation" form.
      *

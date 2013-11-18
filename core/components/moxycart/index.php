@@ -11,10 +11,11 @@
  */
 $core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);
 require_once($core_path.'components/moxycart/model/moxycart/moxycart.class.php');
+require_once 'includes/functions.php';
 
 $Moxycart = new Moxycart($modx);
 
-$old_level = $modx->setLogLevel($log_level);
+//$old_level = $modx->setLogLevel($log_level);
 
 $args = array_merge($_POST,$_GET); // skip the cookies, more explicit than $_REQUEST
 
@@ -31,6 +32,6 @@ $results = $Moxycart->$function($args);
 //}
 // The result?  The MODX manager URLs seem to ALWAYS include the base scripts/html. Boo.
 
-$modx->setLogLevel($old_level);
+//$modx->setLogLevel($old_level);
 return $results;
 /*EOF*/
