@@ -138,8 +138,8 @@
         <composite alias="Parent" class="Product" local="parent_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Variant" class="Product" local="product_id" foreign="parent_id" cardinality="many" owner="local" />
 		
-		<composite alias="Terms" class="ProductTerms" local="product_id" foreign="product_id" cardinality="many" owner="local" />
-        <composite alias="Specs" class="ProductSpecs" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+		<composite alias="Terms" class="ProductTerm" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+        <composite alias="Specs" class="ProductSpec" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Related" class="RelatedProducts" local="product_id" foreign="product_id" cardinality="many" owner="local" />
     </object>
 
@@ -157,10 +157,15 @@
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="spec_id" collation="A" null="false" />
 		</index>
+        <index alias="name" name="name" primary="false" unique="true"  type="BTREE">
+			<column key="name" collation="A" null="false" />
+		</index>
+
+
 		
 	</object>
 
-    <!-- ! ProductSpecs -->
+    <!-- ! ProductSpec -->
     <!-- custom fields for specifying height, weight etc. -->
 	<object class="ProductSpec" table="product_specs" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
@@ -184,7 +189,7 @@
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="true" />
 
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="variation_id" collation="A" null="false" />
+			<column key="vtype_id" collation="A" null="false" />
 		</index>
         <index alias="name" name="name" primary="false" unique="true">
 			<column key="name" collation="A" null="true" />
@@ -244,9 +249,9 @@
         <aggregate alias="Products" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 	</object>
 	    
-    <!-- ! ProductTerms -->
+    <!-- ! ProductTerm -->
     <!-- for adding tags/categories to products -->
-	<object class="ProductTerms" table="product_terms" extends="xPDOSimpleObject">
+	<object class="ProductTerm" table="product_terms" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="term_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />		

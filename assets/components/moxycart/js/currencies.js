@@ -1,29 +1,28 @@
-function renderManageSpecs(){
+function renderManageCurrencies(){
 
-	var specsStore = new Ext.data.Store({
+	var currenciesStore = new Ext.data.Store({
 		autoLoad:true,
-		url: connector_url + 'json_specs',
+		url: connector_url + 'json_currencies',
 		sortInfo:{
-			field:'seq',
+			field:'name',
 			direction: 'ASC'
 		},
 		reader:new Ext.data.JsonReader({
-			idProperty: 'spec_id',
+			idProperty: 'currency_id',
 			root: 'results',
 			totalProperty: 'total',
 			fields:[
-				{name: 'spec_id'},
+				{name: 'currency_id'},
 				{name: 'name'},
-				{name: 'description'},
-				{name: 'group'},
-				{name: 'type'},
-				{name: 'seq'}
+				{name: 'code'},
+				{name: 'symbol'},
+				{name: 'is_active'}
 			]
 		})
 	});
 
-	var specsContainer = new Ext.Panel({
-		title:'Manage Specs',
+	var currenciesContainer = new Ext.Panel({
+		title:'Manage Currencies',
 		renderTo:'moxycart_canvas',
 		layout:{
 			type:'border'
@@ -33,8 +32,8 @@ function renderManageSpecs(){
 			{
 				region:'center',
 				xtype:'grid',
-				id:'pnlSpecsGrid',
-				store:specsStore,
+				id:'pnlCurrenciesGrid',
+				store:currenciesStore,
 				layout:'fit',
 				autoExpandColumn: 'name',
 				selModel:new Ext.grid.RowSelectionModel({
@@ -42,7 +41,7 @@ function renderManageSpecs(){
 				}),				
 				loadMask:true,
 				enableDragDrop:true,
-				ddGroup:'specDDGroup',
+				ddGroup:'currencyDDGroup',
 				enableHdMenu:false,
 				viewConfig: {
 					autoFill: true,
@@ -55,93 +54,62 @@ function renderManageSpecs(){
 					  {
 						header:'Name',
 						resizable: false,
-						dataIndex: 'name'
+						dataIndex: 'name',
+						sortable:true
 					  },
 					  {
-						header: 'Group',
-						dataIndex: 'group'
+						header: 'Code',
+						dataIndex: 'code',
+				        sortable:true
 					  },
 					  {
-						header: 'Description',
-						dataIndex: 'description'
+						header: 'Symbol',
+						dataIndex: 'symbol',
+				        sortable:true
+					  },
+					  {
+						header: 'Active',
+						dataIndex: 'is_active',
+						renderer: function(value) {
+                            return "<input type='checkbox' disabled='disabled' " + (value ? "checked='checked'" : "") + ">";
+                        },
+                        sortable:true
 					  },
 					  {
 						header:'',
-						dataIndex: 'spec_id',
+						dataIndex: 'currency_id',
 						editable:false,
 						width:200,
 						fixed:true,
 						align:'center',
 						renderer:function(value, metaData, record, rowIndex, colIndex, store){
-							var html =  '<input type="button" value="Edit" class="x-btn x-btn-noicon x-box-item" style="height:25px;width:90px;" onclick="return onSpecsEdit(' + record.get('spec_id') + ');"/>';
+							var html =  '<input type="button" value="Edit" class="x-btn x-btn-noicon x-box-item" style="height:20px;width:60px;" onclick="return onCurrenciesEdit(' + record.get('currency_id') + ');"/>';
 							
 							html += '&nbsp;&nbsp;';
 							
-							html += '<input type="button" value="Delete" class="x-btn x-btn-noicon x-box-item" style="height:25px;width:90px;" onclick="return onSpecsDelete(' + record.get('spec_id') + ');"/>';
+							html += '<input type="button" value="Delete" class="x-btn x-btn-noicon x-box-item" style="height:20px;width:60px;" onclick="return onCurrenciesDelete(' + record.get('currency_id') + ');"/>';
 												
 							return html;
 						}
 					  }
 				]),
 				listeners:{
-					dblclick:function(){},
+				    // Double-clicking = Edit Row
+					dblclick:function(){
+					   onDblClickGrid();
+					},
 					render:function(){
-					
-						var grid = Ext.getCmp('pnlSpecsGrid');
-					
-						var ddrow = new Ext.dd.DropTarget(grid.container, {
-							ddGroup : 'specDDGroup',
-							copy:false,
-							notifyDrop : function(dd, e, data){
-
-								var grid = Ext.getCmp('pnlSpecsGrid');
-								var ds = grid.store;
-
-								var sm = grid.getSelectionModel();
-								var rows = sm.getSelections();
-
-								if(dd.getDragData(e)) {
-																
-									var cindex=dd.getDragData(e).rowIndex;
-									if(typeof(cindex) != "undefined") {
-										for(i = 0; i <  rows.length; i++) {
-											ds.remove(ds.getById(rows[i].id));
-										}
-										ds.insert(cindex,data.selections);
-										sm.clearSelections();
-										
-										for(Icount=0;Icount<ds.getCount();Icount++){
-										
-											var record = ds.getAt(Icount);
-										
-											if(record.get('seq')!=Icount){												
-
-												var values = {};
-												Ext.applyIf(values, record.data);
-												values.action = 'update';
-												values.seq = Icount;
-												
-												
-												Ext.Ajax.request({
-												   url: connector_url + 'spec_save',
-												   params:values,
-												   success: function(response, options){					
-												   },
-												   failure: function(response, options){					
-												   }
-												});												
-											}
-											
-										}				
-									}
-								}
-							}
-						}); 
-					
+						var grid = Ext.getCmp('pnlCurrenciesGrid');
 					}
-				}
+				},
+				bbar: new Ext.PagingToolbar({
+        			store: currenciesStore,
+        			displayInfo: true,
+        			pageSize: 30,
+        			prependButtons: true
+        		})
 			},
-			{
+            {
 				region:'north',
 				height:60,
 				xtype:'panel',
@@ -154,9 +122,9 @@ function renderManageSpecs(){
 				items:[
 					{
 						xtype:'button',
-						text:'Create Spec',
+						text:'Create Currency',
 						handler:function(){
-							createUpdateSpec(null);
+							createUpdateCurrency(null);
 						}
 					}
 				]
@@ -181,15 +149,15 @@ function renderManageSpecs(){
 	
 }
 
-function createUpdateSpec(record){
+function createUpdateCurrency(record){
 
 	var isUpdate = false;
 	if(record!=null){
 		isUpdate=true;
 	}
 
-	var createSpecWin = new Ext.Window({
-		title:(isUpdate?'Update Spec : ' + record.get('name'):'Create Spec'),
+	var createCurrencyWin = new Ext.Window({
+		title:(isUpdate?'Update Currency : ' + record.get('name'):'Create Currency'),
 		modal:true,
 		height:300,
 		width:600,
@@ -198,7 +166,7 @@ function createUpdateSpec(record){
 			{
 				xtype:'form',
 				layout:'form',
-				itemId:'frmSpecs',
+				itemId:'frmCurrencies',
 				border:false,
 				labelSeparator:'',
 				bodyStyle:'padding:30px 30px 30px 30px;',
@@ -209,7 +177,7 @@ function createUpdateSpec(record){
 					},				
 					{
 						xtype:'hidden',
-						name:'spec_id'
+						name:'currency_id'
 					},
 					{
 						xtype:'hidden',
@@ -225,16 +193,29 @@ function createUpdateSpec(record){
 					},
 					{
 						xtype:'textfield',
-						fieldLabel:'Group',
-						width:'70%',
-						name: 'group'
+						fieldLabel:'Code',
+						width:'20%',
+						name: 'code'
 					},
 					{
-						xtype:'textarea',
-						fieldLabel:'Description',
-						width:'100%',
-						name: 'description'
-					}											
+						xtype:'textfield',
+						fieldLabel:'Symbol',
+						width:'20%',
+						name: 'symbol'
+					},
+					/*cheap trick to always pass a value*/
+					{
+						xtype:'hidden',
+						name: 'is_active',
+						value:0
+					}					
+					,{
+                         xtype: 'checkbox'
+                        ,id:'is_active' 
+                        ,name : 'is_active'
+                        ,fieldLabel: 'Active?'
+                        ,inputValue: 1    
+                    }								
 				]
 			}
 		],
@@ -242,9 +223,9 @@ function createUpdateSpec(record){
 			{
 				text:(isUpdate?'Update':'Save'),
 				handler:function(btn){
-					var frmSpecs = createSpecWin.getComponent('frmSpecs');
+					var frmCurrencies = createCurrencyWin.getComponent('frmCurrencies');
 					
-					if(!frmSpecs.getForm().isValid()){
+					if(!frmCurrencies.getForm().isValid()){
 						Ext.Msg.show({
 						   title:'Error',
 						   msg: 'Please fill all required fields.',
@@ -256,15 +237,15 @@ function createUpdateSpec(record){
 						return false;
 					}
 					
-					var progressBar = new ProgressBar( (isUpdate?'Update Specs':'Create Specs'), 'Processing specs, please wait...');					
+					var progressBar = new ProgressBar( (isUpdate?'Update Currencies':'Create Currency'), 'Processing currencies, please wait...');					
 					progressBar.showProgress();
 					
-					frmSpecs.getForm().submit({
-						url: connector_url + 'spec_save',
+					frmCurrencies.getForm().submit({
+						url: connector_url + 'currency_save',
 						success: function(form, action) {
 							progressBar.hideProgress();
 							if(action.result.success){
-								createSpecWin.destroy();
+								createCurrencyWin.destroy();
 							}
 							else{
 								Ext.Msg.show({
@@ -272,13 +253,13 @@ function createUpdateSpec(record){
 								   msg: action.result.msg,
 								   buttons: Ext.Msg.OK,
 								   fn: function(){
-									createSpecWin.destroy();
+									createCurrencyWin.destroy();
 								   },
 								   icon: Ext.MessageBox.ERROR
 								});													
 							}
 							
-							Ext.getCmp('pnlSpecsGrid').getStore().reload();
+							Ext.getCmp('pnlManageInventory').getStore().reload();
 						},
 						failure: function(form, action) {
 							progressBar.hideProgress();
@@ -300,7 +281,7 @@ function createUpdateSpec(record){
 							   msg: msg,
 							   buttons: Ext.Msg.OK,
 							   fn: function(){
-								createSpecWin.destroy();
+								createCurrencyWin.destroy();
 							   },
 							   icon: Ext.MessageBox.ERROR
 							});
@@ -314,48 +295,48 @@ function createUpdateSpec(record){
 			{
 				text:'Cancel',
 				handler:function(){
-					createSpecWin.destroy();
+					createCurrencyWin.destroy();
 				}										
 			}									
 		]
 	});
 
-	createSpecWin.show();
+	createCurrencyWin.show();
 	
 	if(isUpdate){
-		createSpecWin.getComponent('frmSpecs').getForm().loadRecord(record);
-		createSpecWin.getComponent('frmSpecs').getForm().findField('action').setValue('update');
+		createCurrencyWin.getComponent('frmCurrencies').getForm().loadRecord(record);
+		createCurrencyWin.getComponent('frmCurrencies').getForm().findField('action').setValue('update');
 	}
 	else{
-		createSpecWin.getComponent('frmSpecs').getForm().findField('seq').setValue(Ext.getCmp('pnlSpecsGrid').getStore().getCount());
+    createCurrencyWin.getComponent('frmCurrencies').getForm().findField('seq').setValue(Ext.getCmp('pnlCurrenciesGrid').getStore().getCount());
 	}
 	
-	createSpecWin.getComponent('frmSpecs').getForm().isValid();
+	createCurrencyWin.getComponent('frmCurrencies').getForm().isValid();
 	
 
 }
 
-function onSpecsEdit(spec_id){
+function onCurrenciesEdit(currency_id){
 	onDblClickGrid();
 }
 
-function onSpecsDelete(spec_id){
+function onCurrenciesDelete(currency_id){
 
 	Ext.Msg.show({
 	   title:'Confirm',
-	   msg: 'Are you sure want to delete specs?',
+	   msg: 'Are you sure want to delete this currency?',
 	   buttons: Ext.Msg.YESNO,
 	   fn: function(buttonId ){
 			if(buttonId=='yes'){
 			
-				var progressBar = new ProgressBar('Delete Specs', 'Processing specs, please wait...');
+				var progressBar = new ProgressBar('Delete Currency', 'Processing specs, please wait...');
 				progressBar.showProgress();
 				
 				Ext.Ajax.request({
-				   url: connector_url + 'spec_save',
+				   url: connector_url + 'currency_save',
 				   params:{
 						action:'delete',
-						spec_id:spec_id
+						currency_id:currency_id
 				   },
 				   success: function(response, options){
 						progressBar.hideProgress();
@@ -372,7 +353,7 @@ function onSpecsDelete(spec_id){
 							});						
 						}
 						
-						Ext.getCmp('pnlSpecsGrid').getStore().reload();
+						Ext.getCmp('pnlCurrenciesGrid').getStore().reload();
 				   },
 				   failure: function(response, options){
 						progressBar.hideProgress();
@@ -395,7 +376,7 @@ function onSpecsDelete(spec_id){
 							});						
 						}
 						
-						Ext.getCmp('pnlSpecsGrid').getStore().reload();
+						Ext.getCmp('pnlCurrenciesGrid').getStore().reload();
 				   }
 				});					
 			}
@@ -408,17 +389,17 @@ function onSpecsDelete(spec_id){
 
 function onDblClickGrid(){
 
-	var pnlSpecsGrid = Ext.getCmp('pnlSpecsGrid');
-	var selModel = pnlSpecsGrid.getSelectionModel();
+	var pnlCurrenciesGrid = Ext.getCmp('pnlCurrenciesGrid');
+	var selModel = pnlCurrenciesGrid.getSelectionModel();
 	
 	if(selModel!=null && selModel.hasSelection()){
 		var record  = selModel.getSelected();
-		createUpdateSpec(record);
+		createUpdateCurrency(record);
 	}
 	else{
 		Ext.Msg.show({
 		   title:'Error',
-		   msg: 'Please select a row to edit spec.',
+		   msg: 'Please select a row to edit currency.',
 		   buttons: Ext.Msg.OK,
 		   icon: Ext.MessageBox.ERROR
 		});		

@@ -26,15 +26,17 @@
 
 
  class moxycart {
-    /** @var $modx modX */
+    
     public $modx;
-    /** @var $props array */
-    public $props;
 
+    public $action; // &a=xxx for primary Moxycart action
+    
     private $core_path;
     private $assets_url;
     private $mgr_url;
     private $default_limit;
+    private $connector_url; 
+
     
     /**
      * Map a function name to a MODX permission, e.g. 
@@ -55,8 +57,19 @@
         $this->core_path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
         $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
+        $this->connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
         $this->modx->addPackage('moxycart',$this->core_path.'components/moxycart/model/','moxy_');
         $this->default_limit = $this->modx->getOption('default_per_page'); // TODO: read from a MC setting?
+        
+        // Like controller_url, but in the mgr
+        // MODx.action['moxycart:index'] + '?f=';
+        if ($Action = $this->modx->getObject('modAction', array('namespace'=>'moxycart','controller'=>'index'))) {
+            $this->action = $Action->get('id');
+        }
+        else {
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart] could not determine mgr action.');
+        }
+        
     }
     
     /**
@@ -85,6 +98,33 @@
         return $chunk->process($props, $tpl);    
     }
 */
+    /**
+     * Convert a variation matrix code (json encoded)
+     *
+     * @param string $json formatted text
+     * @return string
+     */
+    private function _get_variant_info($json) {
+        if (empty($json)) {
+            return '';
+        }
+        $data = json_decode($json, true);
+        if (!is_array($data)) {
+            return $data;
+        }
+        $out = array();
+        foreach ($data as $vtype_id => $vterm_id) {
+            $variant = '';
+            $Type = $this->modx->getObject('VariationType',$vtype_id);
+            $Term = $this->modx->getObject('VariationTerm',$vterm_id);
+            if ($Type && $Term) {
+                $out[] = $Type->get('name') .': '.$Term->get('name');
+            }
+        }
+        
+        return implode(',', $out);
+    }
+    
     private function _send401() {
         header('HTTP/1.0 401 Unauthorized');
         print 'Unauthorized';
@@ -101,44 +141,74 @@
      *
      */
     public function currencies_manage($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Manage Currencies here.</div>';
-    }
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/currencies.js');
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
+		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');
 
-    /**
-     *
-     */
-    public function currency_create($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Create a Currency here.</div>';
-    }
-
-    /**
-     * currency_id
-     */
-    public function currency_update($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Update a Currency here.</div>';
-    }
-
-
-    /**
-     * @param int currency_id
-     */
-    public function currency_delete($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Delete Currency here</div>';
+    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            var connector_url = "'.$this->connector_url.'";
+    		Ext.onReady(function() {   		
+    			renderManageCurrencies();
+    		});
+    		</script>
+    	');
+		
+        return '<div id="moxycart_canvas"></div>';
     }
  
     /**
      * Post data here to save it
      */
     public function currency_save() {
-        // $_POST... todo
+        if (!is_object($this->modx->user)) {
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'currency_save 401 '.print_r($_POST,true));
+            return $this->_send401();
+        }
+        $out = array(
+            'success' => true,
+            'msg' => '',
+        );
+        
+        $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
+        if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'currency_save FAILED. Invalid token: '.print_r($_POST,true));
+            $out['success'] = false;
+            $out['msg'] = 'Invalid token';
+        }
+        
+        $action = $this->modx->getOption('action', $_POST);
+        
+        
+        switch ($action) {
+            case 'update':
+                $Spec = $this->modx->getObject('Currency',$this->modx->getOption('currency_id', $_POST));
+                $Spec->fromArray($_POST);
+                if (!$Spec->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to update Currency.';    
+                }
+                $out['msg'] = 'Currency updated successfully.';    
+                break;
+            case 'delete':
+                $Spec = $this->modx->getObject('Currency',$this->modx->getOption('currency_id', $_POST));
+                if (!$Spec->remove()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to delete Currency.';    
+                }
+                $out['msg'] = 'Currency deleted successfully.';    
+                break;
+            case 'create':
+            default:
+                $Spec = $this->modx->newObject('Currency');    
+                $Spec->fromArray($_POST);
+                if (!$Spec->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to save Currency.';    
+                }
+                $out['msg'] = 'Currency created successfully.';    
+        }
+                
+        return json_encode($out);
     }
     
     //------------------------------------------------------------------------------
@@ -199,16 +269,16 @@
     public function product_create($args) {
     	
     	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/util/datetime.js');
-    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/element/modx.panel.tv.renders.js');
+//    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/element/modx.panel.tv.renders.js');
     	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.grid.resource.security.local.js');	
-    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.tv.js');
+//    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.tv.js');
     	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.js');
         $this->modx->regClientStartupScript($this->mgr_url.'assets/modext/sections/resource/create.js');	
     	$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
     	
-    	$moxycart_connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-            var connector_url = "'.$moxycart_connector_url.'";
+            var connector_url = "'.$this->connector_url.'";
+            var site_url = "'.MODX_SITE_URL.'";
     		Ext.onReady(function() {
     
     			MODx.load({
@@ -233,9 +303,30 @@
      * @param int product_id (from $_GET). Defines the id of the product
      */
     public function product_update($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">This is the Update Product Page.</div>';
+    
+    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/util/datetime.js');
+//    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/element/modx.panel.tv.renders.js');
+    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.grid.resource.security.local.js');	
+//    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.tv.js');
+    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.js');
+        $this->modx->regClientStartupScript($this->mgr_url.'assets/modext/sections/resource/update.js');	
+    	$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
+        
+    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            var connector_url = "'.$this->connector_url.'";
+    		var site_url = "'.MODX_SITE_URL.'";
+    		Ext.onReady(function() {
+    			MODx.load({
+    				xtype: "modx-page-resource-update",
+    				canSave:true,
+    				mode:"update"
+    			});
+    			renderProduct();
+    		});
+    		</script>
+    	');
+
+        return '<div id="modx-panel-resource-div"> </div>';
     }
 
     /**
@@ -257,10 +348,66 @@
      * @param int product_id (from $_GET) defines the product_id
      */
     public function product_inventory($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Manage your inventory here.</div>';
+        $store_id = (int) $this->modx->getOption('store_id', $args);
+        $product_id = (int) $this->modx->getOption('product_id', $args);
+        if ($store_id) {
+            $back_url = '?a=30&id='.$store_id;
+        }
+        else {
+            $back_url = '?a='.$this->action.'&f=product_update&product_id=2'.$product_id;
+        }
+
+    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            var connector_url = "'.$this->connector_url.'";
+    		var back_url = "'.$back_url.'";
+    		Ext.onReady(function() {   		
+    			renderManageInventoryPanel();
+    		});
+    		</script>
+    	');
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/manageinventory.js');
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
+		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');	
+		
+        return '<div id="moxycart_canvas"></div>';
     }
+
+    /**
+     * Editing the product inventory will post here.
+     *
+     */
+	public function product_inventory_save($args) {
+        $this->modx->log(MODX_LOG_LEVEL_ERROR, 'product_inventory_save: '.print_r($args,true));
+        $out = array(
+            'success' => true,
+            'msg' => '',
+        );
+        $products = $this->modx->getOption('products',$args);
+        
+        if (!empty($products) && is_array($products)) {
+            foreach ($products as $product_id => $data) {
+                $Product = $this->modx->getObject('Product', $product_id);
+                if(!$Product) {
+                    $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_inventory_save product_id not found '.$product_id);
+                    continue;
+                }
+                
+                $qty = $Product->get('qty_inventory');
+                $change = (int) $data['qty_change'];
+                $alert = (int) $data['qty_alert'];
+                $Product->set('qty_inventory',$qty + $change);
+                $Product->set('qty_alert',$alert);
+                
+                if (!$Product->save()) {
+                    $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_inventory_save failed to update inventory for product '.$product_id);
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to update inventory.';
+                }
+            }
+        }
+        
+		return json_encode($out);
+	}
 
     /**
      * Handles updates to a product's images, e.g. drag and drop
@@ -281,8 +428,28 @@
      */
     public function product_sort_order($args) {
         // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Sort your products manually, using drag-and-drop.</div>';
+        // You can get here 2 ways: all products in a store, or all variations in a product.
+        $store_id = (int) $this->modx->getOption('store_id', $args);
+        $product_id = (int) $this->modx->getOption('product_id', $args);
+        if ($store_id) {
+            $back_url = '?a=30&id='.$store_id;
+        }
+        else {
+            $back_url = '?a='.$this->action.'&f=product_update&product_id=2'.$product_id;
+        }
+    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            var connector_url = "'.$this->connector_url.'";
+            var back_url = "'.$back_url.'";
+    		Ext.onReady(function() {   		
+    			renderProductSortPanel();
+    		});
+    		</script>
+    	');
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productsortorder.js');
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
+		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');		
+		
+        return '<div id="moxycart_canvas"></div>';
     }
 
     /**
@@ -299,58 +466,8 @@
      * Post data here to save it
      */
     public function product_save() {
-        // $_POST... todo
-    }
-    
-    //------------------------------------------------------------------------------
-    //! Specs
-    //------------------------------------------------------------------------------
-    /**
-     * Hosts the "Manage Variation Terms" page
-     */
-    public function specs_manage($args) {
-        // Add Required JS files here:
-		$moxycart_connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
-    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-            var connector_url = "'.$moxycart_connector_url.'";
-    		Ext.onReady(function() {   		
-    			renderManageSpecs();
-    		});
-    		</script>
-    	');
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/specs.js');
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
-		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');
-		
-        return '<div id="moxycart_canvas"></div>';
-    }
-
-    /**
-     * Hosts the "Create Variation Term" page
-     * @param int vterm_id
-     */
-    public function spec_create($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Create spec.</div>';
-    }
-
-    /**
-     * Hosts the "Delete Variation Term" page
-     * @param int vterm_id
-     */
-    public function spec_delete($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Delete spec</div>';
-    }
-
-    /**
-     * Post data here to save it
-     */
-    public function spec_save() {
         if (!is_object($this->modx->user)) {
-            $this->modx->log(1,'spec_save 401 '.print_r($_POST,true));
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'spec_save 401 '.print_r($_POST,true));
             return $this->_send401();
         }
         $out = array(
@@ -360,7 +477,84 @@
         
         $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
         if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
-            $this->modx->log(1,'spec_save FAILED. Invalid token: '.print_r($_POST,true));
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_save FAILED. Invalid token: '.print_r($_POST,true));
+            $out['success'] = false;
+            $out['msg'] = 'Invalid token';
+        }
+        
+        $action = $this->modx->getOption('action', $_POST);
+        
+        
+        switch ($action) {
+            case 'update':
+                $Product = $this->modx->getObject('Product',$this->modx->getOption('product_id', $_POST));
+                $Product->fromArray($_POST);
+                if (!$Product->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to update product.';    
+                }
+                $out['msg'] = 'Product updated successfully.';    
+                break;
+            case 'delete':
+                $Product = $this->modx->getObject('Product',$this->modx->getOption('product_id', $_POST));
+                if (!$Product->remove()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to delete Product.';    
+                }
+                $out['msg'] = 'Product deleted successfully.';    
+                break;
+            case 'create':
+            default:
+                $Product = $this->modx->newObject('Product');    
+                $Product->fromArray($_POST);
+                if (!$Spec->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to save Product.';    
+                }
+                $out['msg'] = 'Product created successfully.';    
+        }
+                
+        return json_encode($out);        
+
+    }
+    
+    //------------------------------------------------------------------------------
+    //! Specs
+    //------------------------------------------------------------------------------
+    /**
+     * Hosts the "Manage Variation Terms" page
+     */
+    public function specs_manage($args) {
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/specs.js');
+		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
+		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');
+
+    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            var connector_url = "'.$this->connector_url.'";
+    		Ext.onReady(function() {   		
+    			renderManageSpecs();
+    		});
+    		</script>
+    	');		
+        return '<div id="moxycart_canvas"></div>';
+    }
+
+    /**
+     * Post data here to save it
+     */
+    public function spec_save() {
+        if (!is_object($this->modx->user)) {
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'spec_save 401 '.print_r($_POST,true));
+            return $this->_send401();
+        }
+        $out = array(
+            'success' => true,
+            'msg' => '',
+        );
+        
+        $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
+        if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'spec_save FAILED. Invalid token: '.print_r($_POST,true));
             $out['success'] = false;
             $out['msg'] = 'Invalid token';
         }
@@ -397,11 +591,7 @@
                 $out['msg'] = 'Spec created successfully.';    
         }
                 
-        return json_encode($out);        
-		//Here code will go to add data in the database
-
-		//JSON response will look like below. We will consider below as standard, but we can add more attributes later if we need.
-		return '{"success":true, msg:"Operation done successfully."}';
+        return json_encode($out);
     }  
  
     //------------------------------------------------------------------------------`
@@ -460,9 +650,8 @@
 
 		$vtype_id = (int) $this->modx->getOption('vtype_id',$args);
 		
-		$moxycart_connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-            var connector_url = "'.$moxycart_connector_url.'";
+            var connector_url = "'.$this->connector_url.'";
     		Ext.onReady(function() {   		
     			renderVariationTerms(' . $vtype_id . ');
     		});
@@ -476,31 +665,11 @@
     }
 
     /**
-     * Hosts the "Create Variation Term" page
-     * @param int vterm_id
-     */
-    public function variation_term_create($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Create variation term.</div>';
-    }
-
-    /**
-     * Hosts the "Delete Variation Term" page
-     * @param int vterm_id
-     */
-    public function variation_term_delete($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Delete variation term.</div>';
-    }
-
-    /**
      * Post data here to save it
      */
     public function variation_term_save() {
         if (!is_object($this->modx->user)) {
-            $this->modx->log(1,'variation_term_save 401 '.print_r($_POST,true));
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'variation_term_save 401 '.print_r($_POST,true));
             return $this->_send401();
         }
         $out = array(
@@ -510,13 +679,12 @@
         
         $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
         if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
-            $this->modx->log(1,'variation_term_save FAILED. Invalid token: '.print_r($_POST,true));
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'variation_term_save FAILED. Invalid token: '.print_r($_POST,true));
             $out['success'] = false;
             $out['msg'] = 'Invalid token';
         }
         
         $action = $this->modx->getOption('action', $_POST);
-        
         
         switch ($action) {
             case 'update':
@@ -563,9 +731,8 @@
 
 		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/variation_types.js');
 
-		$moxycart_connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-            var connector_url = "'.$moxycart_connector_url.'";
+            var connector_url = "'.$this->connector_url.'";
     		Ext.onReady(function() {   		
     			renderVariationTypes();
     		});
@@ -580,31 +747,11 @@
     }
 
     /**
-     * Hosts the "Manage Variation Types" page
-     *
-     */
-    public function variation_type_create($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Create a Variation Type here.</div>';
-    }
-
-    /**
-     * Hosts the "Manage Variation Terms" page
-     * @param int vtype_id
-     */
-    public function variation_type_delete($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Delete a Variation Type here</div>';
-    }
-
-    /**
      * Post data here to save it
      */
     public function variation_type_save() {
         if (!is_object($this->modx->user)) {
-            $this->modx->log(1,'variation_type_save 401 '.print_r($_POST,true));
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'variation_type_save 401 '.print_r($_POST,true));
             return $this->_send401();
         }
         $out = array(
@@ -614,7 +761,7 @@
         
         $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
         if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
-            $this->modx->log(1,'variation_type_save FAILED. Invalid token: '.print_r($_POST,true));
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'variation_type_save FAILED. Invalid token: '.print_r($_POST,true));
             $out['success'] = false;
             $out['msg'] = 'Invalid token';
         }
@@ -782,8 +929,8 @@
             'total' => $total_pages,
         );
         foreach ($pages as $p) {
-            $data['results'][] = array(
-                'id' => $p->get('id'),
+            $row = array(
+                'product_id' => $p->get('product_id'),
                 'name' => $p->get('name'),
                 'sku' => $p->get('sku'),
                 'type' => $p->get('type'),
@@ -793,7 +940,11 @@
                 'category' => $p->get('category'),
                 'uri' => $p->get('uri'),
                 'is_active' => $p->get('is_active'), 
+                'seq' => $p->get('seq'), 
             );
+            
+            $row['variant'] = $this->_get_variant_info($p->get('variant_matrix'));
+            $data['results'][] = $row;
         }
 
         if ($raw) {
@@ -1386,26 +1537,43 @@
     public function json_variation_types($args,$raw=false) {
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
-        $sort = $this->modx->getOption('sort',$args,'vtype_id');
+        $sort = 'VariationType.'.$this->modx->getOption('sort',$args,'vtype_id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('VariationType');
         //$criteria->where();
         $total_pages = $this->modx->getCount('VariationType',$criteria);
-        
+      
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('VariationType',$criteria);
-        // return $criteria->toSQL(); <-- useful for debugging
+        $pages = $this->modx->getCollectionGraph('VariationType','{"Terms":{}}',$criteria);
+
+//        return $criteria->toSQL();// <-- useful for debugging
         // Init our array
         $data = array(
             'results'=>array(),
             'total' => $total_pages,
         );
         foreach ($pages as $p) {
-            $data['results'][] = $p->toArray();
+            
+            $row = $p->toArray();
+            $row['terms'] = '';
+            if ($p->Terms) {
+                $terms = array();
+                $i = 1;
+                foreach ($p->Terms as $t) {
+                    $terms[] = $t->get('name');
+                    $i++;
+                    // Max number of terms to list
+                    if ($i > 3) {
+                        break;
+                    }
+                }
+                $row['terms'] = implode(', ', $terms) .'...';
+            }
+            $data['results'][] = $row;
         }
-
+        
         if ($raw) {
             return $data;
         }

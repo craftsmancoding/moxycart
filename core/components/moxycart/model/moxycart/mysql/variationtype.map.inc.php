@@ -53,7 +53,7 @@ $xpdo_meta_map['VariationType']= array (
       'unique' => true,
       'columns' => 
       array (
-        'variation_id' => 
+        'vtype_id' => 
         array (
           'collation' => 'A',
           'null' => false,

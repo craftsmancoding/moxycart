@@ -8,17 +8,17 @@ class StoreCreateManagerController extends ResourceCreateManagerController {
     public function loadCustomCssJs() {
 
         parent::loadCustomCssJs();
-        
+
         // Req'd for dev overrides
-        $mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         
 		//Add below for customization
         $this->addJavascript($assets_url . 'components/moxycart/js/productcontainer.js');
     	$moxycart_connector_url = $assets_url.'components/moxycart/connector.php?f=';
-    	$this->addHtml('<script type="text/javascript">
+    	$this->addHtml('
 			<script type="text/javascript">
                 var connector_url = "'.$moxycart_connector_url.'";
+                var site_url = "'.MODX_SITE_URL.'";                
 				isProductContainerCreate = true;
 				
 				Ext.onReady(function(){
@@ -38,7 +38,7 @@ class StoreCreateManagerController extends ResourceCreateManagerController {
         return array('resource','moxycart:default');
     }
     /**
-     * Return the pagetitle
+     * Return the pagetitle in the <title>
      *
      * @return string
      */

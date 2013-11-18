@@ -130,8 +130,10 @@ $manager->removeObjectContainer('VariationType');
 $manager->removeObjectContainer('VariationTerm');
 $manager->removeObjectContainer('ProductVariationTypes');
 $manager->removeObjectContainer('ProductTaxonomy');
-$manager->removeObjectContainer('ProductTerms');
-$manager->removeObjectContainer('ProductSpecs');
+$manager->removeObjectContainer('ProductTerm');
+//$manager->removeObjectContainer('ProductTerms'); // whoops
+$manager->removeObjectContainer('ProductSpec');
+//$manager->removeObjectContainer('ProductSpecs'); // whoops
 $manager->removeObjectContainer('Cart');
 $manager->removeObjectContainer('Image');
 
@@ -171,8 +173,8 @@ $manager->createObjectContainer('VariationType');
 $manager->createObjectContainer('VariationTerm');
 $manager->createObjectContainer('ProductVariationTypes');
 $manager->createObjectContainer('ProductTaxonomy');
-$manager->createObjectContainer('ProductTerms');
-$manager->createObjectContainer('ProductSpecs');
+$manager->createObjectContainer('ProductTerm');
+$manager->createObjectContainer('ProductSpec');
 $manager->createObjectContainer('Cart');
 $manager->createObjectContainer('Image');
 
@@ -354,7 +356,8 @@ function delete_class_files($dir) {
 
         if ( preg_match('#\.class\.php$#i', $f) || preg_match('#\.map\.inc\.php$#i', $f)) {
             if (in_array(basename($f),array('moxycart.class.php','taxonomyparents.class.php',
-                'termparents.class.php','store.class.php','taxonomy.class.php','term.class.php'))) {
+                'termparents.class.php','store.class.php','taxonomy.class.php','term.class.php'
+                ,'moxycart.snippets.class.php','rc4crypt.class.php','foxycartdatafeed.class.php'))) {
                 continue; // skip
             } 
 

@@ -8,7 +8,7 @@ function getQueryParams(qs) {
 }
 
 var query = getQueryParams(document.location.search),
-	pid = query.id,
+	pid = query.product_id || query.id,
 	/* Getting value loaded to the page through MODx 
 	 * Asuming here that his path is always set by MODx.
 	 */
@@ -89,6 +89,7 @@ function renderProduct(){
 			labelSeparator: '',
 			bodyCssClass: 'tab-panel-wrapper main-wrapper',
 			autoHeight: true,
+			disabled : pid ? false : true,
 			defaults: {
 				border: false,
 				msgTarget: 'under',
@@ -332,34 +333,28 @@ function getImagesFields(){
 }
 
 function getVariationsFields(){
-	var store = new Ext.data.Store();
+	var store = getProductStoreStore();
 
 	var cm = new Ext.grid.ColumnModel([{
-			header:'Variant',
+			header:'Name',
 			resizable: false,
-			dataIndex: 'state',
+			dataIndex: 'name',
 			sortable: true
 		},{
 			header: 'SKU',
-			dataIndex: 'filename',
+			dataIndex: 'sku',
 			sortable: true
 		},{
-			header: 'Cost',
-			dataIndex: 'note',
+			header: 'Category',
+			dataIndex: 'category',
 			sortable: true
 		},{
-			header: 'Qty In Stock',
-			dataIndex: 'note',
-			sortable: true
-		},{
-			xtype: 'actioncolumn',
-			items: [{
-				xtype: 'button',
-				text:'Edit'
-			},{
-				xtype: 'button',
-				text:'View'
-			}]
+			header : 'Action',
+			dataIndex: 'id',
+			sortable: true,
+			renderer : function(value, metaData, record, rowIndex, colIndex, store) {
+			  return '<button role="edit" class="x-btn">Edit</button><button role="view" class="x-btn">View</button>';
+			}
 		}
 	]);
 
@@ -369,10 +364,28 @@ function getVariationsFields(){
 		style:'margin-top: 10px;',
 		layout:'fit',
 		region:'center',
+		height : 200,
 		border: true,
 		viewConfig: {
 			autoFill: true,
-			forceFit: true
+			forceFit: true,
+			emptyText : 'You don\'t have any products yet.'
+		},
+		listeners : {
+			afterrender : function(){
+				this.getStore().load();
+			},
+			cellclick : function(grid, rowIndex, columnIndex, e) {
+				var record = grid.getStore().getAt(rowIndex),
+					fieldName = grid.getColumnModel().getDataIndex(columnIndex);
+				if(fieldName === 'id'){
+					if(e.target.innerHTML === 'Edit'){
+						MODx.loadPage(MODx.action['moxycart:index'], 'f=product_update&product_id='+record.data.product_id);
+					} else if(e.target.innerHTML === 'View'){
+						window.open(site_url + record.data.uri,'_blank');
+					}
+				}
+			}
 		},
 		bbar : new Ext.Toolbar({
 			pageSize: 25,
@@ -386,7 +399,7 @@ function getVariationsFields(){
 	return [{
 			anchor: '100%',
 			border:false,
-			layout:'form',
+			layout:'anchor',
 			id: 'modx-resource-variations-columns',
 			style: 'border:0px',
 			defaults: {
@@ -398,6 +411,7 @@ function getVariationsFields(){
 			},
 			items:[{
 				xtype: 'button',
+				height : 40,
 				text: 'Manage Inventory'
 			},this.VariationsGrid_panel]
 	}];
@@ -547,6 +561,7 @@ function getVariations(container){
 						container.add({
 							xtype : 'combo',
 							name : 'variations_'+obj.results[n].vtype_id,
+							hiddenName : 'variations_'+obj.results[n].vtype_id,
 							fieldLabel: obj.results[n].name,
 							displayField:'name',
 							valueField:'value',
@@ -559,6 +574,7 @@ function getVariations(container){
 									{ name: 'name' },
 									{ name: 'value' }
 								],
+//								data:[{name:'Off', id:'off'}, {name:'Option Only', id:'option'}, {name:'Variant', id:'variant'}]
 								data:[['Off', 'off'], ['Option Only', 'option'], ['Variant', 'variant']]
 							})
 						});
@@ -594,7 +610,7 @@ function getTemplateStore(){
 			load : function(){
 				var dt =  Ext.getCmp('defaultTemplates');
 				if(dt) {
-					if(default_template) dt.setValue(default_template);
+					if(typeof default_template !== "undefined") dt.setValue(default_template);
 					//else dt.setValue(this.items.items[0].data.);
 				}
 			}
@@ -733,6 +749,8 @@ function getStoreSettingsFields(config){
 					xtype : 'combo',
 					fieldLabel: 'Product Type',
 					name : 'product_type',
+					// This is needed to send the proper value
+					hiddenName: 'product_type',
 					editable: false,
 					triggerAction: 'all',
 					mode: 'local',
@@ -770,6 +788,9 @@ function getStoreSettingsFields(config){
 					lastQuery: '',
 					displayField : 'name',
 					valueField : 'id',
+					// value: 7, // <-- need to set this so the combobox repopulates!
+					// See http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.form.ComboBox
+					hiddenName: 'product_template',
 					store: 'defaultTemplates'
 				},{
 					colspan:2
@@ -789,6 +810,7 @@ function getStoreSettingsFields(config){
 					displayField:'name',
 					valueField:'value',
 					value : 0,
+//					hiddenName: 'track_inventory',
 					store:new Ext.data.ArrayStore({
 						autoDestroy: true,
 						fields: [
@@ -796,6 +818,7 @@ function getStoreSettingsFields(config){
 							{name: 'value'}
 						],
 						data:[['Yes', 1], ['No', 0]]
+//						data:[{name:'Yes', value:1}, {name:'No', value:0}]
 					})
 				},
 				{
@@ -1040,7 +1063,7 @@ function getProductsTabFields(){
 		},{
 			xtype : 'combo',
 			editable: true,
-			width:60,
+			width:80,
 			editable: false,
 			triggerAction: 'all',
 			mode: 'local',
@@ -1215,11 +1238,12 @@ function getProductsTabFields(){
 	}];
 }
 
+function getProductStoreStore(){
+	var store = Ext.StoreMgr.get('productStore');
 
-
-function getProductsFields(config){
-	var store = new Ext.data.Store({
-		fields: ['id', 'name', 'sku', 'category'],
+	if(store) return store;
+	else return new Ext.data.Store({
+		fields: ['id', 'name', 'sku', 'category', 'uri', 'product_id'],
 		autoLoad : true,
 		storeId : 'productStore',
 		reader : new Ext.data.JsonReader({
@@ -1230,7 +1254,9 @@ function getProductsFields(config){
 				{name: 'id'},
 				{name: 'name'},
 				{name: 'sku'},
-				{name: 'category'}
+				{name: 'category'},
+				{name: 'uri'},
+				{name: 'product_id'}
 			]
 		}),
 		proxy : new Ext.data.HttpProxy({
@@ -1239,6 +1265,10 @@ function getProductsFields(config){
 			url: connector_url+'json_products&store_id='+pid
 		})
 	});
+}
+
+function getProductsFields(config){
+	var store = getProductStoreStore();
 
 	var cm = new Ext.grid.ColumnModel([{
 			header:'Name',
@@ -1258,7 +1288,7 @@ function getProductsFields(config){
 			dataIndex: 'id',
 			sortable: true,
 			renderer : function(value, metaData, record, rowIndex, colIndex, store) {
-			  return '<button role="edit" class="x-btn">Edit</button><button role="view" class="x-btn">View</button>';
+			  return '<button role="edit" class="x-btn">Edit</button> <button role="view" class="x-btn">View</button>';
 			}
 		}
 	]);
@@ -1283,9 +1313,9 @@ function getProductsFields(config){
 					fieldName = grid.getColumnModel().getDataIndex(columnIndex);
 				if(fieldName === 'id'){
 					if(e.target.innerHTML === 'Edit'){
-
+						MODx.loadPage(MODx.action['moxycart:index'], 'f=product_update&product_id='+record.data.product_id);
 					} else if(e.target.innerHTML === 'View'){
-
+						window.open(site_url + record.data.uri, '_blank');
 					}
 				}
 			}
@@ -1326,16 +1356,17 @@ function getProductsFields(config){
 				items:[{
 					xtype: 'button',
 					text:'Add Product',
+					tooltip : 'Add a Product inside this Store',
 					listeners: {
 						'click': {fn: function(){
-							MODx.loadPage(MODx.action['moxycart:index'], 'f=product_create');
+							MODx.loadPage(MODx.action['moxycart:index'], 'f=product_create&store_id='+pid);
 						}, scope: this}
 					}
 				},{
 					xtype: 'button',
 					text:'Manage Inventory',
 					handler : function(){
-						location.href = connector_url + 'product_inventory&store_id=' + pid;
+						MODx.loadPage(MODx.action['moxycart:index'], 'f=product_inventory&store_id='+pid);
 					}
 				},{
 					xtype: 'button',
@@ -1344,7 +1375,7 @@ function getProductsFields(config){
 					width : 55,
 					text:'Sort',
 					handler : function(){
-						location.href = connector_url + 'product_sort_order&store_id=' + pid;
+						MODx.loadPage(MODx.action['moxycart:index'], 'f=product_sort_order&store_id='+pid);
 					}
 				},{
 					border:false,
@@ -1353,7 +1384,8 @@ function getProductsFields(config){
 					columnWidth:.20
 				},{
 					xtype: 'textfield',
-					emptyText:'Search..'
+					emptyText:'Search..',
+					name:'search'
 				},{
 					xtype: 'button',
 					text:'Filter'

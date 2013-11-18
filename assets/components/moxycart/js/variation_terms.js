@@ -41,13 +41,14 @@ function renderVariationTerms(vtype_id){
 				}),				
 				loadMask:true,
 				enableDragDrop:true,
-				ddGroup:'variationTermsDDGroup',				
+				ddGroup:'variationTermsDDGroup',
+				enableHdMenu:false,				
 				viewConfig: {
-					autoFill: true,
 					forceFit: true,
 					getRowClass:function(record, rowIndex, rp, ds){
 						return 'moxycart-grid-row';
-					}					
+					},
+					emptyText : 'You don\'t have any variation terms yet.'					
 				},				
 				cm:new Ext.grid.ColumnModel([
 					  {
@@ -65,14 +66,15 @@ function renderVariationTerms(vtype_id){
 					  {
 						header:'',
 						dataIndex: 'note',
-						width:100,
+						width:200,
+						fixed:true,
 						align:'center',
 						renderer:function(value, metaData, record, rowIndex, colIndex, store){
-							var html =  '<input type="button" value="Edit" class="x-btn x-btn-noicon x-box-item" style="height:30px;width:90px;"   onclick="return onVariationTermEdit(' + record.get('vterm_id') + ');"/>';
+							var html =  '<input type="button" value="Edit" class="x-btn x-btn-noicon x-box-item" style="height:20px;width:60px;"   onclick="return onVariationTermEdit(' + record.get('vterm_id') + ');"/>';
 							
 							html += '&nbsp;&nbsp;';
 							
-							html += '<input type="button" value="Delete" class="x-btn x-btn-noicon x-box-item" style="height:30px;width:90px;"   onclick="return onVariationTermDelete(' + record.get('vterm_id') + ');"/>';
+							html += '<input type="button" value="Delete" class="x-btn x-btn-noicon x-box-item" style="height:20px;width:60px;"   onclick="return onVariationTermDelete(' + record.get('vterm_id') + ');"/>';
 							
 							return html;
 						}
@@ -152,7 +154,15 @@ function renderVariationTerms(vtype_id){
 						handler:function(){
 							createUpdateVariationTerm(null, vtype_id);
 						}
-					}
+					},
+					{
+						xtype:'button',
+						text:'Close',
+						width:100,
+						handler:function(){
+							MODx.loadPage(MODx.action['moxycart:index'], 'f=variation_types_manage');
+						}
+					}					
 				]
 			},
 			{
@@ -197,13 +207,7 @@ function onVariationTermDelete(vterm_id){
 						progressBar.hideProgress();
 						var results = Ext.decode(response.responseText);
 						
-						if(results.success){
-							Ext.Msg.show({
-							   title:'Success',
-							   msg: results.msg,
-							   buttons: Ext.Msg.OK,
-							   icon: Ext.MessageBox.INFO
-							});						
+						if(results.success){				
 						}
 						else{
 							Ext.Msg.show({
@@ -292,6 +296,10 @@ function createUpdateVariationTerm(record, vtype_id){
 				items:[
 					{
 						xtype:'hidden',
+						name:'seq'
+					},				
+					{
+						xtype:'hidden',
 						name:'vterm_id'
 					},				
 					{
@@ -352,15 +360,7 @@ function createUpdateVariationTerm(record, vtype_id){
 						
 							progressBar.hideProgress();
 							if(action.result.success){
-								Ext.Msg.show({
-								   title:'Success',
-								   msg: action.result.msg,
-								   buttons: Ext.Msg.OK,
-								   fn: function(){
-									createVariationTermWin.destroy();
-								   },
-								   icon: Ext.MessageBox.INFO
-								});
+								createVariationTermWin.destroy();
 							}
 							else{
 								Ext.Msg.show({
@@ -426,6 +426,7 @@ function createUpdateVariationTerm(record, vtype_id){
 	}
 	else{
 		createVariationTermWin.getComponent('frmVariationTerm').getForm().findField('vtype_id').setValue(vtype_id);
+		createVariationTermWin.getComponent('frmVariationTerm').getForm().findField('seq').setValue(Ext.getCmp('pnlVariationTermsGrid').getStore().getCount());
 	}
 	
 	createVariationTermWin.getComponent('frmVariationTerm').getForm().isValid();

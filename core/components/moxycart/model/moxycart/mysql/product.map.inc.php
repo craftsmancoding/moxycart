@@ -433,7 +433,7 @@ $xpdo_meta_map['Product']= array (
     ),
     'Terms' => 
     array (
-      'class' => 'ProductTerms',
+      'class' => 'ProductTerm',
       'local' => 'product_id',
       'foreign' => 'product_id',
       'cardinality' => 'many',
@@ -441,7 +441,7 @@ $xpdo_meta_map['Product']= array (
     ),
     'Specs' => 
     array (
-      'class' => 'ProductSpecs',
+      'class' => 'ProductSpec',
       'local' => 'product_id',
       'foreign' => 'product_id',
       'cardinality' => 'many',

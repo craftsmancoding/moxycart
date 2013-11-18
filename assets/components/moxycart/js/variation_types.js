@@ -15,7 +15,8 @@ function renderVariationTypes(){
 				{name: 'vtype_id'},
 				{name: 'seq'},
 				{name: 'name'},
-				{name: 'description'}
+				{name: 'description'},
+				{name: 'terms'}				
 			]
 		})
 	});
@@ -24,6 +25,7 @@ function renderVariationTypes(){
 		title:'Manage Variation Types',
 		renderTo:'moxycart_canvas',
 		layout:'border',
+		width:'auto',
 		height:500,		
 		items:[
 			{
@@ -38,9 +40,9 @@ function renderVariationTypes(){
 				}),				
 				loadMask:true,
 				enableDragDrop:true,
-				ddGroup:'variationTypesDDGroup',				
+				ddGroup:'variationTypesDDGroup',
+				enableHdMenu:false,				
 				viewConfig: {
-					autoFill: true,
 					forceFit: true,
 					getRowClass:function(record, rowIndex, rp, ds){
 						return 'moxycart-grid-row';
@@ -49,8 +51,8 @@ function renderVariationTypes(){
 				cm:new Ext.grid.ColumnModel([
 					  {
 						header:'Name',
-						resizable: false,
-						dataIndex: 'name'
+						dataIndex: 'name',
+						width:80
 					  },
 					  {
 						header: 'Description',
@@ -62,19 +64,20 @@ function renderVariationTypes(){
 					  },
 					  {
 						header:'',
-						dataIndex: 'note',
-						width:150,
+						dataIndex: 'note',						
 						align:'center',
+						fixed:true,
+						width:250,
 						renderer:function(value, metaData, record, rowIndex, colIndex, store){
-							var html = '<input type="button" value="Manage Terms" class="x-btn x-btn-noicon x-box-item" style="height:30px;width:90px;" onclick="return onManageTerms(' + record.get('vtype_id') + ');"/>';
+							var html = '<input type="button" value="Manage Terms" class="x-btn x-btn-noicon x-box-item" style="height:20px;width:90px;" onclick="return onManageTerms(' + record.get('vtype_id') + ');"/>';
 							
 							html += '&nbsp;&nbsp;';
 							
-							html += '<input type="button" value="Edit" class="x-btn x-btn-noicon x-box-item" style="height:30px;width:90px;"  onclick="return onVariationTypesEdit(' + record.get('vtype_id') + ');"/>';
+							html += '<input type="button" value="Edit" class="x-btn x-btn-noicon x-box-item" style="height:20px;width:50px;"  onclick="return onVariationTypesEdit(' + record.get('vtype_id') + ');"/>';
 							
 							html += '&nbsp;&nbsp;';
 							
-							html += '<input type="button" value="Delete" class="x-btn x-btn-noicon x-box-item" style="height:30px;width:90px;"  onclick="return onVariationTypesDelete(' + record.get('vtype_id') + ');"/>';							
+							html += '<input type="button" value="Delete" class="x-btn x-btn-noicon x-box-item" style="height:20px;width:60px;"  onclick="return onVariationTypesDelete(' + record.get('vtype_id') + ');"/>';							
 							
 							return html;
 						}
@@ -221,13 +224,7 @@ function onVariationTypesDelete(vtype_id){
 						progressBar.hideProgress();
 						var results = Ext.decode(response.responseText);
 						
-						if(results.success){
-							Ext.Msg.show({
-							   title:'Success',
-							   msg: results.msg,
-							   buttons: Ext.Msg.OK,
-							   icon: Ext.MessageBox.INFO
-							});						
+						if(results.success){			
 						}
 						else{
 							Ext.Msg.show({
@@ -296,6 +293,10 @@ function createUpdateVariationType(record){
 				items:[
 					{
 						xtype:'hidden',
+						name:'seq'
+					},				
+					{
+						xtype:'hidden',
 						name:'vtype_id'
 					},
 					{
@@ -346,15 +347,7 @@ function createUpdateVariationType(record){
 						
 							progressBar.hideProgress();
 							if(action.result.success){
-								Ext.Msg.show({
-								   title:'Success',
-								   msg: action.result.msg,
-								   buttons: Ext.Msg.OK,
-								   fn: function(){
-									createVariationTypWin.destroy();
-								   },
-								   icon: Ext.MessageBox.INFO
-								});
+								createVariationTypWin.destroy();
 							}
 							else{
 								Ext.Msg.show({
@@ -418,6 +411,9 @@ function createUpdateVariationType(record){
 		createVariationTypWin.getComponent('frmVariationType').getForm().loadRecord(record);
 		createVariationTypWin.getComponent('frmVariationType').getForm().findField('action').setValue('update');
 	}
+	else{
+		createVariationTypWin.getComponent('frmVariationType').getForm().findField('seq').setValue(Ext.getCmp('pnlVariationTypesGrid').getStore().getCount());
+	}	
 	
 	createVariationTypWin.getComponent('frmVariationType').getForm().isValid();
 }

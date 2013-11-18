@@ -246,6 +246,9 @@ class StoreCreateProcessor extends modResourceCreateProcessor {
         $this->object->set('class_key','Store');
         $this->object->set('cacheable',true);
         $this->object->set('isfolder',false);
+        
+        
+        
         return parent::afterSave();
     }
 
