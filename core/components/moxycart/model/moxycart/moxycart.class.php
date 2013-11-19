@@ -306,6 +306,20 @@
     
     }
 
+        //------------------------------------------------------------------------------
+    //! Products
+    //------------------------------------------------------------------------------
+    /**
+     * Hosts the "Create Product" form.
+     *
+     * @param int parent (from $_GET). Defines the id of the parent page.
+     */
+    public function product_create2($args) 
+    {
+        $data = array();
+        return load_view('product_create.php',$data);
+    }
+
     /**
      * Hosts the "Update Product" form.
      *
