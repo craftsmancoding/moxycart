@@ -220,17 +220,23 @@
 						</td>
 						<td>
 							<select name="type" id="type">
-								<option value="default">Default</option>
+								<option value="regular">Regular</option>
+								<option value="subscription">Subscription</option>
+								<option value="download">Download</option>
 							</select>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<label for="product_container">Product Container</label>
+							<label for="store_id">Product Container</label>
 						</td>
 						<td>
-							<select name="product_container" id="product_container">
-								<option value="default">Default</option>
+							<select name="store_id" id="store_id">
+								<script id="storesTpl" type="text/x-handlebars-template" >
+									{{#each this}}
+										<option value="{{id}}">{{name}}</option>
+									{{/each}}
+								</script>
 							</select>
 						</td>
 					</tr>
