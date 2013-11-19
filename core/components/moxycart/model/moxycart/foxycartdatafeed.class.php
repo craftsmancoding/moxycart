@@ -32,8 +32,8 @@ class FC_Datafeed {
     	$FoxyData_encrypted = urldecode($data);
 		$FoxyData_decrypted = $this->rc4crypt->decrypt($api_key,$FoxyData_encrypted);
 		return $FoxyData_decrypted;
-		$xml = new SimpleXMLElement($FoxyData_decrypted);
-		return $xml;
+		//$xml = new SimpleXMLElement($FoxyData_decrypted);
+		//return $xml;
     }
 
 

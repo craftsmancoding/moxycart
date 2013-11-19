@@ -1,6 +1,5 @@
 <?php
-/**
- * FoxyCart XMl Data Feed
+/** * FoxyCart XMl Data Feed
  * 
  * @link http://wiki.foxycart.com/integration:xml:xml_to_simple_csv
  * @version 0.1a
@@ -47,12 +46,14 @@ if($data = $modx->getOption('FoxyData', $_POST)) {
     $fc_datafeed = new FC_Datafeed($rc4crypt);
 
 	$xml = $fc_datafeed->decrypt($data,$api_key);
+    
+    $XMLobj = new SimpleXMLElement($xml);
 
 	// store files on local dir
 	$dom = new DOMDocument('1.0');
 	$dom->preserveWhiteSpace = false;
 	$dom->formatOutput = true;
-	$dom->loadXML($xml->asXML());
+	$dom->loadXML($XMLobj->asXML());
 
 	$encrypted_cache_key = 'encrypted_txn_'.time();
     $modx->cacheManager->set($encrypted_cache_key, $data, $lifetime, $cache_opts);
@@ -60,7 +61,7 @@ if($data = $modx->getOption('FoxyData', $_POST)) {
     $modx->cacheManager->set($decrypted_cache_key, $dom->saveXML(), $lifetime, $cache_opts);
 
     // processed this transactions data
-	$transactions = $fc_datafeed->parseXML($xml);
+	$transactions = $fc_datafeed->parseXML($XMLobj);
 
 	// store it as cache file for now
 	$transaction_cache_key = 'txn_'.time();
@@ -75,6 +76,7 @@ elseif ($modx->resource->Template) {
     return '<div>In order for the getDataFeed Snippet to function properly, the page it is placed on
     cannot use a template: it must use an empty template.</div>';
 }
+// See https://wiki.foxycart.com/v/1.1/transaction_xml_datafeed
 elseif($debug==1) {
     require_once($core_path . 'components/moxycart/model/moxycart/foxycartdatafeed.class.php');
     require_once($core_path . 'components/moxycart/model/moxycart/rc4crypt.class.php');
@@ -83,10 +85,17 @@ elseif($debug==1) {
     $fc_datafeed = new FC_Datafeed($rc4crypt);
     $data = $modx->cacheManager->get('encrypted_TEST',$cache_opts);
 
-	$xml = $fc_datafeed->decrypt($data,$api_key);
+	$FoxyData_decrypted = $fc_datafeed->decrypt($data,$api_key);
 	
-    return '<textarea rows="30" cols="80">'.$xml.'</textarea>';
+    $out = '<h2>This Should Have unencrypted XML</h2>
+    <textarea rows="15" cols="80">'.$FoxyData_decrypted.'</textarea>';
 
+    $xml = simplexml_load_string($FoxyData_decrypted, NULL, LIBXML_NOCDATA);
+    
+    $out .= '<h2>XML as object</h2>
+        <textarea rows="15" cols="80">'.print_r($xml,true).'</textarea>';
+
+    return $out;
 }
 else {
     $url = $modx->makeUrl($modx->resource->get('id'),'','','full');
