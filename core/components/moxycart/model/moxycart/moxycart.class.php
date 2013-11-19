@@ -61,6 +61,12 @@
         $this->modx->addPackage('moxycart',$this->core_path.'components/moxycart/model/','moxy_');
         $this->default_limit = $this->modx->getOption('default_per_page'); // TODO: read from a MC setting?
         
+
+        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
+        $this->modx->regClientStartupScript('http://code.jquery.com/jquery-1.10.2.min.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
+
         // Like controller_url, but in the mgr
         // MODx.action['moxycart:index'] + '?f=';
         if ($Action = $this->modx->getObject('modAction', array('namespace'=>'moxycart','controller'=>'index'))) {
@@ -330,6 +336,7 @@
     }
 
     public function product_update2($args) {
+       
         $data = array();
         return load_view('product_update.php', $data);
     }
