@@ -188,7 +188,11 @@
 						</td>
 						<td>
 							<select name="template_id" id="template_id">
-								<option value="default">Default</option>
+								<script id="templateTpl" type="text/x-handlebars-template" >
+									{{#each this}}
+										<option value="{{id}}">{{name}}</option>
+									{{/each}}
+								</script>
 							</select>
 						</td>
 					</tr>
@@ -198,7 +202,11 @@
 						</td>
 						<td>
 							<select name="currency_id" id="currency_id">
-								<option value="default">Default</option>
+								<script id="currencyTemplate" type="text/x-handlebars-template" >
+									{{#each this}}
+										<option value="{{currency_id}}">{{name}}</option>
+									{{/each}}
+								</script>
 							</select>
 						</td>
 					</tr>

@@ -3,8 +3,24 @@ INIT = {
 		$('#moxytab').tabify();
 	},
 
+	load_currencies: function() {
+		$.getJSON( "/assets/mycomponents/moxycart/assets/components/moxycart/connector.php?f=json_currencies", function( data ) {
+			var template = Handlebars.compile( $('#currencyTemplate').html() );
+			$('#currency_id').append( template( data.results ) );
+		});
+	},
+
+	load_templates: function() {
+		$.getJSON( "/assets/mycomponents/moxycart/assets/components/moxycart/connector.php?f=json_templates", function( data ) {
+			var template = Handlebars.compile( $('#templateTpl').html() );
+			$('#template_id').append( template( data.results ) );
+		});
+	}
+
 }
 
 $(function() {
+	INIT.load_currencies();
+	INIT.load_templates();
 	INIT.tabify();
 });

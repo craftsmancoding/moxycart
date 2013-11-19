@@ -35,3 +35,4 @@ $results = $Moxycart->$function($args);
 //$modx->setLogLevel($old_level);
 return $results;
 /*EOF*/
+
