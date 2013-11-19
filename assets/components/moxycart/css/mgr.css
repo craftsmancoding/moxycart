@@ -35,16 +35,20 @@ a {
 
 
 .table {
+margin-top: 20px;
   width: 100%;
-  margin-bottom: 20px;
 }
 .table th,
 .table td {
-  padding: 8px;
+  padding: 4px;
   line-height: 20px;
   text-align: left;
 /*  vertical-align: top;*/
   border-top: 1px solid #dddddd;
+}
+
+.no-top-border td {
+	border-top: none;
 }
 .table th {
   font-weight: bold;
@@ -1453,8 +1457,17 @@ button.close {
 
 
 }
+.moxy-header {
+	clear:both;
+}
+.moxy-header-title {
+	float: left;
+}
+.moxy-buttons-wrapper {
+	float: right;
+}
 .menu li.active a { background: #fff; color: #000 !important;}
-.content { float: left; clear: both; border: 1px solid #999999; border-top: none;background: #fff; padding: 10px 20px 20px; width: 95%; }
+.content { float: left; clear: both; border: 1px solid #999999; border-top: none;background: #fff; padding: 10px 20px; width: 95%; }
 
 .icon-store .x-tree-node-icon {
     background-image: url(../images/cart-icon.png) !important;
@@ -1465,3 +1478,13 @@ button.close {
 .icon-term .x-tree-node-icon {
     background-image: url(../images/term-icon.png) !important;
 }
+
+/* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
+   j.mp/bestclearfix */
+.clear:before, .clear:after,
+.clearfix:before, .clearfix:after { content: "\0020"; display: block; height: 0; visibility: hidden; }
+.clear:after,
+.clearfix:after { clear: both; }
+/* Fix clearfix: blueprintcss.lighthouseapp.com/projects/15318/tickets/5-extra-margin-padding-bottom-of-page */
+.clear,
+.clearfix { zoom: 1; }
