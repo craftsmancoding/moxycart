@@ -105,7 +105,11 @@
 						</td>
 						<td>
 							<select name="category" id="category">
-								<option value="default">Default</option>
+								<script id="categoryTpl" type="text/x-handlebars-template" >
+									{{#each this}}
+										<option value="{{name}}">{{name}}</option>
+									{{/each}}
+								</script>
 							</select>
 						</td>
 						<td>
