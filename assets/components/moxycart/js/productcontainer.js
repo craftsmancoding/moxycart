@@ -16,7 +16,14 @@ var query = getQueryParams(document.location.search),
 
 
 function renderProduct(){
-	var tabPanel = Ext.getCmp("modx-resource-tabs");
+	//var tabPanel = Ext.getCmp("modx-resource-tabs");
+	
+	
+	var tabPanel = new Ext.TabPanel({
+		renderTo:'modx-panel-resource-div',
+		border:false,
+		height:500
+	});
 
 	if(tabPanel!=null){
 		//Taxonomies tab configuration
@@ -403,6 +410,9 @@ function getVariationsFields(){
 }
 
 function getProductSettingsFields(){
+
+	var product = product || {};
+
 	return [{
 		anchor: '100%',
 		border:false,
@@ -995,6 +1005,9 @@ function getImagesFields(){
 
 
 function getProductsTabFields(){
+
+	var product = product || {};
+
 	var categoryStore = new Ext.data.Store({
 		fields: ['id', 'name'],
 		autoLoad : true,

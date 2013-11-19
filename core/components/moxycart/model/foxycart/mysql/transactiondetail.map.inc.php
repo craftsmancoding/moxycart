@@ -1,6 +1,6 @@
 <?php
 $xpdo_meta_map['TransactionDetail']= array (
-  'package' => 'moxycart',
+  'package' => 'foxycart',
   'version' => '1.0',
   'table' => 'transactiondetails',
   'extends' => 'xPDOSimpleObject',
@@ -66,11 +66,11 @@ $xpdo_meta_map['TransactionDetail']= array (
     ),
     'product_code' => 
     array (
-      'dbtype' => 'int',
-      'precision' => '11',
-      'phptype' => 'integer',
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
       'null' => false,
-      'comment' => 'This should be a link back to the products table',
+      'comment' => 'This should be a link back to the products table, but it\'s loosely coupled here.',
     ),
     'downloadable_url' => 
     array (

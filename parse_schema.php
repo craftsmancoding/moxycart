@@ -21,8 +21,6 @@ $package_name = 'moxycart';
 // your changes will be overwritten!
 $regenerate_classes = true;
  
-$my_table_prefix='moxy_';
-
 //$adjusted_core_path = MODX_CORE_PATH;
 $adjusted_core_path = MODX_BASE_PATH.'assets/mycomponents/moxycart/core/';
 
@@ -107,10 +105,15 @@ if ($regenerate_classes) {
 }
 
 $generator->parseSchema($xml_schema_file,$model_dir);
+$generator->parseSchema($adjusted_core_path . "components/$package_name/model/schema/foxycart.mysql.schema.xml",$model_dir);
 
-if(!$xpdo->addPackage('moxycart',$adjusted_core_path.'components/moxycart/model/',$my_table_prefix)) {
+if(!$xpdo->addPackage('moxycart',$adjusted_core_path.'components/moxycart/model/','moxy_')) {
     return 'Package Error.';
 }
+if(!$xpdo->addPackage('foxycart',$adjusted_core_path.'components/moxycart/model/','foxy_')) {
+    return 'Package Error.';
+}
+
 
 
 
@@ -141,7 +144,7 @@ $xpdo->setLogLevel(xPDO::LOG_LEVEL_FATAL); // keep it quiet
 @$manager->removeObjectContainer('TransactionDetailOption');
 @$manager->removeObjectContainer('ShiptoAddress');
 
-
+print '<code>Done.</code>';
 /*
 print '<h3>Removing Taxonomy and Term Records on modx_site_content Tables...</h3>';
 //Removing Taxonomies
@@ -171,7 +174,7 @@ if($terms) {
 
 // Re-create them
 $xpdo->setLogLevel(xPDO::LOG_LEVEL_WARN);
-print '<h3>Creating Tables...<h3>';
+print '<h3>Creating Tables...</h3>';
 $manager->createObjectContainer('Currency');
 $manager->createObjectContainer('Product');
 $manager->createObjectContainer('Spec');
@@ -193,7 +196,7 @@ $manager->createObjectContainer('Attribute');
 $manager->createObjectContainer('TransactionDetail');
 $manager->createObjectContainer('TransactionDetailOption');
 $manager->createObjectContainer('ShiptoAddress');
-
+print '<code>Done.</code>';
 
 // Seed Data
 $data_src_dir = '_build/data/moxycart/';

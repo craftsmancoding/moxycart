@@ -1,6 +1,6 @@
 <?php
 $xpdo_meta_map['ShiptoAddress']= array (
-  'package' => 'moxycart',
+  'package' => 'foxycart',
   'version' => '1.0',
   'table' => 'shipto_addresses',
   'extends' => 'xPDOSimpleObject',

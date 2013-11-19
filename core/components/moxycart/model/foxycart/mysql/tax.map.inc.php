@@ -1,21 +1,20 @@
 <?php
-$xpdo_meta_map['CustomField']= array (
-  'package' => 'moxycart',
+$xpdo_meta_map['Tax']= array (
+  'package' => 'foxycart',
   'version' => '1.0',
-  'table' => 'customfields',
+  'table' => 'taxes',
   'extends' => 'xPDOObject',
-  'comment' => 'Foxycart transaction customfields',
   'fields' => 
   array (
-    'customfield_id' => NULL,
+    'tax_id' => NULL,
     'transaction_id' => NULL,
-    'custom_field_name' => NULL,
-    'custom_field_value' => NULL,
-    'custom_field_is_hidden' => 0,
+    'tax_rate' => 0,
+    'tax_name' => NULL,
+    'tax_amount' => 0,
   ),
   'fieldMeta' => 
   array (
-    'customfield_id' => 
+    'tax_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -31,26 +30,26 @@ $xpdo_meta_map['CustomField']= array (
       'phptype' => 'integer',
       'null' => false,
     ),
-    'custom_field_name' => 
+    'tax_rate' => 
+    array (
+      'dbtype' => 'decimal',
+      'precision' => '6,4',
+      'phptype' => 'float',
+      'null' => false,
+      'default' => 0,
+    ),
+    'tax_name' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '32',
       'phptype' => 'string',
       'null' => false,
     ),
-    'custom_field_value' => 
+    'tax_amount' => 
     array (
-      'dbtype' => 'varchar',
-      'precision' => '255',
-      'phptype' => 'string',
-      'null' => false,
-    ),
-    'custom_field_is_hidden' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'attributes' => 'unsigned',
-      'phptype' => 'boolean',
+      'dbtype' => 'decimal',
+      'precision' => '6,4',
+      'phptype' => 'float',
       'null' => false,
       'default' => 0,
     ),
@@ -64,7 +63,7 @@ $xpdo_meta_map['CustomField']= array (
       'unique' => true,
       'columns' => 
       array (
-        'customfield_id' => 
+        'tax_id' => 
         array (
           'collation' => 'A',
           'null' => false,

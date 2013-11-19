@@ -1,6 +1,6 @@
 <?php
 $xpdo_meta_map['TransactionDetailOption']= array (
-  'package' => 'moxycart',
+  'package' => 'foxycart',
   'version' => '1.0',
   'table' => 'transactiondetailoptions',
   'extends' => 'xPDOSimpleObject',

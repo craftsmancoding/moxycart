@@ -1,24 +1,21 @@
 <?php
-$xpdo_meta_map['Discount']= array (
-  'package' => 'moxycart',
+$xpdo_meta_map['CustomField']= array (
+  'package' => 'foxycart',
   'version' => '1.0',
-  'table' => 'discounts',
+  'table' => 'customfields',
   'extends' => 'xPDOObject',
+  'comment' => 'Foxycart transaction customfields',
   'fields' => 
   array (
-    'discount_id' => NULL,
+    'customfield_id' => NULL,
     'transaction_id' => NULL,
-    'code' => NULL,
-    'valid_categories' => NULL,
-    'name' => NULL,
-    'amount' => 0,
-    'display' => NULL,
-    'coupon_discount_type' => NULL,
-    'coupon_discount_details' => NULL,
+    'custom_field_name' => NULL,
+    'custom_field_value' => NULL,
+    'custom_field_is_hidden' => 0,
   ),
   'fieldMeta' => 
   array (
-    'discount_id' => 
+    'customfield_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -34,56 +31,28 @@ $xpdo_meta_map['Discount']= array (
       'phptype' => 'integer',
       'null' => false,
     ),
-    'code' => 
+    'custom_field_name' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '32',
       'phptype' => 'string',
       'null' => false,
     ),
-    'valid_categories' => 
+    'custom_field_value' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
-      'comment' => '???',
     ),
-    'name' => 
+    'custom_field_is_hidden' => 
     array (
-      'dbtype' => 'varchar',
-      'precision' => '32',
-      'phptype' => 'string',
-      'null' => false,
-    ),
-    'amount' => 
-    array (
-      'dbtype' => 'decimal',
-      'precision' => '6,4',
-      'phptype' => 'float',
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'attributes' => 'unsigned',
+      'phptype' => 'boolean',
       'null' => false,
       'default' => 0,
-    ),
-    'display' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '32',
-      'phptype' => 'string',
-      'null' => false,
-    ),
-    'coupon_discount_type' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '32',
-      'phptype' => 'string',
-      'null' => false,
-    ),
-    'coupon_discount_details' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '32',
-      'phptype' => 'string',
-      'null' => false,
     ),
   ),
   'indexes' => 
@@ -95,7 +64,7 @@ $xpdo_meta_map['Discount']= array (
       'unique' => true,
       'columns' => 
       array (
-        'discount_id' => 
+        'customfield_id' => 
         array (
           'collation' => 'A',
           'null' => false,

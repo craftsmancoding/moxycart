@@ -1,0 +1,259 @@
+<!--
+Tables for storing data from the Foxycart Datafeed
+See https://wiki.foxycart.com/v/1.1/transaction_xml_datafeed
+-->
+<model package="foxycart" version="1.0" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM">
+    <!-- ! Foxydata -->
+    <object class="Foxydata" table="foxydata" extends="xPDOObject">
+        <field key="foxydata_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+        <!--field key="store_version" dbtype="varchar" precision="32" phptype="string" null="false" /-->
+        <field key="md5" dbtype="varchar" precision="32" phptype="string" null="false" comment="Used to uniquely id the data payload"/>
+        <field key="xml" dbtype="mediumtext" phptype="string" null="false" default="" comment="Decrypted XML body"/>
+        <field key="timestamp_created" dbtype="timestamp" phptype="timestamp" null="true" default="CURRENT_TIMESTAMP" />
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="foxydata_id" collation="A" null="false" />
+		</index>
+        <index alias="md5" name="md5" primary="false" unique="true"  type="BTREE">
+			<column key="md5" collation="A" null="false" />
+		</index>
+        <composite alias="Transactions" class="Transaction" local="foxydata_id" foreign="foxydata_id" cardinality="many" owner="local" />
+    </object>
+    
+    <!-- ! Transactions -->
+    <!-- A billing event. For the list of products purchased, see TransactionDetail -->
+	<object class="Transaction" table="transactions" extends="xPDOObject">
+    	<field key="transaction_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+    	<field key="foxydata_id" dbtype="int" precision="11" phptype="integer" null="false" />
+    	<field key="id" dbtype="int" precision="11" phptype="integer" null="false" comment="Foxycart unique transaction id"/>
+		<field key="store_id" dbtype="int" precision="11" phptype="integer" null="false" />
+		<field key="store_version" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="is_test" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
+		<field key="is_hidden" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" />
+		<field key="data_is_fed" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
+		<field key="transaction_date" dbtype="timestamp" phptype="timestamp" null="true" />
+		
+		<field key="payment_type" dbtype="varchar" precision="16" phptype="string" null="false" />
+		<field key="payment_gateway_type" dbtype="varchar" precision="16" phptype="string" null="false" />
+		<field key="processor_response" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="processor_response_details" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="purchase_order" dbtype="varchar" precision="16" phptype="string" null="false" />		
+		
+		<field key="cc_number_masked" dbtype="varchar" precision="20" phptype="string" null="false" />
+		<field key="cc_type" dbtype="varchar" precision="16" phptype="string" null="false" />		
+		
+		<field key="cc_exp_month" dbtype="int" precision="2" phptype="integer" attributes="ZEROFILL UNSIGNED" null="false" />
+		<field key="cc_exp_year" dbtype="int" precision="4" phptype="integer" null="false" />
+		<field key="cc_start_date_month" dbtype="int" precision="2" phptype="integer" attributes="ZEROFILL UNSIGNED" null="true" />
+		<field key="cc_start_date_year" dbtype="int" precision="4" phptype="integer" null="true" />
+		<field key="cc_issue_number" dbtype="int" precision="2" phptype="integer" null="true" />
+		<field key="minfraud_score" dbtype="int" precision="4" phptype="integer" null="true" />
+		<field key="paypal_payer_id" dbtype="varchar" precision="255" phptype="string" null="true" />
+		
+		<field key="customer_id" dbtype="int" precision="11" phptype="integer" null="false" comment="Foxycart customer"/>
+
+		<field key="is_anonymous" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" />
+		
+		<field key="customer_first_name" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="customer_last_name" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="customer_company" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="customer_address1" dbtype="varchar" precision="64" phptype="string" null="false" />
+		<field key="customer_address2" dbtype="varchar" precision="64" phptype="string" null="false" />
+		<field key="customer_city" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="customer_state" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="customer_postal_code" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="customer_country" dbtype="varchar" precision="2" phptype="string" null="false" />
+		<field key="customer_phone" dbtype="varchar" precision="16" phptype="string" null="true" />
+		<field key="customer_email" dbtype="varchar" precision="64" phptype="string" null="true" />
+		<field key="customer_ip" dbtype="varchar" precision="16" phptype="string" null="true" />
+
+		<field key="shipping_first_name" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="shipping_last_name" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="shipping_company" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="shipping_address1" dbtype="varchar" precision="64" phptype="string" null="false" />
+		<field key="shipping_address2" dbtype="varchar" precision="64" phptype="string" null="false" />
+		<field key="shipping_city" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="shipping_state" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="shipping_postal_code" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="shipping_country" dbtype="varchar" precision="2" phptype="string" null="false" />
+		<field key="shipping_phone" dbtype="varchar" precision="16" phptype="string" null="true" />
+		<field key="shipto_shipping_service_description" dbtype="varchar" precision="64" phptype="string" null="true" />
+
+		<!-- money -->
+		<field key="product_total" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0.00" />
+		<field key="tax_total" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0.00" />
+		<field key="shipping_total" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0.00" />
+		<field key="order_total" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0.00" />
+		
+		<field key="receipt_url" dbtype="varchar" precision="255" phptype="string" null="false" />
+		
+		<field key="customer_password" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="customer_password_salt" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="customer_password_hash_type" dbtype="varchar" precision="8" phptype="string" null="false" />
+		<field key="customer_password_hash_config" dbtype="varchar" precision="8" phptype="string" null="false" comment="Not sure what this stores"/>
+		
+		<field key="shipto_addresses" dbtype="varchar" precision="255" phptype="string" null="false" />		
+
+		
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="transaction_id" collation="A" null="false" />
+		</index>
+        <index alias="foxydata_id" name="foxydata_id" primary="false" unique="false"  type="BTREE">
+			<column key="foxydata_id" collation="A" null="false" />
+		</index>
+
+        <!-- We use the id field to adhere exactly to Foxycart's naming conventions -->
+        <index alias="id" name="id" primary="false" unique="true"  type="BTREE">
+			<column key="id" collation="A" null="false" />
+		</index>
+        <index alias="receipt_url" name="receipt_url" primary="false" unique="true"  type="BTREE">
+			<column key="receipt_url" collation="A" null="false" />
+		</index>
+
+
+		<aggregate alias="Data" class="Foxydata" local="foxydata_id" foreign="foxydata_id" cardinality="one" owner="foreign" />
+		<composite alias="Taxes" class="Tax" local="transaction_id" foreign="transaction_id" cardinality="many" owner="local" />
+		<composite alias="Discounts" class="Discount" local="transaction_id" foreign="transaction_id" cardinality="many" owner="local" />
+		<composite alias="Attributes" class="Attribute" local="transaction_id" foreign="transaction_id" cardinality="many" owner="local" />
+		<composite alias="CustomFields" class="CustomField" local="transaction_id" foreign="transaction_id" cardinality="many" owner="local" />
+		<composite alias="Details" class="TransactionDetail" local="transaction_id" foreign="transaction_id" cardinality="many" owner="local" />
+		<composite alias="ShiptoAddresses" class="ShiptoAddress" local="transaction_id" foreign="transaction_id" cardinality="many" owner="local" />
+
+	</object>
+	
+	<!-- ! Tax -->
+	<object class="Tax" table="taxes" extends="xPDOObject">
+        <field key="tax_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+        <field key="transaction_id" dbtype="int" precision="11" phptype="integer" null="false" />
+        
+        <field key="tax_rate" dbtype="decimal" precision="6,4" phptype="float" null="false" default="0.0000" />
+        <field key="tax_name" dbtype="varchar" precision="32" phptype="string" null="false" />
+        <field key="tax_amount" dbtype="decimal" precision="6,4" phptype="float" null="false" default="0.0000"/>
+        
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="tax_id" collation="A" null="false" />
+		</index>
+		
+		<aggregate alias="Transaction" class="Transaction" local="transaction_id" foreign="transaction_id" cardinality="one" owner="foreign" />      
+    </object>
+
+	<!-- ! Discount -->
+	<object class="Discount" table="discounts" extends="xPDOObject">
+        <field key="discount_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+        <field key="transaction_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="code" dbtype="varchar" precision="32" phptype="string" null="false" />
+        <field key="valid_categories" dbtype="varchar" precision="255" phptype="string" null="false" comment="???"/>
+        <field key="name" dbtype="varchar" precision="32" phptype="string" null="false" />
+        <field key="amount" dbtype="decimal" precision="6,4" phptype="float" null="false" default="0.0000" />
+        <field key="display" dbtype="varchar" precision="32" phptype="string" null="false" />
+        <field key="coupon_discount_type" dbtype="varchar" precision="32" phptype="string" null="false" />         
+        <field key="coupon_discount_details" dbtype="varchar" precision="32" phptype="string" null="false" />                 
+                
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="discount_id" collation="A" null="false" />
+		</index>
+		
+		<aggregate alias="Transaction" class="Transaction" local="transaction_id" foreign="transaction_id" cardinality="one" owner="foreign" />
+    </object>
+    
+    <!-- ! CustomField -->
+	<object class="CustomField" table="customfields" extends="xPDOObject" comment="Foxycart transaction customfields">
+        <field key="customfield_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+        <field key="transaction_id" dbtype="int" precision="11" phptype="integer" null="false" />
+        
+        <field key="custom_field_name" dbtype="varchar" precision="32" phptype="string" null="false" />
+        <field key="custom_field_value" dbtype="varchar" precision="255" phptype="string" null="false" />
+        <field key="custom_field_is_hidden" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" />
+        
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="customfield_id" collation="A" null="false" />
+		</index>
+		
+		<aggregate alias="Transaction" class="Transaction" local="transaction_id" foreign="transaction_id" cardinality="one" owner="foreign" />      
+    </object>
+    
+    <!-- ! Attribute -->
+	<object class="Attribute" table="attributes" extends="xPDOObject" comment="Foxycart transaction attributes">
+        <field key="attribute_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+        <field key="transaction_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        
+        <field key="name" dbtype="varchar" precision="32" phptype="string" null="false" />
+        <field key="value" dbtype="varchar" precision="255" phptype="string" null="false" />
+        
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="attribute_id" collation="A" null="false" />
+		</index>
+		
+		<aggregate alias="Transaction" class="Transaction" local="transaction_id" foreign="transaction_id" cardinality="one" owner="foreign" />      
+    </object>
+       
+    <!-- ! TransactionDetail -->
+	<object class="TransactionDetail" table="transactiondetails" extends="xPDOSimpleObject" comment="Foxycart transaction details">
+        <field key="transaction_id" dbtype="int" precision="11" phptype="integer" null="false" />
+        <field key="product_name" dbtype="varchar" precision="255" phptype="string" null="false" />
+        <field key="product_price" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0.00" />
+        <field key="product_quantity" dbtype="int" precision="11" phptype="integer" null="false" />
+        <field key="product_weight" dbtype="decimal" precision="8,4" phptype="float" null="false" default="0.0000" />
+        <field key="product_code" dbtype="varchar" precision="255" phptype="string" null="false" comment="This should be a link back to the products table, but it's loosely coupled here."/>
+        
+        <field key="downloadable_url" dbtype="varchar" precision="255" phptype="string" null="true" />
+        <field key="sub_token_url" dbtype="varchar" precision="255" phptype="string" null="true" />
+        <field key="subscription_frequency" dbtype="varchar" precision="8" phptype="string" null="true" comment="e.g. 1m"/>
+        <field key="subscription_startdate" dbtype="date" phptype="datetime" null="true" default="0000-00-00" />
+        <field key="subscription_nextdate" dbtype="date" phptype="datetime" null="true" default="0000-00-00" />
+        <field key="subscription_enddate" dbtype="date" phptype="datetime" null="true" default="0000-00-00" />                
+        <field key="is_future_line_item" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" />
+        <field key="shipto" dbtype="varchar" precision="255" phptype="string" null="true" comment="???"/>
+        
+        <field key="category_description" dbtype="varchar" precision="255" phptype="string" null="true" />
+        <field key="category_code" dbtype="varchar" precision="255" phptype="string" null="true" />
+        <field key="product_delivery_type" dbtype="varchar" precision="255" phptype="string" null="true" />
+        
+		<aggregate alias="Transaction" class="Transaction" local="transaction_id" foreign="transaction_id" cardinality="one" owner="foreign" />
+		<composite alias="Options" class="TransactionDetailOption" local="id" foreign="transactiondetail_id" cardinality="many" owner="local" /> 
+    </object>
+            
+    <!-- ! TransactionDetailOption -->
+    <object class="TransactionDetailOption" table="transactiondetailoptions" extends="xPDOSimpleObject" comment="Foxycart options for transaction detail (i.e. product options)">
+        <field key="transactiondetail_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        
+        <!-- Ideally, this would be a fk back to a vtype_id -->
+        <field key="product_option_name" dbtype="varchar" precision="32" phptype="string" null="false" />
+        <field key="product_option_value" dbtype="varchar" precision="255" phptype="string" null="false" />
+        <field key="price_mod" dbtype="decimal" precision="8,3" phptype="float" null="false" default="0.000" />
+        <field key="weight_mod" dbtype="decimal" precision="8,3" phptype="float" null="false" default="0.000" />
+        
+		<aggregate alias="TransactionDetail" class="TransactionDetail" local="transactiondetail_id" foreign="id" cardinality="one" owner="foreign" />
+    </object>
+
+    <!-- ! ShiptoAddress -->
+    <!-- This may only be relevant to a multiship store (?)-->
+	<object class="ShiptoAddress" table="shipto_addresses" extends="xPDOSimpleObject" comment="Foxycart shipto addresses">
+        <field key="transaction_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        	    
+        <field key="address_id" dbtype="int" precision="11" phptype="integer" null="false" comment="Passed by Foxycart (?)"/>
+        <field key="address_name" dbtype="varchar" precision="64" phptype="string" null="false" />
+        <field key="shipto_first_name" dbtype="varchar" precision="64" phptype="string" null="false" />
+        <field key="shipto_last_name" dbtype="varchar" precision="64" phptype="string" null="false" />
+        <field key="shipto_company" dbtype="varchar" precision="64" phptype="string" null="false" />
+        <field key="shipto_address1" dbtype="varchar" precision="64" phptype="string" null="false" />
+        <field key="shipto_address2" dbtype="varchar" precision="64" phptype="string" null="false" />
+
+        <field key="shipto_city" dbtype="varchar" precision="64" phptype="string" null="false" />
+        <field key="shipto_state" dbtype="varchar" precision="64" phptype="string" null="false" />
+        <field key="shipto_postal_code" dbtype="varchar" precision="64" phptype="string" null="false" />
+        <field key="shipto_country" dbtype="varchar" precision="64" phptype="string" null="false" />
+        <field key="date_created" dbtype="datetime" phptype="datetime" />
+        <field key="date_modified" dbtype="datetime" phptype="datetime" />
+        <field key="shipto_shipping_service_description" dbtype="varchar" precision="255" phptype="string" null="false" />
+        
+        <field key="shipto_subtotal" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0.00" />
+        <field key="shipto_tax_total" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0.00" />
+        <field key="shipto_shipping_total" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0.00" />
+        <field key="shipto_total" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0.00" />
+        
+        <!-- shipto_custom_fields TODO??? -->
+		
+		<aggregate alias="Transaction" class="Transaction" local="transaction_id" foreign="transaction_id" cardinality="one" owner="foreign" />      
+    </object>
+
+</model>

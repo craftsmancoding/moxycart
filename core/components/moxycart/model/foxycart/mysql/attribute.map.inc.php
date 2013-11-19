@@ -1,20 +1,20 @@
 <?php
-$xpdo_meta_map['Tax']= array (
-  'package' => 'moxycart',
+$xpdo_meta_map['Attribute']= array (
+  'package' => 'foxycart',
   'version' => '1.0',
-  'table' => 'taxes',
+  'table' => 'attributes',
   'extends' => 'xPDOObject',
+  'comment' => 'Foxycart transaction attributes',
   'fields' => 
   array (
-    'tax_id' => NULL,
+    'attribute_id' => NULL,
     'transaction_id' => NULL,
-    'tax_rate' => 0,
-    'tax_name' => NULL,
-    'tax_amount' => 0,
+    'name' => NULL,
+    'value' => NULL,
   ),
   'fieldMeta' => 
   array (
-    'tax_id' => 
+    'attribute_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -30,28 +30,19 @@ $xpdo_meta_map['Tax']= array (
       'phptype' => 'integer',
       'null' => false,
     ),
-    'tax_rate' => 
-    array (
-      'dbtype' => 'decimal',
-      'precision' => '6,4',
-      'phptype' => 'float',
-      'null' => false,
-      'default' => 0,
-    ),
-    'tax_name' => 
+    'name' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '32',
       'phptype' => 'string',
       'null' => false,
     ),
-    'tax_amount' => 
+    'value' => 
     array (
-      'dbtype' => 'decimal',
-      'precision' => '6,4',
-      'phptype' => 'float',
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
       'null' => false,
-      'default' => 0,
     ),
   ),
   'indexes' => 
@@ -63,7 +54,7 @@ $xpdo_meta_map['Tax']= array (
       'unique' => true,
       'columns' => 
       array (
-        'tax_id' => 
+        'attribute_id' => 
         array (
           'collation' => 'A',
           'null' => false,
