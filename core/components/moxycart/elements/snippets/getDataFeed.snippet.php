@@ -85,7 +85,7 @@ elseif($debug==1) {
 
 	$xml = $fc_datafeed->decrypt($data,$api_key);
 	
-    return '<pre>'.$xml.'</pre>';
+    return '<textarea rows="30" cols="80">'.$xml.'</textarea>';
 
 }
 else {

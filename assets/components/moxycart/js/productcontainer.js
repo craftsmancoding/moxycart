@@ -44,7 +44,7 @@ function renderProduct(){
 			title: 'Images',
 			id: 'modx-resource-product-images-tab',
 			cls: 'modx-resource-tab',
-			layout: 'form',
+			layout: 'fit',
 			labelAlign: 'top',
 			labelSeparator: '',
 			bodyCssClass: 'tab-panel-wrapper main-wrapper',
@@ -316,21 +316,6 @@ function getSpecsFields(){
 	}];
 }
 
-function getImagesFields(){
-	return [{
-		layout:'column',
-		columns:2,
-		height:40,
-		xtype:'panel',
-		items:[{
-			  xtype: 'label',
-				width: 200  
-			},{
-			xtype: 'button',
-			text:'Add'
-		}]
-	}];
-}
 
 function getVariationsFields(){
 	var store = getProductStoreStore();
@@ -441,7 +426,8 @@ function getProductSettingsFields(){
 		},{
 			xtype: 'textfield',
 			fieldLabel: 'Alias',
-			name: 'productSettings',
+			name: 'alias',
+			value : product.alias,
 			id: 'modx-resource-productSettings'
 		},{
 			xtype : 'combo',
@@ -450,6 +436,9 @@ function getProductSettingsFields(){
 			editable: true,
 			id : 'defaultTemplates',
 			mode : 'remote',
+			name : 'template_id',
+			hiddenName : 'template_id',
+			value : product.template_id,
 			pageSize : 10,
 			typeAhead: false,
 			triggerAction: 'all',
@@ -465,6 +454,9 @@ function getProductSettingsFields(){
 			editable: true,
 			id : 'currency',
 			mode : 'remote',
+			name : 'currency_id',
+			hiddenName : 'currency_id',
+			value : product.currency_id,
 			typeAhead: false,
 			triggerAction: 'all',
 			lastQuery: '',
@@ -475,10 +467,12 @@ function getProductSettingsFields(){
 		{
 			xtype : 'combo',
 			fieldLabel: 'Product Type',
-			name : 'product_type',
 			editable: false,
 			triggerAction: 'all',
 			mode: 'local',
+			name : 'type',
+			hiddenName : 'type',
+			value : product.type,
 			typeAhead: true,
 			displayField:'name',
 			valueField:'value',
@@ -499,6 +493,9 @@ function getProductSettingsFields(){
 			editable: true,
 			id : 'product_container',
 			mode : 'remote',
+			name : 'store_id',
+			hiddenName : 'store_id',
+			value : product.store_id,
 			typeAhead: false,
 			triggerAction: 'all',
 			lastQuery: '',
@@ -983,6 +980,18 @@ function getCreateProductFields(config){
 }
 
 
+function getImagesFields(){
+	return [{
+		xtype:'panel',
+		items:[{
+			xtype:'button',
+			text:'Add',
+			handler:function(){
+				showImageWindow();
+			}
+		}]
+	}];
+}
 
 
 function getProductsTabFields(){
@@ -1018,7 +1027,18 @@ function getProductsTabFields(){
 		defaults: {
 			labelSeparator: '',
 			border: false,
-			msgTarget: 'under'
+			msgTarget: 'under',
+			listeners : {
+				keypress : function(){
+					Ext.getCmp('modx-abtn-save').enable(true);
+				},
+				change : function(){
+					Ext.getCmp('modx-abtn-save').enable(true);
+				},
+				select : function(){
+					Ext.getCmp('modx-abtn-save').enable(true);
+				}
+			}
 		},
 		layoutConfig: {
 			columns: 4,
@@ -1036,6 +1056,8 @@ function getProductsTabFields(){
 			text: 'Name'
 		},{
 			xtype: 'textfield',
+			name : 'name',
+			value: product.name,
 			width : 205
 		},{
 			xtype: 'label',
@@ -1051,7 +1073,9 @@ function getProductsTabFields(){
 			typeAhead: true,
 			displayField:'name',
 			valueField:'value',
-			value : 1,
+			name: 'is_active',
+			hiddenName : 'is_active',
+			value : product.is_active,
 			store:new Ext.data.ArrayStore({
 				autoDestroy: true,
 				fields: [
@@ -1070,6 +1094,8 @@ function getProductsTabFields(){
 			text: 'SKU'
 		},{
 			xtype: 'textfield',
+			name: 'sku',
+			value : product.sku,
 			width : 205
 		},{
 			xtype: 'label',
@@ -1077,6 +1103,8 @@ function getProductsTabFields(){
 			text: 'Vendor SKU'
 		},{
 			xtype: 'textfield',
+			name: 'sku_vendor',
+			value : product.sku_vendor,
 			width : 205
 		},
 
@@ -1088,6 +1116,8 @@ function getProductsTabFields(){
 			text: 'Description'
 		},{
 			xtype: 'textarea',
+			name: 'description',
+			value : product.description,
 			anchor: '100%',
 			colspan : 3,
 			width : 592
@@ -1101,6 +1131,8 @@ function getProductsTabFields(){
 			text: 'Price'
 		},{
 			xtype: 'textfield',
+			name: 'price',
+			value : product.price,
 			width : 205
 		},{
 			xtype: 'label',
@@ -1108,6 +1140,8 @@ function getProductsTabFields(){
 			text: 'Sale Price'
 		},{
 			xtype: 'textfield',
+			name: 'price_sale',
+			value : product.price_sale,
 			width : 205
 		},
 
@@ -1119,6 +1153,8 @@ function getProductsTabFields(){
 			html: 'Strike-<br>Through Price'
 		},{
 			xtype: 'textfield',
+			name: 'price_strike_thru',
+			value : product.price_strike_thru,
 			width : 205
 		},{
 			xtype: 'label',
@@ -1126,6 +1162,9 @@ function getProductsTabFields(){
 			text: 'Sale Start'
 		},{
 			xtype: 'datefield',
+			name: 'sale_start',
+			format : 'm/d/Y',
+			value : product.sale_start,
 			width : 205
 		},
 
@@ -1144,6 +1183,9 @@ function getProductsTabFields(){
 			typeAhead: false,
 			triggerAction: 'all',
 			lastQuery: '',
+			name: 'category',
+			value : product.category,
+			hiddenName : 'category',
 			displayField : 'name',
 			valueField : 'name',
 			store: 'categories'
@@ -1153,6 +1195,8 @@ function getProductsTabFields(){
 			text: 'Sale End'
 		},{
 			xtype: 'datefield',
+			name: 'sale_end',
+			value : product.sale_end,
 			width : 205
 		},
 
@@ -1164,6 +1208,8 @@ function getProductsTabFields(){
 			text: 'Inventory'
 		},{
 			xtype: 'textfield',
+			name: 'track_inventory',
+			value : product.track_inventory,
 			width : 205
 		},{
 			xtype: 'label',
@@ -1171,6 +1217,8 @@ function getProductsTabFields(){
 			text: 'Qty Min'
 		},{
 			xtype: 'textfield',
+			name: 'qty_min',
+			value : product.qty_min,
 			width : 205
 		},
 
@@ -1182,6 +1230,8 @@ function getProductsTabFields(){
 			text: 'Alert Qty'
 		},{
 			xtype: 'textfield',
+			name: 'qty_alert',
+			value : product.qty_alert,
 			width : 205
 		},{
 			xtype: 'label',
@@ -1189,6 +1239,8 @@ function getProductsTabFields(){
 			text: 'Qty Max'
 		},{
 			xtype: 'textfield',
+			name: 'qty_max',
+			value : product.qty_max,
 			width : 205
 		},
 
@@ -1201,6 +1253,8 @@ function getProductsTabFields(){
 		},{
 			xtype: 'textfield',
 			width : 205,
+			name : 'qty_backorder_max',
+			//value : product.qty_backorder_cap,
 			colspan : 3
 		},
 
@@ -1213,6 +1267,16 @@ function getProductsTabFields(){
 		},{
 			xtype: 'htmleditor',
 			width : 592,
+			name : 'content',
+			hiddenName : 'content',
+			value : product.content,
+			colspan : 3
+		},{
+			xtype: 'hidden',
+			width : 592,
+			name : 'uri',
+			hiddenName : 'uri',
+			value : product.uri,
 			colspan : 3
 		}]
 
