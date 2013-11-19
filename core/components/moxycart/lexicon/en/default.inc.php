@@ -143,5 +143,7 @@ $_lang['moxycart.default_taxonomy_template'] = 'Default Taxonomy Template';
 $_lang['moxycart.default_term_template'] = 'Default Term Template';
 $_lang['moxycart.default_product_type'] = 'Default Term Template';
 
+$_lang['view_not_found'] = 'The view file you requested could not be found: [[+file]]';
+
 // foxycart_store_url
 //
