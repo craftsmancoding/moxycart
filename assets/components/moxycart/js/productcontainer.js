@@ -516,7 +516,7 @@ function getSpecs(container){
 			var obj = Ext.decode(response.responseText);
 			if(obj && obj.results){
 				for(n in obj.results){
-					if(obj.results[n].spec_id) container.add({ xtype : 'checkbox', name : 'specs_'+obj.results[n].spec_id, boxLabel : obj.results[n].name });
+					if(obj.results[n].spec_id) container.add({ xtype : 'checkbox', name : 'specs_'+obj.results[n].spec_id, checked : activeRecord.specs[obj.results[n].spec_id] ? true : false, boxLabel : obj.results[n].name, listeners : { check : function(){Ext.getCmp('modx-abtn-save').enable(true)} } });
 				}
 			}
 		}
@@ -537,7 +537,9 @@ function getTaxonomies(container){
 			var obj = Ext.decode(response.responseText);
 			if(obj && obj.results){
 				for(n in obj.results){
-					if(obj.results[n].id) container.add({ xtype : 'checkbox', name : 'taxonomies_'+obj.results[n].id, boxLabel : obj.results[n].pagetitle, checked : obj.results[n].is_checked });
+					if(obj.results[n].id) {
+						container.add({ xtype : 'checkbox', name : 'taxonomies_'+obj.results[n].id, checked : activeRecord.taxonomies[obj.results[n].id] ? true : false, boxLabel : obj.results[n].pagetitle, listeners : { check : function(){Ext.getCmp('modx-abtn-save').enable(true)} } });
+					}
 				}
 			}
 		}
@@ -567,7 +569,12 @@ function getVariations(container){
 							valueField:'value',
 							triggerAction: 'all',
 							mode: 'local',
-							value : 'off',
+							listeners : {
+								select : function(){
+									Ext.getCmp('modx-abtn-save').enable(true);
+								}
+							},
+							value : activeRecord.variations[obj.results[n].vtype_id],
 							store:new Ext.data.ArrayStore({
 								autoDestroy: true,
 								fields: [
@@ -585,7 +592,7 @@ function getVariations(container){
 	});
 }
 
-function getTemplateStore(){
+function getTemplateStore(dtmp){
 	var store = Ext.StoreMgr.get('defaultTemplate');
 	if(store) return store;
 	else return new Ext.data.Store({
@@ -610,7 +617,7 @@ function getTemplateStore(){
 			load : function(){
 				var dt =  Ext.getCmp('defaultTemplates');
 				if(dt) {
-					if(typeof default_template !== "undefined") dt.setValue(default_template);
+					if(dtmp || typeof default_template !== "undefined") dt.setValue(dtmp || default_template);
 					//else dt.setValue(this.items.items[0].data.);
 				}
 			}
@@ -681,7 +688,8 @@ function getProductContainerStore(){
 }
 
 function getStoreSettingsFields(config){
-	getTemplateStore();
+	activeRecord = MODx.activePage.config.record.properties.moxycart;
+	getTemplateStore(activeRecord.product_template);
 	config = config || {record:{}};
 
 	return [{
@@ -758,7 +766,7 @@ function getStoreSettingsFields(config){
 					width : 280,
 					displayField:'name',
 					valueField:'value',
-					value:'regular',
+					value : activeRecord.product_type,
 					store:new Ext.data.ArrayStore({
 						autoDestroy: true,
 						fields: [
@@ -809,7 +817,7 @@ function getStoreSettingsFields(config){
 					width : 280,
 					displayField:'name',
 					valueField:'value',
-					value : 0,
+					value : activeRecord.track_inventory,
 //					hiddenName: 'track_inventory',
 					store:new Ext.data.ArrayStore({
 						autoDestroy: true,
@@ -838,7 +846,7 @@ function getStoreSettingsFields(config){
 					width : 280,
 					displayField:'name',
 					valueField:'value',
-					value:'sku',
+					value:activeRecord.sort_order,
 					store:new Ext.data.ArrayStore({
 						autoDestroy: true,
 						fields: [
@@ -858,6 +866,7 @@ function getStoreSettingsFields(config){
 				{
 					xtype : 'textfield',
 					name : 'qty_alert',
+					value : activeRecord.qty_alert,
 					fieldLabel: 'Default Inventory Alert Level',
 					width : 280
 				},
@@ -930,36 +939,8 @@ function getStoreSettingsFields(config){
 							afterrender : function(f){
 								getVariations(f);
 								var save = Ext.getCmp('modx-abtn-save');
-								activeRecord = MODx.activePage.config.record.properties.moxycart;
 								if(save) save.disable(true);
 							}
-						}
-					}]
-				},{
-					colspan:3,
-					layout:'column',
-					border:false,
-					hidden : true,
-					items: [{
-						xtype : 'button',
-						text : 'Save',
-						handler : function(){
-							var fields = Ext.getCmp('modx-resource-storesettings-columns').findByType('field'), values = { specs : {}, taxonomies : {}, variations : {} };
-							for(n in fields){
-								if(fields[n].getValue) {
-									if(fields[n].name.indexOf('specs_') !== -1 || fields[n].name.indexOf('taxonomies_') !== -1 || fields[n].name.indexOf('variations_') !== -1){
-										var s = fields[n].name.split('_');
-										values[s[0]][s[1]] = s[0] === 'variations' ? fields[n].getValue() : Number(fields[n].getValue());
-									} else {
-										values[fields[n].name] = fields[n].getValue();
-									}
-								}
-							}
-							Ext.Ajax.request({
-								url : location.href,
-								method : 'POST',
-								jsonData : values
-							});
 						}
 					}]
 				}]

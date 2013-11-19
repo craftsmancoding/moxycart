@@ -14,19 +14,24 @@ class FC_Datafeed {
 
 	public $rc4crypt;
 
-	public function __construct(rc4crypt $rc4crypt) 
-	{
+    /**
+     *
+     * @param rc4crypt class
+     */
+	public function __construct(rc4crypt $rc4crypt) {
 		$this->rc4crypt = $rc4crypt;
 	}
+	
     /**
-	* decrypt function
+	* decrypt function: converts encrypted $data into xml string.
 	* Decrypt data using rc4crypt class
 	* @param string $data
-	* @return xml $xml
-    **/
+	* @return string XML text
+	*/
     public function decrypt($data,$api_key) {
     	$FoxyData_encrypted = urldecode($data);
 		$FoxyData_decrypted = $this->rc4crypt->decrypt($api_key,$FoxyData_encrypted);
+		return $FoxyData_decrypted;
 		$xml = new SimpleXMLElement($FoxyData_decrypted);
 		return $xml;
     }
