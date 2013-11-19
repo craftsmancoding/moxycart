@@ -108,14 +108,48 @@ elseif($debug==1) {
     
     $rc4crypt = new rc4crypt();
     $fc_datafeed = new FC_Datafeed($rc4crypt);
-    $data = $modx->cacheManager->get('encrypted_TEST',$cache_opts);
+    $data = $modx->cacheManager->get('encrypted_TEST',$cache_opts); // I renamed the cache file.
 
 	$FoxyData_decrypted = $fc_datafeed->decrypt($data,$api_key);
 	
     $out = '<h2>This Should Have unencrypted XML</h2>
     <textarea rows="15" cols="80">'.$FoxyData_decrypted.'</textarea>';
 
+
+    $md5 = md5($FoxyData_decrypted); // uniquely identifies the payload so we don't store the same thing twice
+    $Foxydata = $modx->getObject('Foxydata', array('md5'=>$md5));
+    
+    // We don't have this stored!  Create a copy of the  data.
+    if (!$Foxydata) {
+        // Start storing the data (maybe put this into the datafeed class?)
+        $Foxydata = $modx->newObject('Foxydata');
+        $Foxydata->set('md5', $md5);
+        $Foxydata->set('xml', $FoxyData_decrypted);
+        
+        if (!$Foxydata->save()) {
+            $modx->log(xPDO::LOG_LEVEL_ERROR,'Foxydata failed to save!',$log,__CLASS__.'::'.__FUNCTION__,__FILE__,__LINE__);
+            return 'error';
+        }
+    }
+    
+
     $xml = simplexml_load_string($FoxyData_decrypted, NULL, LIBXML_NOCDATA);
+    foreach($xml->transactions->transaction as $t) {
+        $Transaction  = $modx->newObject('Transaction');
+        $Transaction->fromArray((array)$t);
+        $Transaction->set('foxydata_id', $Foxydata->get('foxydata_id'));
+        // See http://rtfm.modx.com/xpdo/2.x/class-reference/xpdoobject/related-object-accessors/addmany
+        $details = array();
+        foreach( $t->transaction_details->transaction_detail as $d) {
+            $TransactionDetail = $modx->newObject('TransactionDetail');
+            $TransactionDetail->fromArray((array) $d);
+            $details[] = $TransactionDetail;
+        }
+        $Transaction->addMany($details);
+        if(!$Transaction->save()) {
+            return 'There was a problem saving.';
+        }
+    }
     
     $out .= '<h2>XML as object</h2>
         <textarea rows="15" cols="80">'.print_r($xml,true).'</textarea>';

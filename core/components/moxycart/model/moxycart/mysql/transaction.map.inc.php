@@ -7,6 +7,7 @@ $xpdo_meta_map['Transaction']= array (
   'fields' => 
   array (
     'transaction_id' => NULL,
+    'foxydata_id' => NULL,
     'id' => NULL,
     'store_id' => NULL,
     'store_version' => NULL,
@@ -74,6 +75,13 @@ $xpdo_meta_map['Transaction']= array (
       'null' => false,
       'index' => 'pk',
       'generated' => 'native',
+    ),
+    'foxydata_id' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => false,
     ),
     'id' => 
     array (
@@ -494,6 +502,21 @@ $xpdo_meta_map['Transaction']= array (
       'columns' => 
       array (
         'transaction_id' => 
+        array (
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
+    ),
+    'foxydata_id' => 
+    array (
+      'alias' => 'foxydata_id',
+      'primary' => false,
+      'unique' => false,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'foxydata_id' => 
         array (
           'collation' => 'A',
           'null' => false,

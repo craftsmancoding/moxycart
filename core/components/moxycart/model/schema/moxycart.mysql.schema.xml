@@ -354,6 +354,7 @@
     <!-- A billing event. For the list of products purchased, see TransactionDetail -->
 	<object class="Transaction" table="transactions" extends="xPDOObject">
     	<field key="transaction_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+    	<field key="foxydata_id" dbtype="int" precision="11" phptype="integer" null="false" />
     	<field key="id" dbtype="int" precision="11" phptype="integer" null="false" comment="Foxycart unique transaction id"/>
 		<field key="store_id" dbtype="int" precision="11" phptype="integer" null="false" />
 		<field key="store_version" dbtype="varchar" precision="32" phptype="string" null="false" />
@@ -426,6 +427,9 @@
 		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="transaction_id" collation="A" null="false" />
+		</index>
+        <index alias="foxydata_id" name="foxydata_id" primary="false" unique="false"  type="BTREE">
+			<column key="foxydata_id" collation="A" null="false" />
 		</index>
 
         <!-- We use the id field to adhere exactly to Foxycart's naming conventions -->
