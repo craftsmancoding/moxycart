@@ -25,6 +25,7 @@ $xpdo_meta_map['Product']= array (
     'qty_alert' => NULL,
     'qty_min' => NULL,
     'qty_max' => NULL,
+    'qty_backorder_max' => NULL,
     'price' => NULL,
     'price_strike_thru' => NULL,
     'price_sale' => NULL,
@@ -189,6 +190,14 @@ $xpdo_meta_map['Product']= array (
       'phptype' => 'integer',
       'null' => false,
       'comment' => 'Maximum quantity that should be allowed per product, per cart.',
+    ),
+    'qty_backorder_max' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => false,
+      'comment' => 'Number of units you can oversell.',
     ),
     'price' => 
     array (
@@ -430,6 +439,14 @@ $xpdo_meta_map['Product']= array (
       'foreign' => 'product_id',
       'cardinality' => 'one',
       'owner' => 'foreign',
+    ),
+    'Images' => 
+    array (
+      'class' => 'Image',
+      'local' => 'product_id',
+      'foreign' => 'product_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
     ),
     'Terms' => 
     array (

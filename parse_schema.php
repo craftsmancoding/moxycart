@@ -93,7 +93,7 @@ if (file_exists($xml_schema_file)) {
 }
  
 $xpdo = new xPDO("mysql:host=$database_server;dbname=$dbase", $database_user, $database_password);
-$xpdo->setLogLevel(xPDO::LOG_LEVEL_INFO);
+
 $xpdo->setLogTarget(XPDO_CLI_MODE ? 'ECHO' : 'HTML');
  
 $manager = $xpdo->getManager();
@@ -116,6 +116,7 @@ if(!$xpdo->addPackage('moxycart',$adjusted_core_path.'components/moxycart/model/
 
 // Clear out Tables
 print '<h3>Dropping Tables...</h3>';
+$xpdo->setLogLevel(xPDO::LOG_LEVEL_FATAL); // keep it quiet
 @$manager->removeObjectContainer('Currency');
 @$manager->removeObjectContainer('Product');
 @$manager->removeObjectContainer('Spec');
@@ -129,6 +130,17 @@ print '<h3>Dropping Tables...</h3>';
 @$manager->removeObjectContainer('ProductSpecs'); // whoops
 @$manager->removeObjectContainer('Cart');
 @$manager->removeObjectContainer('Image');
+
+@$manager->removeObjectContainer('Foxydata');
+@$manager->removeObjectContainer('Transaction');
+@$manager->removeObjectContainer('Tax');
+@$manager->removeObjectContainer('Discount');
+@$manager->removeObjectContainer('CustomField');
+@$manager->removeObjectContainer('Attribute');
+@$manager->removeObjectContainer('TransactionDetail');
+@$manager->removeObjectContainer('TransactionDetailOption');
+@$manager->removeObjectContainer('ShiptoAddress');
+
 
 /*
 print '<h3>Removing Taxonomy and Term Records on modx_site_content Tables...</h3>';
@@ -158,6 +170,7 @@ if($terms) {
 
 
 // Re-create them
+$xpdo->setLogLevel(xPDO::LOG_LEVEL_WARN);
 print '<h3>Creating Tables...<h3>';
 $manager->createObjectContainer('Currency');
 $manager->createObjectContainer('Product');
@@ -171,6 +184,15 @@ $manager->createObjectContainer('ProductSpec');
 $manager->createObjectContainer('Cart');
 $manager->createObjectContainer('Image');
 
+$manager->createObjectContainer('Foxydata');
+$manager->createObjectContainer('Transaction');
+$manager->createObjectContainer('Tax');
+$manager->createObjectContainer('Discount');
+$manager->createObjectContainer('CustomField');
+$manager->createObjectContainer('Attribute');
+$manager->createObjectContainer('TransactionDetail');
+$manager->createObjectContainer('TransactionDetailOption');
+$manager->createObjectContainer('ShiptoAddress');
 
 
 // Seed Data

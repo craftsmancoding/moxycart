@@ -1,19 +1,20 @@
 <?php
-$xpdo_meta_map['VariationType']= array (
+$xpdo_meta_map['Attribute']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'variation_types',
+  'table' => 'attributes',
   'extends' => 'xPDOObject',
+  'comment' => 'Foxycart transaction attributes',
   'fields' => 
   array (
-    'vtype_id' => NULL,
+    'attribute_id' => NULL,
+    'transaction_id' => NULL,
     'name' => NULL,
-    'description' => NULL,
-    'seq' => NULL,
+    'value' => NULL,
   ),
   'fieldMeta' => 
   array (
-    'vtype_id' => 
+    'attribute_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -22,6 +23,13 @@ $xpdo_meta_map['VariationType']= array (
       'index' => 'pk',
       'generated' => 'native',
     ),
+    'transaction_id' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => false,
+    ),
     'name' => 
     array (
       'dbtype' => 'varchar',
@@ -29,19 +37,12 @@ $xpdo_meta_map['VariationType']= array (
       'phptype' => 'string',
       'null' => false,
     ),
-    'description' => 
+    'value' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '255',
       'phptype' => 'string',
-      'null' => true,
-    ),
-    'seq' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '4',
-      'phptype' => 'integer',
-      'null' => true,
+      'null' => false,
     ),
   ),
   'indexes' => 
@@ -53,37 +54,23 @@ $xpdo_meta_map['VariationType']= array (
       'unique' => true,
       'columns' => 
       array (
-        'vtype_id' => 
+        'attribute_id' => 
         array (
           'collation' => 'A',
           'null' => false,
         ),
       ),
     ),
-    'name' => 
-    array (
-      'alias' => 'name',
-      'primary' => false,
-      'unique' => true,
-      'columns' => 
-      array (
-        'name' => 
-        array (
-          'collation' => 'A',
-          'null' => true,
-        ),
-      ),
-    ),
   ),
-  'composites' => 
+  'aggregates' => 
   array (
-    'Terms' => 
+    'Transaction' => 
     array (
-      'class' => 'VariationTerm',
-      'local' => 'vtype_id',
-      'foreign' => 'vtype_id',
-      'cardinality' => 'many',
-      'owner' => 'local',
+      'class' => 'Transaction',
+      'local' => 'transaction_id',
+      'foreign' => 'transaction_id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
     ),
   ),
 );

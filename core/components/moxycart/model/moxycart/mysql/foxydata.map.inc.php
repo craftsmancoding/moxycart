@@ -1,19 +1,19 @@
 <?php
-$xpdo_meta_map['VariationType']= array (
+$xpdo_meta_map['Foxydata']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'variation_types',
+  'table' => 'foxydata',
   'extends' => 'xPDOObject',
   'fields' => 
   array (
-    'vtype_id' => NULL,
-    'name' => NULL,
-    'description' => NULL,
-    'seq' => NULL,
+    'foxydata_id' => NULL,
+    'md5' => NULL,
+    'xml' => '',
+    'timestamp_created' => 'CURRENT_TIMESTAMP',
   ),
   'fieldMeta' => 
   array (
-    'vtype_id' => 
+    'foxydata_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -22,26 +22,28 @@ $xpdo_meta_map['VariationType']= array (
       'index' => 'pk',
       'generated' => 'native',
     ),
-    'name' => 
+    'md5' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '32',
       'phptype' => 'string',
       'null' => false,
+      'comment' => 'Used to uniquely id the data payload',
     ),
-    'description' => 
+    'xml' => 
     array (
-      'dbtype' => 'varchar',
-      'precision' => '255',
+      'dbtype' => 'mediumtext',
       'phptype' => 'string',
-      'null' => true,
+      'null' => false,
+      'default' => '',
+      'comment' => 'Decrypted XML body',
     ),
-    'seq' => 
+    'timestamp_created' => 
     array (
-      'dbtype' => 'int',
-      'precision' => '4',
-      'phptype' => 'integer',
+      'dbtype' => 'timestamp',
+      'phptype' => 'timestamp',
       'null' => true,
+      'default' => 'CURRENT_TIMESTAMP',
     ),
   ),
   'indexes' => 
@@ -53,35 +55,36 @@ $xpdo_meta_map['VariationType']= array (
       'unique' => true,
       'columns' => 
       array (
-        'vtype_id' => 
+        'foxydata_id' => 
         array (
           'collation' => 'A',
           'null' => false,
         ),
       ),
     ),
-    'name' => 
+    'md5' => 
     array (
-      'alias' => 'name',
+      'alias' => 'md5',
       'primary' => false,
       'unique' => true,
+      'type' => 'BTREE',
       'columns' => 
       array (
-        'name' => 
+        'md5' => 
         array (
           'collation' => 'A',
-          'null' => true,
+          'null' => false,
         ),
       ),
     ),
   ),
   'composites' => 
   array (
-    'Terms' => 
+    'Transactions' => 
     array (
-      'class' => 'VariationTerm',
-      'local' => 'vtype_id',
-      'foreign' => 'vtype_id',
+      'class' => 'Transaction',
+      'local' => 'foxydata_id',
+      'foreign' => 'foxydata_id',
       'cardinality' => 'many',
       'owner' => 'local',
     ),

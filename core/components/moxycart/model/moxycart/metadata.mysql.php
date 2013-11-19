@@ -16,6 +16,12 @@ $xpdo_meta_map = array (
     4 => 'VariationTerm',
     5 => 'Cart',
     6 => 'Image',
+    7 => 'Foxydata',
+    8 => 'Transaction',
+    9 => 'Tax',
+    10 => 'Discount',
+    11 => 'CustomField',
+    12 => 'Attribute',
   ),
   'xPDOSimpleObject' => 
   array (
@@ -24,5 +30,8 @@ $xpdo_meta_map = array (
     2 => 'ProductTaxonomy',
     3 => 'ProductTerm',
     4 => 'RelatedProducts',
+    5 => 'TransactionDetail',
+    6 => 'TransactionDetailOption',
+    7 => 'ShiptoAddress',
   ),
 );
