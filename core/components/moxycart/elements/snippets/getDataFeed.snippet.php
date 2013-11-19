@@ -75,6 +75,19 @@ elseif ($modx->resource->Template) {
     return '<div>In order for the getDataFeed Snippet to function properly, the page it is placed on
     cannot use a template: it must use an empty template.</div>';
 }
+elseif($debug==1) {
+    require_once($core_path . 'components/moxycart/model/moxycart/foxycartdatafeed.class.php');
+    require_once($core_path . 'components/moxycart/model/moxycart/rc4crypt.class.php');
+    
+    $rc4crypt = new rc4crypt();
+    $fc_datafeed = new FC_Datafeed($rc4crypt);
+    $data = $modx->cacheManager->get('encrypted_TEST',$cache_opts);
+
+	$xml = $fc_datafeed->decrypt($data,$api_key);
+	
+    return '<pre>'.$xml.'</pre>';
+
+}
 else {
     $url = $modx->makeUrl($modx->resource->get('id'),'','','full');
     return '<div>Welcome to Moxycart.  This page is contains the getDataFeed Snippet. In your 

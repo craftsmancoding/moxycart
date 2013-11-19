@@ -268,14 +268,6 @@
      */
     public function product_create($args) {
     	
-    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/util/datetime.js');
-//    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/element/modx.panel.tv.renders.js');
-    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.grid.resource.security.local.js');	
-//    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.tv.js');
-    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.js');
-        $this->modx->regClientStartupScript($this->mgr_url.'assets/modext/sections/resource/create.js');	
-    	$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
-    	
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
             var connector_url = "'.$this->connector_url.'";
             var site_url = "'.MODX_SITE_URL.'";
@@ -292,6 +284,15 @@
     		});
     		</script>
     	');	
+
+    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/util/datetime.js');
+//    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/element/modx.panel.tv.renders.js');
+    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.grid.resource.security.local.js');	
+//    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.tv.js');
+    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.js');
+        $this->modx->regClientStartupScript($this->mgr_url.'assets/modext/sections/resource/create.js');	
+    	$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
+    	$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/manageimages.js');
     
         return '<div id="modx-panel-resource-div"> </div>';
     
@@ -303,7 +304,19 @@
      * @param int product_id (from $_GET). Defines the id of the product
      */
     public function product_update($args) {
+    
+        $product_id = (int) $this->modx->getOption('product_id', $args);
         
+        if (!$product_id) {
+            return 'Invalid product_id';
+        }
+        
+        $Product = $this->modx->getObject('Product', $product_id);
+        if (!$Product) {
+            return 'Invalid product_id';
+        }
+        
+//        return '<pre>'.$Product->toJson().'</pre>';
     	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/util/datetime.js');
 //    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/element/modx.panel.tv.renders.js');
     	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.grid.resource.security.local.js');	
@@ -315,6 +328,7 @@
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
             var connector_url = "'.$this->connector_url.'";
     		var site_url = "'.MODX_SITE_URL.'";
+    		var product = '.$Product->toJson().';
     		Ext.onReady(function() {
     			MODx.load({
     				xtype: "modx-page-resource-update",
@@ -465,30 +479,50 @@
     /**
      * Post data here to save it
      */
-    public function product_save() {
+    public function product_save($args) {
+        $this->modx->log(4, 'product_save args: '. print_r($args,true));
+
+        $this->modx->log(1, 'token: '. $this->modx->getOption('HTTP_MODAUTH', $args). ' usertoken: '.$this->modx->user->getUserToken($this->modx->context->get('key')));        
+/*
         if (!is_object($this->modx->user)) {
             $this->modx->log(MODX_LOG_LEVEL_ERROR,'spec_save 401 '.print_r($_POST,true));
             return $this->_send401();
         }
+*/
         $out = array(
             'success' => true,
             'msg' => '',
         );
         
+/*
         $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
         if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
             $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_save FAILED. Invalid token: '.print_r($_POST,true));
             $out['success'] = false;
             $out['msg'] = 'Invalid token';
+            return json_encode($out);        
         }
+*/
         
-        $action = $this->modx->getOption('action', $_POST);
+        $action = $this->modx->getOption('action', $args);
         
+        unset($args['action']);
+        
+        $alias = $this->modx->getOption('alias',$args);
+        if (empty($alias)) {
+            $args['name'] = $this->modx->resource->cleanAlias($args['name']);
+        }
+        $Store = $this->modx->getObject('modResource', $this->modx->getOption('store_id',$args));
+        if (!$Store) {
+            $out['success'] = false;
+            $out['msg'] = 'Invalid store_id '.$this->modx->getOption('store_id',$args); 
+        }
+        $args['uri'] = $Store->get('uri') . $alias;
         
         switch ($action) {
             case 'update':
-                $Product = $this->modx->getObject('Product',$this->modx->getOption('product_id', $_POST));
-                $Product->fromArray($_POST);
+                $Product = $this->modx->getObject('Product',$this->modx->getOption('product_id', $args));
+                $Product->fromArray($args);
                 if (!$Product->save()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to update product.';    
@@ -496,7 +530,7 @@
                 $out['msg'] = 'Product updated successfully.';    
                 break;
             case 'delete':
-                $Product = $this->modx->getObject('Product',$this->modx->getOption('product_id', $_POST));
+                $Product = $this->modx->getObject('Product',$this->modx->getOption('product_id', $args));
                 if (!$Product->remove()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to delete Product.';    
@@ -504,14 +538,14 @@
                 $out['msg'] = 'Product deleted successfully.';    
                 break;
             case 'create':
-            default:
                 $Product = $this->modx->newObject('Product');    
-                $Product->fromArray($_POST);
-                if (!$Spec->save()) {
+                $Product->fromArray($args);
+                if (!$Product->save()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to save Product.';    
                 }
-                $out['msg'] = 'Product created successfully.';    
+                $out['msg'] = 'Product created successfully.';
+                break; 
         }
                 
         return json_encode($out);        
