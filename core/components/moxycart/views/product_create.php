@@ -243,6 +243,7 @@
 				</tbody>
 			</table>
 	</div>
+
 	
 	<div id="specs" class="content">
 		<table class="table table-bordered">

@@ -2949,6 +2949,24 @@ button.close {
     background-image: url(../images/term-icon.png) !important;
 }
 
+.moxy-msg {
+  display: none;
+  background: #fff;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  padding: 10px;
+  width: 250px;
+  position: absolute;
+  top: 10px;
+  right: 250px;
+}
+
+#moxy-result {
+  font-weight: bold;
+  font-weight: 14px;
+}
+
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */
 .clear:before, .clear:after,

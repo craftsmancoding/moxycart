@@ -375,6 +375,7 @@
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/handlebars-v1.1.2.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
                 
@@ -582,6 +583,7 @@
         switch ($action) {
             case 'update':
                 $Product = $this->modx->getObject('Product',$this->modx->getOption('product_id', $args));
+
                 $Product->fromArray($args);
                 if (!$Product->save()) {
                     $out['success'] = false;
@@ -607,7 +609,7 @@
                 $out['msg'] = 'Product created successfully.';
                 break; 
         }
-                
+
         return json_encode($out);        
 
     }
