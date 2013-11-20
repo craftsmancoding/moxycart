@@ -138,6 +138,7 @@ if($encrypted_data = $modx->getOption('FoxyData', $_POST)) {
                 foreach($d->transaction_detail_options->transaction_detail_option as $o) {
                     $TransactionDetailOption = $modx->newObject('TransactionDetailOption');
                     $TransactionDetailOption->fromArray((array) $o);
+                    // Call per-product hook
                     $options[] = $TransactionDetailOption;
                 }
                 $TransactionDetail->addMany($options);
@@ -145,7 +146,8 @@ if($encrypted_data = $modx->getOption('FoxyData', $_POST)) {
             $details[] = $TransactionDetail;
         }
         $Transaction->addMany($details);
-                
+
+        // Call per-transaction hook                
         if(!$Transaction->save()) {
             $modx->log(xPDO::LOG_LEVEL_ERROR,'Failed to save transaction for Foxydata ('.$Foxydata->get('foxydata_id').').',$log,'getDataFeed Snippet',__FILE__,__LINE__);
             return 'There was a problem saving transactional data.';

@@ -26,9 +26,9 @@ jQuery( document ).ready(function() {
 function submit_form() {
     var url = connector_url + 'product_save';
     alert('Save me to product_save : ' + url);
-    
     return false;
 }
+
 </script>
 <form id="product_update" action>
 <div id="modx-panel-workspace" class="x-plain container">
