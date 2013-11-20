@@ -429,7 +429,7 @@
             $c['value'] = $c['currency_id'];
             $c['name'] = $c['name'];
             $c['selected'] = '';
-            if ($c['value'] == $data['curency_id']) {
+            if ($c['value'] == $data['currency_id']) {
                 $c['selected'] = ' selected="selected"';
             }
             $data['currencies'] .= $this->_load_view('option.php',$c);
@@ -484,12 +484,12 @@
         
                 
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/handlebars-v1.1.2.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/dropzone.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
 
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.$Product->toJson().';            

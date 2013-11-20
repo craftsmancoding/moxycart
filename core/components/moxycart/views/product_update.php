@@ -1,44 +1,4 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<script type="text/javascript">
-
-// See http://stackoverflow.com/questions/9807426/use-jquery-to-re-populate-form-with-json-data
-jQuery( document ).ready(function() {
-    jQuery('#moxytab').tabify();
-    jQuery("#product_images").sortable();
-    jQuery("#product_images").disableSelection();
-    $.each(product, function(name, val){
-        var $el = $('#'+name),
-            type = $el.attr('type');
-    
-        switch(type){
-            case "checkbox":
-                $el.attr("checked", "checked");
-                break;
-            case "radio":
-                $el.filter('[value="'+val+'"]').attr("checked", "checked");
-                break;
-            default:
-                $el.val(val);
-        }
-    });
-
-//    var myDropzone = new Dropzone("div#images_tab", { url: connector_url+'image_save',paramName:"image_uploads"});
-    jQuery("div#images_tab").dropzone({url: connector_url+'image_save',paramName:"image_uploads"});
-
-});
-
-
-/**
- * POST data to ?f=product_save 
- */
-function submit_form() {
-    var url = connector_url + 'product_save';
-    alert('Save me to product_save : ' + url);
-    return false;
-}
-
-</script>
-
 <style>
 #sortable { list-style-type: none; margin: 0; padding: 0; width: 450px; }
 #sortable li { margin: 3px 3px 3px 0; padding: 1px; float: left; width: 100px; height: 90px; font-size: 4em; text-align: center; }
@@ -49,8 +9,8 @@ function submit_form() {
 	<div id="moxy-result-msg"></div>
 </div>
 
-<form id="product_update" class="dropzone" action="<?php print $data['connector_url'] ?>image_save" method="post">
 
+<form  class="dropzone" action="<?php print $data['connector_url'] ?>image_save" method="post">
 <div id="modx-panel-workspace" class="x-plain container">
 	<div class="moxy-header clearfix">
 		<div class="moxy-header-title">
@@ -342,3 +302,5 @@ function submit_form() {
 
 </div>
 </form>
+
+
