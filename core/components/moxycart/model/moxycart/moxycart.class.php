@@ -552,7 +552,7 @@
      * Post data here to save it
      */
     public function product_save($args) {
-        $this->modx->log(4, 'product_save args: '. print_r($args,true));
+        $this->modx->log(1, 'product_save args: '. print_r($args,true));
 
         $this->modx->log(1, 'token: '. $this->modx->getOption('HTTP_MODAUTH', $args). ' usertoken: '.$this->modx->user->getUserToken($this->modx->context->get('key')));        
 /*

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <script type="text/javascript">
 
 // See http://stackoverflow.com/questions/9807426/use-jquery-to-re-populate-form-with-json-data
@@ -31,14 +30,14 @@ function submit_form() {
 }
 
 </script>
-<form id="product_update" action>
-=======
+
 <div class="moxy-msg">
 	<div id="moxy-result"></div>
 	<div id="moxy-result-msg"></div>
 </div>
+
 <form id="product_update" action="" method="post">
->>>>>>> cf5bdd828f804a4c1eeb7f55c1033e8bb36b0732
+
 <div id="modx-panel-workspace" class="x-plain container">
 	<div class="moxy-header clearfix">
 		<div class="moxy-header-title">
