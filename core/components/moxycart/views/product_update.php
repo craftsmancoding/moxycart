@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script type="text/javascript">
 
 // See http://stackoverflow.com/questions/9807426/use-jquery-to-re-populate-form-with-json-data
@@ -31,6 +32,13 @@ function submit_form() {
 
 </script>
 <form id="product_update" action>
+=======
+<div class="moxy-msg">
+	<div id="moxy-result"></div>
+	<div id="moxy-result-msg"></div>
+</div>
+<form id="product_update" action="" method="post">
+>>>>>>> cf5bdd828f804a4c1eeb7f55c1033e8bb36b0732
 <div id="modx-panel-workspace" class="x-plain container">
 	<div class="moxy-header clearfix">
 		<div class="moxy-header-title">
@@ -38,7 +46,7 @@ function submit_form() {
 		</div>
 			
 		<div class="moxy-buttons-wrapper">
-			<button class="btn" onclick="javascript:submit_form();">Save</button>
+			<button class="btn" id="moxy-save">Save</button>
 			<button class="btn">View</button>
 			<button class="btn">Close</button>
 		</div>
@@ -62,7 +70,8 @@ function submit_form() {
 							<label for="name">Name</label>
 						</td>
 						<td>
-							<input type="text" name="name" id="name" value="<?php print htmlspecialchars($data['name']); ?>">
+							<input type="text" name="name" id="name" value="">
+							<input type="hidden" name="product_id" id="product_id" value="">
 						</td>
 						<td>
 							<label for="is_active">Active</label>
@@ -70,7 +79,7 @@ function submit_form() {
 						<td>
 							<select name="is_active" id="is_active">
 								<option value="1">Yes</option>
-								<option value="1">No</option>
+								<option value="0">No</option>
 							</select>
 						</td>
 
@@ -199,7 +208,7 @@ function submit_form() {
 							<label for="description">Content</label>
 						</td>
 						<td colspan="3">
-							<textarea name="content" id="content" style="width:80%;height:120px;"></textarea>
+							<textarea name="content" id="content" style="width:600px;height:120px;"></textarea>
 						</td>
 					</tr>
 
@@ -224,13 +233,32 @@ function submit_form() {
 							<label for="template_id">Template</label>
 						</td>
 						<td>
+				<!-- 			<select name="template_id" id="template_id">
+						
+							<option value="1">BaseTemplate</option>
+						
+							<option value="2">Bootstrap</option>
+						
+							<option value="5">sample.ArticlesContainerTemplate</option>
+						
+							<option value="6">sample.ArticleTemplate</option>
+						
+							<option value="7">Home</option>
+						
+							<option value="8">Default Inner</option>
+						
+							<option value="9">Demo</option>
+						
+							<option value="10">Product</option>
+						
+					</select> -->
 							<select name="template_id" id="template_id">
 								<script id="templateTpl" type="text/x-handlebars-template" >
 									{{#each this}}
 										<option value="{{id}}">{{name}}</option>
 									{{/each}}
 								</script>
-							</select>
+							</select> 
 						</td>
 					</tr>
 					<tr>
