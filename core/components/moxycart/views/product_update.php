@@ -1,3 +1,36 @@
+<script type="text/javascript">
+
+// See http://stackoverflow.com/questions/9807426/use-jquery-to-re-populate-form-with-json-data
+jQuery( document ).ready(function() {
+    $.each(product, function(name, val){
+        var $el = $('#'+name),
+            type = $el.attr('type');
+    
+        switch(type){
+            case "checkbox":
+                $el.attr("checked", "checked");
+                break;
+            case "radio":
+                $el.filter('[value="'+val+'"]').attr("checked", "checked");
+                break;
+            default:
+                $el.val(val);
+        }
+    });
+    
+});
+
+/**
+ * POST data to ?f=product_save 
+ */
+function submit_form() {
+    var url = connector_url + 'product_save';
+    alert('Save me to product_save : ' + url);
+    
+    return false;
+}
+</script>
+<form id="product_update" action>
 <div id="modx-panel-workspace" class="x-plain container">
 	<div class="moxy-header clearfix">
 		<div class="moxy-header-title">
@@ -5,7 +38,7 @@
 		</div>
 			
 		<div class="moxy-buttons-wrapper">
-			<button class="btn">Save</button>
+			<button class="btn" onclick="javascript:submit_form();">Save</button>
 			<button class="btn">View</button>
 			<button class="btn">Close</button>
 		</div>
@@ -29,7 +62,7 @@
 							<label for="name">Name</label>
 						</td>
 						<td>
-							<input type="text" name="name" id="name" value="">
+							<input type="text" name="name" id="name" value="<?php print htmlspecialchars($data['name']); ?>">
 						</td>
 						<td>
 							<label for="is_active">Active</label>
@@ -286,3 +319,4 @@
 	</div>
 
 </div>
+</form>

@@ -60,15 +60,7 @@
         $this->connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
         $this->modx->addPackage('moxycart',$this->core_path.'components/moxycart/model/','moxy_');
         $this->default_limit = $this->modx->getOption('default_per_page'); // TODO: read from a MC setting?
-        
-        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/handlebars-v1.1.2.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
-
-       
-
+    
         // Like controller_url, but in the mgr
         // MODx.action['moxycart:index'] + '?f=';
         if ($Action = $this->modx->getObject('modAction', array('namespace'=>'moxycart','controller'=>'index'))) {
@@ -314,9 +306,15 @@
      *
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
-    public function product_create2($args) 
-    {
+    public function product_create2($args) {
         $data = array();
+        
+        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/handlebars-v1.1.2.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
+        
         return load_view('product_create.php',$data);
     }
 
@@ -371,7 +369,36 @@
      * @param int product_id (from $_GET). Defines the id of the product
      */
     public function product_update2($args) {
-        $data = array();
+        $product_id = (int) $this->modx->getOption('product_id', $args);
+        
+
+        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/handlebars-v1.1.2.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
+                
+        $Product = $this->modx->getObject('Product', $product_id);
+        
+        if (!$Product) {
+            return 'Product not found.';
+        }
+        
+        $data = $Product->toArray();
+
+    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+    		var product = '.$Product->toJson().';            
+    		var connector_url = "'.$this->connector_url.'";
+    		// use Ext JS?
+    		Ext.onReady(function() {
+    		  // populate the form
+    		});
+    		</script>
+    	');
+
+        
+//        return $data['name']; exit;
+//        return print_r($data,true);
         return load_view('product_update.php',$data);
     }
 

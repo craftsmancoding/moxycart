@@ -7,7 +7,7 @@
  * @param array $data: an associative array containing key => value pairs, passed to the view
  * @return string
  */
-function load_view($file, $data=array()) {
+function load_view($file, $data=array(),$return=false) {
 	global $modx;
 	$moxycart_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
 	if (file_exists($moxycart_path.'components/moxycart/views/'.$file)) {
