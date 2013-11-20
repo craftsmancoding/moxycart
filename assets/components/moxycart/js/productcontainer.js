@@ -991,16 +991,7 @@ function getCreateProductFields(config){
 
 
 function getImagesFields(){
-	return [{
-		xtype:'panel',
-		items:[{
-			xtype:'button',
-			text:'Add',
-			handler:function(){
-				showImageWindow();
-			}
-		}]
-	}];
+	return [new ProductImages()];
 }
 
 

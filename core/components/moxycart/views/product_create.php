@@ -109,11 +109,7 @@
 						</td>
 						<td>
 							<select name="category" id="category">
-								<script id="categoryTpl" type="text/x-handlebars-template" >
-									{{#each this}}
-										<option value="{{name}}">{{name}}</option>
-									{{/each}}
-								</script>
+                                <?php print $data['categories']; ?>
 							</select>
 						</td>
 						<td>
@@ -196,11 +192,7 @@
 						</td>
 						<td>
 							<select name="template_id" id="template_id">
-								<script id="templateTpl" type="text/x-handlebars-template" >
-									{{#each this}}
-										<option value="{{id}}">{{name}}</option>
-									{{/each}}
-								</script>
+                                <?php print $data['templates']; ?>
 							</select>
 						</td>
 					</tr>

@@ -132,6 +132,31 @@
         print 'Unauthorized';
         exit;
     }
+    
+    /**
+     * Load a view file. We put in some commonly used variables here for convenience
+     *
+     * @param string $file: name of a file inside of the "views" folder
+     * @param array $data: an associative array containing key => value pairs, passed to the view
+     * @return string
+     */
+    private function _load_view($file, $data=array(),$return=false) {
+
+    	if (file_exists($this->core_path.'components/moxycart/views/'.$file)) {
+    	    if (!isset($return) || $return == false) {
+    	        ob_start();
+    	        include ($this->core_path.'components/moxycart/views/'.$file);
+    	        $output = ob_get_contents();
+    	        ob_end_clean();
+    	    }     
+    	} 
+    	else {
+    		$output = $this->modx->lexicon('view_not_found', array('file'=> 'views/'.$file));
+    	}
+    
+    	return $output;
+    
+    }    
     //------------------------------------------------------------------------------
     //! Public
     //------------------------------------------------------------------------------
@@ -256,7 +281,8 @@
     /**
      * Post data here to save it
      */
-    public function image_save() {
+    public function image_save($args) {
+        $this->modx->log(1,'image_save: '.print_r($args,true));
         // $_POST... todo
     }    
        
@@ -327,7 +353,7 @@
         ');
 
         
-        return load_view('product_create.php',$data);
+        return $this->_load_view('product_create.php',$data);
     }
 
     /**
@@ -383,21 +409,87 @@
     public function product_update2($args) {
         $product_id = (int) $this->modx->getOption('product_id', $args);
         
-
-        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/handlebars-v1.1.2.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
-                
-        $Product = $this->modx->getObject('Product', $product_id);
-        
-        if (!$Product) {
-            return 'Product not found.';
+        if (!$Product = $this->modx->getObject('Product', $product_id)) {        
+            return 'Product not found : '.$product_id;
         }
         
         $data = $Product->toArray();
+        $data['connector_url'] = $this->connector_url;
+        
+        // Get the dropdowns
+        $data['images'] = '';
+        $product_images = $this->json_images(array('product_id'=>$product_id,'limit'=>0),true);
+        foreach ($product_images['results'] as $img) {
+            $data['images'] .= $this->_load_view('product_image.php',$img);
+        }
+        
+        $data['currencies'] = '';
+        $currencies = $this->json_currencies(array('limit'=>0,'is_active'=>1),true);
+        foreach ($currencies['results'] as $c) {
+            $c['value'] = $c['currency_id'];
+            $c['name'] = $c['name'];
+            $c['selected'] = '';
+            if ($c['value'] == $data['curency_id']) {
+                $c['selected'] = ' selected="selected"';
+            }
+            $data['currencies'] .= $this->_load_view('option.php',$c);
+        }
+        
+        
+        $data['templates'] = '';
+        $templates = $this->json_templates(array('limit'=>0),true);
+        foreach ($templates['results'] as $t) {
+            $t['value'] = $t['id'];
+            $t['name'] = $t['name']; // WARNING: we swapped names in json_templates. not templatename!
+            $t['selected'] = '';
+            if ($t['value'] == $data['template_id']) {
+                $t['selected'] = ' selected="selected"';
+            }
+            $data['templates'] .= $this->_load_view('option.php',$t);
+        }
+        $data['categories'] = '';
+        $categories = $this->json_categories(array('limit'=>0),true);
+        foreach ($categories['results'] as $c) {
+            $c['value'] = $c['name'];
+            $c['name'] = $c['name'];
+            $c['selected'] = '';
+            if ($c['value'] == $data['store_id']) {
+                $c['selected'] = ' selected="selected"';
+            }
+            $data['categories'] .= $this->_load_view('option.php',$c);
+        }
+
+        $data['stores'] = '';
+        $stores = $this->json_stores(array('limit'=>0),true);
+        foreach ($stores['results'] as $s) {
+            $s['value'] = $s['id'];
+            $s['name'] = $s['name']; // WARNING: we swapped names in json_stores. not pagetitle!
+            $s['selected'] = '';
+            if ($s['value'] == $data['store_id']) {
+                $s['selected'] = ' selected="selected"';
+            }
+            $data['stores'] .= $this->_load_view('option.php',$s);
+        }
+        $data['types'] = '';
+        $types = $this->json_types(array('limit'=>0),true);
+        foreach ($types['results'] as $t) {
+            $t['value'] = $t['id'];
+            $t['name'] = $t['name']; 
+            $t['selected'] = '';
+            if ($t['value'] == $data['type']) {
+                $t['selected'] = ' selected="selected"';
+            }
+            $data['types'] .= $this->_load_view('option.php',$t);
+        }        
+        
+                
+        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/handlebars-v1.1.2.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/dropzone.js');
 
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.$Product->toJson().';            
@@ -408,11 +500,10 @@
     		});
     		</script>
     	');
+    	
+//        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
 
-        
-//        return $data['name']; exit;
-//        return print_r($data,true);
-        return load_view('product_update.php',$data);
+        return $this->_load_view('product_update.php',$data);
     }
 
     /**
@@ -937,16 +1028,11 @@
      */
     public function json_categories($args,$raw=false) {
 
-        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
-        $start = (int) $this->modx->getOption('start',$args,0);
-        $sort = $this->modx->getOption('sort',$args,'name');
-        $dir = $this->modx->getOption('dir',$args,'ASC');
-        
         $total_pages = 1;
         
         // Init our array
         $data = array(
-            'results'=>array(array('name'=>'Default')),
+            'results'=>array(array('id'=>'default','name'=>'Default')),
             'total' => $total_pages,
         );
 
@@ -970,7 +1056,9 @@
         $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('Currency');
-        //$criteria->where();
+        if (isset($args['is_active'])) {
+            $criteria->where(array('is_active' => (int) $this->modx->getOption('is_active',$args)));
+        }
         $total_pages = $this->modx->getCount('Currency',$criteria);
         
         $criteria->limit($limit, $start); 
@@ -1231,7 +1319,7 @@
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
-        $sort = $this->modx->getOption('sort',$args,'image_id');
+        $sort = $this->modx->getOption('sort',$args,'seq');
         $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('Image');
@@ -1640,6 +1728,31 @@
     
     }
 
+    /**
+     * Putting this in like the rest of the data sources, even though this is hard-coded
+     *
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
+     */
+    public function json_types($args,$raw=false) {
+
+        // Init our array
+        $data = array(
+            'results'=>array(
+                array('name'=>'Regular','id'=>'regular'),
+                array('name'=>'Subscription','id'=>'subscription'),
+                array('name'=>'Download','id'=>'download')
+            ),
+            'total' => 1,
+        );
+
+        if ($raw) {
+            return $data;
+        }
+        return json_encode($data);
+
+        
+    }
 
     /**
      * @param boolean $raw if true, results are returned as PHP array default: false

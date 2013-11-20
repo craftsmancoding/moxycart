@@ -1,7 +1,11 @@
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script type="text/javascript">
 
 // See http://stackoverflow.com/questions/9807426/use-jquery-to-re-populate-form-with-json-data
 jQuery( document ).ready(function() {
+    jQuery('#moxytab').tabify();
+    jQuery("#product_images").sortable();
+    jQuery("#product_images").disableSelection();
     $.each(product, function(name, val){
         var $el = $('#'+name),
             type = $el.attr('type');
@@ -17,8 +21,12 @@ jQuery( document ).ready(function() {
                 $el.val(val);
         }
     });
-    
+
+//    var myDropzone = new Dropzone("div#images_tab", { url: connector_url+'image_save',paramName:"image_uploads"});
+    jQuery("div#images_tab").dropzone({url: connector_url+'image_save',paramName:"image_uploads"});
+
 });
+
 
 /**
  * POST data to ?f=product_save 
@@ -31,12 +39,17 @@ function submit_form() {
 
 </script>
 
+<style>
+#sortable { list-style-type: none; margin: 0; padding: 0; width: 450px; }
+#sortable li { margin: 3px 3px 3px 0; padding: 1px; float: left; width: 100px; height: 90px; font-size: 4em; text-align: center; }
+</style>
+
 <div class="moxy-msg">
 	<div id="moxy-result"></div>
 	<div id="moxy-result-msg"></div>
 </div>
 
-<form id="product_update" action="" method="post">
+<form id="product_update" class="dropzone" action="<?php print $data['connector_url'] ?>image_save" method="post">
 
 <div id="modx-panel-workspace" class="x-plain container">
 	<div class="moxy-header clearfix">
@@ -54,11 +67,11 @@ function submit_form() {
 	
 	<ul id="moxytab" class="menu">
 		<li class="active"><a href="#product">Product</a></li>
-		<li><a href="#settings">Settings</a></li>
-		<li><a href="#variations">Variations</a></li>
-		<li><a href="#specs">Specs</a></li>
-		<li><a href="#images">Images</a></li>
-		<li><a href="#taxonomies">Taxonomies</a></li>
+		<li><a href="#settings_tab">Settings</a></li>
+		<li><a href="#variations_tab">Variations</a></li>
+		<li><a href="#specs_tab">Specs</a></li>
+		<li><a href="#images_tab">Images</a></li>
+		<li><a href="#taxonomies_tab">Taxonomies</a></li>
 	</ul>
 
 	<div id="product" class="content">
@@ -216,7 +229,7 @@ function submit_form() {
 			</table>
 	</div>
 
-	<div id="settings" class="content">
+	<div id="settings_tab" class="content">
 		 <table class="table no-top-border">
 				<tbody>
 					<tr>
@@ -232,31 +245,9 @@ function submit_form() {
 							<label for="template_id">Template</label>
 						</td>
 						<td>
-				<!-- 			<select name="template_id" id="template_id">
-						
-							<option value="1">BaseTemplate</option>
-						
-							<option value="2">Bootstrap</option>
-						
-							<option value="5">sample.ArticlesContainerTemplate</option>
-						
-							<option value="6">sample.ArticleTemplate</option>
-						
-							<option value="7">Home</option>
-						
-							<option value="8">Default Inner</option>
-						
-							<option value="9">Demo</option>
-						
-							<option value="10">Product</option>
-						
-					</select> -->
+
 							<select name="template_id" id="template_id">
-								<script id="templateTpl" type="text/x-handlebars-template" >
-									{{#each this}}
-										<option value="{{id}}">{{name}}</option>
-									{{/each}}
-								</script>
+                                <?php print $data['templates']; ?>
 							</select> 
 						</td>
 					</tr>
@@ -266,11 +257,7 @@ function submit_form() {
 						</td>
 						<td>
 							<select name="currency_id" id="currency_id">
-								<script id="currencyTemplate" type="text/x-handlebars-template" >
-									{{#each this}}
-										<option value="{{currency_id}}">{{name}}</option>
-									{{/each}}
-								</script>
+                                <?php print $data['currencies']; ?>
 							</select>
 						</td>
 					</tr>
@@ -280,9 +267,7 @@ function submit_form() {
 						</td>
 						<td>
 							<select name="type" id="type">
-								<option value="regular">Regular</option>
-								<option value="subscription">Subscription</option>
-								<option value="download">Download</option>
+                                <?php print $data['types']; ?>
 							</select>
 						</td>
 					</tr>
@@ -292,11 +277,7 @@ function submit_form() {
 						</td>
 						<td>
 							<select name="store_id" id="store_id">
-								<script id="storesTpl" type="text/x-handlebars-template" >
-									{{#each this}}
-										<option value="{{id}}">{{name}}</option>
-									{{/each}}
-								</script>
+								<?php print $data['stores']; ?>
 							</select>
 						</td>
 					</tr>
@@ -305,7 +286,7 @@ function submit_form() {
 			</table>
 	</div>
 
-	<div id="variations" class="content"><br>
+	<div id="variations_tab" class="content"><br>
 		<a id="manage_inventory" class="btn">Manage Inventory</a>
 		<table class="table table-bordered">
 			<thead>
@@ -322,7 +303,7 @@ function submit_form() {
 		</table>
 	</div>
 	
-	<div id="specs" class="content">
+	<div id="specs_tab" class="content">
 		<table class="table table-bordered">
 			<thead>
 				<tr>
@@ -337,10 +318,24 @@ function submit_form() {
 		</table>
 	</div>
 
-	<div id="images" class="content">
-		<a id="moxy_add_image" class="btn">Add Image</a>
+	<div id="images_tab" class="content">
+		<?php /* 
+		Not needed...
+		<a id="moxy_add_image" class="btn">Add Image</a> 
+		*/ ?>
+		
+		
+		<ul id="product_images">
+		
+            <?php print $data['images']; ?>
+        
+        </ul>
+		
+		
+		
+		
 	</div>
-	<div id="taxonomies" class="content">
+	<div id="taxonomies_tab" class="content">
 		<a id="moxy_add_categories" class="btn">Add Category</a><br>
 		<a id="moxy_add_tags" class="btn">Add Tag</a><br>
 	</div>

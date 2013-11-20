@@ -41,6 +41,8 @@ $modx->initialize('mgr');
 $log_level = $modx->getOption('log_level',$_GET, $modx->getOption('log_level'));
 $old_level = $modx->setLogLevel($log_level);
 
+$function = $modx->getOption('f',$_GET,'help');
+unset($_GET['f']);
 $args = array_merge($_POST,$_GET); // skip the cookies, more explicit than $_REQUEST
 $modx->log(MODX_LOG_LEVEL_DEBUG, print_r($args,true),'','',__FILE__,__LINE__);
 
@@ -50,7 +52,7 @@ require_once($core_path.'components/moxycart/model/moxycart/moxycart.class.php')
 
 $Moxycart = new Moxycart($modx);
 
-$function = $modx->getOption('f',$_GET,'help');
+
 
 $results = $Moxycart->$function($args);
 
