@@ -186,9 +186,9 @@
     /**
      * Post data here to save it
      */
-    public function currency_save() {
+    public function currency_save($args) {
         if (!is_object($this->modx->user)) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'currency_save 401 '.print_r($_POST,true));
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'currency_save 401 '.print_r($args,true));
             return $this->_send401();
         }
         $out = array(
@@ -196,20 +196,20 @@
             'msg' => '',
         );
         
-        $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
+        $token = $this->modx->getOption('HTTP_MODAUTH', $args);   
         if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'currency_save FAILED. Invalid token: '.print_r($_POST,true));
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'currency_save FAILED. Invalid token: '.print_r($args,true));
             $out['success'] = false;
             $out['msg'] = 'Invalid token';
         }
         
-        $action = $this->modx->getOption('action', $_POST);
+        $action = $this->modx->getOption('action', $args);
         
         
         switch ($action) {
             case 'update':
-                $Spec = $this->modx->getObject('Currency',$this->modx->getOption('currency_id', $_POST));
-                $Spec->fromArray($_POST);
+                $Spec = $this->modx->getObject('Currency',$this->modx->getOption('currency_id', $args));
+                $Spec->fromArray($args);
                 if (!$Spec->save()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to update Currency.';    
@@ -217,7 +217,7 @@
                 $out['msg'] = 'Currency updated successfully.';    
                 break;
             case 'delete':
-                $Spec = $this->modx->getObject('Currency',$this->modx->getOption('currency_id', $_POST));
+                $Spec = $this->modx->getObject('Currency',$this->modx->getOption('currency_id', $args));
                 if (!$Spec->remove()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to delete Currency.';    
@@ -227,7 +227,7 @@
             case 'create':
             default:
                 $Spec = $this->modx->newObject('Currency');    
-                $Spec->fromArray($_POST);
+                $Spec->fromArray($args);
                 if (!$Spec->save()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to save Currency.';    
@@ -480,6 +480,28 @@
                 $t['selected'] = ' selected="selected"';
             }
             $data['types'] .= $this->_load_view('option.php',$t);
+        }        
+        
+        // A list of all specs
+        $data['specs'] = '';
+        $specs = $this->json_specs(array('limit'=>0),true);
+        foreach ($specs['results'] as $s) {
+            $s['value'] = $s['spec_id'];
+            $s['name'] = $s['name']; 
+            $s['selected'] = ''; // none are selected -- it's only for attaching
+            $data['specs'] .= $this->_load_view('option.php',$s);
+        }
+        
+        $data['product_specs'] = '';
+        $specs = $this->json_product_specs(array('limit'=>0,'product_id'=>$product_id),true);
+        foreach ($specs['results'] as $s) {
+            $data['product_specs'] .= $this->_load_view('product_spec.php',$s); // TODO: react to the spec "type"
+        }        
+  
+        $data['product_terms'] = '';
+        $product_terms = $this->json_product_terms(array('limit'=>0,'product_id'=>$product_id),true);
+        foreach ($product_terms['results'] as $t) {
+            $data['product_terms'] .= $this->_load_view('product_spec.php',$s); // TODO: react to the spec "type"
         }        
         
                 
@@ -744,9 +766,9 @@
     /**
      * Post data here to save it
      */
-    public function spec_save() {
+    public function spec_save($args) {
         if (!is_object($this->modx->user)) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'spec_save 401 '.print_r($_POST,true));
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'spec_save 401 '.print_r($args,true));
             return $this->_send401();
         }
         $out = array(
@@ -754,19 +776,19 @@
             'msg' => '',
         );
         
-        $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
+        $token = $this->modx->getOption('HTTP_MODAUTH', $args);   
         if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'spec_save FAILED. Invalid token: '.print_r($_POST,true));
+            $this->modx->log(MODX_LOG_LEVEL_ERROR,'spec_save FAILED. Invalid token: '.print_r($args,true));
             $out['success'] = false;
             $out['msg'] = 'Invalid token';
         }
         
-        $action = $this->modx->getOption('action', $_POST);
+        $action = $this->modx->getOption('action', $args);
         
         
         switch ($action) {
             case 'update':
-                $Spec = $this->modx->getObject('Spec',$this->modx->getOption('spec_id', $_POST));
+                $Spec = $this->modx->getObject('Spec',$this->modx->getOption('spec_id', $args));
                 $Spec->fromArray($_POST);
                 if (!$Spec->save()) {
                     $out['success'] = false;
@@ -1198,16 +1220,16 @@
         );
         if($pages) {
              foreach ($pages as $p) {
-                $product = $this->modx->getObject('Product',array('product_id'=>$p->get('product_id')));
-                $spec = $this->modx->getObject('Spec',array('spec_id'=>$p->get('spec_id')));
                $data['results'][] = array(
-                'product' => ($product) ? $product->get('name') : '',
-                'spec' => ($spec) ? $spec->get('name') : '',
+                'product_id' => $p->get('product_id'), 
+                'product' => $p->Product->get('name'),
+                'spec' => $p->Spec->get('name'),
                 'value' => $p->get('value'),
+                'description' => $p->Spec->get('description'),
+                'type' => $p->Spec->get('type')
                );
              }
          }
-      
 
         if($raw) {
             return $data;
@@ -1223,7 +1245,7 @@
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
     public function json_product_taxonomies($args,$raw=false) {
-        $product_id = (int) $this->modx->getOption('product_id',$_REQUEST);
+        $product_id = (int) $this->modx->getOption('product_id',$args);
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
@@ -1267,7 +1289,7 @@
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)     
      */
     public function json_product_terms($args,$raw=false) {
-             
+         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
@@ -1276,18 +1298,19 @@
         $product_id = (int) $this->modx->getOption('product_id',$args);
        
         
-        $criteria = $this->modx->newQuery('ProductTerms');
+        $criteria = $this->modx->newQuery('ProductTerm');
         
         if ($product_id) {
             $criteria->where(array('product_id'=>$product_id));
         }
         
-        $total_pages = $this->modx->getCount('ProductTerms',$criteria);
+        $total_pages = $this->modx->getCount('ProductTerm',$criteria);
         
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('Term',$criteria);
-        // return $criteria->toSQL(); <-- useful for debugging
+//        $pages = $this->modx->getCollectionGraph('ProductTerm','{"Terms":{}}',$criteria);
+        $pages = $this->modx->getCollection('ProductTerm',$criteria);
+        return $criteria->toSQL(); // <-- useful for debugging
         // Init our array
         $data = array(
             'results'=>array(),

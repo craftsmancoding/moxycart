@@ -61,7 +61,7 @@ $xpdo_meta_map['ProductTerm']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
-    'Products' => 
+    'Product' => 
     array (
       'class' => 'Product',
       'local' => 'product_id',

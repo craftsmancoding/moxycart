@@ -176,7 +176,7 @@
 			<column key="id" collation="A" null="false" />
 		</index>
 
-        <aggregate alias="Products" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Spec" class="Spec" local="spec_id" foreign="spec_id" cardinality="one" owner="foreign" />
 	</object>
 
@@ -261,7 +261,7 @@
 		</index>
 
         <aggregate alias="Term" class="Term" local="term_id" foreign="id" cardinality="one" owner="foreign" />
-        <aggregate alias="Products" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 	</object>
 	
 	

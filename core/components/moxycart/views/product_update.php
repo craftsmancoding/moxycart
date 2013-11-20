@@ -313,9 +313,21 @@ function submit_form() {
 				</tr>
 			</thead>
 			<tbody>
-				<tr><td colspan="3">No Spec Found</td></tr>
+                <?php
+                if ($data['product_specs']) {
+                    print $data['product_specs'];
+                }
+                else {
+				    print '<tr><td colspan="3">No Specs Found</td></tr>';
+				}
+				?>
 			</tbody>
 		</table>
+		
+		<select>
+            <?php print $data['specs']; ?>
+		</select>
+		<button onclick="alert('add a row to the table with this spec'); return false;">Attach Spec</button>
 	</div>
 
 	<div id="images_tab" class="content">
