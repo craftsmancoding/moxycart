@@ -53,7 +53,7 @@ $xpdo_meta_map['ProductSpec']= array (
   ),
   'aggregates' => 
   array (
-    'Products' => 
+    'Product' => 
     array (
       'class' => 'Product',
       'local' => 'product_id',
