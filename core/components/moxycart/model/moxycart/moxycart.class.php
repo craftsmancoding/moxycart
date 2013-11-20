@@ -36,6 +36,7 @@
     private $mgr_url;
     private $default_limit;
     private $connector_url; 
+    private $component_id;
 
     
     /**
@@ -57,10 +58,11 @@
         $this->core_path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
         $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
+        $this->component_id = isset($_GET['a']) ? (int) $_GET['a'] : 'e'; 
         $this->connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
         $this->modx->addPackage('moxycart',$this->core_path.'components/moxycart/model/','moxy_');
         $this->default_limit = $this->modx->getOption('default_per_page'); // TODO: read from a MC setting?
-    
+        
         // Like controller_url, but in the mgr
         // MODx.action['moxycart:index'] + '?f=';
         if ($Action = $this->modx->getObject('modAction', array('namespace'=>'moxycart','controller'=>'index'))) {
@@ -307,13 +309,23 @@
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
     public function product_create2($args) {
-        $data = array();
-        
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/handlebars-v1.1.2.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
+        $data = array();
+        $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">          
+            var connector_url = "'.$this->connector_url.'";
+            var redirect_url = "'.$this->mgr_url .'?a='.$this->component_id . '&f=product_update2&product_id='.'";
+            // use Ext JS?
+            Ext.onReady(function() {
+              // populate the form
+            });
+            </script>
+        ');
+
         
         return load_view('product_create.php',$data);
     }
@@ -564,13 +576,14 @@
         }
 */
         
-        $action = $this->modx->getOption('action', $args);
-        
+        $action = $this->modx->getOption('action', $args);        
         unset($args['action']);
         
         $alias = $this->modx->getOption('alias',$args);
         if (empty($alias)) {
-            $args['name'] = $this->modx->resource->cleanAlias($args['name']);
+             $resource = $this->modx->newObject('modResource');
+            //$args['name'] = $this->modx->resource->cleanAlias($args['name']);
+            $args['alias'] = $resource->cleanAlias($args['name']);
         }
         $Store = $this->modx->getObject('modResource', $this->modx->getOption('store_id',$args));
         if (!$Store) {
@@ -600,12 +613,14 @@
                 $out['msg'] = 'Product deleted successfully.';    
                 break;
             case 'create':
+                 
                 $Product = $this->modx->newObject('Product');    
                 $Product->fromArray($args);
                 if (!$Product->save()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to save Product.';    
                 }
+                $out['product_id']    = $this->modx->lastInsertId();;
                 $out['msg'] = 'Product created successfully.';
                 break; 
         }

@@ -43,7 +43,7 @@
 						<td>
 							<select name="is_active" id="is_active">
 								<option value="1">Yes</option>
-								<option value="1">No</option>
+								<option value="0">No</option>
 							</select>
 						</td>
 
@@ -197,13 +197,32 @@
 							<label for="template_id">Template</label>
 						</td>
 						<td>
+				<!-- 			<select name="template_id" id="template_id">
+						
+							<option value="1">BaseTemplate</option>
+						
+							<option value="2">Bootstrap</option>
+						
+							<option value="5">sample.ArticlesContainerTemplate</option>
+						
+							<option value="6">sample.ArticleTemplate</option>
+						
+							<option value="7">Home</option>
+						
+							<option value="8">Default Inner</option>
+						
+							<option value="9">Demo</option>
+						
+							<option value="10">Product</option>
+						
+					</select> -->
 							<select name="template_id" id="template_id">
 								<script id="templateTpl" type="text/x-handlebars-template" >
 									{{#each this}}
 										<option value="{{id}}">{{name}}</option>
 									{{/each}}
 								</script>
-							</select>
+							</select> 
 						</td>
 					</tr>
 					<tr>

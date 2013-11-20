@@ -1,3 +1,8 @@
+<div class="moxy-msg">
+	<div id="moxy-result"></div>
+	<div id="moxy-result-msg"></div>
+</div>
+<form id="product_create" action="" method="post">
 <div id="modx-panel-workspace" class="x-plain container">
 	<div class="moxy-header clearfix">
 		<div class="moxy-header-title">
@@ -35,8 +40,8 @@
 						</td>
 						<td>
 							<select name="is_active" id="is_active">
-								<option value="1">Yes</option>
-								<option value="1">No</option>
+								<option value="1" selected=selected>Yes</option>
+								<option value="0">No</option>
 							</select>
 						</td>
 
@@ -269,3 +274,4 @@
 	</div>
 
 </div>
+</form>

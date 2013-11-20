@@ -35,11 +35,22 @@ INIT = {
 	    })
 	},
 
+	create_product: function(){
+		$('#product_create').on('submit',function(e){
+	    	var values = $(this).serialize();
+	    	var url = connector_url + 'product_save';
+		    $.post( url+"&action=create", values, function(data){
+		    	data = $.parseJSON(data);
+		    	window.location.href = redirect_url + data.product_id;
+		    } );
+		    e.preventDefault();
+	    })
+	},
+
 	fill_form_fields : function() {
 		$.each(product, function(name, val){
 	        var $el = $('#'+name),
-	            type = $el.attr('type');
-	    
+	            type = $el.attr('type');	    
 	        switch(type){
 	            case "checkbox":
 	                $el.attr("checked", "checked");
@@ -80,5 +91,6 @@ $(function() {
 	INIT.tabify();
 	INIT.exec_wysiwyg();
 	INIT.update_product();
+	INIT.create_product();
 	INIT.fill_form_fields();
 });
