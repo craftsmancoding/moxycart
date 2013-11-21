@@ -282,7 +282,8 @@
      * Post data here to save it
      */
     public function image_save($args) {
-        $this->modx->log(1,'image_save: '.print_r($args,true));
+
+        $this->modx->log(1,'image_save: '.print_r($_FILES,true));
         // $_POST... todo
     }    
        
@@ -494,6 +495,7 @@
         
         $data['product_specs'] = '';
         $specs = $this->json_product_specs(array('limit'=>0,'product_id'=>$product_id),true);
+
         foreach ($specs['results'] as $s) {
             $data['product_specs'] .= $this->_load_view('product_spec.php',$s); // TODO: react to the spec "type"
         }        
@@ -506,6 +508,7 @@
         
                 
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
+        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
@@ -665,6 +668,8 @@
      * Post data here to save it
      */
     public function product_save($args) {
+        $this->image_save($args);
+        die();
         $this->modx->log(1, 'product_save args: '. print_r($args,true));
 
         $this->modx->log(1, 'token: '. $this->modx->getOption('HTTP_MODAUTH', $args). ' usertoken: '.$this->modx->user->getUserToken($this->modx->context->get('key')));        
@@ -1222,6 +1227,7 @@
              foreach ($pages as $p) {
                $data['results'][] = array(
                 'product_id' => $p->get('product_id'), 
+                'spec_id' => $p->get('spec_id'), 
                 'product' => $p->Product->get('name'),
                 'spec' => $p->Spec->get('name'),
                 'value' => $p->get('value'),
@@ -1310,7 +1316,7 @@
         $criteria->sortby($sort,$dir);
 //        $pages = $this->modx->getCollectionGraph('ProductTerm','{"Terms":{}}',$criteria);
         $pages = $this->modx->getCollection('ProductTerm',$criteria);
-        return $criteria->toSQL(); // <-- useful for debugging
+        //return $criteria->toSQL(); // <-- useful for debugging
         // Init our array
         $data = array(
             'results'=>array(),
@@ -1328,6 +1334,7 @@
         if ($raw) {
             return $data;
         }
+
         return json_encode($data);
 
     }

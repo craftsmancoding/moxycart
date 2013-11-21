@@ -10,7 +10,7 @@
 </div>
 
 
-<form  class="dropzone" action="<?php print $data['connector_url'] ?>image_save" method="post">
+<form  id="product_update" class="dropzone" action="#" method="post" enctype="multipart/form-data">
 <div id="modx-panel-workspace" class="x-plain container">
 	<div class="moxy-header clearfix">
 		<div class="moxy-header-title">
@@ -303,9 +303,6 @@
         
         </ul>
 		
-		
-		
-		
 	</div>
 	<div id="taxonomies_tab" class="content">
 		<a id="moxy_add_categories" class="btn">Add Category</a><br>
@@ -313,6 +310,5 @@
 	</div>
 
 </div>
+
 </form>
-
-
