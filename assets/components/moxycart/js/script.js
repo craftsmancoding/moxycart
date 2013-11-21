@@ -29,9 +29,15 @@ INIT = {
 		$('#product_create').on('submit',function(e){
 	    	var values = $(this).serialize();
 	    	var url = connector_url + 'product_save';
-		    $.post( url+"&action=create", values, function(data){
+		    $.post( url+"&action=create", values, function( data ){
 		    	data = $.parseJSON(data);
-		    	window.location.href = redirect_url + data.product_id;
+		    	if(data.success == true) {
+		    		window.location.href = redirect_url + data.product_id;
+		    	} else{
+		    		$('#moxy-result').html('Failed');
+		    		$('#moxy-result-msg').html(data.msg);
+		    		$(".moxy-msg").delay(3200).fadeOut(300);
+		    	}
 		    } );
 		    e.preventDefault();
 	    })

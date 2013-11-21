@@ -9,8 +9,7 @@
 	<div id="moxy-result-msg"></div>
 </div>
 
-
-<form  id="product_update" class="dropzone" action="#" method="post" enctype="multipart/form-data">
+<form enctype="multipart/form-data" class="dropzone" method="POST" id="product_update" action="#">
 <div id="modx-panel-workspace" class="x-plain container">
 	<div class="moxy-header clearfix">
 		<div class="moxy-header-title">
