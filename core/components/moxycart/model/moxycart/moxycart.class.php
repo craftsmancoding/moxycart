@@ -134,6 +134,19 @@
         print 'Unauthorized';
         exit;
     }
+
+    /**
+    * Checked if target_path doesnt exist create the directory
+    * @param string $target_path
+    * @return true
+    */
+    private function _check_target_path($target_path) {
+        $dir_exist = true;
+        if (!is_dir($target_path)) {
+            $dir_check = (!@mkdir($target_path)) ? false : true;
+        }
+        return $dir_exist;
+    }
     
     /**
      * Load a view file. We put in some commonly used variables here for convenience
@@ -324,8 +337,19 @@
      * Post data here to save it
      */
     public function image_save($args) {
+       
+        if (isset($_FILES['file']['name']) ) {
+            $temp_file = $_FILES['file']['tmp_name'];
+            $target_path = $this->assets_url . 'components/moxycart/images/uploads/' . basename( $_FILES['file']['name']);
+            $target_file =  $target_path. $_FILES['file']['name'];
+            if(move_uploaded_file($temp_file,$target_file)) {
+                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'SUCCESS UPLOAD');
+            } else {
+                 $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD');
+            }
+        }
+         $this->modx->log(1,'image_save: '.print_r($_FILES,true));
 
-        $this->modx->log(1,'image_save: '.print_r($_FILES,true));
         // $_POST... todo
     }    
        
@@ -378,13 +402,69 @@
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
     public function product_create2($args) {
-        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/handlebars-v1.1.2.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
         $data = array();
+        $data['currencies'] = '';
+        $currencies = $this->json_currencies(array('limit'=>0,'is_active'=>1),true);
+        foreach ($currencies['results'] as $c) {
+            $c['value'] = $c['currency_id'];
+            $c['name'] = $c['name'];
+            $c['selected'] = '';
+            $data['currencies'] .= $this->_load_view('option.php',$c);
+        }
+        
+        
+        $data['templates'] = '';
+        $templates = $this->json_templates(array('limit'=>0),true);
+        foreach ($templates['results'] as $t) {
+            $t['value'] = $t['id'];
+            $t['name'] = $t['name']; // WARNING: we swapped names in json_templates. not templatename!
+            $t['selected'] = '';
+            $data['templates'] .= $this->_load_view('option.php',$t);
+        }
+        $data['categories'] = '';
+        $categories = $this->json_categories(array('limit'=>0),true);
+        foreach ($categories['results'] as $c) {
+            $c['value'] = $c['name'];
+            $c['name'] = $c['name'];
+            $c['selected'] = '';
+            $data['categories'] .= $this->_load_view('option.php',$c);
+        }
+
+        $data['stores'] = '';
+        $stores = $this->json_stores(array('limit'=>0),true);
+        foreach ($stores['results'] as $s) {
+            $s['value'] = $s['id'];
+            $s['name'] = $s['name']; // WARNING: we swapped names in json_stores. not pagetitle!
+            $s['selected'] = '';
+            $data['stores'] .= $this->_load_view('option.php',$s);
+        }
+        $data['types'] = '';
+        $types = $this->json_types(array('limit'=>0),true);
+        foreach ($types['results'] as $t) {
+            $t['value'] = $t['id'];
+            $t['name'] = $t['name']; 
+            $t['selected'] = '';
+            $data['types'] .= $this->_load_view('option.php',$t);
+        }        
+        
+        // A list of all specs
+        $data['specs'] = '';
+        $specs = $this->json_specs(array('limit'=>0),true);
+        foreach ($specs['results'] as $s) {
+            $s['value'] = $s['spec_id'];
+            $s['name'] = $s['name']; 
+            $s['selected'] = ''; // none are selected -- it's only for attaching
+            $data['specs'] .= $this->_load_view('option.php',$s);
+        }
+
+            $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
+            $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
+            $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
+            $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
+            $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
+            $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
+            $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/dropzone.js');
+            $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
         $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">          
             var connector_url = "'.$this->connector_url.'";
             var redirect_url = "'.$this->mgr_url .'?a='.$this->component_id . '&f=product_update2&product_id='.'";
@@ -395,7 +475,6 @@
             </script>
         ');
 
-        
         return $this->_load_view('product_create.php',$data);
     }
 
@@ -416,6 +495,8 @@
         if (!$Product) {
             return 'Invalid product_id';
         }
+
+
         
 //        return '<pre>'.$Product->toJson().'</pre>';
     	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/util/datetime.js');
@@ -731,8 +812,6 @@
      * Post data here to save it
      */
     public function product_save($args) {
-        $this->image_save($args);
-        die();
         $this->modx->log(1, 'product_save args: '. print_r($args,true));
 
         $this->modx->log(1, 'token: '. $this->modx->getOption('HTTP_MODAUTH', $args). ' usertoken: '.$this->modx->user->getUserToken($this->modx->context->get('key')));        
@@ -783,6 +862,7 @@
                     $out['success'] = false;
                     $out['msg'] = 'Failed to update product.';    
                 }
+                //$this->image_save($args);
                 $out['msg'] = 'Product updated successfully.';    
                 break;
             case 'delete':
@@ -794,13 +874,13 @@
                 $out['msg'] = 'Product deleted successfully.';    
                 break;
             case 'create':
-                 
                 $Product = $this->modx->newObject('Product');    
                 $Product->fromArray($args);
                 if (!$Product->save()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to save Product.';    
                 }
+                //$this->image_save($args);
                 $out['product_id']    = $this->modx->lastInsertId();;
                 $out['msg'] = 'Product created successfully.';
                 break; 

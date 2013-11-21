@@ -2,7 +2,7 @@
 	<div id="moxy-result"></div>
 	<div id="moxy-result-msg"></div>
 </div>
-<form id="product_create" action="" method="post">
+<form id="product_create" action="#" method="post">
 <div id="modx-panel-workspace" class="x-plain container">
 	<div class="moxy-header clearfix">
 		<div class="moxy-header-title">
@@ -166,7 +166,7 @@
 							<label for="description">Content</label>
 						</td>
 						<td colspan="3">
-							<textarea name="content" id="content" style="width:80%;height:120px;"></textarea>
+							<textarea name="content" id="content" style="width:600px;height:120px;"></textarea>
 						</td>
 					</tr>
 
@@ -202,11 +202,7 @@
 						</td>
 						<td>
 							<select name="currency_id" id="currency_id">
-								<script id="currencyTemplate" type="text/x-handlebars-template" >
-									{{#each this}}
-										<option value="{{currency_id}}">{{name}}</option>
-									{{/each}}
-								</script>
+								 <?php print $data['currencies']; ?>
 							</select>
 						</td>
 					</tr>
@@ -228,11 +224,7 @@
 						</td>
 						<td>
 							<select name="store_id" id="store_id">
-								<script id="storesTpl" type="text/x-handlebars-template" >
-									{{#each this}}
-										<option value="{{id}}">{{name}}</option>
-									{{/each}}
-								</script>
+								 <?php print $data['stores']; ?>
 							</select>
 						</td>
 					</tr>
