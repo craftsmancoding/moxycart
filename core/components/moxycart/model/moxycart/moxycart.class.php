@@ -156,7 +156,7 @@
     
     	return $output;
     
-    }    
+    }
     //------------------------------------------------------------------------------
     //! Public
     //------------------------------------------------------------------------------
@@ -498,6 +498,8 @@
             $data['product_specs'] .= $this->_load_view('product_spec.php',$s); // TODO: react to the spec "type"
         }        
   
+        // Taxonomies (yowza!)
+        
         $data['product_terms'] = '';
         $product_terms = $this->json_product_terms(array('limit'=>0,'product_id'=>$product_id),true);
         foreach ($product_terms['results'] as $t) {
@@ -1292,25 +1294,25 @@
          
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
-        $sort = $this->modx->getOption('sort',$args,'id');
+        $sort = $this->modx->getOption('sort',$args,'Term.id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
 
         $product_id = (int) $this->modx->getOption('product_id',$args);
-       
-        
+
         $criteria = $this->modx->newQuery('ProductTerm');
         
         if ($product_id) {
-            $criteria->where(array('product_id'=>$product_id));
+            $criteria->where(array('ProductTerm.product_id'=>$product_id));
         }
         
         $total_pages = $this->modx->getCount('ProductTerm',$criteria);
-        
+
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
-//        $pages = $this->modx->getCollectionGraph('ProductTerm','{"Terms":{}}',$criteria);
-        $pages = $this->modx->getCollection('ProductTerm',$criteria);
-        return $criteria->toSQL(); // <-- useful for debugging
+
+        $pages = $this->modx->getCollectionGraph('ProductTerm','{"Product":{},"Term":{}}',$criteria);
+
+//        return $criteria->toSQL(); // <-- useful for debugging
         // Init our array
         $data = array(
             'results'=>array(),
@@ -1318,10 +1320,9 @@
         );
 
         foreach ($pages as $p) {
-            $term = $this->modx->getObject('modResource',array('id'=>$p->get('term_id')));
             $data['results'][] = array(
                 'id' => $p->get('id'),
-                'term' => ($term) ? $term->get('pagetitle') : '',
+                'term' => $p->Term->get('pagetitle'),
             );
         }
 
