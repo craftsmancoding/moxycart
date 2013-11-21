@@ -6,7 +6,8 @@ function renderManageInventoryPanel(){
 	
 	productSortStore = new Ext.data.Store({
 		autoLoad:false,
-		url: connector_url + 'json_products',
+		// url: connector_url + 'json_products',
+		url: store_url,
 		sortInfo:{
 			field:'seq',
 			direction: 'ASC'

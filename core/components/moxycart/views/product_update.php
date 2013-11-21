@@ -248,7 +248,7 @@
 	</div>
 
 	<div id="variations_tab" class="content"><br>
-		<a id="manage_inventory" class="btn">Manage Inventory</a>
+		<a id="manage_inventory" class="btn" href="<?php print $data['mgr_connector_url']; ?>product_inventory&product_id=<?php print $data['product_id']; ?>">Manage Inventory</a>
 		<table class="table table-bordered">
 			<thead>
 				<tr>

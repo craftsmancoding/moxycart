@@ -36,7 +36,8 @@
     private $mgr_url;
     private $default_limit;
     private $connector_url; 
-    private $component_id;
+    private $mgr_connector_url; 
+
 
     private $cache; // for iterative ops
     private $depth = 0; //
@@ -60,7 +61,6 @@
         $this->core_path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
         $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $this->component_id = isset($_GET['a']) ? (int) $_GET['a'] : 'e'; 
         $this->connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
         $this->modx->addPackage('moxycart',$this->core_path.'components/moxycart/model/','moxy_');
         $this->default_limit = $this->modx->getOption('default_per_page'); // TODO: read from a MC setting?
@@ -74,6 +74,7 @@
             $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart] could not determine mgr action.');
         }
         
+        $this->mgr_connector_url = MODX_MANAGER_URL .'?a='.$this->action.'&f=';
     }
     
     /**
@@ -467,7 +468,7 @@
             $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
         $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">          
             var connector_url = "'.$this->connector_url.'";
-            var redirect_url = "'.$this->mgr_url .'?a='.$this->component_id . '&f=product_update2&product_id='.'";
+            var redirect_url = "'.$this->mgr_url .'?a='.$this->action . '&f=product_update2&product_id='.'";
             // use Ext JS?
             Ext.onReady(function() {
               // populate the form
@@ -532,7 +533,7 @@
      */
     public function product_update2($args) {
         $product_id = (int) $this->modx->getOption('product_id', $args);
-        
+
         if (!$Product = $this->modx->getObject('Product', $product_id)) {        
             return 'Product not found : '.$product_id;
         }
@@ -671,7 +672,7 @@
     	');
     	
 //        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
-
+        $data['mgr_connector_url'] = $this->mgr_connector_url;
         return $this->_load_view('product_update.php',$data);
     }
 
@@ -696,16 +697,20 @@
     public function product_inventory($args) {
         $store_id = (int) $this->modx->getOption('store_id', $args);
         $product_id = (int) $this->modx->getOption('product_id', $args);
+        $store_url = $this->connector_url.'json_products';
         if ($store_id) {
             $back_url = '?a=30&id='.$store_id;
+            $store_url .= '&store_id='.$store_id;
         }
         else {
-            $back_url = '?a='.$this->action.'&f=product_update&product_id=2'.$product_id;
+            $back_url = '?a='.$this->action.'&f=product_update&product_id='.$product_id;
+            $store_url .= '&parent_id='.$product_id;
         }
 
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
             var connector_url = "'.$this->connector_url.'";
     		var back_url = "'.$back_url.'";
+    		var store_url = "'.$store_url.'";
     		Ext.onReady(function() {   		
     			renderManageInventoryPanel();
     		});
