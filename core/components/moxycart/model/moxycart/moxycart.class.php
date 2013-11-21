@@ -1004,24 +1004,11 @@
                 }
                 
                                 
-                //images
-                $many = array();
-                $existing = array();
+                //images (handled by image_save)
+                // Here we just reorder them
+                $seq = 0;
                 $related = $this->modx->getOption('images',$args,array());
-                if ($Images = $this->modx->getCollection('Image', array('product_id'=>$product_id))) {
-                    // Remove any unchecked items
-                    foreach ($Images as $I) {
-                        if (!in_array($I->get('image_id'), $related)) {
-                            if($I->remove() === false) {
-                                $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_save failed to remove Image '.$I->get('image_id'));
-                            }
-                        }
-                        else {
-                            $existing[] = $I;
-                        }
-                    }
-                }
-                // Reorder
+                // Reorder the ones we know about already
                 $seq = 0;
                 foreach ($related as $image_id) {
                     if ($I = $this->modx->getObject('Image', $image_id)) {
@@ -1033,18 +1020,17 @@
                         $this->modx->log(MODX_LOG_LEVEL_ERROR,'failed to load image '.$image_id);
                     }
                 }
-                // Add any new ones
-                // we can't do this here: gotta upload images
-/*
-                foreach ($relation as $r) {
-                    if (!in_array($r, $existing)) {
-                        $obj = $this->modx->newObject('Image');
-                        $obj->set('taxonomy_id', $r);
-                        $many[] = $obj;
+                // Order any ones we didn't know about (i.e. newly uploaded ones)
+                $query = $this->modx->newQuery('Image');
+                $query->where(array('product_id' => $product_id));
+                $query->where(array('image_id:NOT IN' => $related));
+                if ($Images = $this->modx->getCollection('Image', $query)) {
+                    foreach ($Images as $I) {
+                        $I->set('seq',$seq);
+                        $I->save();
+                        $seq++;
                     }
                 }
-                $Product->addMany($many);
-*/
                 
                                 
                 $Product->fromArray($args);
