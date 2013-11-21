@@ -323,6 +323,7 @@
 		<field key="path" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="width" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="height" dbtype="int" precision="4" phptype="integer" null="false" />
+		<field key="size" dbtype="int" precision="11" phptype="integer" null="false" />
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="is_active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">

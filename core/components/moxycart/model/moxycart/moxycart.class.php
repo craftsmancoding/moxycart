@@ -63,6 +63,8 @@
         $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $this->connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
         $this->modx->addPackage('moxycart',$this->core_path.'components/moxycart/model/','moxy_');
+        // relative to the MODX_ASSETS_PATH or MODX_ASSETS_URL
+        $this->upload_dir = 'images/products/';
         $this->default_limit = $this->modx->getOption('default_per_page'); // TODO: read from a MC setting?
         
         // Like controller_url, but in the mgr
@@ -338,18 +340,49 @@
      * Post data here to save it
      */
     public function image_save($args) {
+        $product_id = (int) $this->modx->getOption('product_id',$args);
+        $this->modx->log(MODX_LOG_LEVEL_DEBUG,'image_save: '.print_r($_FILES,true));
        
         if (isset($_FILES['file']['name']) ) {
-            $temp_file = $_FILES['file']['tmp_name'];
-            $target_path = $this->assets_url . 'components/moxycart/images/uploads/' . basename( $_FILES['file']['name']);
-            $target_file =  $target_path. $_FILES['file']['name'];
-            if(move_uploaded_file($temp_file,$target_file)) {
-                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'SUCCESS UPLOAD');
-            } else {
-                 $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD');
+            // Relative to either MODX_ASSETS_URL or MODX_ASSETS_PATH
+            $rel_file =  $this->upload_dir.$product_id.'/'.basename($_FILES['file']['name']);
+            $target_path = MODX_ASSETS_PATH.$this->upload_dir.$product_id.'/';
+            if (!file_exists($target_path)) {
+                if (!mkdir($target_path,0777,true)) {
+                    $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create directory at '.$target_path);
+                    return;
+                }
             }
+            // Image already exists?
+            if (file_exists(MODX_ASSETS_PATH.$rel_file)) {
+                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Upload Cannot Continue. File of same name exits '.MODX_ASSETS_PATH.$rel_file);
+                return;
+            }
+            if(move_uploaded_file($_FILES['file']['tmp_name'],MODX_ASSETS_PATH.$rel_file)) {
+                $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'SUCCESS UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
+            } 
+            else {
+                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
+                return;
+            }
+            // Create db record
+            list($width, $height) = getimagesize(MODX_ASSETS_PATH.$rel_file);
+            $Image = $this->modx->newObject('Image');
+            $Image->set('product_id',$product_id);
+            $Image->set('url',MODX_ASSETS_URL.$rel_file);
+            $Image->set('path',MODX_ASSETS_PATH.$rel_file);
+            $Image->set('width',$width);
+            $Image->set('height',$height);
+            $Image->set('size',$_FILES['file']['size']);
+            $Image->set('is_active',1);
+            
+            if (!$Image->save()) {
+                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to save Image object for product '.$product_id .' '.MODX_ASSETS_PATH.$rel_file);
+                return;
+            }
+            $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'Successfully saved image '.$Image->getPrimaryKey() .' '.MODX_ASSETS_PATH.$rel_file);
         }
-         $this->modx->log(MODX_LOG_LEVEL_ERROR,'image_save: '.print_r($_FILES,true));
+         
 
         // $_POST... todo
     }    
@@ -664,10 +697,11 @@
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.$Product->toJson().';            
     		var connector_url = "'.$this->connector_url.'";
-    		// use Ext JS?
-    		Ext.onReady(function() {
-    		  // populate the form
-    		});
+
+            jQuery(document).ready(function() {
+                var myDropzone = new Dropzone("div#image_upload", {url: connector_url+"image_save&product_id='.$product_id.'"});
+            });
+
     		</script>
     	');
     	

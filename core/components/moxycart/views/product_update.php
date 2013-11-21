@@ -245,6 +245,7 @@
 
 	<div id="variations_tab" class="content"><br>
 		<a id="manage_inventory" class="btn" href="<?php print $data['mgr_connector_url']; ?>product_inventory&product_id=<?php print $data['product_id']; ?>">Manage Variation Inventory</a>
+		<div id="product_variations"></div>
 		<table class="table table-bordered">
 			<thead>
 				<tr>
@@ -289,11 +290,14 @@
 
 	<div id="images_tab" class="content">		
 		
-		<ul id="product_images">
-		
-            <?php print $data['images']; ?>
-        
-        </ul>
+        <div id="image_upload">
+    		<ul id="product_images">
+    		
+                <?php print $data['images']; ?>
+            
+            </ul>
+        Drag images here
+        </div>
 		
 	</div>
 	<div id="taxonomies_tab" class="content">
@@ -310,4 +314,3 @@
 </div>
 
 </form>
-<form class="dropzone" action="<?php print $data['connector_url'] ?>image_save"></form>
