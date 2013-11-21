@@ -120,11 +120,7 @@
 						</td>
 						<td>
 							<select name="category" id="category">
-								<script id="categoryTpl" type="text/x-handlebars-template" >
-									{{#each this}}
-										<option value="{{name}}">{{name}}</option>
-									{{/each}}
-								</script>
+                                <?php print $data['categories']; ?>
 							</select>
 						</td>
 						<td>
@@ -248,7 +244,7 @@
 	</div>
 
 	<div id="variations_tab" class="content"><br>
-		<a id="manage_inventory" class="btn" href="<?php print $data['mgr_connector_url']; ?>product_inventory&product_id=<?php print $data['product_id']; ?>">Manage Inventory</a>
+		<a id="manage_inventory" class="btn" href="<?php print $data['mgr_connector_url']; ?>product_inventory&product_id=<?php print $data['product_id']; ?>">Manage Variation Inventory</a>
 		<table class="table table-bordered">
 			<thead>
 				<tr>
@@ -291,12 +287,7 @@
 		<button onclick="alert('add a row to the table with this spec'); return false;">Attach Spec</button>
 	</div>
 
-	<div id="images_tab" class="content">
-		<?php /* 
-		Not needed...
-		<a id="moxy_add_image" class="btn">Add Image</a> 
-		*/ ?>
-		
+	<div id="images_tab" class="content">		
 		
 		<ul id="product_images">
 		

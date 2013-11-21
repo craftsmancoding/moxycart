@@ -456,6 +456,14 @@ $xpdo_meta_map['Product']= array (
       'cardinality' => 'many',
       'owner' => 'local',
     ),
+    'Taxonomies' => 
+    array (
+      'class' => 'ProductTaxonomy',
+      'local' => 'product_id',
+      'foreign' => 'product_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
+    ),
     'Specs' => 
     array (
       'class' => 'ProductSpec',

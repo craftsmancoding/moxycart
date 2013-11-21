@@ -349,7 +349,7 @@
                  $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD');
             }
         }
-         $this->modx->log(1,'image_save: '.print_r($_FILES,true));
+         $this->modx->log(MODX_LOG_LEVEL_ERROR,'image_save: '.print_r($_FILES,true));
 
         // $_POST... todo
     }    
@@ -814,42 +814,51 @@
     }
 
     /**
-     * Post data here to save it
+     * Post data here to save it.  Data should be in the following format:
+     *
+     * keys in $_POST should match *exactly* column names in products table, e.g.
+     *  name
+     *  qty_inventory
+     *  sale_end 
+     *  ... etc..
+     *
+     * Related data should be stored in the following arrays:
+     *
+     *  taxonomies  = array(1,2,3)  a simple array of taxonomy_id's
+     *  terms       = array(4,5,6)  a simple array of term_id's
+     *  specs       = array(            An array of key/value pairs: keys=spec_ids, values=values for that spec
+     *                  array(7 => "Value1"), 
+     *                  array(8 => "Value2")
+     *                )
+     *  images      = array(2,4,8)  a simple array of image_ids
+     *
+     * Finally, an "action" parameter should be passed to indicate whether this function should
+     * create, update, or delete a product record.
+     *
      */
     public function product_save($args) {
-        $this->modx->log(1, 'product_save args: '. print_r($args,true));
+       
 
-        $this->modx->log(1, 'token: '. $this->modx->getOption('HTTP_MODAUTH', $args). ' usertoken: '.$this->modx->user->getUserToken($this->modx->context->get('key')));        
-/*
-        if (!is_object($this->modx->user)) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'spec_save 401 '.print_r($_POST,true));
-            return $this->_send401();
-        }
-*/
         $out = array(
             'success' => true,
             'msg' => '',
         );
         
-/*
-        $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
-        if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_save FAILED. Invalid token: '.print_r($_POST,true));
-            $out['success'] = false;
-            $out['msg'] = 'Invalid token';
-            return json_encode($out);        
-        }
-*/
         
         $action = $this->modx->getOption('action', $args);        
         unset($args['action']);
         
+        // Ensure a clean/usable alias
+        $resource = $this->modx->newObject('modResource');
         $alias = $this->modx->getOption('alias',$args);
         if (empty($alias)) {
-             $resource = $this->modx->newObject('modResource');
-            //$args['name'] = $this->modx->resource->cleanAlias($args['name']);
             $args['alias'] = $resource->cleanAlias($args['name']);
         }
+        else {
+            $args['alias'] = $resource->cleanAlias($args['alias']);
+        }
+        
+         
         $Store = $this->modx->getObject('modResource', $this->modx->getOption('store_id',$args));
         if (!$Store) {
             $out['success'] = false;
@@ -860,16 +869,160 @@
         
         switch ($action) {
             case 'update':
-                $Product = $this->modx->getObject('Product',$this->modx->getOption('product_id', $args));
+                $product_id = (int) $this->modx->getOption('product_id', $args);
+                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'product update args: '. print_r($args,true));        
+                
+                $Product = $this->modx->getObject('Product',$product_id);
+                
+                //taxonomies
+                $many = array();
+                $existing = array();
+                $related = $this->modx->getOption('taxonomies',$args,array());
+                if ($Taxonomies = $this->modx->getCollection('ProductTaxonomy', array('product_id'=>$product_id))) {
+                    // Remove any unchecked items
+                    foreach ($Taxonomies as $T) {
+                        if (!in_array($T->get('taxonomy_id'), $related)) {
+                            if($T->remove() === false) {
+                                $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_save failed to remove ProductTaxonomy '.$T->get('id'));
+                            }
+                        }
+                        else {
+                            $existing[] = $T->get('taxonomy_id');
+                        }
+                    }
+                } 
+                // Add any new ones
+                foreach ($related as $r) {
+                    if (!in_array($r, $existing)) {
+                        $obj = $this->modx->newObject('ProductTaxonomy');
+                        $obj->set('taxonomy_id', $r);
+                        $many[] = $obj;
+                    }
+                }
+                $Product->addMany($many);
 
+
+                //terms
+                $many = array();
+                $existing = array();
+                $related = $this->modx->getOption('terms',$args,array());
+                if ($Terms = $this->modx->getCollection('ProductTerm', array('product_id'=>$product_id))) {
+                    // Remove any unchecked items
+                    foreach ($Terms as $T) {
+                        if (!in_array($T->get('taxonomy_id'), $related)) {
+                            if($T->remove() === false) {
+                                $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_save failed to remove ProductTerm '.$T->get('id'));
+                            }
+                        }
+                        else {
+                            $existing[] = $T->get('term_id');
+                        }
+                    }
+                } 
+                // Add any new ones
+                foreach ($related as $r) {
+                    if (!in_array($r, $existing)) {
+                        $obj = $this->modx->newObject('ProductTerm');
+                        $obj->set('term_id', $r);
+                        $many[] = $obj;
+                    }
+                }
+                $Product->addMany($many);
+                
+                
+                                
+                //specs
+                $many = array();
+                $existing = array();
+                $related = $this->modx->getOption('specs',$args,array());
+                if ($Specs = $this->modx->getCollection('ProductSpec', array('product_id'=>$product_id))) {
+                    // Remove any unchecked items
+                    foreach ($Specs as $S) {
+                        if (!in_array($S->get('spec_id'), array_keys($related))) {
+                            if($S->remove() === false) {
+                                $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_save failed to remove ProductSpec '.$S->get('id'));
+                            }
+                        }
+                        else {
+                            $existing[] = $S; // Store the entire object
+                        }
+                    }
+                }
+                
+                // Update existing
+                foreach ($existing as $S) {
+                    $S->set('value', $related[ $S->get('spec_id') ]);
+                    if(!$S->save()){
+                        $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Error saving ProductSpec: '. $S->get('id'));
+                    }
+                    unset($related[ $S->get('spec_id') ]);
+                }
+                
+                // Add any new ones
+                foreach ($related as $k => $v) {
+                    $S = $this->modx->newObject('ProductSpec');
+                    $S->set('product_id',$product_id);
+                    $S->set('spec_id', $k);
+                    $S->set('value', $v);
+                    if (!$S->save()) {
+                        $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Error creating ProductSpec product '. $product_id.' spec_id '.$k .' with value '.$v);
+                    }
+                }
+                
+                                
+                //images
+                $many = array();
+                $existing = array();
+                $related = $this->modx->getOption('images',$args,array());
+                if ($Images = $this->modx->getCollection('Image', array('product_id'=>$product_id))) {
+                    // Remove any unchecked items
+                    foreach ($Images as $I) {
+                        if (!in_array($I->get('image_id'), $related)) {
+                            if($I->remove() === false) {
+                                $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_save failed to remove Image '.$I->get('image_id'));
+                            }
+                        }
+                        else {
+                            $existing[] = $I;
+                        }
+                    }
+                }
+                // Reorder
+                $seq = 0;
+                foreach ($related as $image_id) {
+                    if ($I = $this->modx->getObject('Image', $image_id)) {
+                        $I->set('seq',$seq);
+                        $I->save();
+                        $seq++;
+                    }
+                    else {
+                        $this->modx->log(MODX_LOG_LEVEL_ERROR,'failed to load image '.$image_id);
+                    }
+                }
+                // Add any new ones
+                // we can't do this here: gotta upload images
+/*
+                foreach ($relation as $r) {
+                    if (!in_array($r, $existing)) {
+                        $obj = $this->modx->newObject('Image');
+                        $obj->set('taxonomy_id', $r);
+                        $many[] = $obj;
+                    }
+                }
+                $Product->addMany($many);
+*/
+                
+                                
                 $Product->fromArray($args);
                 if (!$Product->save()) {
+                    $this->modx->log(MODX_LOG_LEVEL_ERROR,'problem saving product_id '.$product_id);
                     $out['success'] = false;
                     $out['msg'] = 'Failed to update product.';    
                 }
-                //$this->image_save($args);
                 $out['msg'] = 'Product updated successfully.';    
                 break;
+                
+                
             case 'delete':
                 $Product = $this->modx->getObject('Product',$this->modx->getOption('product_id', $args));
                 if (!$Product->remove()) {
@@ -881,6 +1034,47 @@
             case 'create':
                 $Product = $this->modx->newObject('Product');    
                 $Product->fromArray($args);
+                //taxonomies
+                $related = $this->modx->getOption('taxonomies',$args,array());
+                $many = array();
+                foreach ($related as $r) {
+                    $obj = $this->modx->newObject('ProductTaxonomy');
+                    $obj->set('taxonomy_id', $r);
+                    $many[] = $obj;
+                }
+                $Product->addMany($many);
+                
+                //terms
+                $related = $this->modx->getOption('terms',$args,array());
+                $many = array();
+                foreach ($related as $r) {
+                    $obj = $this->modx->newObject('ProductTerm');
+                    $obj->set('term_id', $r);
+                    $many[] = $obj;
+                }
+                $Product->addMany($many);
+                
+                //specs
+                $related = $this->modx->getOption('taxonomies',$args,array());
+                $many = array();
+                foreach ($related as $k => $v) {
+                    $obj = $this->modx->newObject('ProductSpec');
+                    $obj->set('spec_id', $k);
+                    $obj->set('value', $v);
+                    $many[] = $obj;
+                }
+                $Product->addMany($many);
+                                
+                //images
+                $related = $this->modx->getOption('images',$args,array());
+                $many = array();
+                foreach ($related as $r) {
+                    $obj = $this->modx->newObject('ProductImage');
+                    $obj->set('imagae_id', $r);
+                    $many[] = $obj;
+                }
+                $Product->addMany($many);
+
                 if (!$Product->save()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to save Product.';    
