@@ -1,0 +1,1 @@
+<h2 class="taxonomy_heading"><?php print $data['name']; ?></h2>

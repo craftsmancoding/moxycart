@@ -38,6 +38,8 @@
     private $connector_url; 
     private $component_id;
 
+    private $cache; // for iterative ops
+    private $depth = 0; //
     
     /**
      * Map a function name to a MODX permission, e.g. 
@@ -157,6 +159,46 @@
     	return $output;
     
     }
+    
+    /** 
+     * For iterative parsing of the Taxonomy/Terms properties
+     * 
+     {
+     "children":{
+        "44":{"alias":"popular","pagetitle":"Popular","published":true,"menuindex":0,"children":{
+            "48":{"alias":"geek","pagetitle":"geek","published":true,"menuindex":0,"children":[]}}},
+        "45":{"alias":"special","pagetitle":"Special","published":true,"menuindex":1,"children":[]}},
+        "children_ids":{"44":true,"45":true}
+     }
+        
+     convert this to a flat structure
+     
+     */
+    private function _get_subterms($props) {
+        $data = array();
+        $data['terms'] = '';
+        unset($props['children_ids']);
+        if (!empty($props['children'])) {
+            foreach($props['children'] as $term_id => $tdata) {
+                $tdata['class'] = 'taxonomy_term_item';
+                $tdata['depth'] = str_repeat('&nbsp;', $this->depth * 2);
+                if (!empty($tdata['children'])) {
+                    $this->depth++;
+                    $tdata['terms'] = $this->_get_subterms($tdata);
+                    $tdata['class'] = 'taxonomy_parent_item';                    
+                }
+                $tdata['term_id'] = $term_id;
+                $tdata['is_checked'] = '';
+                if (isset($this->cache[$term_id])) {
+                    $tdata['is_checked'] = ' checked="checked"';
+                }
+                $data['terms'] .= $this->_load_view('product_term_item.php', $tdata);
+            }
+        }
+        
+        return $this->_load_view('product_term_list.php',$data);
+    }
+    
     //------------------------------------------------------------------------------
     //! Public
     //------------------------------------------------------------------------------
@@ -282,7 +324,8 @@
      * Post data here to save it
      */
     public function image_save($args) {
-        $this->modx->log(1,'image_save: '.print_r($args,true));
+
+        $this->modx->log(1,'image_save: '.print_r($_FILES,true));
         // $_POST... todo
     }    
        
@@ -429,7 +472,7 @@
             $c['value'] = $c['currency_id'];
             $c['name'] = $c['name'];
             $c['selected'] = '';
-            if ($c['value'] == $data['curency_id']) {
+            if ($c['value'] == $data['currency_id']) {
                 $c['selected'] = ' selected="selected"';
             }
             $data['currencies'] .= $this->_load_view('option.php',$c);
@@ -494,26 +537,47 @@
         
         $data['product_specs'] = '';
         $specs = $this->json_product_specs(array('limit'=>0,'product_id'=>$product_id),true);
+
         foreach ($specs['results'] as $s) {
             $data['product_specs'] .= $this->_load_view('product_spec.php',$s); // TODO: react to the spec "type"
         }        
-  
-        // Taxonomies (yowza!)
-        
-        $data['product_terms'] = '';
+
         $product_terms = $this->json_product_terms(array('limit'=>0,'product_id'=>$product_id),true);
         foreach ($product_terms['results'] as $t) {
-            $data['product_terms'] .= $this->_load_view('product_spec.php',$s); // TODO: react to the spec "type"
+            $this->cache[ $t['term_id'] ] = true;
+        }
+        
+        // Taxonomies (yowza!)
+        $data['product_taxonomies'] = '';
+        $product_taxonomies = $this->json_product_taxonomies(array('limit'=>0,'product_id'=>$product_id),true);
+        $active = array();
+        foreach ($product_taxonomies['results'] as $t) {
+            $active[ $t['taxonomy_id'] ] = true;
+            $data['product_taxonomies'] .= $this->_load_view('product_taxonomy_heading.php',$t);
+            $data['product_taxonomies'] .= $this->_get_subterms($t['properties']);
         }        
+
+        // All avail. taxonomies
+        $data['taxonomies'] = '';
+        $taxonomies = $this->json_taxonomies(array('limit'=>0),true);
+        foreach ($taxonomies['results'] as $t) {
+            $t['is_checked'] = '';
+            if (isset($active[ $t['id'] ])) {
+                $t['is_checked'] = ' checked="checked"';
+            }
+            $data['taxonomies'] .= $this->_load_view('product_taxonomy.php',$t); // TODO: react to the spec "type"
+        }
+              
         
                 
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/handlebars-v1.1.2.js');
+        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/dropzone.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
 
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.$Product->toJson().';            
@@ -667,6 +731,8 @@
      * Post data here to save it
      */
     public function product_save($args) {
+        $this->image_save($args);
+        die();
         $this->modx->log(1, 'product_save args: '. print_r($args,true));
 
         $this->modx->log(1, 'token: '. $this->modx->getOption('HTTP_MODAUTH', $args). ' usertoken: '.$this->modx->user->getUserToken($this->modx->context->get('key')));        
@@ -1224,6 +1290,7 @@
              foreach ($pages as $p) {
                $data['results'][] = array(
                 'product_id' => $p->get('product_id'), 
+                'spec_id' => $p->get('spec_id'), 
                 'product' => $p->Product->get('name'),
                 'spec' => $p->Spec->get('name'),
                 'value' => $p->get('value'),
@@ -1251,20 +1318,20 @@
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
-        $sort = $this->modx->getOption('sort',$args,'id');
+        $sort = $this->modx->getOption('sort',$args,'ProductTaxonomy.id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('ProductTaxonomy');
         
         if ($product_id) {
-            $criteria->where(array('product_id'=>$product_id));
+            $criteria->where(array('ProductTaxonomy.product_id'=>$product_id));
         }
                 
         $total_pages = $this->modx->getCount('ProductTaxonomy',$criteria);
         
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('ProductTaxonomy',$criteria);
+        $pages = $this->modx->getCollectionGraph('ProductTerm','{"Product":{},"Taxonomy":{}}',$criteria);
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
         $data = array(
@@ -1274,7 +1341,11 @@
         foreach ($pages as $p) {
             $data['results'][] = array(
                 'id' => $p->get('id'),
-                'pagetitle' => $p->get('pagetitle'),
+                'product_id' => $p->get('product_id'),
+                'taxonomy_id' => $p->get('taxonomy_id'),
+                'name' => $p->Taxonomy->get('pagetitle'),
+                'product' => $p->Product->get('name'),
+                'properties' => $p->Taxonomy->get('properties')
             );
         }
 
@@ -1313,6 +1384,7 @@
         $pages = $this->modx->getCollectionGraph('ProductTerm','{"Product":{},"Term":{}}',$criteria);
 
 //        return $criteria->toSQL(); // <-- useful for debugging
+
         // Init our array
         $data = array(
             'results'=>array(),
@@ -1322,13 +1394,17 @@
         foreach ($pages as $p) {
             $data['results'][] = array(
                 'id' => $p->get('id'),
+                'product_id' => $p->get('product_id'),
+                'term_id' => $p->get('term_id'),
                 'term' => $p->Term->get('pagetitle'),
+                'properties' => $p->Term->get('properties')
             );
         }
 
         if ($raw) {
             return $data;
         }
+
         return json_encode($data);
 
     }

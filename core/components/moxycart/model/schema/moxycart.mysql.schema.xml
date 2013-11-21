@@ -247,7 +247,7 @@
 		</index>
 
         <aggregate alias="Taxonomy" class="Taxonomy" local="taxonomy_id" foreign="id" cardinality="one" owner="foreign" />
-        <aggregate alias="Products" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 	</object>
 	    
     <!-- ! ProductTerm -->
