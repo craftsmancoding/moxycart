@@ -9,7 +9,9 @@
 	<div id="moxy-result-msg"></div>
 </div>
 
-<form enctype="multipart/form-data" class="dropzone" method="POST" id="product_update" action="#">
+
+
+<form method="POST" id="product_update" action="#">
 <div id="modx-panel-workspace" class="x-plain container">
 	<div class="moxy-header clearfix">
 		<div class="moxy-header-title">
@@ -311,3 +313,4 @@
 </div>
 
 </form>
+<form class="dropzone" action="<?php print $data['connector_url'] ?>image_save"></form>

@@ -132,6 +132,19 @@
         print 'Unauthorized';
         exit;
     }
+
+    /**
+    * Checked if target_path doesnt exist create the directory
+    * @param string $target_path
+    * @return true
+    */
+    private function _check_target_path($target_path) {
+        $dir_exist = true;
+        if (!is_dir($target_path)) {
+            $dir_check = (!@mkdir($target_path)) ? false : true;
+        }
+        return $dir_exist;
+    }
     
     /**
      * Load a view file. We put in some commonly used variables here for convenience
@@ -282,10 +295,19 @@
      * Post data here to save it
      */
     public function image_save($args) {
-        echo '<pre>';
-        print_r($_FILES);
-        die();
-        //$this->modx->log(1,'image_save: '.print_r($args,true));
+       
+        if (isset($_FILES['file']['name']) ) {
+            $temp_file = $_FILES['file']['tmp_name'];
+            $target_path = $this->assets_url . 'components/moxycart/images/uploads/' . basename( $_FILES['file']['name']);
+            $target_file =  $target_path. $_FILES['file']['name'];
+            if(move_uploaded_file($temp_file,$target_file)) {
+                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'SUCCESS UPLOAD');
+            } else {
+                 $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD');
+            }
+        }
+         $this->modx->log(1,'image_save: '.print_r($_FILES,true));
+
         // $_POST... todo
     }    
        
