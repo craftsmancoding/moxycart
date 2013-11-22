@@ -346,51 +346,75 @@
      * Post data here to save it
      */
     public function image_save($args) {
-        $product_id = (int) $this->modx->getOption('product_id',$args);
-        $this->modx->log(MODX_LOG_LEVEL_DEBUG,'image_save: '.print_r($_FILES,true));
-       
-        if (isset($_FILES['file']['name']) ) {
-            // Relative to either MODX_ASSETS_URL or MODX_ASSETS_PATH
-            $rel_file =  $this->upload_dir.$product_id.'/'.basename($_FILES['file']['name']);
-            $target_path = MODX_ASSETS_PATH.$this->upload_dir.$product_id.'/';
-            if (!file_exists($target_path)) {
-                if (!mkdir($target_path,0777,true)) {
-                    $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create directory at '.$target_path);
-                    return;
-                }
-            }
-            // Image already exists?
-            if (file_exists(MODX_ASSETS_PATH.$rel_file)) {
-                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Upload Cannot Continue. File of same name exits '.MODX_ASSETS_PATH.$rel_file);
-                return;
-            }
-            if(move_uploaded_file($_FILES['file']['tmp_name'],MODX_ASSETS_PATH.$rel_file)) {
-                $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'SUCCESS UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
-            } 
-            else {
-                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
-                return;
-            }
-            // Create db record
-            list($width, $height) = getimagesize(MODX_ASSETS_PATH.$rel_file);
-            $Image = $this->modx->newObject('Image');
-            $Image->set('product_id',$product_id);
-            $Image->set('url',MODX_ASSETS_URL.$rel_file);
-            $Image->set('path',MODX_ASSETS_PATH.$rel_file);
-            $Image->set('width',$width);
-            $Image->set('height',$height);
-            $Image->set('size',$_FILES['file']['size']);
-            $Image->set('is_active',1);
-            
-            if (!$Image->save()) {
-                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to save Image object for product '.$product_id .' '.MODX_ASSETS_PATH.$rel_file);
-                return;
-            }
-            $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'Successfully saved image '.$Image->getPrimaryKey() .' '.MODX_ASSETS_PATH.$rel_file);
-        }
-         
+        $action = $this->modx->getOption('action', $args);
+        $out = array(
+            'success' => true,
+            'msg' => '',
+        );
 
-        // $_POST... todo
+        switch ($action) {
+            case 'delete':
+                $Image = $this->modx->getObject('Image',$this->modx->getOption('image_id', $args));
+                if (!$Image->remove()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to delete Image.';    
+                }
+                $out['msg'] = 'Image deleted successfully.';    
+                break;
+            case 'create':
+            default:
+                $product_id = (int) $this->modx->getOption('product_id',$args);
+                if (isset($_FILES['file']['name']) ) {
+                    // Relative to either MODX_ASSETS_URL or MODX_ASSETS_PATH
+                    $rel_file =  $this->upload_dir.$product_id.'/'.basename($_FILES['file']['name']);
+                    $target_path = MODX_ASSETS_PATH.$this->upload_dir.$product_id.'/';
+                    if (!file_exists($target_path)) {
+                        if (!mkdir($target_path,0777,true)) {
+                            $out['success'] = false;
+                            $out['msg'] = 'Failed to create directory at '.$target_path;    
+                            $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create directory at '.$target_path);
+                            return json_decode($out);
+                        }
+                    }
+                    // Image already exists?
+                    if (file_exists(MODX_ASSETS_PATH.$rel_file)) {
+                        $out['success'] = false;
+                        $out['msg'] = 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file;
+                        $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file);
+                        return json_decode($out);
+                    }
+                    if(move_uploaded_file($_FILES['file']['tmp_name'],MODX_ASSETS_PATH.$rel_file)) {
+                        $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'SUCCESS UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
+                    } 
+                    else {
+                        $out['success'] = false;
+                        $out['msg'] = 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file;
+                        $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
+                        return json_decode($out);
+                    }
+                    // Create db record
+                    list($width, $height) = getimagesize(MODX_ASSETS_PATH.$rel_file);
+                    $Image = $this->modx->newObject('Image');
+                    $Image->set('product_id',$product_id);
+                    $Image->set('url',MODX_ASSETS_URL.$rel_file);
+                    $Image->set('path',MODX_ASSETS_PATH.$rel_file);
+                    $Image->set('width',$width);
+                    $Image->set('height',$height);
+                    $Image->set('size',$_FILES['file']['size']);
+                    $Image->set('is_active',1);
+                    
+                    if (!$Image->save()) {
+                        $out['success'] = false;
+                        $out['msg'] = 'Failed to save Image object for product';
+                        $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to save Image object for product '.$product_id .' '.MODX_ASSETS_PATH.$rel_file);
+                        return json_decode($out);
+                    }
+                    $out['msg'] = 'Successfully saved image';
+                    $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'Successfully saved image '.$Image->getPrimaryKey() .' '.MODX_ASSETS_PATH.$rel_file);
+                } 
+        }
+
+        return json_encode($out);
     }    
     
 

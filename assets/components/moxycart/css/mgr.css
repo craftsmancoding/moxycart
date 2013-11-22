@@ -4183,11 +4183,22 @@ button.close {
   border: 1px solid #acacac;
   padding: 5px;
   margin: 10px;
+  position: relative;
 }
 
 
 .no-top-border td {
   border: none;
+}
+
+.li_product_image .remove-img {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 25px;
+  height: 25px;
+  background: url('../images/remove-icon.png') no-repeat;
+  text-indent: -999999px;
 }
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */

@@ -60,6 +60,33 @@ INIT = {
 	    });
 	},
 
+	remove_image : function(e) {
+		var remove_img = $('.remove-img');
+		remove_img.hide();
+		$('.li_product_image').hover(
+            function() { $(this).find('a.remove-img').show(); },
+            function() { $(this).find('a.remove-img').hide(); }
+          );
+		var url = connector_url + 'image_save';
+		remove_img.on('click',function(){
+			if(confirm('Are you sure to Remove this Image')) {
+				var current_img = $(this).parent();
+	            var img_id = $(this).data('image_id');
+	            $.post( url+"&action=delete", { image_id: img_id }, function( data ){
+			    	data = $.parseJSON(data);
+			    	if(data.success == true) {
+			    		current_img.remove();
+			    	} else{
+			    		$('#moxy-result').html('Failed');
+			    		$('#moxy-result-msg').html(data.msg);
+			    		$(".moxy-msg").delay(3200).fadeOut(300);
+			    	}
+			    } );
+	        }
+			return false;
+		})
+	}
+
 	
 
 
@@ -70,6 +97,7 @@ $(function() {
 	INIT.update_product();
 	INIT.create_product();
 	INIT.fill_form_fields();
+	INIT.remove_image();
 	$('#moxytab').tabify();
 	$('.datepicker').datepicker();
 	$("#product_images").sortable();
