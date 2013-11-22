@@ -306,11 +306,12 @@
         </div>
 		
 	</div>
-	<div id="taxonomies_tab" class="content">
+	<div id="taxonomies_tab" class="content"><br>
+		<legend>Taxonomy List</legend>
         <div id="taxonomy_list">
             <?php print $data['taxonomies']; ?>
         </div>
-        
+        <legend>Term List</legend>
         <div id="taxonomy_terms">
             <?php print $data['product_taxonomies']; ?>
         </div>

@@ -4191,6 +4191,12 @@ button.close {
   border: none;
 }
 
+
+ol.terms_taxonomy {
+   margin-left: 25px;
+  border-left: 1px dotted #000;
+  padding-left: 10px;
+}
 .li_product_image .remove-img {
   position: absolute;
   top: -10px;
