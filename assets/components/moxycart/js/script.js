@@ -69,10 +69,11 @@ INIT = {
           );
 		var url = connector_url + 'image_save';
 		remove_img.on('click',function(){
-			if(confirm('Are you sure to Remove this Image')) {
+			if(confirm('Are you sure you want to delete this image?')) {
 				var current_img = $(this).parent();
 	            var img_id = $(this).data('image_id');
-	            $.post( url+"&action=delete", { image_id: img_id }, function( data ){
+	            var img_file = $(this).data('file');
+	            $.post( url+"&action=delete", { image_id: img_id, file: img_file }, function( data ){
 			    	data = $.parseJSON(data);
 			    	if(data.success == true) {
 			    		current_img.remove();

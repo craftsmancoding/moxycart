@@ -354,11 +354,13 @@
 
         switch ($action) {
             case 'delete':
+                $file = $this->modx->getOption('file', $args);
                 $Image = $this->modx->getObject('Image',$this->modx->getOption('image_id', $args));
                 if (!$Image->remove()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to delete Image.';    
                 }
+                unlink(MODX_BASE_PATH . $file);
                 $out['msg'] = 'Image deleted successfully.';    
                 break;
             case 'create':
