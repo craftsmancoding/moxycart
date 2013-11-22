@@ -20,8 +20,10 @@
 			
 		<div class="moxy-buttons-wrapper">
 			<button class="btn" id="moxy-save">Save</button>
-			<button class="btn">View</button>
-			<button class="btn">Close</button>
+			<?php if(isset($data['uri'])) : ?>
+				<a class="btn" href="/<?php print $data['uri']; ?>" target="_blank">View</a>
+			<?php endif; ?>
+			<a class="btn" href="<?php print $data['manager_url']; ?>">Close</a>
 		</div>
 	</div>
 	

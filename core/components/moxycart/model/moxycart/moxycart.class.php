@@ -430,6 +430,7 @@
      */
     public function product_create($args) {
         $data = array();
+        $data['manager_url'] = $this->mgr_url;
         $data['product_form_action'] = 'product_create';
         $data['product_specs'] ='';
         $data['currencies'] = '';
@@ -498,6 +499,7 @@
      * @param int product_id (from $_GET). Defines the id of the product
      */
     public function product_update($args) {
+        
         $product_id = (int) $this->modx->getOption('product_id', $args);
 
         if (!$Product = $this->modx->getObject('Product', $product_id)) {        
@@ -505,6 +507,7 @@
         }
         
         $data = $Product->toArray();
+        $data['manager_url'] = $this->mgr_url;
         $data['connector_url'] = $this->connector_url;
         $data['product_form_action'] = 'product_update';
         
