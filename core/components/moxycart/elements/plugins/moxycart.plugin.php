@@ -38,14 +38,22 @@ $cache_dir = 'moxycart';
 
 switch ($modx->event->name) {
 
+    //------------------------------------------------------------------------------
+    //! OnManagerPageInit
+    //  Load up custom CSS for the manager
+    //------------------------------------------------------------------------------
     case 'OnManagerPageInit':
-        $assetsUrl = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
-        $modx->regClientCSS($assetsUrl.'components/moxycart/css/mgr.css');
+        $assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
+        $modx->regClientCSS($assets_url.'components/moxycart/css/mgr.css');
         break;
         
     //------------------------------------------------------------------------------
+    //! OnPageNotFound
+    //  Query for our custom product and format it using a MODX template
+    //------------------------------------------------------------------------------
     case 'OnPageNotFound':
         $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
+        $placeholder_prefix = $modx->getOption('moxycart.placeholder_prefix');
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
         $refresh = false; // used if you want to turn off caching (good for testing)
@@ -99,7 +107,7 @@ switch ($modx->event->name) {
             // add calculated_price field
             $product_attributes['calculated_price'] = $calculated_price;
 
-            $modx->setPlaceholders($product_attributes,'moxycart.');
+            $modx->setPlaceholders($product_attributes,$placeholder_prefix);
 
             // or?
             $modx->resource->set('template', $Product->get('template_id'));    
@@ -108,12 +116,14 @@ switch ($modx->event->name) {
             $modx->resource->set('cacheable',false);
             $out = $modx->resource->process();
             $modx->cacheManager->set($fingerprint, $out, $lifetime, $cache_opts);
-            //1384300800 >= 1384313156
         }
         print $out;
         die();
         break;
 
+    //------------------------------------------------------------------------------
+    //! OnBeforeCacheUpdate
+    //  Clear out our custom cache files.
     //------------------------------------------------------------------------------
     case 'OnBeforeCacheUpdate':
         $dir = MODX_CORE_PATH .'cache/'.$cache_dir;

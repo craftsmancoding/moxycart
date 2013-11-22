@@ -1498,7 +1498,8 @@
     }
 
     /**
-     * product_id ?  if not set, then its for a store     
+     * Get the taxonomies associated with a given product.
+     *
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
@@ -1520,7 +1521,7 @@
         
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollectionGraph('ProductTerm','{"Product":{},"Taxonomy":{}}',$criteria);
+        $pages = $this->modx->getCollectionGraph('ProductTaxonomy','{"Product":{},"Taxonomy":{}}',$criteria);
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
         $data = array(
