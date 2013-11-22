@@ -56,6 +56,7 @@
         <field key="template_id" dbtype="int" precision="11" phptype="integer" null="true" />
         <field key="currency_id" dbtype="int" precision="4" phptype="integer" null="true" />
         <field key="name" dbtype="varchar" precision="60" phptype="string" null="false" />
+        <field key="title" dbtype="varchar" precision="60" phptype="string" null="false" comment="For the webpage"/>
         <field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
         <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />
         <field key="type" dbtype="enum" precision="'regular','subscription','download'" phptype="string" null="true" />
@@ -320,6 +321,7 @@
 		<field key="title" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="alt" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="url" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<field key="thumbnail_url" dbtype="varchar" precision="255" phptype="string" null="false"/>
 		<field key="path" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="width" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="height" dbtype="int" precision="4" phptype="integer" null="false" />

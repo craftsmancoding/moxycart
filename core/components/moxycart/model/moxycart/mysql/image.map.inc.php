@@ -11,9 +11,11 @@ $xpdo_meta_map['Image']= array (
     'title' => NULL,
     'alt' => NULL,
     'url' => NULL,
+    'thumbnail_url' => NULL,
     'path' => NULL,
     'width' => NULL,
     'height' => NULL,
+    'size' => NULL,
     'seq' => NULL,
     'is_active' => 1,
   ),
@@ -56,6 +58,13 @@ $xpdo_meta_map['Image']= array (
       'phptype' => 'string',
       'null' => false,
     ),
+    'thumbnail_url' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => false,
+    ),
     'path' => 
     array (
       'dbtype' => 'varchar',
@@ -74,6 +83,13 @@ $xpdo_meta_map['Image']= array (
     array (
       'dbtype' => 'int',
       'precision' => '4',
+      'phptype' => 'integer',
+      'null' => false,
+    ),
+    'size' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
     ),

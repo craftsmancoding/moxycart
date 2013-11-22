@@ -12,6 +12,7 @@ $xpdo_meta_map['Product']= array (
     'template_id' => NULL,
     'currency_id' => NULL,
     'name' => NULL,
+    'title' => NULL,
     'description' => NULL,
     'content' => '',
     'type' => NULL,
@@ -92,6 +93,14 @@ $xpdo_meta_map['Product']= array (
       'precision' => '60',
       'phptype' => 'string',
       'null' => false,
+    ),
+    'title' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '60',
+      'phptype' => 'string',
+      'null' => false,
+      'comment' => 'For the webpage',
     ),
     'description' => 
     array (
