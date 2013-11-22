@@ -139,16 +139,22 @@
     }
 
     /**
-    * Checked if target_path doesnt exist create the directory
-    * @param string $target_path
-    * @return true
-    */
-    private function _check_target_path($target_path) {
-        $dir_exist = true;
-        if (!is_dir($target_path)) {
-            $dir_check = (!@mkdir($target_path)) ? false : true;
-        }
-        return $dir_exist;
+     * Generates HTML for select <options> (NOT the wrapping <select>)
+     * @param $data array 
+     * @param $selected $string
+     * @param $column_id $string
+     * @param $label $string
+     * @return string 
+     */
+    private function _get_options($data = array(),$selected=null, $column_id='id',$label='name') {
+        $output = '';
+        foreach ($data['results'] as $row) {
+            if ($row[$column_id] == $selected) {
+                $selected = ' selected="selected"';
+            } 
+            $output .= sprintf('<option value="%s"%s>%s</option>', $row[$column_id], $selected, $row[$label]);
+        } 
+        return $output;
     }
     
     /**
@@ -401,48 +407,26 @@
         $data['product_form_action'] = 'product_create';
         $data['product_specs'] ='';
         $data['currencies'] = '';
-        $currencies = $this->json_currencies(array('limit'=>0,'is_active'=>1),true);
-        foreach ($currencies['results'] as $c) {
-            $c['value'] = $c['currency_id'];
-            $c['name'] = $c['name'];
-            $c['selected'] = '';
-            $data['currencies'] .= $this->_load_view('option.php',$c);
-        }
-        
-        
-        $data['templates'] = '';
-        $templates = $this->json_templates(array('limit'=>0),true);
-        foreach ($templates['results'] as $t) {
-            $t['value'] = $t['id'];
-            $t['name'] = $t['name']; // WARNING: we swapped names in json_templates. not templatename!
-            $t['selected'] = '';
-            $data['templates'] .= $this->_load_view('option.php',$t);
-        }
-        $data['categories'] = '';
-        $categories = $this->json_categories(array('limit'=>0),true);
-        foreach ($categories['results'] as $c) {
-            $c['value'] = $c['name'];
-            $c['name'] = $c['name'];
-            $c['selected'] = '';
-            $data['categories'] .= $this->_load_view('option.php',$c);
-        }
+         $specs = $this->json_specs(array('limit'=>0),true);
+        $data['specs'] = $this->_get_options($specs,'','spec_id');  
 
-        $data['stores'] = '';
+        $currencies = $this->json_currencies(array('limit'=>0,'is_active'=>1),true);
+        $data['currencies'] = $this->_get_options($currencies,'','currency_id'); 
+        
+        
+
+        $templates = $this->json_templates(array('limit'=>0),true);
+        $data['templates'] = $this->_get_options($templates); 
+
+        $categories = $this->json_categories(array('limit'=>0),true);
+        $data['categories'] = $this->_get_options($categories); 
+
+
         $stores = $this->json_stores(array('limit'=>0),true);
-        foreach ($stores['results'] as $s) {
-            $s['value'] = $s['id'];
-            $s['name'] = $s['name']; // WARNING: we swapped names in json_stores. not pagetitle!
-            $s['selected'] = '';
-            $data['stores'] .= $this->_load_view('option.php',$s);
-        }
-        $data['types'] = '';
+        $data['stores'] = $this->_get_options($stores); 
+
         $types = $this->json_types(array('limit'=>0),true);
-        foreach ($types['results'] as $t) {
-            $t['value'] = $t['id'];
-            $t['name'] = $t['name']; 
-            $t['selected'] = '';
-            $data['types'] .= $this->_load_view('option.php',$t);
-        }        
+        $data['types'] = $this->_get_options($types);       
 
         // Taxonomies (yowza!)
         $data['product_taxonomies'] = '';       
@@ -505,74 +489,25 @@
             $data['images'] .= $this->_load_view('product_image.php',$img);
         }
         
-        $data['currencies'] = '';
-        $currencies = $this->json_currencies(array('limit'=>0,'is_active'=>1),true);
-        foreach ($currencies['results'] as $c) {
-            $c['value'] = $c['currency_id'];
-            $c['name'] = $c['name'];
-            $c['selected'] = '';
-            if ($c['value'] == $data['currency_id']) {
-                $c['selected'] = ' selected="selected"';
-            }
-            $data['currencies'] .= $this->_load_view('option.php',$c);
-        }
-        
-        
-        $data['templates'] = '';
-        $templates = $this->json_templates(array('limit'=>0),true);
-        foreach ($templates['results'] as $t) {
-            $t['value'] = $t['id'];
-            $t['name'] = $t['name']; // WARNING: we swapped names in json_templates. not templatename!
-            $t['selected'] = '';
-            if ($t['value'] == $data['template_id']) {
-                $t['selected'] = ' selected="selected"';
-            }
-            $data['templates'] .= $this->_load_view('option.php',$t);
-        }
-        $data['categories'] = '';
-        $categories = $this->json_categories(array('limit'=>0),true);
-        foreach ($categories['results'] as $c) {
-            $c['value'] = $c['name'];
-            $c['name'] = $c['name'];
-            $c['selected'] = '';
-            if ($c['value'] == $data['store_id']) {
-                $c['selected'] = ' selected="selected"';
-            }
-            $data['categories'] .= $this->_load_view('option.php',$c);
-        }
 
-        $data['stores'] = '';
+        $currencies = $this->json_currencies(array('limit'=>0,'is_active'=>1),true);
+        $data['currencies'] = $this->_get_options($currencies,$data['currency_id'],'currency_id');
+       
+        $templates = $this->json_templates(array('limit'=>0),true);
+        $data['templates'] = $this->_get_options($templates,$data['template_id']);
+
+
+        $categories = $this->json_categories(array('limit'=>0),true);
+        $data['categories'] = $this->_get_options($categories,$data['category']);
+
         $stores = $this->json_stores(array('limit'=>0),true);
-        foreach ($stores['results'] as $s) {
-            $s['value'] = $s['id'];
-            $s['name'] = $s['name']; // WARNING: we swapped names in json_stores. not pagetitle!
-            $s['selected'] = '';
-            if ($s['value'] == $data['store_id']) {
-                $s['selected'] = ' selected="selected"';
-            }
-            $data['stores'] .= $this->_load_view('option.php',$s);
-        }
-        $data['types'] = '';
+        $data['stores'] = $this->_get_options($stores,$data['store_id']);
+
         $types = $this->json_types(array('limit'=>0),true);
-        foreach ($types['results'] as $t) {
-            $t['value'] = $t['id'];
-            $t['name'] = $t['name']; 
-            $t['selected'] = '';
-            if ($t['value'] == $data['type']) {
-                $t['selected'] = ' selected="selected"';
-            }
-            $data['types'] .= $this->_load_view('option.php',$t);
-        }        
-        
-        // A list of all specs
-        $data['specs'] = '';
+        $data['types'] = $this->_get_options($types,$data['type']);      
+
         $specs = $this->json_specs(array('limit'=>0),true);
-        foreach ($specs['results'] as $s) {
-            $s['value'] = $s['spec_id'];
-            $s['name'] = $s['name']; 
-            $s['selected'] = ''; // none are selected -- it's only for attaching
-            $data['specs'] .= $this->_load_view('option.php',$s);
-        }
+        $data['specs'] = $this->_get_options($specs,'','spec_id');  
         
         $data['product_specs'] = '';
         $specs = $this->json_product_specs(array('limit'=>0,'product_id'=>$product_id),true);
