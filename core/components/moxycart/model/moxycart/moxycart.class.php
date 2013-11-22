@@ -386,46 +386,7 @@
 
         // $_POST... todo
     }    
-       
-    //------------------------------------------------------------------------------
-    //! Products
-    //------------------------------------------------------------------------------
-    /**
-     * Hosts the "Create Product" form.
-     *
-     * @param int parent (from $_GET). Defines the id of the parent page.
-     */
-    public function product_create($args) {
-    	
-    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-            var connector_url = "'.$this->connector_url.'";
-            var site_url = "'.MODX_SITE_URL.'";
-    		Ext.onReady(function() {
     
-    			MODx.load({
-    				xtype: "modx-page-resource-create",
-    				canSave:true,
-    				mode:"create"
-    			});
-    		
-    			renderProduct();
-    		
-    		});
-    		</script>
-    	');	
-
-    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/util/datetime.js');
-//    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/element/modx.panel.tv.renders.js');
-    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.grid.resource.security.local.js');	
-//    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.tv.js');
-    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.js');
-        $this->modx->regClientStartupScript($this->mgr_url.'assets/modext/sections/resource/create.js');	
-    	$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
-    	$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/manageimages.js');
-    
-        return '<div id="modx-panel-resource-div"> </div>';
-    
-    }
 
         //------------------------------------------------------------------------------
     //! Products
@@ -435,8 +396,10 @@
      *
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
-    public function product_create2($args) {
+    public function product_create($args) {
         $data = array();
+        $data['product_form_action'] = 'product_create';
+        $data['product_specs'] ='';
         $data['currencies'] = '';
         $currencies = $this->json_currencies(array('limit'=>0,'is_active'=>1),true);
         foreach ($currencies['results'] as $c) {
@@ -480,28 +443,32 @@
             $t['selected'] = '';
             $data['types'] .= $this->_load_view('option.php',$t);
         }        
-        
-        // A list of all specs
-        $data['specs'] = '';
-        $specs = $this->json_specs(array('limit'=>0),true);
-        foreach ($specs['results'] as $s) {
-            $s['value'] = $s['spec_id'];
-            $s['name'] = $s['name']; 
-            $s['selected'] = ''; // none are selected -- it's only for attaching
-            $data['specs'] .= $this->_load_view('option.php',$s);
+
+        // Taxonomies (yowza!)
+        $data['product_taxonomies'] = '';       
+
+        // All avail. taxonomies
+        $data['taxonomies'] = '';
+        $taxonomies = $this->json_taxonomies(array('limit'=>0),true);
+        foreach ($taxonomies['results'] as $t) {
+            $t['is_checked'] = '';
+            if (isset($active[ $t['id'] ])) {
+                $t['is_checked'] = ' checked="checked"';
+            }
+            $data['taxonomies'] .= $this->_load_view('product_taxonomy.php',$t); // TODO: react to the spec "type"
         }
 
-            $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
-            $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
-            $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
-            $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
-            $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
-            $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
-            $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/dropzone.js');
-            $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
+        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
+        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/dropzone.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
         $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">          
             var connector_url = "'.$this->connector_url.'";
-            var redirect_url = "'.$this->mgr_url .'?a='.$this->action . '&f=product_update2&product_id='.'";
+            var redirect_url = "'.$this->mgr_url .'?a='.$this->action . '&f=product_update&product_id='.'";
             // use Ext JS?
             Ext.onReady(function() {
               // populate the form
@@ -509,62 +476,16 @@
             </script>
         ');
 
-        return $this->_load_view('product_create.php',$data);
+        return $this->_load_view('product_template.php',$data);
     }
 
-    /**
-     * Hosts the "Update Product" form.
-     *
-     * @param int product_id (from $_GET). Defines the id of the product
-     */
-    public function product_update($args) {
-    
-        $product_id = (int) $this->modx->getOption('product_id', $args);
-        
-        if (!$product_id) {
-            return 'Invalid product_id';
-        }
-        
-        $Product = $this->modx->getObject('Product', $product_id);
-        if (!$Product) {
-            return 'Invalid product_id';
-        }
-
-
-        
-//        return '<pre>'.$Product->toJson().'</pre>';
-    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/util/datetime.js');
-//    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/element/modx.panel.tv.renders.js');
-    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.grid.resource.security.local.js');	
-//    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.tv.js');
-    	$this->modx->regClientStartupScript($this->mgr_url.'assets/modext/widgets/resource/modx.panel.resource.js');
-        $this->modx->regClientStartupScript($this->mgr_url.'assets/modext/sections/resource/update.js');	
-    	$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
-        
-    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-            var connector_url = "'.$this->connector_url.'";
-    		var site_url = "'.MODX_SITE_URL.'";
-    		var product = '.$Product->toJson().';
-    		Ext.onReady(function() {
-    			MODx.load({
-    				xtype: "modx-page-resource-update",
-    				canSave:true,
-    				mode:"update"
-    			});
-    			renderProduct();
-    		});
-    		</script>
-    	');
-
-        return '<div id="modx-panel-resource-div"> </div>';
-    }
 
      /**
      * Hosts the "Update Product" form.
      *
      * @param int product_id (from $_GET). Defines the id of the product
      */
-    public function product_update2($args) {
+    public function product_update($args) {
         $product_id = (int) $this->modx->getOption('product_id', $args);
 
         if (!$Product = $this->modx->getObject('Product', $product_id)) {        
@@ -573,6 +494,7 @@
         
         $data = $Product->toArray();
         $data['connector_url'] = $this->connector_url;
+        $data['product_form_action'] = 'product_update';
         
         // Get the dropdowns
         $data['images'] = '';
@@ -707,7 +629,7 @@
     	
 //        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
         $data['mgr_connector_url'] = $this->mgr_connector_url;
-        return $this->_load_view('product_update.php',$data);
+        return $this->_load_view('product_template.php',$data);
     }
 
     /**

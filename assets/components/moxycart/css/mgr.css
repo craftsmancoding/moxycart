@@ -2949,6 +2949,10 @@ button.close {
     background-image: url(../images/term-icon.png) !important;
 }
 
+#product_create .variations-link,
+#product_create .images-link {
+  display: none; 
+}
 .moxy-msg {
   display: none;
   background: #fff;
@@ -2962,9 +2966,21 @@ button.close {
   right: 250px;
 }
 
+
 #moxy-result {
   font-weight: bold;
   font-weight: 14px;
+}
+
+#product_images {
+  margin-top: 20px;
+}
+
+#product_images li.li_product_image {
+  float: left;
+  border: 1px solid #acacac;
+  padding: 5px;
+  margin: 10px;
 }
 
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
