@@ -203,6 +203,7 @@
         if (!empty($props['children'])) {
             foreach($props['children'] as $term_id => $tdata) {
                 $tdata['class'] = 'taxonomy_term_item';
+                $tdata['terms'] = '';
                 $tdata['depth'] = str_repeat('&nbsp;', $this->depth * 2);
                 if (!empty($tdata['children'])) {
                     $this->depth++;
@@ -430,7 +431,7 @@
      */
     public function product_create($args) {
         $data = array();
-        $data['manager_url'] = $this->mgr_url;
+        $data['manager_url'] = $this->mgr_url.'?a=30&id='.$this->modx->getOption('store_id',$_GET);
         $data['product_form_action'] = 'product_create';
         $data['product_specs'] ='';
         $data['currencies'] = '';
@@ -507,7 +508,7 @@
         }
         
         $data = $Product->toArray();
-        $data['manager_url'] = $this->mgr_url;
+        $data['manager_url'] = $this->mgr_url.'?a=30&id='.$Product->get('store_id');
         $data['connector_url'] = $this->connector_url;
         $data['product_form_action'] = 'product_update';
         
