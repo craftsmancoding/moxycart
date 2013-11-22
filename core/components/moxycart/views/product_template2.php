@@ -30,7 +30,7 @@
 	
 	<ul id="moxytab" class="menu">
 		<li class="product-link active"><a href="#product">Product</a></li>
-		<li class="settings-link" ><a href="#settings_tab">Product Settings</a></li>
+		<li class="settings-link" ><a href="#settings_tab">Settings</a></li>
 		<li class="variations-link" ><a href="#variations_tab">Variations</a></li>
 		<li class="specs-link" ><a href="#specs_tab">Specs</a></li>
 		<li class="images-link" ><a href="#images_tab">Images</a></li>
@@ -62,67 +62,6 @@
 
 					<tr>
 						<td>
-							<label for="title">Browser Title</label>
-						</td>
-						<td>
-							<input type="text" name="title" id="title" value="">
-						</td>
-						<td>
-							<label for="alias">Alias</label>
-						</td>
-						<td>
-							<input type="text" name="alias" id="alias" value="">
-						</td>
-
-					</tr>
-
-					<tr>
-						<td>
-							<label for="category">Category</label>
-						</td>
-						<td>
-							<select name="category" id="category">
-                                <?php print $data['categories']; ?>
-							</select>
-						</td>
-						<td>
-							<label for="template_id">Template</label>
-						</td>
-						<td>
-
-							<select name="template_id" id="template_id">
-                                <?php print $data['templates']; ?>
-							</select> 
-						</td>
-					</tr>
-					<tr><td colspan="4">&nbsp;</td></tr>
-					<tr>
-						<td>
-							<label for="description">Description</label>
-						</td>
-						<td colspan="3">
-							<textarea name="description" id="description" style="width:680px;height:70px;"></textarea>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<label for="description">Content</label>
-						</td>
-						<td colspan="3">
-							<textarea name="content" id="content" style="width:700px;height:120px;"></textarea>
-						</td>
-					</tr>
-
-						
-				</tbody>
-			</table>
-	</div>
-
-	<div id="settings_tab" class="content">
-		 <table class="table no-top-border">
-				<tbody>
-					<tr>
-						<td>
 							<label for="sku">SKU</label>
 						</td>
 						<td>
@@ -133,6 +72,16 @@
 						</td>
 						<td>
 							<input type="text" name="sku_vendor" id="sku_vendor" value="">
+						</td>
+
+					</tr>
+
+					<tr>
+						<td>
+							<label for="description">Description</label>
+						</td>
+						<td colspan="3">
+							<textarea name="description" id="description" style="width:80%;height:70px;"></textarea>
 						</td>
 					</tr>
 					<tr>
@@ -167,15 +116,16 @@
 									  <span class="add-on"><i class="icon icon-calendar"></i></span>
 							</div>
 						</td>
+
 					</tr>
 
 					<tr>
 						<td>
-							<label for="currency_id">Currency</label>
+							<label for="category">Category</label>
 						</td>
 						<td>
-							<select name="currency_id" id="currency_id">
-                                <?php print $data['currencies']; ?>
+							<select name="category" id="category">
+                                <?php print $data['categories']; ?>
 							</select>
 						</td>
 						<td>
@@ -187,8 +137,8 @@
 									  <span class="add-on"><i class="icon icon-calendar"></i></span>
 							</div>
 						</td>
-					</tr>
 
+					</tr>
 					<tr>
 						<td>
 							<label for="qty_inventory">Inventory</label>
@@ -222,21 +172,59 @@
 
 					<tr>
 						<td>
-							<label for="track_inventory">Track Inventory</label>
-						</td>
-						<td>
-							<select name="track_inventory" id="track_inventory">
-								<option value="1">Yes</option>
-								<option value="0">No</option>
-							</select>
-						</td>
-						<td>
 							<label for="back_order_cap">Back Order Cap</label>
 						</td>
 						<td colspan="3">
 							<input type="text" name="back_order_cap" id="back_order_cap" value="">
 						</td>
 
+					</tr>
+
+					<tr>
+						<td>
+							<label for="description">Content</label>
+						</td>
+						<td colspan="3">
+							<textarea name="content" id="content" style="width:600px;height:120px;"></textarea>
+						</td>
+					</tr>
+
+						
+				</tbody>
+			</table>
+	</div>
+
+	<div id="settings_tab" class="content">
+		 <table class="table no-top-border">
+				<tbody>
+					<tr>
+						<td>
+							<label for="alias">Alias</label>
+						</td>
+						<td>
+							<input type="text" name="alias" id="alias" value="">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for="template_id">Template</label>
+						</td>
+						<td>
+
+							<select name="template_id" id="template_id">
+                                <?php print $data['templates']; ?>
+							</select> 
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for="currency_id">Currency</label>
+						</td>
+						<td>
+							<select name="currency_id" id="currency_id">
+                                <?php print $data['currencies']; ?>
+							</select>
+						</td>
 					</tr>
 					<tr>
 						<td>
@@ -247,6 +235,8 @@
                                 <?php print $data['types']; ?>
 							</select>
 						</td>
+					</tr>
+					<tr>
 						<td>
 							<label for="store_id">Product Container</label>
 						</td>
@@ -255,7 +245,8 @@
 								<?php print $data['stores']; ?>
 							</select>
 						</td>
-					</tr>						
+					</tr>
+						
 				</tbody>
 			</table>
 	</div>
