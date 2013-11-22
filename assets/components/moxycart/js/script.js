@@ -71,6 +71,8 @@ $(function() {
 	INIT.create_product();
 	INIT.fill_form_fields();
 	$('#moxytab').tabify();
+	$('.datepicker').datepicker();
 	$("#product_images").sortable();
     $("#product_images").disableSelection();
+
 });

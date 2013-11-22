@@ -460,10 +460,12 @@
 
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
+        $this->modx->regClientCSS($this->assets_url.'components/moxycart/css/datepicker.css');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap-datepicker.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/dropzone.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
         $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">          
@@ -609,11 +611,13 @@
                 
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
+        $this->modx->regClientCSS($this->assets_url.'components/moxycart/css/datepicker.css');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/dropzone.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap-datepicker.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
 
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
@@ -1012,7 +1016,7 @@
                 $many = array();
                 foreach ($related as $r) {
                     $obj = $this->modx->newObject('ProductImage');
-                    $obj->set('imagae_id', $r);
+                    $obj->set('image_id', $r);
                     $many[] = $obj;
                 }
                 $Product->addMany($many);

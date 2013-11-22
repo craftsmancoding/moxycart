@@ -109,7 +109,10 @@
 							<label for="sale_start">Sale Start</label>
 						</td>
 						<td>
-							<input type="text" name="sale_start" id="sale_start" value="">
+							<div class="input-append date datepicker" data-date="<?php echo date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
+									  <input type="text" name="sale_start" id="sale_start" class="span2" maxlength="10" value="">
+									  <span class="add-on"><i class="icon icon-calendar"></i></span>
+							</div>
 						</td>
 
 					</tr>
@@ -127,7 +130,10 @@
 							<label for="sale_end">Sale End</label>
 						</td>
 						<td>
-							<input type="text" name="sale_end" id="sale_end" value="">
+							<div class="input-append date datepicker" data-date="<?php echo date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
+									  <input type="text" name="sale_end" id="sale_end" class="span2" maxlength="10" value="">
+									  <span class="add-on"><i class="icon icon-calendar"></i></span>
+							</div>
 						</td>
 
 					</tr>
@@ -311,6 +317,6 @@
 
 </div>
 
+
 </form>
 
-<form class="dropzone"action="#"></form>
