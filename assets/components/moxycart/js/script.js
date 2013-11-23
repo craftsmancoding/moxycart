@@ -86,9 +86,15 @@ INIT = {
 	        }
 			return false;
 		})
-	}
+	},
 
-	
+	edit_image_modal: function() {
+
+		$('.edit-img').on('click',function(){
+			var url = $(this).attr('href');
+			$("#update-image").load(url + " .modal-container");
+		});
+	},
 
 
 }
@@ -99,9 +105,9 @@ $(function() {
 	INIT.create_product();
 	INIT.fill_form_fields();
 	INIT.remove_image();
+	INIT.edit_image_modal();
 	$('#moxytab').tabify();
 	$('.datepicker').datepicker();
 	$("#product_images").sortable();
     $("#product_images").disableSelection();
-
 });

@@ -313,7 +313,7 @@
         <div class="dropzone" id="image_upload">
         	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
         </div>
-		
+		<div class="modal fade" id="update-image"></div><!--/.modal -->
 	</div>
 	<div id="taxonomies_tab" class="content"><br>
 		<legend>Taxonomy List</legend>

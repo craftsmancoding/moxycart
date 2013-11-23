@@ -304,6 +304,8 @@
         <div class="dropzone" id="image_upload">
         	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
         </div>
+
+        
 		
 	</div>
 	<div id="taxonomies_tab" class="content"><br>

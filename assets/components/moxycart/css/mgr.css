@@ -1034,6 +1034,7 @@ legend + .control-group {
   width: 160px;
   padding-top: 5px;
   text-align: right;
+  margin-right: 40px;
 }
 .form-horizontal .controls {
   *display: inline-block;
@@ -4206,6 +4207,11 @@ ol.terms_taxonomy {
   background: url('../images/remove-icon.png') no-repeat;
   text-indent: -999999px;
 }
+
+.form-group {
+  margin-bottom: 10px;
+}
+
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */
 .clear:before, .clear:after,

@@ -325,12 +325,23 @@
     }
 
     /**
-     * image_id
+     * Hosts the "Update Image" form.
+     *
+     * @param int image_id (from $_GET). Defines the id of the product
      */
     public function image_update($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Update an image here.</div>';
+       
+        $image_id = (int) $this->modx->getOption('image_id', $args);
+
+        if (!$Image = $this->modx->getObject('Image', $image_id)) {        
+            return 'Image not found : '.$image_id;
+        }
+        $data = $Image->toArray(); 
+        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
+        return $this->_load_view('image_update.php',$data);
     }
 
 
@@ -344,6 +355,51 @@
     } 
 
     /**
+    * upload_image
+    * @param product_id int
+    * @return $out json
+    **/
+    public function upload_image($product_id) {
+        $out = array(
+            'success' => true,
+            'msg' => '',
+        );
+        if (isset($_FILES['file']['name']) ) {
+            // Relative to either MODX_ASSETS_URL or MODX_ASSETS_PATH
+            $rel_file =  $this->upload_dir.$product_id.'/'.basename($_FILES['file']['name']);
+            $target_path = MODX_ASSETS_PATH.$this->upload_dir.$product_id.'/';
+            if (!file_exists($target_path)) {
+                if (!mkdir($target_path,0777,true)) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to create directory at '.$target_path;    
+                    $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create directory at '.$target_path);
+                    return json_decode($out);
+                }
+            }
+            // Image already exists?
+            if (file_exists(MODX_ASSETS_PATH.$rel_file)) {
+                $out['success'] = false;
+                $out['msg'] = 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file;
+                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file);
+                return json_decode($out);
+            }
+            if(move_uploaded_file($_FILES['file']['tmp_name'],MODX_ASSETS_PATH.$rel_file)) {
+                $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'SUCCESS UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
+            } 
+            else {
+                $out['success'] = false;
+                $out['msg'] = 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file;
+                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
+                return json_decode($out);
+            }
+            $out['rel_file'] = $rel_file;
+            $out['file_size'] = $_FILES['file']['size'];
+            
+        } 
+        return json_encode($out);
+    }
+
+    /**
      * Post data here to save it
      */
     public function image_save($args) {
@@ -354,6 +410,11 @@
         );
 
         switch ($action) {
+            case 'update' :
+                $product_id = (int) $this->modx->getOption('product_id',$args);
+                $uploaded_img = json_decode($this->upload_image($product_id),true);
+                $rel_file = $uploaded_img['rel_file'];
+                break;
             case 'delete':
                 $file = $this->modx->getOption('file', $args);
                 $Image = $this->modx->getObject('Image',$this->modx->getOption('image_id', $args));
@@ -367,54 +428,28 @@
             case 'create':
             default:
                 $product_id = (int) $this->modx->getOption('product_id',$args);
-                if (isset($_FILES['file']['name']) ) {
-                    // Relative to either MODX_ASSETS_URL or MODX_ASSETS_PATH
-                    $rel_file =  $this->upload_dir.$product_id.'/'.basename($_FILES['file']['name']);
-                    $target_path = MODX_ASSETS_PATH.$this->upload_dir.$product_id.'/';
-                    if (!file_exists($target_path)) {
-                        if (!mkdir($target_path,0777,true)) {
-                            $out['success'] = false;
-                            $out['msg'] = 'Failed to create directory at '.$target_path;    
-                            $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create directory at '.$target_path);
-                            return json_decode($out);
-                        }
-                    }
-                    // Image already exists?
-                    if (file_exists(MODX_ASSETS_PATH.$rel_file)) {
-                        $out['success'] = false;
-                        $out['msg'] = 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file;
-                        $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file);
-                        return json_decode($out);
-                    }
-                    if(move_uploaded_file($_FILES['file']['tmp_name'],MODX_ASSETS_PATH.$rel_file)) {
-                        $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'SUCCESS UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
-                    } 
-                    else {
-                        $out['success'] = false;
-                        $out['msg'] = 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file;
-                        $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
-                        return json_decode($out);
-                    }
-                    // Create db record
-                    list($width, $height) = getimagesize(MODX_ASSETS_PATH.$rel_file);
-                    $Image = $this->modx->newObject('Image');
-                    $Image->set('product_id',$product_id);
-                    $Image->set('url',MODX_ASSETS_URL.$rel_file);
-                    $Image->set('path',MODX_ASSETS_PATH.$rel_file);
-                    $Image->set('width',$width);
-                    $Image->set('height',$height);
-                    $Image->set('size',$_FILES['file']['size']);
-                    $Image->set('is_active',1);
-                    
-                    if (!$Image->save()) {
-                        $out['success'] = false;
-                        $out['msg'] = 'Failed to save Image object for product';
-                        $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to save Image object for product '.$product_id .' '.MODX_ASSETS_PATH.$rel_file);
-                        return json_decode($out);
-                    }
-                    $out['msg'] = 'Successfully saved image';
-                    $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'Successfully saved image '.$Image->getPrimaryKey() .' '.MODX_ASSETS_PATH.$rel_file);
-                } 
+                $uploaded_img = json_decode($this->upload_image($product_id),true);
+                $rel_file = $uploaded_img['rel_file'];
+                // Create db record
+                list($width, $height) = getimagesize(MODX_ASSETS_PATH.$rel_file);
+                $Image = $this->modx->newObject('Image');
+                $Image->set('product_id',$product_id);
+                $Image->set('url',MODX_ASSETS_URL.$rel_file);
+                $Image->set('path',MODX_ASSETS_PATH.$rel_file);
+                $Image->set('width',$width);
+                $Image->set('height',$height);
+                $Image->set('size',$uploaded_img['file_size']);
+                $Image->set('is_active',1);
+                
+                if (!$Image->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to save Image object for product';
+                    $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to save Image object for product '.$product_id .' '.MODX_ASSETS_PATH.$rel_file);
+                    return json_decode($out);
+                }
+                $out['msg'] = 'Successfully saved image';
+                $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'Successfully saved image '.$Image->getPrimaryKey() .' '.MODX_ASSETS_PATH.$rel_file);
+                
         }
 
         return json_encode($out);
@@ -489,7 +524,6 @@
             });
             </script>
         ');
-
         return $this->_load_view('product_template.php',$data);
     }
 
@@ -516,6 +550,7 @@
         $data['images'] = '';
         $product_images = $this->json_images(array('product_id'=>$product_id,'limit'=>0),true);
         foreach ($product_images['results'] as $img) {
+            $img['action'] = $this->action;
             $data['images'] .= $this->_load_view('product_image.php',$img);
         }
         
@@ -582,7 +617,7 @@
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/dropzone.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap-datepicker.js');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
 
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
