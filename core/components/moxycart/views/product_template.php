@@ -264,21 +264,9 @@
 		<?php if(isset($data['product_id'])) : ?>
 			<a id="manage_inventory" class="btn" href="<?php print $data['mgr_connector_url']; ?>product_inventory&product_id=<?php print $data['product_id']; ?>">Manage Variation Inventory</a>
 		<?php endif; ?>
-		<div id="product_variations"></div>
-		<table class="table table-bordered">
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>SKU</th>
-					<th>Category</th>
-					<th>Action</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><td colspan="4">No Product Found</td></tr>
-			</tbody>
-		</table>
-	</div>
+		<div id="product_variations" style="padding-top:10px;">
+		</div>
+    </div>
 	
 	<div id="specs_tab" class="content">
 			<table class="table table-bordered">
@@ -310,7 +298,7 @@
 
 		<ul class="clearfix" id="product_images"><?php print isset($data['images']) ? $data['images'] : ''; ?></ul>
 
-        <div class="dropzone" id="image_upload">
+        <div id="image_upload">
         	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
         </div>
 		<div class="modal fade" id="update-image"></div><!--/.modal -->

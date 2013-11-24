@@ -695,7 +695,8 @@ function getProductContainerStore(){
 }
 
 function getStoreSettingsFields(config){
-	activeRecord = MODx.activePage.config.record.properties.moxycart;
+	MODx.activePage.config.record.properties = MODx.activePage.config.record.properties || {};
+	activeRecord = MODx.activePage.config.record.properties.moxycart || {};
 	getTemplateStore(activeRecord.product_template);
 	config = config || {record:{}};
 
@@ -1569,3 +1570,91 @@ MODx.triggerRTEOnChange = function() {
 MODx.fireResourceFormChange = function(f,nv,ov) {
 	Ext.getCmp('modx-panel-resource').fireEvent('fieldChange');
 };
+
+function renderProductVariationProductsGrid(){
+
+	var store = new Ext.data.Store({
+		fields: ['id', 'name', 'sku', 'category', 'uri', 'product_id'],
+		autoLoad : true,
+		storeId : 'productStore',
+		reader : new Ext.data.JsonReader({
+			idProperty: 'id',
+			root: 'results',
+			totalProperty: 'total',
+			fields: [
+				{name: 'id'},
+				{name: 'name'},
+				{name: 'sku'},
+				{name: 'category'},
+				{name: 'uri'},
+				{name: 'product_id'}
+			]
+		}),
+		proxy : new Ext.data.HttpProxy({
+			method: 'GET',
+			prettyUrls: false,
+			url: variation_url+'&f=json_products'
+		})
+	});
+
+	var cm = new Ext.grid.ColumnModel([{
+			header:'Name',
+			resizable: false,
+			dataIndex: 'name',
+			sortable: true
+		},{
+			header: 'SKU',
+			dataIndex: 'sku',
+			sortable: true
+		},{
+			header: 'Category',
+			dataIndex: 'category',
+			sortable: true
+		},{
+			header : 'Action',
+			dataIndex: 'id',
+			sortable: true,
+			renderer : function(value, metaData, record, rowIndex, colIndex, store) {
+			  return '<button role="edit" class="x-btn">Edit</button> <button role="view" class="x-btn">View</button>';
+			}
+		}
+	]);
+
+	this.productsGrid_panel = new Ext.grid.GridPanel({
+		renderTo:'product_variations',
+		height:400,
+		padding:5,
+		ds: store,
+		cm: cm,
+		layout:'fit',
+		region:'center',
+		border: true,
+		viewConfig: {
+			autoFill: true,
+			forceFit: true,
+			emptyText : 'You don\'t have any products yet.'
+		},
+		listeners : {
+			afterrender : function(){
+				this.getStore().load();
+			},
+			cellclick : function(grid, rowIndex, columnIndex, e) {
+				var record = grid.getStore().getAt(rowIndex),
+					fieldName = grid.getColumnModel().getDataIndex(columnIndex);
+				if(fieldName === 'id'){
+					if(e.target.innerHTML === 'Edit'){
+						MODx.loadPage(MODx.action['moxycart:index'], 'f=product_update&product_id='+record.data.product_id);
+					} else if(e.target.innerHTML === 'View'){
+						window.open(site_url + record.data.uri, '_blank');
+					}
+				}
+			}
+		},
+		bbar: new Ext.PagingToolbar({
+			store: store,
+			displayInfo: true,
+			pageSize: 30,
+			prependButtons: true
+		})
+	});
+}

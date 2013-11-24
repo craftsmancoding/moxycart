@@ -64,4 +64,5 @@ if ($results===false) {
 
 $modx->setLogLevel($old_level);
 print $results;
+exit;
 /*EOF*/

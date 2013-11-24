@@ -623,15 +623,18 @@
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.$Product->toJson().';            
     		var connector_url = "'.$this->connector_url.'";
-
+            var variation_url = "'.$this->connector_url.'&parent_id='.$product_id.'";
             jQuery(document).ready(function() {
                 var myDropzone = new Dropzone("div#image_upload", {url: connector_url+"image_save&product_id='.$product_id.'"});
             });
-
+			Ext.onReady(function() {   		
+    			renderProductVariationProductsGrid();
+    		});
     		</script>
     	');
     	
-//        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
+        $this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
+        
         $data['mgr_connector_url'] = $this->mgr_connector_url;
         return $this->_load_view('product_template.php',$data);
     }

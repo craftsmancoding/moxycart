@@ -20,13 +20,11 @@ class StoreCreateManagerController extends ResourceCreateManagerController {
                 var connector_url = "'.$moxycart_connector_url.'";
                 var site_url = "'.MODX_SITE_URL.'";                
 				isProductContainerCreate = true;
-				
 				Ext.onReady(function(){
+					MODx.activePage.config.record = MODx.activePage.config.record || {};
+					MODx.activePage.config.record.properties = MODx.activePage.config.record.properties || {};
+					MODx.activePage.config.record.properties.moxycart = '.json_encode($this->resource->getProperties('moxycart')).'
 					renderProductContainer(isProductContainerCreate, MODx.config);
-				    MODx.load({
-                        xtype: "articles-page-articles-container-create"
-                        ,record: '.json_encode($this->resource->getProperties('moxycart')).'
-                    });
 
 				});
 			</script>');

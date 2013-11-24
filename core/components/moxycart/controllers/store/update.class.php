@@ -17,17 +17,11 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
     	$moxycart_connector_url = $assets_url.'components/moxycart/connector.php?f=';
     	$this->addHtml('
 			<script type="text/javascript">
-
                 var connector_url = "'.$moxycart_connector_url.'";
                 var site_url = "'.MODX_SITE_URL.'";
 				isProductContainerCreate = false;
-				
 				Ext.onReady(function(){
 					renderProductContainer(isProductContainerCreate, MODx.config);
-				    MODx.load({
-                        xtype: "articles-page-articles-container-create"
-                    });
-
 				});
 			</script>');
 			

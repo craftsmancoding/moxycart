@@ -1,7 +1,7 @@
 <?php 
 /**
-* BaseClass for Moxycart Snippets
-**/
+ * BaseClass for Moxycart Snippets
+ */
 class MoxycartSnippet {
 
 	/** @var $modx modX */

@@ -17,7 +17,7 @@
 $api_key = $modx->getOption('moxycart.api_key');
 
 if (empty($api_key)) {
-
+    return 'ERROR: moxycart.api_key missing';
 }
 $input = ''; // The value, e.g. 1.99
 $name = ''; // the name, e.g. price
