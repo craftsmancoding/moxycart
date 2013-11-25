@@ -15,6 +15,10 @@
  *  and the Snippet must return a message that evaluates to true on success, boolean false
  *  on fail.
  *
+ * USAGE
+ *
+ * [[!parseFoxycartDatafeed? &product_hooks=`UpdateInventory`]]
+ *
  * PARAMS
  *
  * &product_hooks (string) comma-separated Snippet(s) to execute for each product
@@ -217,5 +221,6 @@ if($encrypted_data = $modx->getOption('FoxyData', $_POST)) {
 else {
     $url = $modx->makeUrl($modx->resource->get('id'),'','','full');
     return '<div style="margin:10px; padding:20px; border:1px solid green; background-color:#00CC66; border-radius: 5px; width:500px;">Welcome to Moxycart.  This page is contains the getDataFeed Snippet. In your 
-    Foxycart dashboard, point the datafeed to this URL: '.$url.'</div>';
+    Foxycart dashboard, point the datafeed to this URL: <br/>
+    <input type="text" value="'.$url.'" size="50"/></div>';
 }

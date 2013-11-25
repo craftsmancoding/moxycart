@@ -37,10 +37,12 @@
     private $default_limit;
     private $connector_url; 
     private $mgr_connector_url; 
-
+    private $jquery_url;
 
     private $cache; // for iterative ops
     private $depth = 0; //
+    
+    const MOXYID = 'm42Ccf';
     
     /**
      * Map a function name to a MODX permission, e.g. 
@@ -66,6 +68,7 @@
         // relative to the MODX_ASSETS_PATH or MODX_ASSETS_URL
         $this->upload_dir = 'images/products/';
         $this->default_limit = $this->modx->getOption('default_per_page'); // TODO: read from a MC setting?
+        $this->jquery_url = $this->assets_url.'components/moxycart/js/jquery-2.0.3.min.js';
         
         // Like controller_url, but in the mgr
         // MODx.action['moxycart:index'] + '?f=';
@@ -149,10 +152,11 @@
     private function _get_options($data = array(),$selected=null, $column_id='id',$label='name') {
         $output = '';
         foreach ($data['results'] as $row) {
+            $selected_str = '';
             if ($row[$column_id] == $selected) {
-                $selected = ' selected="selected"';
+                $selected_str = ' selected="selected"';
             } 
-            $output .= sprintf('<option value="%s"%s>%s</option>', $row[$column_id], $selected, $row[$label]);
+            $output .= sprintf('<option value="%s"%s>%s</option>', $row[$column_id], $selected_str, $row[$label]);
         } 
         return $output;
     }
@@ -225,6 +229,22 @@
     //------------------------------------------------------------------------------
     //! Public
     //------------------------------------------------------------------------------
+    /**
+     * Generate a string to be used as the API key
+     *
+     * @return string
+     */
+    public function generate_api_key() {
+        $length = 54;
+        $charset='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        $str = '';
+        $count = strlen($charset);
+        while ($length--) {
+            $str .= $charset[mt_rand(0, $count-1)];
+        }
+        return self::MOXYID . $str;
+    }
+    
      //------------------------------------------------------------------------------
     //! Currencies
     //------------------------------------------------------------------------------
@@ -338,7 +358,7 @@
         }
         $data = $Image->toArray(); 
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
+        $this->modx->regClientStartupScript($this->jquery_url);
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
         return $this->_load_view('image_update.php',$data);
@@ -466,7 +486,8 @@
      */
     public function product_create($args) {
         $data = array();
-        $data['manager_url'] = $this->mgr_url.'?a=30&id='.$this->modx->getOption('store_id',$_GET);
+        $store_id = (int) $this->modx->getOption('store_id',$_GET);
+        $data['manager_url'] = $this->mgr_url.'?a=30&id='.$store_id;
         $data['product_form_action'] = 'product_create';
         $data['product_specs'] ='';
         $data['currencies'] = '';
@@ -474,10 +495,9 @@
         $data['specs'] = $this->_get_options($specs,'','spec_id');  
 
         $currencies = $this->json_currencies(array('limit'=>0,'is_active'=>1),true);
-        $data['currencies'] = $this->_get_options($currencies,'','currency_id'); 
-        
-        
-
+        $currency_id = $this->modx->getOption('moxycart.currency_id','',109); // TODO
+        $data['currencies'] = $this->_get_options($currencies,$currency_id,'currency_id'); 
+                
         $templates = $this->json_templates(array('limit'=>0),true);
         $data['templates'] = $this->_get_options($templates); 
 
@@ -486,7 +506,7 @@
 
 
         $stores = $this->json_stores(array('limit'=>0),true);
-        $data['stores'] = $this->_get_options($stores); 
+        $data['stores'] = $this->_get_options($stores,$store_id); 
 
         $types = $this->json_types(array('limit'=>0),true);
         $data['types'] = $this->_get_options($types);       
@@ -508,15 +528,15 @@
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
         $this->modx->regClientCSS($this->assets_url.'components/moxycart/css/datepicker.css');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
+        $this->modx->regClientStartupScript($this->jquery_url);
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap-datepicker.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/dropzone.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
         $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">          
             var connector_url = "'.$this->connector_url.'";
+            var assets_url = "'.MODX_ASSETS_URL.'";
             var redirect_url = "'.$this->mgr_url .'?a='.$this->action . '&f=product_update&product_id='.'";
             // use Ext JS?
             Ext.onReady(function() {
@@ -524,6 +544,7 @@
             });
             </script>
         ');
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');        
         return $this->_load_view('product_template.php',$data);
     }
 
@@ -612,9 +633,8 @@
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
         $this->modx->regClientCSS($this->assets_url.'components/moxycart/css/datepicker.css');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-1.7.2.js');
+        $this->modx->regClientStartupScript($this->jquery_url);
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/dropzone.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
@@ -623,6 +643,7 @@
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.$Product->toJson().';            
     		var connector_url = "'.$this->connector_url.'";
+            var assets_url = "'.MODX_ASSETS_URL.'";    		
             var variation_url = "'.$this->connector_url.'&parent_id='.$product_id.'";
             jQuery(document).ready(function() {
                 var myDropzone = new Dropzone("div#image_upload", {url: connector_url+"image_save&product_id='.$product_id.'"});
@@ -632,7 +653,7 @@
     		});
     		</script>
     	');
-    	
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');    	
         $this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
         
         $data['mgr_connector_url'] = $this->mgr_connector_url;
@@ -1439,7 +1460,7 @@
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
         $pages = $this->modx->getCollection('Product',$criteria);
-        // return $criteria->toSQL(); //<-- useful for debugging
+        //return $criteria->toSQL(); //<-- useful for debugging
         // Init our array
         $data = array(
             'results'=>array(),

@@ -129,8 +129,9 @@ class Store extends modResource {
 				var at = this.cm.activeNode.attributes;
 		        var p = itm.usePk ? itm.usePk : at.pk;
 	            Ext.getCmp('modx-resource-tree').loadAction(
-	                'a='+MODx.action['moxycart:product_create']
-	                + '&parent='+p
+	                'a='+MODx.action['moxycart:index']
+	                + '&f=product_create'
+	                + '&store_id='+p
 	                + '&type=regular'
                 );
         	}",
@@ -141,8 +142,9 @@ class Store extends modResource {
 				var at = this.cm.activeNode.attributes;
 		        var p = itm.usePk ? itm.usePk : at.pk;
 	            Ext.getCmp('modx-resource-tree').loadAction(
-	                'a='+MODx.action['moxycart:product_create']
-	                + '&parent='+p
+	                'a='+MODx.action['moxycart:index']
+	                + '&f=product_create'
+	                + '&store_id='+p
 	                + '&type=download'
                 );
         	}",
@@ -153,8 +155,9 @@ class Store extends modResource {
 				var at = this.cm.activeNode.attributes;
 		        var p = itm.usePk ? itm.usePk : at.pk;
 	            Ext.getCmp('modx-resource-tree').loadAction(
-	                'a='+MODx.action['moxycart:product_create']
-	                + '&parent='+p
+	                'a='+MODx.action['moxycart:index']
+	                + '&f=product_create'
+	                + '&store_id='+p
 	                + '&type=subscription'
                 );
         	}",
@@ -168,23 +171,12 @@ class Store extends modResource {
 		        var p = itm.usePk ? itm.usePk : at.pk;
 	            Ext.getCmp('modx-resource-tree').loadAction(
 	                'a='+MODx.action['moxycart:index']
-	                + '&parent='+p
+	                + '&store_id='+p
 	                + '&f=manage_inventory'
                 );
         	}",
         );
-        $menu[] = array(
-            'text' => $this->xpdo->lexicon('set_manual_sort_order'),
-            'handler' => "function(itm,e) { 
-				var at = this.cm.activeNode.attributes;
-		        var p = itm.usePk ? itm.usePk : at.pk;
-	            Ext.getCmp('modx-resource-tree').loadAction(
-	                'a='+MODx.action['moxycart:index']
-	                + '&parent='+p
-	                + '&f=set_manual_sort_order'
-                );
-        	}",
-        );        
+        
         $menu[] = '-'; // equiv. to <hr/>
         
         $menu[] = array(

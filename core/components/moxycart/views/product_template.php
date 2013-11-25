@@ -19,10 +19,18 @@
 		</div>
 			
 		<div class="moxy-buttons-wrapper">
-			<button class="btn" id="moxy-save">Save</button>
-			<?php if(isset($data['uri'])) : ?>
-				<a class="btn" href="/<?php print $data['uri']; ?>" target="_blank">View</a>
-			<?php endif; ?>
+            <?php
+            if ($data['product_form_action'] == 'product_update'):
+            ?>
+                <button class="btn" id="product_update">Save</button>
+                <a class="btn" href="<?php print MODX_SITE_URL. $data['uri']; ?>" target="_blank">View</a>
+            <?php    
+            else:
+            ?>
+                <button class="btn" id="product_create">Save</button>
+            <?php
+            endif;
+            ?>
 			<a class="btn" href="<?php print $data['manager_url']; ?>">Close</a>
 		</div>
 	</div>

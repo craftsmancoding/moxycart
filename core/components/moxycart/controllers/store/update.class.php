@@ -43,40 +43,11 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
     }
 */
     /**
-     * Used to set values on the resource record sent to the template for derivative classes
-     *
+     * Used to set values on the resource record sent to the template for derivative classes (wtf?)
+     * We're doing this in the store model instead...
      * @return void
      */
     public function prepareResource() {
-//        $this->resourceArray['template'] = 3;
-//        $this->resourceArray['qty_alert'] = 666;
-/*
-        $settings = $this->resource->getProperties('moxycart');
-        if (empty($settings)) $settings = array();
-        
-        $defaultContainerTemplate = $this->modx->getOption('moxycart.default_container_template',$settings,false);
-        if (empty($defaultContainerTemplate)) {
-            // @var modTemplate $template 
-            $template = $this->modx->getObject('modTemplate',array('templatename' => 'sample.ArticlesContainerTemplate'));
-            if ($template) {
-                $defaultContainerTemplate = $template->get('id');
-            }
-        }
-        $this->resourceArray['template'] = $defaultContainerTemplate;
 
-        $defaultArticleTemplate = $this->modx->getOption('moxycart.default_moxycart_template',$settings,false);
-        if (empty($defaultArticleTemplate)) {
-            // @var modTemplate $template
-            $template = $this->modx->getObject('modTemplate',array('templatename' => 'sample.ArticleTemplate'));
-            if ($template) {
-                $defaultArticleTemplate = $template->get('id');
-            }
-        }
-        $this->resourceArray['setting_moxycartTemplate'] = $defaultArticleTemplate;
-
-        foreach ($settings as $k => $v) {
-            $this->resourceArray['setting_'.$k] = $v;
-        }
-*/
     }    
 }

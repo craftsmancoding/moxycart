@@ -8,7 +8,8 @@ INIT = {
 	
 	update_product: function(){
 		$('#product_update').on('submit',function(e){
-	    	var values = $(this).serialize();
+            console.log('Updating product.');
+            var values = $(this).serialize();
 	    	var url = connector_url + 'product_save';
 		    $.post( url+"&action=update", values, function(data){
 		    	$('.moxy-msg').show();
@@ -27,6 +28,7 @@ INIT = {
 
 	create_product: function(){
 		$('#product_create').on('submit',function(e){
+            console.log('Creating new product.');
 	    	var values = $(this).serialize();
 	    	var url = connector_url + 'product_save';
 		    $.post( url+"&action=create", values, function( data ){
