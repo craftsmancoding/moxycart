@@ -50,7 +50,7 @@ class StoreCreateManagerController extends ResourceCreateManagerController {
      */
     public function prepareResource() {
         $settings = $this->resource->get('properties');
-        $this->modx->log(1,print_r($settings,true));
+        //$this->modx->log(1,print_r($settings,true));
         if (empty($settings)) $settings = array();
         foreach ($settings as $k => $v) {
             $this->resourceArray[$k] = $v;
