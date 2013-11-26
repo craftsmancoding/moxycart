@@ -18,7 +18,7 @@
  *
  * USAGE
  *
- * [[!parseFoxycartDatafeed? &product_hooks=`UpdateInventory`]]
+ * [[!parseFoxycartDatafeed? &product_hooks=`UpdateInventory` &transaction_hooks=`CreateUser`]]
  *
  * PARAMS
  *
@@ -212,7 +212,7 @@ if($encrypted_data = $modx->getOption('FoxyData', $_POST)) {
     // Call per-postback hooks
     foreach ($postback_hooks as $hook) {    
         $modx->log(xPDO::LOG_LEVEL_DEBUG,'Calling postback-hook '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-        if (!$msg = $modx->runSnippet(trim($hook),$Transaction->toArray())) {
+        if (!$msg = $modx->runSnippet(trim($hook),$Foxydata->toArray())) {
             $modx->log(xPDO::LOG_LEVEL_ERROR,'postback-hook failed to execute: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);  
         }
         $modx->log(xPDO::LOG_LEVEL_DEBUG,'Completed postback-hook '.$hook.' with result: '.$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);    
