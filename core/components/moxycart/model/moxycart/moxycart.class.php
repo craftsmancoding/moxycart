@@ -358,12 +358,10 @@
         }
         $data = $Image->toArray(); 
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
-        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
         $this->modx->regClientStartupScript($this->jquery_url);
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
-        
-        $data['dropzone'] = $this->assets_url.'components/moxycart/js/dropzone.js';
+
         return $this->_load_view('image_update.php',$data);
     }
 
