@@ -93,8 +93,21 @@ INIT = {
 	edit_image_modal: function() {
 
 		$('.edit-img').on('click',function(){
-			var url = $(this).attr('href');
-			$("#update-image").load(url + " .modal-container");
+			var url_img_update = $(this).attr('href');
+			 $.ajax({
+                    type: "GET",
+                    url: url_img_update,
+                    success: function(data)
+                    {	
+                       var form = $(data).find('#modal-container').html();
+                       $("#update-image").html(form);
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown)
+                    {
+                        $("#update-image").html(errorThrown + ": " + this.url_img_update);
+                    },
+                    dataType: "html"
+                });
 		});
 	},
 

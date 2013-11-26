@@ -361,6 +361,7 @@
         $this->modx->regClientStartupScript($this->jquery_url);
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
+        $data['jquery_url'] = $this->jquery_url;
         return $this->_load_view('image_update.php',$data);
     }
 
@@ -379,7 +380,7 @@
     * @param product_id int
     * @return $out json
     **/
-    public function upload_image($product_id) {
+     public function upload_image($product_id) {
         $out = array(
             'success' => true,
             'msg' => '',
@@ -432,8 +433,20 @@
         switch ($action) {
             case 'update' :
                 $product_id = (int) $this->modx->getOption('product_id',$args);
-                $uploaded_img = json_decode($this->upload_image($product_id),true);
-                $rel_file = $uploaded_img['rel_file'];
+                if (isset($_FILES['file']['name']) ) {
+                    $uploaded_img = json_decode($this->upload_image($product_id),true);
+                    $rel_file = $uploaded_img['rel_file'];
+                }
+                $Image = $this->modx->getObject('Image',$this->modx->getOption('image_id', $args));
+
+                $Image->fromArray($_POST);
+
+                if (!$Image->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to update Image.';    
+                }
+                $out['msg'] = 'Image updated successfully.';  
+
                 break;
             case 'delete':
                 $file = $this->modx->getOption('file', $args);
@@ -448,18 +461,20 @@
             case 'create':
             default:
                 $product_id = (int) $this->modx->getOption('product_id',$args);
-                $uploaded_img = json_decode($this->upload_image($product_id),true);
-                $rel_file = $uploaded_img['rel_file'];
-                // Create db record
-                list($width, $height) = getimagesize(MODX_ASSETS_PATH.$rel_file);
-                $Image = $this->modx->newObject('Image');
-                $Image->set('product_id',$product_id);
-                $Image->set('url',MODX_ASSETS_URL.$rel_file);
-                $Image->set('path',MODX_ASSETS_PATH.$rel_file);
-                $Image->set('width',$width);
-                $Image->set('height',$height);
-                $Image->set('size',$uploaded_img['file_size']);
-                $Image->set('is_active',1);
+                if (isset($_FILES['file']['name']) ) {
+                    $uploaded_img = json_decode($this->upload_image($product_id),true);
+                    $rel_file = $uploaded_img['rel_file'];
+                    // Create db record
+                    list($width, $height) = getimagesize(MODX_ASSETS_PATH.$rel_file);
+                    $Image = $this->modx->newObject('Image');
+                    $Image->set('product_id',$product_id);
+                    $Image->set('url',MODX_ASSETS_URL.$rel_file);
+                    $Image->set('path',MODX_ASSETS_PATH.$rel_file);
+                    $Image->set('width',$width);
+                    $Image->set('height',$height);
+                    $Image->set('size',$uploaded_img['file_size']);
+                    $Image->set('is_active',1);
+                }
                 
                 if (!$Image->save()) {
                     $out['success'] = false;

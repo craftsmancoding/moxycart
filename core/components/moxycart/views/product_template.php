@@ -306,7 +306,7 @@
 
 		<ul class="clearfix" id="product_images"><?php print isset($data['images']) ? $data['images'] : ''; ?></ul>
 
-        <div id="image_upload">
+        <div class="dropzone-wrap" id="image_upload">
         	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
         </div>
 		<div class="modal fade" id="update-image"></div><!--/.modal -->

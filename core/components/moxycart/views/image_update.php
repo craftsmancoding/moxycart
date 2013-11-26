@@ -1,25 +1,42 @@
-<div class="modal-container">
-	 <script>
-	 $(function(){
-	 	alert('test');
-	 });
-	 </script>
+<div id="modal-container">
+		<script>
+			$(function(){
+				$('#image_update_form').on('submit',function(e){
+		           	var values = $(this).serialize();
+		           	console.log(connector_url+"image_save&action=update&image_id=1");
+				    $.post( connector_url+"image_save&action=update&image_id=1", values, function( data ){
+				    	//data = $.parseJSON(data);
+				    	console.log(values);
+				    	console.log(data);
+				    	/*if(data.success == true) {
+				    		window.location.href = redirect_url + data.product_id;
+				    	} else{
+				    		$('#moxy-result').html('Failed');
+				    		$('#moxy-result-msg').html(data.msg);
+				    		$(".moxy-msg").delay(3200).fadeOut(300);
+				    	}*/
+				    } );
+				    e.preventDefault();
+			    });
+			})
+		</script>
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	        <h4 class="modal-title" id="myModalLabel">Update Image</h4>
 	      </div>
-	      <form enctype="multipart/form-data" method="POST" action="#"class="form-horizontal">
+	      <form id="image_update_form" enctype="multipart/form-data" method="POST" action="#" class="form-horizontal">
 		      <div class="modal-body">
-					
+					<input type="hidden" name="image_id" value="<?php print $data['image_id'] ?>">
+				 	<input type="hidden" name="product_id" value="<?php print $data['product_id'] ?>">
 				 <div class="form-group">
 				    <label for="title" class="control-label">Title</label>
-				     <input type="text" class="form-control" id="title" value="<?php print $data['title']; ?>">
+				     <input type="text" class="form-control" name="title" id="title" value="<?php print $data['title']; ?>">
 				 </div>
 				 <div class="form-group">
 				    <label for="alt" class="control-label">Alt</label>
-				     <input type="text" class="form-control" id="alt" value="<?php print $data['alt']; ?>">
+				     <input type="text" class="form-control" name="alt" id="alt" value="<?php print $data['alt']; ?>">
 				 </div>
 
 				  <div class="form-group">
