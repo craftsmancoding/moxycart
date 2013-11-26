@@ -1,20 +1,26 @@
 <div id="modal-container">
 		<script>
 			$(function(){
+      
+				$('#update-img-msg').hide();
 				$('#image_update_form').on('submit',function(e){
 		           	var values = $(this).serialize();
-		           	console.log(connector_url+"image_save&action=update&image_id=1");
-				    $.post( connector_url+"image_save&action=update&image_id=1", values, function( data ){
-				    	//data = $.parseJSON(data);
-				    	console.log(values);
-				    	console.log(data);
-				    	/*if(data.success == true) {
-				    		window.location.href = redirect_url + data.product_id;
+		           	var image_id = $('#image_id').val();
+					/*var fileInput = document.getElementById('file');
+					var file = fileInput.files[0];
+					var formData = new FormData();
+					formData.append('file', file);*/
+		           	//console.log(connector_url+"image_save&action=update&image_id="+image_id);
+				    $.post( connector_url+"image_save&action=update&image_id="+image_id, values, function( data ){
+				    	//console.log(data);
+				    	data = $.parseJSON(data);
+
+				    	if(data.success == true) {
+				    		$('#update-img-msg').addClass('alert-success').html(data.msg).show();
 				    	} else{
-				    		$('#moxy-result').html('Failed');
-				    		$('#moxy-result-msg').html(data.msg);
-				    		$(".moxy-msg").delay(3200).fadeOut(300);
-				    	}*/
+				    		$('#update-img-msg').addClass('alert-danger').html(data.msg).show();
+				    	}
+				    	$("#update-img-msg").delay(3200).fadeOut(300);
 				    } );
 				    e.preventDefault();
 			    });
@@ -28,8 +34,7 @@
 	      </div>
 	      <form id="image_update_form" enctype="multipart/form-data" method="POST" action="#" class="form-horizontal">
 		      <div class="modal-body">
-					<input type="hidden" name="image_id" value="<?php print $data['image_id'] ?>">
-				 	<input type="hidden" name="product_id" value="<?php print $data['product_id'] ?>">
+					<input type="hidden" name="image_id" id="image_id"  value="<?php print $data['image_id'] ?>">
 				 <div class="form-group">
 				    <label for="title" class="control-label">Title</label>
 				     <input type="text" class="form-control" name="title" id="title" value="<?php print $data['title']; ?>">
@@ -43,9 +48,6 @@
 				    <label for="file" class="control-label">&nbsp;</label>
 					 <input type="file" id="file" name="file">
 				 </div>
-				
-				
-
 
 				<div class="form-group">
 					<label for="is_active" class="control-label">Is Active</label>

@@ -358,10 +358,12 @@
         }
         $data = $Image->toArray(); 
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
+        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
         $this->modx->regClientStartupScript($this->jquery_url);
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
-        $data['jquery_url'] = $this->jquery_url;
+        
+        $data['dropzone'] = $this->assets_url.'components/moxycart/js/dropzone.js';
         return $this->_load_view('image_update.php',$data);
     }
 
@@ -424,7 +426,8 @@
      * Post data here to save it
      */
     public function image_save($args) {
-        $action = $this->modx->getOption('action', $args);
+        $action = $this->modx->getOption('action', $args);     
+        unset($args['action']);
         $out = array(
             'success' => true,
             'msg' => '',
@@ -433,14 +436,20 @@
         switch ($action) {
             case 'update' :
                 $product_id = (int) $this->modx->getOption('product_id',$args);
+
+         
                 if (isset($_FILES['file']['name']) ) {
                     $uploaded_img = json_decode($this->upload_image($product_id),true);
                     $rel_file = $uploaded_img['rel_file'];
+                    list($width, $height) = getimagesize(MODX_ASSETS_PATH.$rel_file);
+                    $args['url'] = MODX_ASSETS_URL.$rel_file;
+                    $args['path'] = MODX_ASSETS_PATH.$rel_file;
+                    $args['width'] = $width;
+                    $args['height'] = $height;
                 }
                 $Image = $this->modx->getObject('Image',$this->modx->getOption('image_id', $args));
-
-                $Image->fromArray($_POST);
-
+                
+                $Image->fromArray($args);
                 if (!$Image->save()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to update Image.';    
