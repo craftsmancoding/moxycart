@@ -4200,11 +4200,22 @@ ol.terms_taxonomy {
 }
 .li_product_image .remove-img {
   position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 25px;
-  height: 25px;
+  top: -5px;
+  right: -5px;
+  width: 15px;
+  height: 15px;
   background: url('../images/remove-icon.png') no-repeat;
+  text-indent: -999999px;
+}
+
+
+.li_product_image .edit-img {
+  position: absolute;
+  top: -5px;
+  right: 15px;
+  width: 15px;
+  height: 15px;
+  background: url('../images/edit-icon.png') no-repeat;
   text-indent: -999999px;
 }
 

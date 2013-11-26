@@ -64,10 +64,12 @@ INIT = {
 
 	remove_image : function(e) {
 		var remove_img = $('.remove-img');
+		$('.edit-img').hide();
 		remove_img.hide();
+
 		$('.li_product_image').hover(
-            function() { $(this).find('a.remove-img').show(); },
-            function() { $(this).find('a.remove-img').hide(); }
+            function() { $(this).find('a.remove-img, a.edit-img').show(); },
+            function() { $(this).find('a.remove-img, a.edit-img').hide(); }
           );
 		var url = connector_url + 'image_save';
 		remove_img.on('click',function(){
