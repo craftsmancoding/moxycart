@@ -21,8 +21,10 @@ class MoxycartSnippet {
     public function execute($method,$args) {
     	$outerTpl = $this->modx->getOption('outerTpl',$args,'MoxyOuterTpl');
 		$innerTpl = $this->modx->getOption('innerTpl',$args,'MoxyInnerTpl');
+		$args['limit'] = 0;
+
 		$records = $this->modx->moxycart->$method($args, true);
-		
+
 		if($records['total'] == 0) {
 			return 'No Record Found.';
 		}
@@ -30,9 +32,12 @@ class MoxycartSnippet {
 		$innerOut = '';
 		$output = '';
 		if (isset($records['results']) && is_array($records['results'])) {
-			foreach ($records['results'] as $row) {
-		   		$innerOut .= $this->modx->getChunk($innerTpl,$row);
-			}
+
+				foreach ($records['results'] as $row) {
+			   		$innerOut .= $this->modx->getChunk($innerTpl,$row);
+				}
+
+			
 		}
 	
 		$innerPlaceholder = array('moxy.items' => $innerOut);

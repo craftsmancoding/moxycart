@@ -871,7 +871,7 @@
             $out['msg'] = 'Invalid store_id '.$this->modx->getOption('store_id',$args); 
             return json_encode($out);
         }
-        $args['uri'] = $Store->get('uri') . $alias;
+        $args['uri'] = $Store->get('uri') .$args['alias'];
         
         switch ($action) {
             case 'update':
@@ -1024,7 +1024,8 @@
                 $out['msg'] = 'Product deleted successfully.';    
                 break;
             case 'create':
-                $Product = $this->modx->newObject('Product');    
+                $Product = $this->modx->newObject('Product');   
+                
                 $Product->fromArray($args);
                 //taxonomies
                 $related = $this->modx->getOption('taxonomies',$args,array());
@@ -1491,6 +1492,7 @@
         foreach ($pages as $p) {
             $row = array(
                 'product_id' => $p->get('product_id'),
+                'alias' => $p->get('alias'),
                 'name' => $p->get('name'),
                 'sku' => $p->get('sku'),
                 'type' => $p->get('type'),
