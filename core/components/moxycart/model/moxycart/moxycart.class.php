@@ -871,7 +871,7 @@
             $out['msg'] = 'Invalid store_id '.$this->modx->getOption('store_id',$args); 
             return json_encode($out);
         }
-        $args['uri'] = $Store->get('uri') . '/'.$args['alias'];
+        $args['uri'] = $Store->get('uri') .$args['alias'];
         
         switch ($action) {
             case 'update':
