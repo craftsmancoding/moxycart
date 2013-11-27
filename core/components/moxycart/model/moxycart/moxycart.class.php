@@ -1491,6 +1491,7 @@
         foreach ($pages as $p) {
             $row = array(
                 'product_id' => $p->get('product_id'),
+                'alias' => $p->get('alias'),
                 'name' => $p->get('name'),
                 'sku' => $p->get('sku'),
                 'type' => $p->get('type'),
