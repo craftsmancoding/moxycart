@@ -1,6 +1,6 @@
 <?php
 /** 
- * This file handles Ajax requests made by Moxycart.  It provides stores of data
+ * This file handles manager requests made by Moxycart.  It provides stores of data
  * for controllers in the manager.  This file is normally accessed via post,
  * but it can also be accessed directly for debugging purposes, e.g. 
  * http://yoursite.com/assets/components/moxycart/connector.php

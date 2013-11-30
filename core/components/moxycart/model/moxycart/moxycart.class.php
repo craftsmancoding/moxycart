@@ -31,6 +31,8 @@
 
     public $action; // &a=xxx for primary Moxycart action
     
+    public $data = array(); // passed to views.
+    
     private $core_path;
     private $assets_url;
     private $mgr_url;
@@ -169,7 +171,7 @@
      * @return string
      */
     private function _load_view($file, $data=array(),$return=false) {
-
+        $file = basename($file);
     	if (file_exists($this->core_path.'components/moxycart/views/'.$file)) {
     	    if (!isset($return) || $return == false) {
     	        ob_start();
@@ -229,6 +231,25 @@
     //------------------------------------------------------------------------------
     //! Public
     //------------------------------------------------------------------------------
+    
+    /**
+     *
+     *
+     */
+    public function dashboard() {
+        $data = array();
+        $data['mgr_connector_url'] = $this->mgr_connector_url;
+        return $this->_load_view('dashboard.php',$data);
+    }
+    
+    /**
+     *
+     */
+    public function receipts() {
+    
+    
+    }
+    
     /**
      * Generate a string to be used as the API key
      *
