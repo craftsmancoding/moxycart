@@ -239,14 +239,44 @@
     public function dashboard() {
         $data = array();
         $data['mgr_connector_url'] = $this->mgr_connector_url;
-        return $this->_load_view('dashboard.php',$data);
+        $out = $this->_load_view('dashboard_header.php',$data);
+        $out .= $this->_load_view('dashboard.php',$data);
+        $out .= $this->_load_view('dashboard_footer.php',$data);        
+        return $out;
     }
     
     /**
      *
      */
     public function receipts() {
+        $this->modx->addPackage('foxycart',$this->core_path.'components/moxycart/model/','foxy_');
+        
+        $data = array();
+        $data['mgr_connector_url'] = $this->mgr_connector_url;
+        $out = $this->_load_view('dashboard_header.php',$data);
+//        $out .= $this->_load_view('dashboard.php',$data);
+  
+        
+        
+        $Data = $this->modx->getCollection('Foxydata');
+        
+        if (!$Data) {
+            $out .= 'No transactions.';
+            $out .= $this->_load_view('dashboard_footer.php',$data);        
+            return $out;
+        }
+        
+        $out = '<table>';
+        foreach ($Data as $t) {
+            $out .= '<tr>';
+            $out .= '<td>'.$t->get('customer_first_name').' '.$t->get('customer_last_name').'</td>';
+            $out .= '<td>'.$t->get('order_total').'</td>';
+            $out .= '<td><a href="'.$t->get('receipt_url').'">View Receipt</a></td>';
+        }
+        $out .= '</table>';
+        $out .= $this->_load_view('dashboard_footer.php',$data);        
     
+        return $out;
     
     }
     
