@@ -1540,10 +1540,21 @@
             'results'=>array(),
             'total' => $total_pages,
         );
+        
+       // set date and time (unix)
+        $now = strtotime(date('Y-m-d H:i:s'));
+        
         foreach ($pages as $p) {
+            $calculated_price = $p->get('price');
+            // if on sale use price sale
+            if(strtotime($p->get('sale_start')) <= $now && strtotime($p->get('sale_end')) >= $now) {
+                $calculated_price = $p->get('price_sale');
+            }
+
             $row = array(
                 'product_id' => $p->get('product_id'),
                 'alias' => $p->get('alias'),
+                'content' => $p->get('content'),
                 'name' => $p->get('name'),
                 'sku' => $p->get('sku'),
                 'type' => $p->get('type'),
@@ -1554,11 +1565,13 @@
                 'uri' => $p->get('uri'),
                 'is_active' => $p->get('is_active'), 
                 'seq' => $p->get('seq'), 
+                'calculated_price'=> $calculated_price,
             );
             
             $row['variant'] = $this->_get_variant_info($p->get('variant_matrix'));
             $data['results'][] = $row;
         }
+
 
         if ($raw) {
             return $data;
