@@ -1,9 +1,11 @@
 INIT = {
+/*
 	exec_wysiwyg: function(){
       bkLib.onDomLoaded(function() {
             new nicEditor({buttonList : ['bold','italic','underline','left','center','right','justify','ol','ul','fontSize','fontFamily','fontFormat','indent','outdent','image','forecolor','bgcolor']}).panelInstance('content');          
       });
     },
+*/
 
 	
 	update_product: function(){
@@ -117,7 +119,7 @@ INIT = {
 }
 
 $(function() {
-	INIT.exec_wysiwyg();
+//	INIT.exec_wysiwyg();
 	INIT.update_product();
 	INIT.create_product();
 	INIT.fill_form_fields();
