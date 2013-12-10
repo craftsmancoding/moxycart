@@ -11,7 +11,20 @@ INIT = {
 	update_product: function(){
 		$('#product_update').on('submit',function(e){
             console.log('Updating product.');
-            var values = $(this).serialize();
+            var values = $(this).serializeArray();
+            if(use_editor == "1") {
+		    	var content_val = $('#content_ifr').contents().find('#tinymce').html();
+		    	for (var item in values)
+				{
+				  if (values[item].name == 'content') {
+				    values[item].value = content_val;
+				  }
+				}
+			}
+			values = jQuery.param(values);
+			console.log(values);
+			//return false;
+
 	    	var url = connector_url + 'product_save';
 		    $.post( url+"&action=update", values, function(data){
 		    	$('.moxy-msg').show();
@@ -33,12 +46,14 @@ INIT = {
 			
 			console.log('Creating new product.');
 	    	var values = $(this).serializeArray();
-	    	var content_val = $('#content_ifr').contents().find('#tinymce').html();
-	    	for (var item in values)
-			{
-			  if (values[item].name == 'content') {
-			    values[item].value = content_val;
-			  }
+	    	 if(use_editor == "1") {
+		    	var content_val = $('#content_ifr').contents().find('#tinymce').html();
+		    	for (var item in values)
+				{
+				  if (values[item].name == 'content') {
+				    values[item].value = content_val;
+				  }
+				}
 			}
 			values = jQuery.param(values);
 

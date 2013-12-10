@@ -117,7 +117,7 @@
 							<label for="description">Content</label>
 						</td>
 						<td colspan="3">
-							<textarea name="content" id="content" class="modx-richtext"></textarea>
+							<textarea name="content" id="content" class="modx-richtext" style="width:700px;height:120px;"></textarea>
 						</td>
 					</tr>
 

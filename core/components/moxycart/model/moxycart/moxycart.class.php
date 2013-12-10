@@ -646,6 +646,7 @@
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
         $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">          
             var connector_url = "'.$this->connector_url.'";
+            var use_editor = "'.$this->modx->getOption('use_editor').'";
             var assets_url = "'.MODX_ASSETS_URL.'";
             var redirect_url = "'.$this->mgr_url .'?a='.$this->action . '&f=product_update&product_id='.'";
             // use Ext JS?
@@ -654,7 +655,10 @@
             });
             </script>
         ');
-        $this->_load_tinyMCE();
+
+        if ($this->modx->getOption('use_editor')) {
+            $this->_load_tinyMCE();
+        }
 
         return $this->_load_view('product_template.php',$data);
     }
@@ -753,6 +757,7 @@
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.$Product->toJson().';            
     		var connector_url = "'.$this->connector_url.'";
+            var use_editor = "'.$this->modx->getOption('use_editor').'";
             var assets_url = "'.MODX_ASSETS_URL.'";    		
             var variation_url = "'.$this->connector_url.'&parent_id='.$product_id.'";
             jQuery(document).ready(function() {
@@ -766,8 +771,10 @@
  	
         $this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
         
+        if ($this->modx->getOption('use_editor')) {
+            $this->_load_tinyMCE();
+        }
 
-        $this->_load_tinyMCE();
         $data['mgr_connector_url'] = $this->mgr_connector_url;
         return $this->_load_view('product_template.php',$data);
     }
