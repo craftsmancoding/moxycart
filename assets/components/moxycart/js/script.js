@@ -30,8 +30,19 @@ INIT = {
 
 	create_product: function(){
 		$('#product_create').on('submit',function(e){
-            console.log('Creating new product.');
-	    	var values = $(this).serialize();
+			
+			console.log('Creating new product.');
+	    	var values = $(this).serializeArray();
+	    	var content_val = $('#content_ifr').contents().find('#tinymce').html();
+	    	for (var item in values)
+			{
+			  if (values[item].name == 'content') {
+			    values[item].value = content_val;
+			  }
+			}
+			values = jQuery.param(values);
+
+
 	    	var url = connector_url + 'product_save';
 		    $.post( url+"&action=create", values, function( data ){
 		    	data = $.parseJSON(data);

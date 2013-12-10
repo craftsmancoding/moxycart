@@ -227,6 +227,42 @@
         
         return $this->_load_view('product_term_list.php',$data);
     }
+
+    /**
+    * Load TinyMCE
+    * Add modx-richtext class on textarea
+    * @param
+    * @return
+    **/
+    private function _load_tinyMCE() 
+    {
+        $_REQUEST['a'] = '';  /* fixes E_NOTICE bug in TinyMCE */
+        $plugin= $this->modx->getObject('modPlugin',array('name'=>'TinyMCE'));
+
+
+        $tinyPath =  $this->modx->getOption('core_path').'components/tinymce/';
+        $tinyUrl =  $this->modx->getOption('assets_url').'components/tinymce/';
+        /* @var $plugin modPlugin */
+        $tinyproperties=$plugin->getProperties();
+        require_once $tinyPath.'tinymce.class.php';
+        $tiny = new TinyMCE( $this->modx, $tinyproperties);
+
+        //$tinyproperties['language'] =  $modx->getOption('fe_editor_lang',array(),$language);
+        $tinyproperties['frontend'] = true;
+        $tinyproperties['cleanup'] = true; /* prevents "bogus" bug */
+        $tinyproperties['width'] = empty ( $props['tinywidth'] )? '95%' :  $props['tinywidth'];
+        $tinyproperties['height'] = empty ( $props['tinyheight'])? '400px' :  $props['tinyheight'];
+       //$tinyproperties['resource'] =  $resource;
+        $tiny->setProperties($tinyproperties);
+        $tiny->initialize();
+
+         $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            delete Tiny.config.setup; // remove manager specific initialization code (depending on ModExt)
+            Ext.onReady(function() {
+                MODx.loadRTE();
+            });
+        </script>');
+    }
     
     //------------------------------------------------------------------------------
     //! Public
@@ -558,6 +594,7 @@
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
     public function product_create($args) {
+
         $data = array();
         $store_id = (int) $this->modx->getOption('store_id',$_GET);
         $data['manager_url'] = $this->mgr_url.'?a=30&id='.$store_id;
@@ -617,7 +654,8 @@
             });
             </script>
         ');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');        
+        $this->_load_tinyMCE();
+
         return $this->_load_view('product_template.php',$data);
     }
 
@@ -628,7 +666,6 @@
      * @param int product_id (from $_GET). Defines the id of the product
      */
     public function product_update($args) {
-        
         $product_id = (int) $this->modx->getOption('product_id', $args);
 
         if (!$Product = $this->modx->getObject('Product', $product_id)) {        
@@ -726,54 +763,11 @@
     		});
     		</script>
     	');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');    	
+ 	
         $this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
         
 
-        // Code copied from Newspubliser
-/*
-        if ($this->modx->getOption('use_editor')) {
-
-           $whichEditor = $this->modx->getOption('which_editor',null,'');
-
-           if ($whichEditor == 'TinyMCE' ) {
-                $_REQUEST['a'] = '';  // fixes E_NOTICE bug in TinyMCE
-                $plugin=$this->modx->getObject('modPlugin',array('name'=>'TinyMCE'));
-
-                // set rich text content placeholders and includes necessary js files
-                $this->modx->regClientStartupScript($this->modx->getOption('manager_url').'assets/ext3/adapter/ext/ext-base.js');
-                $this->modx->regClientStartupScript($this->modx->getOption('manager_url').'assets/ext3/ext-all.js');
-                $this->modx->regClientStartupScript($this->modx->getOption('manager_url').'assets/modext/core/modx.js');
-
-                $tinyPath = $this->modx->getOption('core_path').'components/tinymce/';
-                $tinyUrl = $this->modx->getOption('assets_url').'components/tinymce/';
-                // @var $plugin modPlugin
-                $tinyproperties = $plugin->getProperties();
-//                print_r($tinyproperties); exit;
-                require_once $tinyPath.'tinymce.class.php';
-                $tiny = new TinyMCE($this->modx, $tinyproperties);
-                $language = "en";
-                $tinyproperties['language'] = $this->modx->getOption('fe_editor_lang',array(),$language);
-                $tinyproperties['frontend'] = true;
-                $tinyproperties['cleanup'] = true; // prevents "bogus" bug
-                $tinyproperties['width'] = empty ($this->props['tinywidth'] )? '95%' : $this->props['tinywidth'];
-                $tinyproperties['height'] = empty ($this->props['tinyheight'])? '400px' : $this->props['tinyheight'];
-               $tinyproperties['resource'] = $this->resource;
-                $tiny->setProperties($tinyproperties);
-                $tiny->initialize();
-
-                $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-                    delete Tiny.config.setup; // remove manager specific initialization code (depending on ModExt)
-                    Ext.onReady(function() {
-                        MODx.loadRTE();
-                    });
-                </script>');
-
-           } // end if ($whichEditor == 'TinyMCE')
-       } // end if ($richtext)
-*/
-
-        
+        $this->_load_tinyMCE();
         $data['mgr_connector_url'] = $this->mgr_connector_url;
         return $this->_load_view('product_template.php',$data);
     }

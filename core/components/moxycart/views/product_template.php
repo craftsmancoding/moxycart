@@ -117,13 +117,14 @@
 							<label for="description">Content</label>
 						</td>
 						<td colspan="3">
-							<textarea name="content" id="content" style="width:700px;height:120px;"></textarea>
+							<textarea name="content" id="content" class="modx-richtext"></textarea>
 						</td>
 					</tr>
 
 						
 				</tbody>
 			</table>
+
 	</div>
 
 	<div id="settings_tab" class="content">
