@@ -354,6 +354,24 @@
 		
         return '<div id="moxycart_canvas"></div>';
     }
+
+     /**
+     * Get a single image for Ajax update.
+     */
+    public function get_image($args) {
+        $id = (int) $this->modx->getOption('image_id', $args);
+        
+        $Image = $this->modx->getObject('Image',$id);
+
+        
+        if (!$Image) {
+            return 'Error loading image. '.print_r($args,true);
+        }
+        
+        $data = $Image->toArray();
+        $data['action'] = $this->action;
+        return $this->_load_view('product_image.php',$data);
+    }
  
     /**
      * Post data here to save it
@@ -577,6 +595,7 @@
                     return json_decode($out);
                 }
                 $out['msg'] = 'Successfully saved image';
+                $out['image_id'] = $this->modx->lastInsertId();
                 $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'Successfully saved image '.$Image->getPrimaryKey() .' '.MODX_ASSETS_PATH.$rel_file);
                 
         }
@@ -760,9 +779,31 @@
             var use_editor = "'.$this->modx->getOption('use_editor').'";
             var assets_url = "'.MODX_ASSETS_URL.'";    		
             var variation_url = "'.$this->connector_url.'&parent_id='.$product_id.'";
+  
             jQuery(document).ready(function() {
-                var myDropzone = new Dropzone("div#image_upload", {url: connector_url+"image_save&product_id='.$product_id.'"});
+                    var myDropzone = new Dropzone("div#image_upload", {url: connector_url+"image_save&product_id='.$product_id.'"});
+                    
+                    // Refresh the list on success (append new tile to end)
+                    myDropzone.on("success", function(file,response) {
+
+                         console.log(response);
+                        response = jQuery.parseJSON(response);
+                        console.log(response);
+                        if (response.success) {
+                           
+                            var url = connector_url + "get_image&image_id=" + response.image_id;
+                            jQuery.post( url, function(data){
+                                jQuery("#product_images").append(data);
+                                jQuery(".dz-preview").remove();
+                            });
+                       }
+                       // TODO: better formatting
+                       else {
+                           alert(response.msg);
+                       }
+                    });
             });
+
 			Ext.onReady(function() {   		
     			renderProductVariationProductsGrid();
     		});

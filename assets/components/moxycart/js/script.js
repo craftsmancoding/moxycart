@@ -22,7 +22,7 @@ INIT = {
 				}
 			}
 			values = jQuery.param(values);
-			console.log(values);
+			//console.log(values);
 			//return false;
 
 	    	var url = connector_url + 'product_save';
@@ -100,8 +100,8 @@ INIT = {
             function() { $(this).find('a.remove-img, a.edit-img').hide(); }
           );
 		var url = connector_url + 'image_save';
-		remove_img.on('click',function(){
-			if(confirm('Are you sure you want to delete this image?')) {
+		$( document ).on( "click", "a.remove-img", function() {
+		  	if(confirm('Are you sure you want to delete this image?')) {
 				var current_img = $(this).parent();
 	            var img_id = $(this).data('image_id');
 	            var img_file = $(this).data('file');
@@ -117,7 +117,7 @@ INIT = {
 			    } );
 	        }
 			return false;
-		})
+		});
 	},
 
 	edit_image_modal: function() {
