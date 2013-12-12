@@ -35,6 +35,26 @@
 				    e.preventDefault();
 			    });
 
+				$('#remove-img-modal').on('click', function(){
+					var url = connector_url + 'image_save';
+					var img_id = $(this).data('image_id');
+	            	var img_file = $(this).data('file');
+				  	if(confirm('Are you sure you want to delete this image?')) {
+			            $.post( url+"&action=delete", { image_id: img_id, file: img_file }, function( data ){
+			            	console.log(data)
+					    	data = $.parseJSON(data);
+					    	if(data.success == true) {
+					    		$('#update-image').modal('hide');
+					    		$('#product-image-'+img_id).remove();
+					    	} else{
+					    		$('#update-img-msg').addClass('alert-danger').html(data.msg).show();
+					    		$(".moxy-msg").delay(3200).fadeOut(300);
+					    	}
+					    } );
+			        }
+			        return false;
+				});
+
 				$('#close-update').on('click', function(){
 					if($(this).hasClass('has-saved')) {
 						var image_id = $(this).data('image_id');
@@ -89,26 +109,6 @@
 	//    })
 	    }
 
-	   function remove_image() {
-			var url = connector_url + 'image_save';
-			  	if(confirm('Are you sure you want to delete this image?')) {
-					/*var current_img = $(this).parents('.li_product_image');
-		            var img_id = $(this).data('image_id');
-		            var img_file = $(this).data('file');
-		            $.post( url+"&action=delete", { image_id: img_id, file: img_file }, function( data ){
-				    	data = $.parseJSON(data);
-				    	if(data.success == true) {
-				    		current_img.remove();
-				    	} else{
-				    		$('#moxy-result').html('Failed');
-				    		$('#moxy-result-msg').html(data.msg);
-				    		$(".moxy-msg").delay(3200).fadeOut(300);
-				    	}
-				    } );*/
-		        }
-		        return false;
-		}
-
 		</script>
 	  <div class="modal-dialog">
 	    <div class="modal-content">
@@ -157,14 +157,11 @@
                     </div>
                     <span class="btn crop-btn" onclick="javascript:crop(); return false;">Crop</span>
                 </div>
-                                
-
-				 
 
 		      </div>
 			      <div class="modal-footer">
 			        <button type="button" data-image_id="<?php print $data['image_id']; ?>" class="btn btn-default" id="close-update" data-dismiss="modal">Close</button>
-			        <button type="button" data-image_id="<?php print $data['image_id']; ?>" class="btn btn-default" onclick="javascript:remove_image(); return false;">Delete</button>
+			        <button type="button" id="remove-img-modal" data-image_id="<?php print $data['image_id']; ?>"  data-file="<?php print $data['url']; ?>" class="btn btn-default">Delete</button>
 			        <input type="submit" class="btn btn-custom" name="submit" value="Save changes">
 			      </div>
 	      	</form>
