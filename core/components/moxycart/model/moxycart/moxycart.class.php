@@ -509,7 +509,7 @@
                     $out['success'] = false;
                     $out['msg'] = 'Failed to create directory at '.$target_path;    
                     $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create directory at '.$target_path);
-                    return json_decode($out);
+                    return json_encode($out);
                 }
             }
             // Image already exists?
@@ -517,7 +517,7 @@
                 $out['success'] = false;
                 $out['msg'] = 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file;
                 $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file);
-                return json_decode($out);
+                return json_encode($out);
             }
             if(move_uploaded_file($_FILES['file']['tmp_name'],MODX_ASSETS_PATH.$rel_file)) {
                 $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'SUCCESS UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
@@ -526,7 +526,7 @@
                 $out['success'] = false;
                 $out['msg'] = 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file;
                 $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
-                return json_decode($out);
+                return json_encode($out);
             }
             $out['rel_file'] = $rel_file;
             $out['file_size'] = $_FILES['file']['size'];

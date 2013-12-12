@@ -89,6 +89,26 @@
 	//    })
 	    }
 
+	   function remove_image() {
+			var url = connector_url + 'image_save';
+			  	if(confirm('Are you sure you want to delete this image?')) {
+					/*var current_img = $(this).parents('.li_product_image');
+		            var img_id = $(this).data('image_id');
+		            var img_file = $(this).data('file');
+		            $.post( url+"&action=delete", { image_id: img_id, file: img_file }, function( data ){
+				    	data = $.parseJSON(data);
+				    	if(data.success == true) {
+				    		current_img.remove();
+				    	} else{
+				    		$('#moxy-result').html('Failed');
+				    		$('#moxy-result-msg').html(data.msg);
+				    		$(".moxy-msg").delay(3200).fadeOut(300);
+				    	}
+				    } );*/
+		        }
+		        return false;
+		}
+
 		</script>
 	  <div class="modal-dialog">
 	    <div class="modal-content">
@@ -133,8 +153,6 @@
                                 <input type="hidden" id="y2" name="y2" />
                                 <input type="hidden" id="w" name="w" />
                                 <input type="hidden" id="h" name="h" />
-                                <input type="hidden" id="width" name="width" value="<?php print $data['width']; ?>"/>
-                                <input type="hidden" id="height" name="height" value="<?php print $data['height']; ?>"/>
 
                     </div>
                     <span class="btn crop-btn" onclick="javascript:crop(); return false;">Crop</span>
@@ -145,7 +163,8 @@
 
 		      </div>
 			      <div class="modal-footer">
-			        <button type="button" data-url="<?php print $data['url']; ?>" data-image_id="<?php print $data['image_id']; ?>" class="btn btn-default" id="close-update" data-dismiss="modal">Close</button>
+			        <button type="button" data-image_id="<?php print $data['image_id']; ?>" class="btn btn-default" id="close-update" data-dismiss="modal">Close</button>
+			        <button type="button" data-image_id="<?php print $data['image_id']; ?>" class="btn btn-default" onclick="javascript:remove_image(); return false;">Delete</button>
 			        <input type="submit" class="btn btn-custom" name="submit" value="Save changes">
 			      </div>
 	      	</form>
