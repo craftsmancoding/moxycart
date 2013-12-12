@@ -2,6 +2,19 @@
 		<script src="<?php print $data['jcrop_js']; ?>" type="text/javascript"></script>
 		<script>
 			$(function(){
+
+				/**
+				* Update thumb on images tab
+				* Once the image got cropped, bewly cropped must also appears on thumb
+				**/
+				function update_thumb(image_id) {
+					$.get(connector_url+"get_image&image_id="+image_id, function( data ) {
+						var img_markup = $(data).filter('#product-image-'+image_id).find('.img-info-wrap');
+						console.log(img_markup)
+					 	$('#product-image-'+image_id).html(img_markup);
+					});
+				}
+
 				jQuery('#jcrop_target').Jcrop({
 		    		onChange: set_coords,
 		    		onSelect: set_coords
@@ -25,11 +38,16 @@
 
 					    	if(data.success == true) {
 					    		$('#update-img-msg').addClass('alert-success').html(data.msg).show();
-					    		$('#close-update').addClass('has-saved');
+					    		$("#update-img-msg").delay(2000).fadeOut(300);
+					    		window.setTimeout(function(){
+								     $('#update-image').modal('hide');
+								}, 2000);
+								update_thumb(image_id);
 					    	} else{
 					    		$('#update-img-msg').addClass('alert-danger').html(data.msg).show();
+					    		$("#update-img-msg").delay(3200).fadeOut(300);
 					    	}
-					    	$("#update-img-msg").delay(3200).fadeOut(300);
+					    	
 		                }
 		           });
 				    e.preventDefault();
@@ -56,13 +74,9 @@
 				});
 
 				$('#close-update').on('click', function(){
-					if($(this).hasClass('has-saved')) {
+					if($(this).hasClass('has-cropped')) {
 						var image_id = $(this).data('image_id');
-						$.get(connector_url+"get_image&image_id="+image_id, function( data ) {
-							var img_markup = $(data).filter('#product-image-'+image_id).find('.img-info-wrap');
-							console.log(img_markup)
-						 	$('#product-image-'+image_id).html(img_markup);
-						});
+						update_thumb(image_id);
 					}
 				});
 
@@ -98,7 +112,7 @@
 	                //console.log(data.img);
 	                jQuery("#target_image").html(data.img);
 	                $('#update-img-msg').addClass('alert-success').html(data.msg).show();
-	                $('#close-update').addClass('has-saved');
+	                $('#close-update, #update-save').addClass('has-cropped');
 	            }
 	            else {
 	            	$('#update-img-msg').addClass('alert-danger').html(data.msg).show();
@@ -162,7 +176,7 @@
 			      <div class="modal-footer">
 			        <button type="button" data-image_id="<?php print $data['image_id']; ?>" class="btn btn-default" id="close-update" data-dismiss="modal">Close</button>
 			        <button type="button" id="remove-img-modal" data-image_id="<?php print $data['image_id']; ?>"  data-file="<?php print $data['url']; ?>" class="btn btn-default">Delete</button>
-			        <input type="submit" class="btn btn-custom" name="submit" value="Save changes">
+			        <input type="submit" id="update-save" class="btn btn-custom" name="submit" value="Save changes">
 			      </div>
 	      	</form>
 
