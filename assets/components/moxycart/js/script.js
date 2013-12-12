@@ -122,7 +122,7 @@ INIT = {
 
 	edit_image_modal: function() {
 
-		$('.edit-img').on('click',function(){
+		$( document ).on( "click", "a.edit-img", function() {
 			var url_img_update = $(this).attr('href');
 			 $.ajax({
                     type: "GET",

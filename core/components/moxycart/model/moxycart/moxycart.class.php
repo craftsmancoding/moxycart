@@ -40,6 +40,7 @@
     private $connector_url; 
     private $mgr_connector_url; 
     private $jquery_url;
+    public $max_image_width = 300;
 
     private $cache; // for iterative ops
     private $depth = 0; //
@@ -466,6 +467,15 @@
         $this->modx->regClientStartupScript($this->jquery_url);
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
+        $data['visible_height'] = $data['height'];
+        $data['visible_width'] = $data['width'];        
+        if ($data['width'] > $this->max_image_width) {
+            $data['wide_load'] = 'Warning! This image is larger than it appears.';
+            $ratio = $this->max_image_width / $data['width'];
+            $data['visible_height'] = (int) ($data['height'] * $ratio);
+            $data['visible_width'] = $this->max_image_width;
+        }
+        $data['jcrop_js'] = $this->assets_url.'components/moxycart/js/jcrop.js';
 
         return $this->_load_view('image_update.php',$data);
     }
@@ -523,6 +533,152 @@
             
         } 
         return json_encode($out);
+    }
+
+    /**
+     * Crop an image in place (original file is destructively edited).
+     * In this AddOn, an image MUST be rep'd by a Image, so the id must be set.
+     * We return an <img> tag as well to save the hastle of another ajax post.
+     * 
+     * @params array $args including key for id
+     * @return string JSON array
+     */
+    public function image_crop($args) { 
+        
+        $out = array(
+            'success' => true,
+            'msg' => '',
+            'img' => ''
+        );
+        
+        $id = (int) $this->modx->getOption('image_id', $args);
+        $Image = $this->modx->getObject('Image', $id);
+        
+        if (!$Image) {
+            $out['success'] = false;
+            $out['msg'] = 'Image and Image not found.';
+            return json_encode($out);
+        }
+        // http://www.php.net/manual/en/function.imagecopy.php
+        $src = $Image->get('path');
+       // $src = $Image->get('url');
+        if (!file_exists($src)) {
+            $out['success'] = false;
+            $out['msg'] = 'Image ('.$id.') Image not found: '.$src;
+            return json_encode($out);            
+        }
+        
+        $srcImg = '';
+        $ext = strtolower(substr($src, -4));
+        $image_func = '';
+        $quality = null; // different vals for different funcs
+        switch ($ext) {
+            case '.gif':
+                $srcImg = @imagecreatefromgif($src);
+                $image_func = 'imagegif';
+                break;
+            case '.jpg':
+            case 'jpeg':
+                $srcImg = @imagecreatefromjpeg($src);
+                $image_func = 'imagejpeg';
+                $quality = 100;
+                break;
+            case '.png':
+                $srcImg = @imagecreatefrompng($src);
+                $image_func = 'imagepng';
+                $quality = 0;
+                break;
+            default:
+                $out['success'] = false;
+                $out['msg'] = 'Image ('.$id.') Unrecognized extension: '.$ext;
+                return json_encode($out);                            
+        }
+        
+        if (!$srcImg) {
+            $out['success'] = false;
+            $out['msg'] = 'Image ('.$id.') could not create image: '.$src;
+            return json_encode($out);                        
+        }
+        
+        // Cleared for launch.
+        $ratio = 1;
+        if ($Image->get('width') > $this->max_image_width) {
+            $ratio = $Image->get('width') / $this->max_image_width;
+        }
+        // Remember: order of ops for type-casting. (int) filters ONLY the variable to its right!!
+        $src_x = (int) ($ratio * $this->modx->getOption('x',$args));
+        $src_y = (int) ($ratio * $this->modx->getOption('y',$args));
+        $src_w = (int) ($ratio * $this->modx->getOption('w',$args));
+        $src_h = (int) ($ratio * $this->modx->getOption('h',$args));
+
+        // Remember: at this point, if the user selects the full width of the *displayed*
+        // image, it is not necessarily equal to the dimensions of the original image.
+        $new_w = (int) ($ratio * $this->modx->getOption('w',$args));
+        $new_h = (int) ($ratio * $this->modx->getOption('h',$args));
+        $destImg = imagecreatetruecolor($src_w, $src_h);
+
+        if (!imagecopy($destImg, $srcImg, 0, 0, $src_x, $src_y, $src_w, $src_h)) {
+            $out['success'] = false;
+            $out['msg'] = 'Image ('.$id.') could not crop image: '.$src;
+            imagedestroy($srcImg);
+            imagedestroy($destImg);
+            return json_encode($out);                                    
+        }
+        
+        if (!$image_func($destImg,$Image->get('path'),$quality)) {
+            $out['success'] = false;
+            $out['msg'] = 'Image ('.$id.') could not save cropped image: '.$src;
+            imagedestroy($srcImg);
+            imagedestroy($destImg);
+            return json_encode($out);                                    
+        }
+        
+        imagedestroy($srcImg);
+        imagedestroy($destImg);
+
+        $Image->set('height', $new_h);
+        $Image->set('width', $new_w);
+        $Image->set('size', filesize($Image->get('path')));
+        if (!$Image->save()) {
+            $out['success'] = false;
+            $out['msg'] = 'Could not update Image: '.$id;            
+            return json_encode($out);                                            
+        }
+        $out['msg'] = 'Image cropped successfully.';
+        $out['img'] = $this->get_image_tag(array('image_id'=>$id));
+
+        return json_encode($out);
+    }
+
+    /**
+     * Get a single image tag for Ajax update
+     *
+     */
+    public function get_image_tag($args) {
+               
+        $id = (int) $this->modx->getOption('image_id', $args);
+        
+        $Image = $this->modx->getObject('Image',$id);
+        
+        if (!$Image) {
+            return 'Error loading image.';
+        }
+        
+        $data = $Image->toArray();
+         
+        $data['wide_load'] = '';
+        $data['visible_height'] = $data['height'];
+        $data['visible_width'] = $data['width'];        
+        if ($data['width'] > $this->max_image_width) {
+            $data['wide_load'] = 'Warning! This image is larger than it appears.';
+            $ratio = $this->max_image_width / $data['width'];
+            $data['visible_height'] = (int) ($data['height'] * $ratio);
+            $data['visible_width'] = $this->max_image_width;
+        }
+
+        $img = $this->_load_view('image.php',$data);
+
+        return $img;
     }
 
     /**
