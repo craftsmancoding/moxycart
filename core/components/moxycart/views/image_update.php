@@ -25,6 +25,7 @@
 
 					    	if(data.success == true) {
 					    		$('#update-img-msg').addClass('alert-success').html(data.msg).show();
+					    		$('#close-update').addClass('has-saved');
 					    	} else{
 					    		$('#update-img-msg').addClass('alert-danger').html(data.msg).show();
 					    	}
@@ -33,6 +34,18 @@
 		           });
 				    e.preventDefault();
 			    });
+
+				$('#close-update').on('click', function(){
+					if($(this).hasClass('has-saved')) {
+						var image_id = $(this).data('image_id');
+						$.get(connector_url+"get_image&image_id="+image_id, function( data ) {
+							var img_markup = $(data).filter('#product-image-'+image_id).find('.img-info-wrap');
+							console.log(img_markup)
+						 	$('#product-image-'+image_id).html(img_markup);
+						});
+					}
+				});
+
 			});
 
 		/**
@@ -65,6 +78,7 @@
 	                //console.log(data.img);
 	                jQuery("#target_image").html(data.img);
 	                $('#update-img-msg').addClass('alert-success').html(data.msg).show();
+	                $('#close-update').addClass('has-saved');
 	            }
 	            else {
 	            	$('#update-img-msg').addClass('alert-danger').html(data.msg).show();
@@ -121,6 +135,7 @@
                                 <input type="hidden" id="h" name="h" />
                                 <input type="hidden" id="width" name="width" value="<?php print $data['width']; ?>"/>
                                 <input type="hidden" id="height" name="height" value="<?php print $data['height']; ?>"/>
+
                     </div>
                     <span class="btn crop-btn" onclick="javascript:crop(); return false;">Crop</span>
                 </div>
@@ -130,7 +145,7 @@
 
 		      </div>
 			      <div class="modal-footer">
-			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        <button type="button" data-url="<?php print $data['url']; ?>" data-image_id="<?php print $data['image_id']; ?>" class="btn btn-default" id="close-update" data-dismiss="modal">Close</button>
 			        <input type="submit" class="btn btn-custom" name="submit" value="Save changes">
 			      </div>
 	      	</form>

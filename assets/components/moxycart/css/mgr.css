@@ -4182,7 +4182,7 @@ button.close {
 #product_images li.li_product_image {
   float: left;
   border: 1px solid #acacac;
-  padding: 5px;
+  padding: 5px 5px 0px;
   margin: 10px;
   position: relative;
 }
@@ -4206,6 +4206,7 @@ ol.terms_taxonomy {
   height: 15px;
   background: url('../images/remove-icon.png') no-repeat;
   text-indent: -999999px;
+  display: none;
 }
 
 
@@ -4217,18 +4218,19 @@ ol.terms_taxonomy {
   height: 15px;
   background: url('../images/edit-icon.png') no-repeat;
   text-indent: -999999px;
+  display: none;
 }
 
 .form-group {
   margin-bottom: 10px;
 }
 
-.image-wrap-jcrop {
-  width: 
+
+.crop-btn {
+  margin-left: 200px;
+  margin-top: 10px;
 }
 
-
-.crop-btn,
 .jcrop-holder {
   margin-left: 200px;
 }

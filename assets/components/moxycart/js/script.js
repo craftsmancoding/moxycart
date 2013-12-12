@@ -90,19 +90,11 @@ INIT = {
 	    });
 	},
 
-	remove_image : function(e) {
-		var remove_img = $('.remove-img');
-		$('.edit-img').hide();
-		remove_img.hide();
-
-		$('.li_product_image').hover(
-            function() { $(this).find('a.remove-img, a.edit-img').show(); },
-            function() { $(this).find('a.remove-img, a.edit-img').hide(); }
-          );
+	remove_image : function() {
 		var url = connector_url + 'image_save';
 		$( document ).on( "click", "a.remove-img", function() {
 		  	if(confirm('Are you sure you want to delete this image?')) {
-				var current_img = $(this).parent();
+				var current_img = $(this).parents('.li_product_image');
 	            var img_id = $(this).data('image_id');
 	            var img_file = $(this).data('file');
 	            $.post( url+"&action=delete", { image_id: img_id, file: img_file }, function( data ){
@@ -155,4 +147,13 @@ $(function() {
 	$('.datepicker').datepicker();
 	$("#product_images").sortable();
     $("#product_images").disableSelection();
+
+	$( document ).on( "mouseenter", ".li_product_image", function() {
+ 		$(this).find('a.remove-img, a.edit-img').show();
+	});
+	$( document ).on( "mouseleave", ".li_product_image", function() {
+ 		$(this).find('a.remove-img, a.edit-img').hide();
+	});
+
+
 });
