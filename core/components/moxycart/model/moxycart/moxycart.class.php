@@ -40,7 +40,7 @@
     private $connector_url; 
     private $mgr_connector_url; 
     private $jquery_url;
-    public $max_image_width = 300;
+    public $max_image_width = 250;
 
     private $cache; // for iterative ops
     private $depth = 0; //
@@ -516,7 +516,7 @@
             // Image already exists?
             if (file_exists(MODX_ASSETS_PATH.$rel_file)) {
                 $out['success'] = false;
-                $out['msg'] = 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file;
+                $out['msg'] = 'Upload Failed. File of same name exists';
                 $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file);
                 return json_encode($out);
             }
@@ -730,8 +730,16 @@
             case 'create':
             default:
                 $product_id = (int) $this->modx->getOption('product_id',$args);
+
                 if (isset($_FILES['file']['name']) ) {
                     $uploaded_img = json_decode($this->upload_image($product_id),true);
+
+                    if ($uploaded_img['success'] == false) {
+                        $out['success'] = false;
+                        $out['msg'] = $uploaded_img['msg'];
+                        return json_encode($out);
+                    }
+
                     $rel_file = $uploaded_img['rel_file'];
                     // Create db record
                     list($width, $height) = getimagesize(MODX_ASSETS_PATH.$rel_file);
@@ -749,7 +757,7 @@
                     $out['success'] = false;
                     $out['msg'] = 'Failed to save Image object for product';
                     $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to save Image object for product '.$product_id .' '.MODX_ASSETS_PATH.$rel_file);
-                    return json_decode($out);
+                    return json_encode($out);
                 }
                 $out['msg'] = 'Successfully saved image';
                 $out['image_id'] = $this->modx->lastInsertId();
@@ -953,10 +961,16 @@
                                 jQuery("#product_images").append(data);
                                 jQuery(".dz-preview").remove();
                             });
-                       }
+                       } 
                        // TODO: better formatting
                        else {
-                           alert(response.msg);
+                           
+                            $(".dz-success-mark").hide();
+                           $(".dz-error-mark").show();
+                           $(".moxy-msg").show();
+                           $("#moxy-result").html("Failed");
+                            $("#moxy-result-msg").html(response.msg);
+                            $(".moxy-msg").delay(3200).fadeOut(400);
                        }
                     });
             });
