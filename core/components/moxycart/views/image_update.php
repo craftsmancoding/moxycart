@@ -136,8 +136,8 @@
 
 
 				<div class="form-group">
-					<label for="is_active" class="control-label">Is Active</label>
-				     <input type="checkbox" class="form-control" id="is_active" <?php if($data['is_active'] == 1){ print 'checked'; } ?>>
+					<label for="checkbox_id" class="control-label">Is Active</label>
+					<input type="checkbox" class="form-control" name="is_active" id="checkbox_id" <?php if($data['is_active'] == 1){ print 'checked'; } ?> value="1">
 				 </div>
 
 
