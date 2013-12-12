@@ -467,6 +467,7 @@
         $this->modx->regClientStartupScript($this->jquery_url);
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
+        $data['wide_load'] = '';
         $data['visible_height'] = $data['height'];
         $data['visible_width'] = $data['width'];        
         if ($data['width'] > $this->max_image_width) {
