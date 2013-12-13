@@ -4176,7 +4176,7 @@ button.close {
 }
 
 #product_images {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 #product_images li.li_product_image {
@@ -4185,6 +4185,8 @@ button.close {
   padding: 5px 5px 0px;
   margin: 10px;
   position: relative;
+  width: 100px;
+  height: 100px;
 }
 
 

@@ -129,8 +129,10 @@
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	        <h4 class="modal-title" id="myModalLabel">Update Image</h4>
+	        
 	      </div>
 	      <div id="update-img-msg" class="alert"></div>
+	      
 	      <form id="image_update_form"  method="POST" action="#" class="form-horizontal">
 		      <div class="modal-body">
 					<input type="hidden" name="image_id" id="image_id"  value="<?php print $data['image_id'] ?>">

@@ -41,6 +41,7 @@
     private $mgr_connector_url; 
     private $jquery_url;
     public $max_image_width = 250;
+    public $thumb_width = 100;
 
     private $cache; // for iterative ops
     private $depth = 0; //
@@ -429,6 +430,48 @@
         return json_encode($out);
     }
     
+    /**
+    * create_thumbnail
+    * @param string $filename
+    **/
+    public function create_thumbnail($filename,$target_path,$target_path_thumb) {   
+   
+        if(preg_match('/[.](jpg)$/', $filename)) {
+            $im = imagecreatefromjpeg($target_path . $filename);
+        } else if (preg_match('/[.](gif)$/', $filename)) {
+            $im = imagecreatefromgif($target_path . $filename);
+        } else if (preg_match('/[.](png)$/', $filename)) {
+            $im = imagecreatefrompng($target_path . $filename);
+        }
+        
+        $ox = imagesx($im);
+        $oy = imagesy($im);
+        
+        $nx = $this->thumb_width;
+        $ny = floor($oy * ($this->thumb_width / $ox));
+        
+        $nm = imagecreatetruecolor($nx, $ny);
+        
+        imagecopyresized($nm, $im, 0,0,0,0,$nx,$ny,$ox,$oy);
+        
+        if(!file_exists(MODX_ASSETS_PATH.$target_path_thumb)) {
+          if (!mkdir(MODX_ASSETS_PATH.$target_path_thumb,0777,true)) {
+                $out['success'] = false;
+                $out['msg'] = 'Failed to create directory at '.MODX_ASSETS_PATH.$target_path_thumb;    
+                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create directory at '.MODX_ASSETS_PATH.$target_path_thumb);
+                return json_encode($out);
+          } 
+        }
+
+        if(!imagejpeg($nm, MODX_ASSETS_PATH.$target_path_thumb . $filename)) {
+                $out['success'] = false;
+                $out['msg'] = 'Failed to create thumb at '.MODX_ASSETS_PATH.$target_path_thumb;    
+                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create thumb at '.MODX_ASSETS_PATH.$target_path_thumb);
+                return json_encode($out);
+        }
+        return $target_path_thumb . $filename;
+    }
+
     //------------------------------------------------------------------------------
     //! Images
     //------------------------------------------------------------------------------
@@ -477,6 +520,7 @@
             $data['visible_width'] = $this->max_image_width;
         }
         $data['jcrop_js'] = $this->assets_url.'components/moxycart/js/jcrop.js';
+        $data['loader_path'] = $this->assets_url.'components/moxycart/images/gif-load.gif';
 
         return $this->_load_view('image_update.php',$data);
     }
@@ -505,6 +549,7 @@
             // Relative to either MODX_ASSETS_URL or MODX_ASSETS_PATH
             $rel_file =  $this->upload_dir.$product_id.'/'.basename($_FILES['file']['name']);
             $target_path = MODX_ASSETS_PATH.$this->upload_dir.$product_id.'/';
+            $target_path_thumb = $this->upload_dir.$product_id.'/thumbs' . '/';
             if (!file_exists($target_path)) {
                 if (!mkdir($target_path,0777,true)) {
                     $out['success'] = false;
@@ -529,6 +574,8 @@
                 $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
                 return json_encode($out);
             }
+
+            $out['thumbnail_url'] = $this->create_thumbnail(basename($_FILES['file']['name']),$target_path,$target_path_thumb);
             $out['rel_file'] = $rel_file;
             $out['file_size'] = $_FILES['file']['size'];
             
@@ -718,13 +765,13 @@
 
                 break;
             case 'delete':
-                $file = $this->modx->getOption('file', $args);
                 $Image = $this->modx->getObject('Image',$this->modx->getOption('image_id', $args));
                 if (!$Image->remove()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to delete Image.';    
                 }
-                unlink(MODX_BASE_PATH . $file);
+                unlink(MODX_BASE_PATH . $Image->get('url'));
+                unlink(MODX_BASE_PATH . $Image->get('thumbnail_url'));
                 $out['msg'] = 'Image deleted successfully.';    
                 break;
             case 'create':
@@ -747,6 +794,7 @@
                     $Image->set('product_id',$product_id);
                     $Image->set('url',MODX_ASSETS_URL.$rel_file);
                     $Image->set('path',MODX_ASSETS_PATH.$rel_file);
+                    $Image->set('thumbnail_url',MODX_ASSETS_URL.$uploaded_img['thumbnail_url']);
                     $Image->set('width',$width);
                     $Image->set('height',$height);
                     $Image->set('size',$uploaded_img['file_size']);

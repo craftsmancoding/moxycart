@@ -96,8 +96,7 @@ INIT = {
 		  	if(confirm('Are you sure you want to delete this image?')) {
 				var current_img = $(this).parents('.li_product_image');
 	            var img_id = $(this).data('image_id');
-	            var img_file = $(this).data('file');
-	            $.post( url+"&action=delete", { image_id: img_id, file: img_file }, function( data ){
+	            $.post( url+"&action=delete", { image_id: img_id }, function( data ){
 			    	data = $.parseJSON(data);
 			    	if(data.success == true) {
 			    		current_img.remove();
