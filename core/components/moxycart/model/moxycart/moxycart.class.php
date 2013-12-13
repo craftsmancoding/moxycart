@@ -435,7 +435,11 @@
     * @param string $filename
     **/
     public function create_thumbnail($filename,$target_path,$target_path_thumb) {   
-   
+         if(file_exists(MODX_ASSETS_PATH.$target_path_thumb.$filename)) {
+            unlink(MODX_ASSETS_PATH.$target_path_thumb.$filename);
+         }
+
+        $ext = strtolower(substr($filename, -4));
         if(preg_match('/[.](jpg)$/', $filename)) {
             $im = imagecreatefromjpeg($target_path . $filename);
         } else if (preg_match('/[.](gif)$/', $filename)) {
@@ -443,14 +447,38 @@
         } else if (preg_match('/[.](png)$/', $filename)) {
             $im = imagecreatefrompng($target_path . $filename);
         }
-        
+        list($width, $height) = getimagesize($target_path.$filename);
         $ox = imagesx($im);
         $oy = imagesy($im);
         
-        $nx = $this->thumb_width;
-        $ny = floor($oy * ($this->thumb_width / $ox));
+        $nx = ( $width >= $this->thumb_width ) ? $this->thumb_width : $width;
+        $ny = floor($oy * ($nx / $ox));
         
         $nm = imagecreatetruecolor($nx, $ny);
+
+        if (preg_match('/[.](png)$/', $filename)) {
+                // integer representation of the color black (rgb: 0,0,0)
+                $background = imagecolorallocate($nm, 0, 0, 0);
+                // removing the black from the placeholder
+                imagecolortransparent($nm, $background);
+
+                // turning off alpha blending (to ensure alpha channel information 
+                // is preserved, rather than removed (blending with the rest of the 
+                // image in the form of black))
+                imagealphablending($nm, false);
+
+                // turning on alpha channel information saving (to ensure the full range 
+                // of transparency is preserved)
+                imagesavealpha($nm, true);
+        } 
+
+        if (preg_match('/[.](png)$/', $filename)) {
+                // integer representation of the color black (rgb: 0,0,0)
+                $background = imagecolorallocate($nm, 0, 0, 0);
+                // removing the black from the placeholder
+                imagecolortransparent($nm, $background);
+        }
+
         
         imagecopyresized($nm, $im, 0,0,0,0,$nx,$ny,$ox,$oy);
         
@@ -592,6 +620,7 @@
      * @return string JSON array
      */
     public function image_crop($args) { 
+
         
         $out = array(
             'success' => true,
@@ -601,7 +630,13 @@
         
         $id = (int) $this->modx->getOption('image_id', $args);
         $Image = $this->modx->getObject('Image', $id);
-        
+     
+        $thumbnail_url = $Image->get('thumbnail_url');
+        $filename = basename($thumbnail_url); 
+        $target_path_thumb = dirname($thumbnail_url). '/';
+        $target_path = MODX_ASSETS_PATH.dirname($target_path_thumb). '/';
+
+
         if (!$Image) {
             $out['success'] = false;
             $out['msg'] = 'Image and Image not found.';
@@ -687,11 +722,21 @@
         $Image->set('height', $new_h);
         $Image->set('width', $new_w);
         $Image->set('size', filesize($Image->get('path')));
+
         if (!$Image->save()) {
             $out['success'] = false;
             $out['msg'] = 'Could not update Image: '.$id;            
             return json_encode($out);                                            
         }
+
+         // start create new thumb
+        $thumbnail_url = $Image->get('thumbnail_url');
+        $filename = basename($thumbnail_url); 
+        $target_path_thumb = substr(dirname($thumbnail_url),8). '/';
+        $target_path = MODX_ASSETS_PATH.dirname($target_path_thumb). '/';
+        $this->create_thumbnail($filename,$target_path,$target_path_thumb);
+        // start create new thumb
+
         $out['msg'] = 'Image cropped successfully.';
         $out['img'] = $this->get_image_tag(array('image_id'=>$id));
 

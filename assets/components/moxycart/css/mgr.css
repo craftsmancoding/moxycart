@@ -4182,7 +4182,7 @@ button.close {
 #product_images li.li_product_image {
   float: left;
   border: 1px solid #acacac;
-  padding: 5px 5px 0px;
+  padding: 5px;
   margin: 10px;
   position: relative;
   width: 100px;
@@ -4242,6 +4242,13 @@ ol.terms_taxonomy {
 .warning {
   padding-bottom: 5px;
 }
+
+.helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
 /* .crop-btn {
   margin-bottom: 10px;
 }
