@@ -1,4 +1,8 @@
 /* The MIT License */
+.dropzone-wrap {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
 .dropzone-previews,
 .dropzone-previews * {
   -webkit-box-sizing: border-box;
