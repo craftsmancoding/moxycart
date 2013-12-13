@@ -38,10 +38,10 @@
 
 					    	if(data.success == true) {
 					    		$('#update-img-msg').addClass('alert-success').html(data.msg).show();
-					    		$("#update-img-msg").delay(2000).fadeOut(300);
+					    		$("#update-img-msg").delay(1000).fadeOut(300);
 					    		window.setTimeout(function(){
 								     $('#update-image').modal('hide');
-								}, 2000);
+								}, 1000);
 								update_thumb(image_id);
 					    	} else{
 					    		$('#update-img-msg').addClass('alert-danger').html(data.msg).show();
@@ -155,7 +155,7 @@
 				 </div>
 
 
-				<div class="span6" id="image_stuff">
+				<div class="clearfix" id="image_stuff">
 					<span class="btn crop-btn" onclick="javascript:crop(); return false;">Crop</span>
                      <div id="image_stuff-inner">
                               <div id="target_image">

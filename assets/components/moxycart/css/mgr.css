@@ -4225,8 +4225,22 @@ ol.terms_taxonomy {
   margin-bottom: 10px;
 }
 
-
 .crop-btn {
+  float: left;
+  margin-left: -100px;
+  margin-top: 5px;
+}
+
+
+#image_stuff-inner {
+  float: left;
+  margin-top: 5px;
+}
+
+.warning {
+  padding-bottom: 5px;
+}
+/* .crop-btn {
   margin-bottom: 10px;
 }
 
@@ -4235,7 +4249,9 @@ ol.terms_taxonomy {
 #jcrop_target {
   padding-bottom: 5px;
   margin-left: 200px;
-}
+} */
+
+
 
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */
