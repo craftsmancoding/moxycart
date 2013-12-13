@@ -1,12 +1,4 @@
 INIT = {
-/*
-	exec_wysiwyg: function(){
-      bkLib.onDomLoaded(function() {
-            new nicEditor({buttonList : ['bold','italic','underline','left','center','right','justify','ol','ul','fontSize','fontFamily','fontFormat','indent','outdent','image','forecolor','bgcolor']}).panelInstance('content');          
-      });
-    },
-*/
-
 	
 	update_product: function(){
 		$('#product_update').on('submit',function(e){
@@ -132,11 +124,20 @@ INIT = {
 		});
 	},
 
+    
+}
 
+/**
+ * Ajax call to dynamically update the form
+ */
+function get_spec(spec_id) {
+    var url = connector_url + "get_spec&spec_id=" + spec_id;
+    jQuery.post( url, function(data){
+        jQuery("#product_specs").append(data);
+    });
 }
 
 $(function() {
-//	INIT.exec_wysiwyg();
 	INIT.update_product();
 	INIT.create_product();
 	INIT.fill_form_fields();

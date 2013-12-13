@@ -440,12 +440,17 @@
          }
 
         $ext = strtolower(substr($filename, -4));
-        if(preg_match('/[.](jpg)$/', $filename)) {
-            $im = imagecreatefromjpeg($target_path . $filename);
-        } else if (preg_match('/[.](gif)$/', $filename)) {
-            $im = imagecreatefromgif($target_path . $filename);
-        } else if (preg_match('/[.](png)$/', $filename)) {
-            $im = imagecreatefrompng($target_path . $filename);
+        switch ($ext) {
+            case '.jpg':
+            case 'jpeg':
+                $im = imagecreatefromjpeg($target_path . $filename);
+                break;
+            case '.gif':
+                $im = imagecreatefromgif($target_path . $filename);
+                break;
+            case '.png':
+                $im = imagecreatefrompng($target_path . $filename);
+                break;
         }
         list($width, $height) = getimagesize($target_path.$filename);
         $ox = imagesx($im);
@@ -775,6 +780,22 @@
     }
 
     /**
+     * Get a single Spec for Ajax updates
+     *
+     */
+    public function get_spec($args) {
+        $spec_id = (int) $this->modx->getOption('spec_id', $args);
+        $Spec = $this->modx->getObject('Spec',$spec_id);
+        if (!$Spec) {
+            return 'Invalid Spec';
+        }
+        // template name mapping
+        $s = $Spec->toArray();
+        $s['spec'] = $s['name'];
+        return $this->_load_view('product_spec.php',$s); // TODO: react to the spec "type"
+    }
+
+    /**
      * Post data here to save it
      */
     public function image_save($args) {
@@ -963,6 +984,7 @@
         $product_images = $this->json_images(array('product_id'=>$product_id,'limit'=>0),true);
         foreach ($product_images['results'] as $img) {
             $img['action'] = $this->action;
+            $img['thumb_width'] = $this->thumb_width;
             $data['images'] .= $this->_load_view('product_image.php',$img);
         }
         
@@ -1186,7 +1208,9 @@
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
     public function product_sort_order($args) {
-        // Add Required JS files here:
+        $args['limit'] = 0; // get 'em all
+        $args['sort'] = 'seq';
+
         // You can get here 2 ways: all products in a store, or all variations in a product.
         $store_id = (int) $this->modx->getOption('store_id', $args);
         $product_id = (int) $this->modx->getOption('product_id', $args);
@@ -1199,16 +1223,19 @@
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
             var connector_url = "'.$this->connector_url.'";
             var back_url = "'.$back_url.'";
-    		Ext.onReady(function() {   		
-    			renderProductSortPanel();
-    		});
     		</script>
     	');
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productsortorder.js');
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
-		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');		
+
+        $this->modx->regClientStartupScript($this->jquery_url);
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
+		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');		
 		
-        return '<div id="moxycart_canvas"></div>';
+        $products = $this->json_products($args,true);
+
+        $products['back_url'] = $back_url;        
+
+        return $this->_load_view('product_list.php',$products);
+        
     }
 
     /**
@@ -1482,6 +1509,43 @@
 
         return json_encode($out);        
 
+    }
+
+    /**
+     * Post data here to save product sort order.  Data should be in the following format:
+     *
+     * $_POST['seq'] = array( 11,22,33) where 11,22,33 are product ids.
+     *
+     */
+    public function product_save_seq($args) {
+        $out = array(
+            'success' => true,
+            'msg' => '',
+        );
+        
+        $product_ids = $this->modx->getOption('seq',$args,array());
+        
+        $seq = 0;
+        foreach ($product_ids as $id) {
+            $id = (int) $id;
+            $Prod = $this->modx->getObject('Product', $id);
+            if (!$Prod) {
+                $out['success'] = false;
+                $out['msg'] = 'Invalid product id: '.$id;
+                $this->modx->log(MODX_LOG_LEVEL_ERROR,$out['msg']);
+                return json_encode($out);
+            }
+            $Prod->set('seq', $seq);
+            if (!$Prod->save()) {
+                $out['success'] = false;
+                $out['msg'] = 'Error saving product: '.$id;
+                $this->modx->log(MODX_LOG_LEVEL_ERROR,$out['msg']);
+                return json_encode($out);
+            }
+            $seq++;
+        }
+        $out['msg'] = 'Sort order updated.';
+        return json_encode($out);
     }
     
     //------------------------------------------------------------------------------
@@ -1857,7 +1921,7 @@
      */
 
     public function json_products($args,$raw=false) {
-    
+
 /*
         if (!$this->modx->hasPermission($this->modx->getOption(__FUNCTION__, $this->perms, $this->default_perm))) {
             $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart::'.__FUNCTION__.'] User does not have sufficient privileges.');
@@ -1867,7 +1931,7 @@
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
-        $sort = $this->modx->getOption('sort',$args,'product_id');
+        $sort = $this->modx->getOption('sort',$args,'seq');
         $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $parent_id = (int) $this->modx->getOption('parent_id',$args);
@@ -1885,7 +1949,8 @@
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
         $pages = $this->modx->getCollection('Product',$criteria);
-        //return $criteria->toSQL(); //<-- useful for debugging
+//        print $criteria->toSQL(); //<-- useful for debugging
+//        exit;
         // Init our array
         $data = array(
             'results'=>array(),

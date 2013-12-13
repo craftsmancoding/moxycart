@@ -1,8 +1,4 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<style>
-#sortable { list-style-type: none; margin: 0; padding: 0; width: 450px; }
-#sortable li { margin: 3px 3px 3px 0; padding: 1px; float: left; width: 100px; height: 90px; font-size: 4em; text-align: center; }
-</style>
 
 <div class="moxy-msg">
 	<div id="moxy-result"></div>
@@ -11,7 +7,7 @@
 
 
 
-<form method="POST" id="<?php print $data['product_form_action']; ?>" action="#">
+<form method="post" id="<?php print $data['product_form_action']; ?>" action="#">
 <div id="modx-panel-workspace" class="x-plain container">
 	<div class="moxy-header clearfix">
 		<div class="moxy-header-title">
@@ -278,7 +274,7 @@
     </div>
 	
 	<div id="specs_tab" class="content">
-			<table class="table table-bordered">
+			<table class="table table-bordered" id="product_specs">
 				<thead>
 					<tr>
 						<th>Spec</th>
@@ -297,10 +293,10 @@
 					?>
 				</tbody>
 			</table>
-		<select>
+		<select id="spec_id">
             <?php print $data['specs']; ?>
 		</select>
-		<button onclick="alert('add a row to the table with this spec'); return false;">Attach Spec</button>
+		<button onclick="javascript:get_spec(jQuery('#spec_id').val()); return false;">Attach Spec</button>
 	</div>
 
 	<div id="images_tab" class="content">		
