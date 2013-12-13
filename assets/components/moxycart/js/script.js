@@ -149,10 +149,10 @@ $(function() {
     $("#product_images").disableSelection();
 
 	$( document ).on( "mouseenter", ".li_product_image", function() {
- 		$(this).find('a.remove-img, a.edit-img').show();
+ 		$(this).find('a.remove-img').show();
 	});
 	$( document ).on( "mouseleave", ".li_product_image", function() {
- 		$(this).find('a.remove-img, a.edit-img').hide();
+ 		$(this).find('a.remove-img').hide();
 	});
 
 

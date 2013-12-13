@@ -4210,7 +4210,7 @@ ol.terms_taxonomy {
 }
 
 
-.li_product_image .edit-img {
+/* .li_product_image .edit-img {
   position: absolute;
   top: -5px;
   right: 15px;
@@ -4220,7 +4220,7 @@ ol.terms_taxonomy {
   text-indent: -999999px;
   display: none;
 }
-
+ */
 .form-group {
   margin-bottom: 10px;
 }
