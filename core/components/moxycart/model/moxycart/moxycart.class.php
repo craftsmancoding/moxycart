@@ -1812,7 +1812,7 @@
             $row = array(
                 'product_id' => $p->get('product_id'),
                 'alias' => $p->get('alias'),
-                'content' => $p->get('content'),
+                'content' => stripslashes($p->get('content')),
                 'name' => $p->get('name'),
                 'sku' => $p->get('sku'),
                 'type' => $p->get('type'),
