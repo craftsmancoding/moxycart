@@ -4227,11 +4227,13 @@ ol.terms_taxonomy {
 
 
 .crop-btn {
-  margin-left: 200px;
-  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
-.jcrop-holder {
+.jcrop-holder,
+.warning,
+#jcrop_target {
+  padding-bottom: 5px;
   margin-left: 200px;
 }
 

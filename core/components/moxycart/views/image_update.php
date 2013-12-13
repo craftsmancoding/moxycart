@@ -156,6 +156,7 @@
 
 
 				<div class="span6" id="image_stuff">
+					<span class="btn crop-btn" onclick="javascript:crop(); return false;">Crop</span>
                      <div id="image_stuff-inner">
                               <div id="target_image">
                                    <?php include dirname(__FILE__).'/image.php'; ?>
@@ -169,7 +170,7 @@
                                 <input type="hidden" id="h" name="h" />
 
                     </div>
-                    <span class="btn crop-btn" onclick="javascript:crop(); return false;">Crop</span>
+                    
                 </div>
 
 		      </div>
