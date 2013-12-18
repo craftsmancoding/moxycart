@@ -78,8 +78,10 @@
                         </tr>
                         <tr>
                           <td colspan="2">
-                              <label for="content">Content</label>
+                          	<div class="well">
+                              <legend>Content</legend>
                               <textarea id="content" class="modx-richtext" rows="7" name="content"></textarea>
+                              </div>
                           </td>
                         </tr>
                     </tbody>
@@ -87,145 +89,86 @@
 	</div>
 
 	<div id="settings_tab" class="content">
+
 		 <table class="table no-top-border">
-				<tbody>
-					<tr>
-						<td>
-							<label for="sku">SKU</label>
-						</td>
-						<td>
-							<input type="text" name="sku" id="sku" value="">
-						</td>
-						<td>
-							<label for="sku_vendor">Vendor SKU</label>
-						</td>
-						<td>
-							<input type="text" name="sku_vendor" id="sku_vendor" value="">
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<label for="price">Price</label>
-						</td>
-						<td>
-							<input type="text" name="price" id="price" value="">
-						</td>
-						<td>
-							<label for="price_sale">Sale Price</label>
-						</td>
-						<td>
-							<input type="text" name="price_sale" id="price_sale" value="">
-						</td>
+                    <tbody>
+                         <tr>
+                            <td style="vertical-align: top;">
+                                <label for="sku">SKU</label>
+                                <input type="text" class="span8" id="sku" name="sku" value=""/>
 
-					</tr>
+                                <label for="price">Price</label>
+                                <input type="text" class="span8" id="price" name="price" value=""/>
 
-					<tr>
-						<td>
-							<label for="price_strike_thru">Strike-Through Price</label>
-						</td>
-						<td>
-							<input type="text" name="price_strike_thru" id="price_strike_thru" value="">
-						</td>
-						<td>
-							<label for="sale_start">Sale Start</label>
-						</td>
-						<td>
-							<div class="input-append date datepicker" data-date="<?php echo date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
-									  <input type="text" name="sale_start" id="sale_start" class="span2" maxlength="10" value="">
-									  <span class="add-on"><i class="icon icon-calendar"></i></span>
-							</div>
-						</td>
-					</tr>
+                                <label for="price_strike_thru">Strike-Through Price</label>
+                                <input type="text" class="span8" id="price_strike_thru" name="price_strike_thru" value=""/>
 
-					<tr>
-						<td>
-							<label for="currency_id">Currency</label>
-						</td>
-						<td>
-							<select name="currency_id" id="currency_id">
-                                <?php print $data['currencies']; ?>
-							</select>
-						</td>
-						<td>
-							<label for="sale_end">Sale End</label>
-						</td>
-						<td>
-							<div class="input-append date datepicker" data-date="<?php echo date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
-									  <input type="text" name="sale_end" id="sale_end" class="span2" maxlength="10" value="">
-									  <span class="add-on"><i class="icon icon-calendar"></i></span>
-							</div>
-						</td>
-					</tr>
+                                <label for="price_strike_thru">Strike-Through Price</label>
+                                <input type="text" class="span8" id="price_strike_thru" name="price_strike_thru" value=""/>
+								
+								 <label for="currency_id">Currency</label>
+                                <select class="span8" name="currency_id" id="currency_id">
+                                	<?php print $data['currencies']; ?>
+								</select>
 
-					<tr>
-						<td>
-							<label for="qty_inventory">Inventory</label>
-						</td>
-						<td>
-							<input type="text" name="qty_inventory" id="qty_inventory" value="">
-						</td>
-						<td>
-							<label for="qty_min">Qty Min</label>
-						</td>
-						<td>
-							<input type="text" name="qty_min" id="qty_min" value="">
-						</td>
+								 <label for="qty_inventory">Inventory</label>
+                                <input type="text" class="span8" id="qty_inventory" name="qty_inventory" value=""/>
 
-					</tr>
-					<tr>
-						<td>
-							<label for="qty_alert">Alert Qty</label>
-						</td>
-						<td>
-							<input type="text" name="qty_alert" id="qty_alert" value="">
-						</td>
-						<td>
-							<label for="qty_max">Qty Max</label>
-						</td>
-						<td>
-							<input type="text" name="qty_max" id="qty_max" value="">
-						</td>
+                                <label for="qty_alert">Alert Qty</label>
+                                <input type="text" class="span8" id="qty_alert" name="qty_alert" value=""/>
 
-					</tr>
+                                <label for="track_inventory">Track Inventory</label>
+								<select name="track_inventory" class="span8" id="track_inventory">
+									<option value="1">Yes</option>
+									<option value="0">No</option>
+								</select>
 
-					<tr>
-						<td>
-							<label for="track_inventory">Track Inventory</label>
-						</td>
-						<td>
-							<select name="track_inventory" id="track_inventory">
-								<option value="1">Yes</option>
-								<option value="0">No</option>
-							</select>
-						</td>
-						<td>
-							<label for="back_order_cap">Back Order Cap</label>
-						</td>
-						<td colspan="3">
-							<input type="text" name="back_order_cap" id="back_order_cap" value="">
-						</td>
+								<label for="type">Product Type</label>
+								<select class="span8" name="type" id="type">
+	                                <?php print $data['types']; ?>
+								</select>
 
-					</tr>
-					<tr>
-						<td>
-							<label for="type">Product Type</label>
-						</td>
-						<td>
-							<select name="type" id="type">
-                                <?php print $data['types']; ?>
-							</select>
-						</td>
-						<td>
-							<label for="store_id">Product Container</label>
-						</td>
-						<td>
-							<select name="store_id" id="store_id">
-								<?php print $data['stores']; ?>
-							</select>
-						</td>
-					</tr>						
-				</tbody>
-			</table>
+                            </td>
+                            <td style="vertical-align: top;">
+                            	<label for="sku_vendor">Vendor SKU</label>
+                                <input type="text" class="span4" name="sku_vendor" id="sku_vendor" value="">
+
+                                <label for="price_sale">Sale Price</label>
+                                <input type="text" class="span4" name="price_sale" id="price_sale" value="">
+
+                                <label for="sale_start">Sale Start</label>
+								<div class="input-append date datepicker" data-date="<?php echo date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
+											<span class="add-on"><i class="icon icon-calendar"></i></span>
+										  <input type="text" name="sale_start" id="sale_start" class="span3" maxlength="10" value="">
+										  
+								</div>
+
+								<label for="sale_end">Sale End</label>
+								<div class="input-append date datepicker" data-date="<?php echo date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
+									<span class="add-on"><i class="icon icon-calendar"></i></span>
+										  <input type="text" name="sale_end" id="sale_end" class="span3" maxlength="10" value="">
+										  
+								</div>
+
+								<label for="qty_min">Qty Min</label>
+                                <input type="text" class="span4" name="qty_min" id="qty_min" value="">
+
+                                <label for="qty_max">Qty Max</label>
+                                <input type="text" class="span4" name="qty_max" id="qty_max" value="">
+
+                                 <label for="back_order_cap">Back Order Cap</label>
+                                <input type="text" class="span4" name="back_order_cap" id="back_order_cap" value="">
+
+                                <label for="store_id">Product Container</label>
+								<select class="span4" name="store_id" id="store_id">
+									<?php print $data['stores']; ?>
+								</select>
+                            	
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
 	</div>
 
 	<div id="variations_tab" class="content"><br>
