@@ -62,7 +62,7 @@
                                 <input type="text" class="span4" name="alias" id="alias" value="">
                             	<label for="category">Category</label>
                                 <select class="span4" name="category" id="category">
-                                	?php print $data['categories']; ?>
+                                	<?php print $data['categories']; ?>
 								</select>
 
                             	<label for="is_active">Active</label>
@@ -78,10 +78,8 @@
                         </tr>
                         <tr>
                           <td colspan="2">
-                          	<div class="well">
                               <legend>Content</legend>
                               <textarea id="content" class="modx-richtext" rows="7" name="content"></textarea>
-                              </div>
                           </td>
                         </tr>
                     </tbody>
