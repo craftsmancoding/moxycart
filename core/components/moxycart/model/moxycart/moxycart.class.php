@@ -1502,7 +1502,7 @@
                     $out['msg'] = 'Failed to save Product.';    
                 }
                 //$this->image_save($args);
-                $out['product_id']    = $this->modx->lastInsertId();;
+                $out['product_id']    = $this->modx->lastInsertId();
                 $out['msg'] = 'Product created successfully.';
                 break; 
         }

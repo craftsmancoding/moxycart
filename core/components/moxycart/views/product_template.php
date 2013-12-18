@@ -42,85 +42,48 @@
 	</ul>
 
 	<div id="product" class="content">
-            <table class="table no-top-border">
-				<tbody>
-					<tr>
-						<td>
-							<label for="name">Name</label>
-						</td>
-						<td>
-							<input type="text" name="name" id="name" value="">
-							<input type="hidden" name="product_id" id="product_id" value="">
-						</td>
-						<td>
-							<label for="is_active">Active</label>
-						</td>
-						<td>
-							<select name="is_active" id="is_active">
-								<option value="1">Yes</option>
-								<option value="0">No</option>
-							</select>
-						</td>
+		  <table class="table no-top-border">
+                    <tbody>
+                         <tr>
+                            <td style="vertical-align: top;">
+                                 <label for="name">Name</label>
+                                <input type="text" class="span8" id="name" name="name" value=""/>
+                                <input type="hidden" name="product_id" id="product_id" value="">
+                                 <label for="title">Browser Title</label>
+                                <input type="text" class="span8" id="title" name="title" value=""/>
+                                <label for="content">Description</label>
+                                <textarea id="description" class="span8" rows="3" name="description"></textarea>
 
-					</tr>
+                              
+                                 
+                            </td>
+                            <td style="vertical-align: top;">
+                            	  <label for="alias">Alias</label>
+                                <input type="text" class="span4" name="alias" id="alias" value="">
+                            	<label for="category">Category</label>
+                                <select class="span4" name="category" id="category">
+                                	?php print $data['categories']; ?>
+								</select>
 
-					<tr>
-						<td>
-							<label for="title">Browser Title</label>
-						</td>
-						<td>
-							<input type="text" name="title" id="title" value="">
-						</td>
-						<td>
-							<label for="alias">Alias</label>
-						</td>
-						<td>
-							<input type="text" name="alias" id="alias" value="">
-						</td>
-
-					</tr>
-
-					<tr>
-						<td>
-							<label for="category">Category</label>
-						</td>
-						<td>
-							<select name="category" id="category">
-                                <?php print $data['categories']; ?>
-							</select>
-						</td>
-						<td>
-							<label for="template_id">Template</label>
-						</td>
-						<td>
-
-							<select name="template_id" id="template_id">
+                            	<label for="is_active">Active</label>
+                               	<select class="span4" name="is_active" id="is_active">
+									<option value="1">Yes</option>
+									<option value="0">No</option>
+								</select>
+								<label for="is_active">Active</label>
+                                <select class="span4" name="template_id" id="template_id">
                                 <?php print $data['templates']; ?>
 							</select> 
-						</td>
-					</tr>
-					<tr><td colspan="4">&nbsp;</td></tr>
-					<tr>
-						<td>
-							<label for="description">Description</label>
-						</td>
-						<td colspan="3">
-							<textarea name="description" id="description" style="width:680px;height:70px;"></textarea>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<label for="description">Content</label>
-						</td>
-						<td colspan="3">
-							<textarea name="content" id="content" class="modx-richtext" style="width:700px;height:120px;"></textarea>
-						</td>
-					</tr>
-
-						
-				</tbody>
-			</table>
-
+                            </td>
+                        </tr>
+                        <tr>
+                          <td colspan="2">
+                              <label for="content">Content</label>
+                              <textarea id="content" class="modx-richtext" rows="7" name="content"></textarea>
+                          </td>
+                        </tr>
+                    </tbody>
+                </table>
 	</div>
 
 	<div id="settings_tab" class="content">
