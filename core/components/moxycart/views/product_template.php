@@ -6,7 +6,6 @@
 </div>
 
 
-
 <form method="post" id="<?php print $data['product_form_action']; ?>" action="#">
 <div id="modx-panel-workspace" class="x-plain container">
 	<div class="moxy-header clearfix">
