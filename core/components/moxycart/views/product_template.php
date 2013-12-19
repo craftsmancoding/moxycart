@@ -70,7 +70,7 @@
 									<option value="1">Yes</option>
 									<option value="0">No</option>
 								</select>
-								<label for="is_active">Active</label>
+								<label for="template_id">Template</label>
                                 <select class="span4" name="template_id" id="template_id">
                                 <?php print $data['templates']; ?>
 							</select> 

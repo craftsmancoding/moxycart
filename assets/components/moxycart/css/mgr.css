@@ -313,29 +313,11 @@ label {
   color: #707070;
   font-size: 12px;
   font-weight: bold;
+  font-family: Arial,Helvetica,sans-serif;
+  line-height: 15px;
 }
 
-textarea:focus,
-input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="datetime"]:focus,
-input[type="datetime-local"]:focus,
-input[type="date"]:focus,
-input[type="month"]:focus,
-input[type="time"]:focus,
-input[type="week"]:focus,
-input[type="number"]:focus,
-input[type="email"]:focus,
-input[type="url"]:focus,
-input[type="search"]:focus,
-input[type="tel"]:focus,
-input[type="color"]:focus,
-.uneditable-input:focus {
-  border-color: #9caf78;
-  outline: 0;
-  outline: thin dotted \9;
-  /* IE6-9 */
-}
+
 
 select,
 textarea,
@@ -357,15 +339,39 @@ input[type="color"],
   display: inline-block;
   height: 20px;
   padding: 4px 6px;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 20px;
   color: #555555;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   background: #fbfbfb !important;
 }
+
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+.uneditable-input:focus {
+  border-color: #9caf78;
+  outline: 0;
+  outline: thin dotted \9;
+  background-color: #fbfbfb !important;
+  /* IE6-9 */
+}
+
 input,
 textarea,
 .uneditable-input {
@@ -4160,7 +4166,7 @@ padding: 5px 20px;
 }
 
 .menu li.active a { background: #fff; color: #666666 !important;  text-shadow: none;}
-.content { float: left; clear: both; border: 1px solid #999999; border-top: none;background: #fff; padding: 10px 20px 20px; width: 95%; }
+.content { float: left; clear: both; border: 1px solid #999999; border-top: none;background: #fff; padding: 15px 10px 10px; width: 95%; }
 
 .icon-store .x-tree-node-icon {
     background-image: url(../images/cart-icon.png) !important;
