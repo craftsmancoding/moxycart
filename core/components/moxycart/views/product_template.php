@@ -44,33 +44,33 @@
 		  <table class="table no-top-border">
                     <tbody>
                          <tr>
-                            <td style="vertical-align: top;">
+                            <td style="width:70%;vertical-align: top;">
                                  <label for="name">Name</label>
-                                <input type="text" class="span8" id="name" name="name" value=""/>
+                                <input type="text"  id="name" style="width:94%;" name="name" value=""/>
                                 <input type="hidden" name="product_id" id="product_id" value="">
                                  <label for="title">Browser Title</label>
-                                <input type="text" class="span8" id="title" name="title" value=""/>
+                                <input type="text" style="width:94%;" id="title" name="title" value=""/>
                                 <label for="content">Description</label>
-                                <textarea id="description" class="span8" rows="3" name="description"></textarea>
+                                <textarea id="description" style="width:94%;" rows="3" name="description"></textarea>
 
                               
                                  
                             </td>
-                            <td style="vertical-align: top;">
+                            <td style="width:30%;vertical-align: top;">
                             	  <label for="alias">Alias</label>
-                                <input type="text" class="span4" name="alias" id="alias" value="">
+                                <input type="text"  style="width:90%;" name="alias" id="alias" value="">
                             	<label for="category">Category</label>
-                                <select class="span4" name="category" id="category">
+                                <select style="width:90%;" name="category" id="category">
                                 	<?php print $data['categories']; ?>
 								</select>
 
                             	<label for="is_active">Active</label>
-                               	<select class="span4" name="is_active" id="is_active">
+                               	<select style="width:90%;" name="is_active" id="is_active">
 									<option value="1">Yes</option>
 									<option value="0">No</option>
 								</select>
 								<label for="template_id">Template</label>
-                                <select class="span4" name="template_id" id="template_id">
+                                <select style="width:90%;" name="template_id" id="template_id">
                                 <?php print $data['templates']; ?>
 							</select> 
                             </td>
@@ -90,48 +90,48 @@
 		 <table class="table no-top-border">
                     <tbody>
                          <tr>
-                            <td style="vertical-align: top;">
+                            <td style="width:70%;vertical-align: top;">
                                 <label for="sku">SKU</label>
-                                <input type="text" class="span8" id="sku" name="sku" value=""/>
+                                <input type="text" style="width:94%;" id="sku" name="sku" value=""/>
 
                                 <label for="price">Price</label>
-                                <input type="text" class="span8" id="price" name="price" value=""/>
+                                <input type="text" style="width:94%;" id="price" name="price" value=""/>
 
                                 <label for="price_strike_thru">Strike-Through Price</label>
-                                <input type="text" class="span8" id="price_strike_thru" name="price_strike_thru" value=""/>
+                                <input type="text" style="width:94%;" id="price_strike_thru" name="price_strike_thru" value=""/>
 
                                 <label for="price_strike_thru">Strike-Through Price</label>
-                                <input type="text" class="span8" id="price_strike_thru" name="price_strike_thru" value=""/>
+                                <input type="text" style="width:94%;" id="price_strike_thru" name="price_strike_thru" value=""/>
 								
 								 <label for="currency_id">Currency</label>
-                                <select class="span8" name="currency_id" id="currency_id">
+                                <select style="width:40%;" name="currency_id" id="currency_id">
                                 	<?php print $data['currencies']; ?>
 								</select>
 
 								 <label for="qty_inventory">Inventory</label>
-                                <input type="text" class="span8" id="qty_inventory" name="qty_inventory" value=""/>
+                                <input type="text" style="width:94%;" id="qty_inventory" name="qty_inventory" value=""/>
 
                                 <label for="qty_alert">Alert Qty</label>
-                                <input type="text" class="span8" id="qty_alert" name="qty_alert" value=""/>
+                                <input type="text" style="width:94%;" id="qty_alert" name="qty_alert" value=""/>
 
                                 <label for="track_inventory">Track Inventory</label>
-								<select name="track_inventory" class="span8" id="track_inventory">
+								<select name="track_inventory" style="width:40%;" id="track_inventory">
 									<option value="1">Yes</option>
 									<option value="0">No</option>
 								</select>
 
 								<label for="type">Product Type</label>
-								<select class="span8" name="type" id="type">
+								<select style="width:40%;" name="type" id="type">
 	                                <?php print $data['types']; ?>
 								</select>
 
                             </td>
-                            <td style="vertical-align: top;">
+                            <td style="width:30%;;vertical-align: top;">
                             	<label for="sku_vendor">Vendor SKU</label>
-                                <input type="text" class="span4" name="sku_vendor" id="sku_vendor" value="">
+                                <input type="text" style="width:90%;" name="sku_vendor" id="sku_vendor" value="">
 
                                 <label for="price_sale">Sale Price</label>
-                                <input type="text" class="span4" name="price_sale" id="price_sale" value="">
+                                <input type="text" style="width:90%;" name="price_sale" id="price_sale" value="">
 
                                 <label for="sale_start">Sale Start</label>
 								<div class="input-append date datepicker" data-date="<?php echo date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
@@ -148,16 +148,16 @@
 								</div>
 
 								<label for="qty_min">Qty Min</label>
-                                <input type="text" class="span4" name="qty_min" id="qty_min" value="">
+                                <input type="text" style="width:90%;" name="qty_min" id="qty_min" value="">
 
                                 <label for="qty_max">Qty Max</label>
-                                <input type="text" class="span4" name="qty_max" id="qty_max" value="">
+                                <input type="text" style="width:90%;" name="qty_max" id="qty_max" value="">
 
                                  <label for="back_order_cap">Back Order Cap</label>
-                                <input type="text" class="span4" name="back_order_cap" id="back_order_cap" value="">
+                                <input type="text" style="width:90%;" name="back_order_cap" id="back_order_cap" value="">
 
                                 <label for="store_id">Product Container</label>
-								<select class="span4" name="store_id" id="store_id">
+								<select style="width:90%;" name="store_id" id="store_id">
 									<?php print $data['stores']; ?>
 								</select>
                             	
