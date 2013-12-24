@@ -1,15 +1,22 @@
 INIT = {
-	exec_wysiwyg: function(){
-      bkLib.onDomLoaded(function() {
-            new nicEditor({buttonList : ['bold','italic','underline','left','center','right','justify','ol','ul','fontSize','fontFamily','fontFormat','indent','outdent','image','forecolor','bgcolor']}).panelInstance('content');          
-      });
-    },
-
 	
 	update_product: function(){
 		$('#product_update').on('submit',function(e){
             console.log('Updating product.');
-            var values = $(this).serialize();
+            var values = $(this).serializeArray();
+            if(use_editor == "1") {
+		    	var content_val = $('#content_ifr').contents().find('#tinymce').html();
+		    	for (var item in values)
+				{
+				  if (values[item].name == 'content') {
+				    values[item].value = content_val;
+				  }
+				}
+			}
+			values = jQuery.param(values);
+			//console.log(values);
+			//return false;
+
 	    	var url = connector_url + 'product_save';
 		    $.post( url+"&action=update", values, function(data){
 		    	$('.moxy-msg').show();
@@ -28,8 +35,21 @@ INIT = {
 
 	create_product: function(){
 		$('#product_create').on('submit',function(e){
-            console.log('Creating new product.');
-	    	var values = $(this).serialize();
+			
+			console.log('Creating new product.');
+	    	var values = $(this).serializeArray();
+	    	 if(use_editor == "1") {
+		    	var content_val = $('#content_ifr').contents().find('#tinymce').html();
+		    	for (var item in values)
+				{
+				  if (values[item].name == 'content') {
+				    values[item].value = content_val;
+				  }
+				}
+			}
+			values = jQuery.param(values);
+
+
 	    	var url = connector_url + 'product_save';
 		    $.post( url+"&action=create", values, function( data ){
 		    	data = $.parseJSON(data);
@@ -62,22 +82,13 @@ INIT = {
 	    });
 	},
 
-	remove_image : function(e) {
-		var remove_img = $('.remove-img');
-		$('.edit-img').hide();
-		remove_img.hide();
-
-		$('.li_product_image').hover(
-            function() { $(this).find('a.remove-img, a.edit-img').show(); },
-            function() { $(this).find('a.remove-img, a.edit-img').hide(); }
-          );
+	remove_image : function() {
 		var url = connector_url + 'image_save';
-		remove_img.on('click',function(){
-			if(confirm('Are you sure you want to delete this image?')) {
-				var current_img = $(this).parent();
+		$( document ).on( "click", "a.remove-img", function() {
+		  	if(confirm('Are you sure you want to delete this image?')) {
+				var current_img = $(this).parents('.li_product_image');
 	            var img_id = $(this).data('image_id');
-	            var img_file = $(this).data('file');
-	            $.post( url+"&action=delete", { image_id: img_id, file: img_file }, function( data ){
+	            $.post( url+"&action=delete", { image_id: img_id }, function( data ){
 			    	data = $.parseJSON(data);
 			    	if(data.success == true) {
 			    		current_img.remove();
@@ -89,12 +100,12 @@ INIT = {
 			    } );
 	        }
 			return false;
-		})
+		});
 	},
 
 	edit_image_modal: function() {
 
-		$('.edit-img').on('click',function(){
+		$( document ).on( "click", "a.edit-img", function() {
 			var url_img_update = $(this).attr('href');
 			 $.ajax({
                     type: "GET",
@@ -113,11 +124,20 @@ INIT = {
 		});
 	},
 
+    
+}
 
+/**
+ * Ajax call to dynamically update the form
+ */
+function get_spec(spec_id) {
+    var url = connector_url + "get_spec&spec_id=" + spec_id;
+    jQuery.post( url, function(data){
+        jQuery("#product_specs").append(data);
+    });
 }
 
 $(function() {
-	INIT.exec_wysiwyg();
 	INIT.update_product();
 	INIT.create_product();
 	INIT.fill_form_fields();
@@ -127,4 +147,13 @@ $(function() {
 	$('.datepicker').datepicker();
 	$("#product_images").sortable();
     $("#product_images").disableSelection();
+
+	$( document ).on( "mouseenter", ".li_product_image", function() {
+ 		$(this).find('a.remove-img').show();
+	});
+	$( document ).on( "mouseleave", ".li_product_image", function() {
+ 		$(this).find('a.remove-img').hide();
+	});
+
+
 });

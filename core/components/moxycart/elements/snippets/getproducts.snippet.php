@@ -51,4 +51,3 @@ require_once($class_path);
 $moxySnippet = new MoxycartSnippet($modx);
 $out = $moxySnippet->execute('json_products',$scriptProperties);
 return $out;
-

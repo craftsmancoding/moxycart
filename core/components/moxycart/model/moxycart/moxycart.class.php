@@ -40,6 +40,8 @@
     private $connector_url; 
     private $mgr_connector_url; 
     private $jquery_url;
+    public $max_image_width = 250;
+    public $thumb_width = 100;
 
     private $cache; // for iterative ops
     private $depth = 0; //
@@ -68,7 +70,7 @@
         $this->connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
         $this->modx->addPackage('moxycart',$this->core_path.'components/moxycart/model/','moxy_');
         // relative to the MODX_ASSETS_PATH or MODX_ASSETS_URL
-        $this->upload_dir = 'images/products/';
+        $this->upload_dir = $this->modx->getOption('moxycart.upload_dir',null,'images/products/');
         $this->default_limit = $this->modx->getOption('default_per_page'); // TODO: read from a MC setting?
         $this->jquery_url = $this->assets_url.'components/moxycart/js/jquery-2.0.3.min.js';
         
@@ -227,6 +229,42 @@
         
         return $this->_load_view('product_term_list.php',$data);
     }
+
+    /**
+    * Load TinyMCE
+    * Add modx-richtext class on textarea
+    * @param
+    * @return
+    **/
+    private function _load_tinyMCE() 
+    {
+        $_REQUEST['a'] = '';  /* fixes E_NOTICE bug in TinyMCE */
+        $plugin= $this->modx->getObject('modPlugin',array('name'=>'TinyMCE'));
+
+
+        $tinyPath =  $this->modx->getOption('core_path').'components/tinymce/';
+        $tinyUrl =  $this->modx->getOption('assets_url').'components/tinymce/';
+        /* @var $plugin modPlugin */
+        $tinyproperties=$plugin->getProperties();
+        require_once $tinyPath.'tinymce.class.php';
+        $tiny = new TinyMCE( $this->modx, $tinyproperties);
+
+        //$tinyproperties['language'] =  $modx->getOption('fe_editor_lang',array(),$language);
+        $tinyproperties['frontend'] = true;
+        $tinyproperties['cleanup'] = true; /* prevents "bogus" bug */
+        $tinyproperties['width'] = empty ( $props['tinywidth'] )? '95%' :  $props['tinywidth'];
+        $tinyproperties['height'] = empty ( $props['tinyheight'])? '400px' :  $props['tinyheight'];
+       //$tinyproperties['resource'] =  $resource;
+        $tiny->setProperties($tinyproperties);
+        $tiny->initialize();
+
+         $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            delete Tiny.config.setup; // remove manager specific initialization code (depending on ModExt)
+            Ext.onReady(function() {
+                MODx.loadRTE();
+            });
+        </script>');
+    }
     
     //------------------------------------------------------------------------------
     //! Public
@@ -348,6 +386,24 @@
 		
         return '<div id="moxycart_canvas"></div>';
     }
+
+     /**
+     * Get a single image for Ajax update.
+     */
+    public function get_image($args) {
+        $id = (int) $this->modx->getOption('image_id', $args);
+        
+        $Image = $this->modx->getObject('Image',$id);
+
+        
+        if (!$Image) {
+            return 'Error loading image. '.print_r($args,true);
+        }
+        
+        $data = $Image->toArray();
+        $data['action'] = $this->action;
+        return $this->_load_view('product_image.php',$data);
+    }
  
     /**
      * Post data here to save it
@@ -404,6 +460,81 @@
         return json_encode($out);
     }
     
+    /**
+    * create_thumbnail
+    * @param string $filename
+    **/
+    public function create_thumbnail($filename,$target_path,$target_path_thumb) {   
+         if(file_exists(MODX_ASSETS_PATH.$target_path_thumb.$filename)) {
+            unlink(MODX_ASSETS_PATH.$target_path_thumb.$filename);
+         }
+
+        $ext = strtolower(substr($filename, -4));
+        switch ($ext) {
+            case '.jpg':
+            case 'jpeg':
+                $im = imagecreatefromjpeg($target_path . $filename);
+                break;
+            case '.gif':
+                $im = imagecreatefromgif($target_path . $filename);
+                break;
+            case '.png':
+                $im = imagecreatefrompng($target_path . $filename);
+                break;
+        }
+        list($width, $height) = getimagesize($target_path.$filename);
+        $ox = imagesx($im);
+        $oy = imagesy($im);
+        
+        $nx = ( $width >= $this->thumb_width ) ? $this->thumb_width : $width;
+        $ny = floor($oy * ($nx / $ox));
+        
+        $nm = imagecreatetruecolor($nx, $ny);
+
+        if (preg_match('/[.](png)$/', $filename)) {
+                // integer representation of the color black (rgb: 0,0,0)
+                $background = imagecolorallocate($nm, 0, 0, 0);
+                // removing the black from the placeholder
+                imagecolortransparent($nm, $background);
+
+                // turning off alpha blending (to ensure alpha channel information 
+                // is preserved, rather than removed (blending with the rest of the 
+                // image in the form of black))
+                imagealphablending($nm, false);
+
+                // turning on alpha channel information saving (to ensure the full range 
+                // of transparency is preserved)
+                imagesavealpha($nm, true);
+        } 
+
+        if (preg_match('/[.](png)$/', $filename)) {
+                // integer representation of the color black (rgb: 0,0,0)
+                $background = imagecolorallocate($nm, 0, 0, 0);
+                // removing the black from the placeholder
+                imagecolortransparent($nm, $background);
+        }
+
+        
+        imagecopyresized($nm, $im, 0,0,0,0,$nx,$ny,$ox,$oy);
+        
+        if(!file_exists(MODX_ASSETS_PATH.$target_path_thumb)) {
+          if (!mkdir(MODX_ASSETS_PATH.$target_path_thumb,0777,true)) {
+                $out['success'] = false;
+                $out['msg'] = 'Failed to create directory at '.MODX_ASSETS_PATH.$target_path_thumb;    
+                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create directory at '.MODX_ASSETS_PATH.$target_path_thumb);
+                return json_encode($out);
+          } 
+        }
+
+        if(!imagejpeg($nm, MODX_ASSETS_PATH.$target_path_thumb . $filename)) {
+                $out['success'] = false;
+                $out['msg'] = 'Failed to create thumb at '.MODX_ASSETS_PATH.$target_path_thumb;    
+                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create thumb at '.MODX_ASSETS_PATH.$target_path_thumb);
+                return json_encode($out);
+        }
+        return $target_path_thumb . $filename;
+    }
+
     //------------------------------------------------------------------------------
     //! Images
     //------------------------------------------------------------------------------
@@ -442,6 +573,17 @@
         $this->modx->regClientStartupScript($this->jquery_url);
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
+        $data['wide_load'] = '';
+        $data['visible_height'] = $data['height'];
+        $data['visible_width'] = $data['width'];        
+        if ($data['width'] > $this->max_image_width) {
+            $data['wide_load'] = 'Warning! This image is larger than it appears.';
+            $ratio = $this->max_image_width / $data['width'];
+            $data['visible_height'] = (int) ($data['height'] * $ratio);
+            $data['visible_width'] = $this->max_image_width;
+        }
+        $data['jcrop_js'] = $this->assets_url.'components/moxycart/js/jcrop.js';
+        $data['loader_path'] = $this->assets_url.'components/moxycart/images/gif-load.gif';
 
         return $this->_load_view('image_update.php',$data);
     }
@@ -470,6 +612,7 @@
             // Relative to either MODX_ASSETS_URL or MODX_ASSETS_PATH
             $rel_file =  $this->upload_dir.$product_id.'/'.basename($_FILES['file']['name']);
             $target_path = MODX_ASSETS_PATH.$this->upload_dir.$product_id.'/';
+            $target_path_thumb = $this->upload_dir.$product_id.'/thumbs' . '/';
             if (!file_exists($target_path)) {
                 if (!mkdir($target_path,0777,true)) {
                     $out['success'] = false;
@@ -481,7 +624,7 @@
             // Image already exists?
             if (file_exists(MODX_ASSETS_PATH.$rel_file)) {
                 $out['success'] = false;
-                $out['msg'] = 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file;
+                $out['msg'] = 'Upload Failed. File of same name exists';
                 $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file);
                 return json_encode($out);
             }
@@ -494,11 +637,192 @@
                 $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
                 return json_encode($out);
             }
+
+            $out['thumbnail_url'] = $this->create_thumbnail(basename($_FILES['file']['name']),$target_path,$target_path_thumb);
             $out['rel_file'] = $rel_file;
             $out['file_size'] = $_FILES['file']['size'];
             
         } 
         return json_encode($out);
+    }
+
+    /**
+     * Crop an image in place (original file is destructively edited).
+     * In this AddOn, an image MUST be rep'd by a Image, so the id must be set.
+     * We return an <img> tag as well to save the hastle of another ajax post.
+     * 
+     * @params array $args including key for id
+     * @return string JSON array
+     */
+    public function image_crop($args) { 
+
+        
+        $out = array(
+            'success' => true,
+            'msg' => '',
+            'img' => ''
+        );
+        
+        $id = (int) $this->modx->getOption('image_id', $args);
+        $Image = $this->modx->getObject('Image', $id);
+     
+        $thumbnail_url = $Image->get('thumbnail_url');
+        $filename = basename($thumbnail_url); 
+        $target_path_thumb = dirname($thumbnail_url). '/';
+        $target_path = MODX_ASSETS_PATH.dirname($target_path_thumb). '/';
+
+
+        if (!$Image) {
+            $out['success'] = false;
+            $out['msg'] = 'Image and Image not found.';
+            return json_encode($out);
+        }
+        // http://www.php.net/manual/en/function.imagecopy.php
+        $src = $Image->get('path');
+       // $src = $Image->get('url');
+        if (!file_exists($src)) {
+            $out['success'] = false;
+            $out['msg'] = 'Image ('.$id.') Image not found: '.$src;
+            return json_encode($out);            
+        }
+        
+        $srcImg = '';
+        $ext = strtolower(substr($src, -4));
+        $image_func = '';
+        $quality = null; // different vals for different funcs
+        switch ($ext) {
+            case '.gif':
+                $srcImg = @imagecreatefromgif($src);
+                $image_func = 'imagegif';
+                break;
+            case '.jpg':
+            case 'jpeg':
+                $srcImg = @imagecreatefromjpeg($src);
+                $image_func = 'imagejpeg';
+                $quality = 100;
+                break;
+            case '.png':
+                $srcImg = @imagecreatefrompng($src);
+                $image_func = 'imagepng';
+                $quality = 0;
+                break;
+            default:
+                $out['success'] = false;
+                $out['msg'] = 'Image ('.$id.') Unrecognized extension: '.$ext;
+                return json_encode($out);                            
+        }
+        
+        if (!$srcImg) {
+            $out['success'] = false;
+            $out['msg'] = 'Image ('.$id.') could not create image: '.$src;
+            return json_encode($out);                        
+        }
+        
+        // Cleared for launch.
+        $ratio = 1;
+        if ($Image->get('width') > $this->max_image_width) {
+            $ratio = $Image->get('width') / $this->max_image_width;
+        }
+        // Remember: order of ops for type-casting. (int) filters ONLY the variable to its right!!
+        $src_x = (int) ($ratio * $this->modx->getOption('x',$args));
+        $src_y = (int) ($ratio * $this->modx->getOption('y',$args));
+        $src_w = (int) ($ratio * $this->modx->getOption('w',$args));
+        $src_h = (int) ($ratio * $this->modx->getOption('h',$args));
+
+        // Remember: at this point, if the user selects the full width of the *displayed*
+        // image, it is not necessarily equal to the dimensions of the original image.
+        $new_w = (int) ($ratio * $this->modx->getOption('w',$args));
+        $new_h = (int) ($ratio * $this->modx->getOption('h',$args));
+        $destImg = imagecreatetruecolor($src_w, $src_h);
+
+        if (!imagecopy($destImg, $srcImg, 0, 0, $src_x, $src_y, $src_w, $src_h)) {
+            $out['success'] = false;
+            $out['msg'] = 'Image ('.$id.') could not crop image: '.$src;
+            imagedestroy($srcImg);
+            imagedestroy($destImg);
+            return json_encode($out);                                    
+        }
+        
+        if (!$image_func($destImg,$Image->get('path'),$quality)) {
+            $out['success'] = false;
+            $out['msg'] = 'Image ('.$id.') could not save cropped image: '.$src;
+            imagedestroy($srcImg);
+            imagedestroy($destImg);
+            return json_encode($out);                                    
+        }
+        
+        imagedestroy($srcImg);
+        imagedestroy($destImg);
+
+        $Image->set('height', $new_h);
+        $Image->set('width', $new_w);
+        $Image->set('size', filesize($Image->get('path')));
+
+        if (!$Image->save()) {
+            $out['success'] = false;
+            $out['msg'] = 'Could not update Image: '.$id;            
+            return json_encode($out);                                            
+        }
+
+         // start create new thumb
+        $thumbnail_url = $Image->get('thumbnail_url');
+        $filename = basename($thumbnail_url); 
+        $target_path_thumb = substr(dirname($thumbnail_url),8). '/';
+        $target_path = MODX_ASSETS_PATH.dirname($target_path_thumb). '/';
+        $this->create_thumbnail($filename,$target_path,$target_path_thumb);
+        // start create new thumb
+
+        $out['msg'] = 'Image cropped successfully.';
+        $out['img'] = $this->get_image_tag(array('image_id'=>$id));
+
+        return json_encode($out);
+    }
+
+    /**
+     * Get a single image tag for Ajax update
+     *
+     */
+    public function get_image_tag($args) {
+               
+        $id = (int) $this->modx->getOption('image_id', $args);
+        
+        $Image = $this->modx->getObject('Image',$id);
+        
+        if (!$Image) {
+            return 'Error loading image.';
+        }
+        
+        $data = $Image->toArray();
+         
+        $data['wide_load'] = '';
+        $data['visible_height'] = $data['height'];
+        $data['visible_width'] = $data['width'];        
+        if ($data['width'] > $this->max_image_width) {
+            $data['wide_load'] = 'Warning! This image is larger than it appears.';
+            $ratio = $this->max_image_width / $data['width'];
+            $data['visible_height'] = (int) ($data['height'] * $ratio);
+            $data['visible_width'] = $this->max_image_width;
+        }
+
+        $img = $this->_load_view('image.php',$data);
+
+        return $img;
+    }
+
+    /**
+     * Get a single Spec for Ajax updates
+     *
+     */
+    public function get_spec($args) {
+        $spec_id = (int) $this->modx->getOption('spec_id', $args);
+        $Spec = $this->modx->getObject('Spec',$spec_id);
+        if (!$Spec) {
+            return 'Invalid Spec';
+        }
+        // template name mapping
+        $s = $Spec->toArray();
+        $s['spec'] = $s['name'];
+        return $this->_load_view('product_spec.php',$s); // TODO: react to the spec "type"
     }
 
     /**
@@ -537,20 +861,28 @@
 
                 break;
             case 'delete':
-                $file = $this->modx->getOption('file', $args);
                 $Image = $this->modx->getObject('Image',$this->modx->getOption('image_id', $args));
                 if (!$Image->remove()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to delete Image.';    
                 }
-                unlink(MODX_BASE_PATH . $file);
+                unlink(MODX_BASE_PATH . $Image->get('url'));
+                unlink(MODX_BASE_PATH . $Image->get('thumbnail_url'));
                 $out['msg'] = 'Image deleted successfully.';    
                 break;
             case 'create':
             default:
                 $product_id = (int) $this->modx->getOption('product_id',$args);
+
                 if (isset($_FILES['file']['name']) ) {
                     $uploaded_img = json_decode($this->upload_image($product_id),true);
+
+                    if ($uploaded_img['success'] == false) {
+                        $out['success'] = false;
+                        $out['msg'] = $uploaded_img['msg'];
+                        return json_encode($out);
+                    }
+
                     $rel_file = $uploaded_img['rel_file'];
                     // Create db record
                     list($width, $height) = getimagesize(MODX_ASSETS_PATH.$rel_file);
@@ -558,6 +890,7 @@
                     $Image->set('product_id',$product_id);
                     $Image->set('url',MODX_ASSETS_URL.$rel_file);
                     $Image->set('path',MODX_ASSETS_PATH.$rel_file);
+                    $Image->set('thumbnail_url',MODX_ASSETS_URL.$uploaded_img['thumbnail_url']);
                     $Image->set('width',$width);
                     $Image->set('height',$height);
                     $Image->set('size',$uploaded_img['file_size']);
@@ -571,6 +904,7 @@
                     return json_encode($out);
                 }
                 $out['msg'] = 'Successfully saved image';
+                $out['image_id'] = $this->modx->lastInsertId();
                 $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'Successfully saved image '.$Image->getPrimaryKey() .' '.MODX_ASSETS_PATH.$rel_file);
                 
         }
@@ -588,6 +922,7 @@
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
     public function product_create($args) {
+
         $data = array();
         $store_id = (int) $this->modx->getOption('store_id',$_GET);
         $data['manager_url'] = $this->mgr_url.'?a=30&id='.$store_id;
@@ -639,6 +974,7 @@
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
         $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">          
             var connector_url = "'.$this->connector_url.'";
+            var use_editor = "'.$this->modx->getOption('use_editor').'";
             var assets_url = "'.MODX_ASSETS_URL.'";
             var redirect_url = "'.$this->mgr_url .'?a='.$this->action . '&f=product_update&product_id='.'";
             // use Ext JS?
@@ -647,7 +983,11 @@
             });
             </script>
         ');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');        
+
+        if ($this->modx->getOption('use_editor')) {
+            $this->_load_tinyMCE();
+        }
+
         return $this->_load_view('product_template.php',$data);
     }
 
@@ -658,7 +998,6 @@
      * @param int product_id (from $_GET). Defines the id of the product
      */
     public function product_update($args) {
-        
         $product_id = (int) $this->modx->getOption('product_id', $args);
 
         if (!$Product = $this->modx->getObject('Product', $product_id)) {        
@@ -675,6 +1014,7 @@
         $product_images = $this->json_images(array('product_id'=>$product_id,'limit'=>0),true);
         foreach ($product_images['results'] as $img) {
             $img['action'] = $this->action;
+            $img['thumb_width'] = $this->thumb_width;
             $data['images'] .= $this->_load_view('product_image.php',$img);
         }
         
@@ -746,19 +1086,52 @@
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.$Product->toJson().';            
     		var connector_url = "'.$this->connector_url.'";
+            var use_editor = "'.$this->modx->getOption('use_editor').'";
             var assets_url = "'.MODX_ASSETS_URL.'";    		
             var variation_url = "'.$this->connector_url.'&parent_id='.$product_id.'";
+  
             jQuery(document).ready(function() {
-                var myDropzone = new Dropzone("div#image_upload", {url: connector_url+"image_save&product_id='.$product_id.'"});
+                    var myDropzone = new Dropzone("div#image_upload", {url: connector_url+"image_save&product_id='.$product_id.'"});
+                    
+                    // Refresh the list on success (append new tile to end)
+                    myDropzone.on("success", function(file,response) {
+
+                         console.log(response);
+                        response = jQuery.parseJSON(response);
+                        console.log(response);
+                        if (response.success) {
+                           
+                            var url = connector_url + "get_image&image_id=" + response.image_id;
+                            jQuery.post( url, function(data){
+                                jQuery("#product_images").append(data);
+                                jQuery(".dz-preview").remove();
+                            });
+                       } 
+                       // TODO: better formatting
+                       else {
+                           
+                            $(".dz-success-mark").hide();
+                           $(".dz-error-mark").show();
+                           $(".moxy-msg").show();
+                           $("#moxy-result").html("Failed");
+                            $("#moxy-result-msg").html(response.msg);
+                            $(".moxy-msg").delay(3200).fadeOut(400);
+                       }
+                    });
             });
+
 			Ext.onReady(function() {   		
     			renderProductVariationProductsGrid();
     		});
     		</script>
     	');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/nicedit.js');    	
+ 	
         $this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
         
+        if ($this->modx->getOption('use_editor')) {
+            $this->_load_tinyMCE();
+        }
+
         $data['mgr_connector_url'] = $this->mgr_connector_url;
         return $this->_load_view('product_template.php',$data);
     }
@@ -865,7 +1238,9 @@
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
     public function product_sort_order($args) {
-        // Add Required JS files here:
+        $args['limit'] = 0; // get 'em all
+        $args['sort'] = 'seq';
+
         // You can get here 2 ways: all products in a store, or all variations in a product.
         $store_id = (int) $this->modx->getOption('store_id', $args);
         $product_id = (int) $this->modx->getOption('product_id', $args);
@@ -878,16 +1253,19 @@
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
             var connector_url = "'.$this->connector_url.'";
             var back_url = "'.$back_url.'";
-    		Ext.onReady(function() {   		
-    			renderProductSortPanel();
-    		});
     		</script>
     	');
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productsortorder.js');
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
-		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');		
+
+        $this->modx->regClientStartupScript($this->jquery_url);
+        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
+		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');		
 		
-        return '<div id="moxycart_canvas"></div>';
+        $products = $this->json_products($args,true);
+
+        $products['back_url'] = $back_url;        
+
+        return $this->_load_view('product_list.php',$products);
+        
     }
 
     /**
@@ -1154,13 +1532,50 @@
                     $out['msg'] = 'Failed to save Product.';    
                 }
                 //$this->image_save($args);
-                $out['product_id']    = $this->modx->lastInsertId();;
+                $out['product_id']    = $this->modx->lastInsertId();
                 $out['msg'] = 'Product created successfully.';
                 break; 
         }
 
         return json_encode($out);        
 
+    }
+
+    /**
+     * Post data here to save product sort order.  Data should be in the following format:
+     *
+     * $_POST['seq'] = array( 11,22,33) where 11,22,33 are product ids.
+     *
+     */
+    public function product_save_seq($args) {
+        $out = array(
+            'success' => true,
+            'msg' => '',
+        );
+        
+        $product_ids = $this->modx->getOption('seq',$args,array());
+        
+        $seq = 0;
+        foreach ($product_ids as $id) {
+            $id = (int) $id;
+            $Prod = $this->modx->getObject('Product', $id);
+            if (!$Prod) {
+                $out['success'] = false;
+                $out['msg'] = 'Invalid product id: '.$id;
+                $this->modx->log(MODX_LOG_LEVEL_ERROR,$out['msg']);
+                return json_encode($out);
+            }
+            $Prod->set('seq', $seq);
+            if (!$Prod->save()) {
+                $out['success'] = false;
+                $out['msg'] = 'Error saving product: '.$id;
+                $this->modx->log(MODX_LOG_LEVEL_ERROR,$out['msg']);
+                return json_encode($out);
+            }
+            $seq++;
+        }
+        $out['msg'] = 'Sort order updated.';
+        return json_encode($out);
     }
     
     //------------------------------------------------------------------------------
@@ -1536,7 +1951,7 @@
      */
 
     public function json_products($args,$raw=false) {
-    
+
 /*
         if (!$this->modx->hasPermission($this->modx->getOption(__FUNCTION__, $this->perms, $this->default_perm))) {
             $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart::'.__FUNCTION__.'] User does not have sufficient privileges.');
@@ -1546,7 +1961,7 @@
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
-        $sort = $this->modx->getOption('sort',$args,'product_id');
+        $sort = $this->modx->getOption('sort',$args,'seq');
         $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $parent_id = (int) $this->modx->getOption('parent_id',$args);
@@ -1564,16 +1979,28 @@
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
         $pages = $this->modx->getCollection('Product',$criteria);
-        //return $criteria->toSQL(); //<-- useful for debugging
+//        print $criteria->toSQL(); //<-- useful for debugging
+//        exit;
         // Init our array
         $data = array(
             'results'=>array(),
             'total' => $total_pages,
         );
+        
+       // set date and time (unix)
+        $now = strtotime(date('Y-m-d H:i:s'));
+        
         foreach ($pages as $p) {
+            $calculated_price = $p->get('price');
+            // if on sale use price sale
+            if(strtotime($p->get('sale_start')) <= $now && strtotime($p->get('sale_end')) >= $now) {
+                $calculated_price = $p->get('price_sale');
+            }
+
             $row = array(
                 'product_id' => $p->get('product_id'),
                 'alias' => $p->get('alias'),
+                'content' => stripslashes($p->get('content')),
                 'name' => $p->get('name'),
                 'sku' => $p->get('sku'),
                 'type' => $p->get('type'),
@@ -1584,11 +2011,13 @@
                 'uri' => $p->get('uri'),
                 'is_active' => $p->get('is_active'), 
                 'seq' => $p->get('seq'), 
+                'calculated_price'=> $calculated_price,
             );
             
             $row['variant'] = $this->_get_variant_info($p->get('variant_matrix'));
             $data['results'][] = $row;
         }
+
 
         if ($raw) {
             return $data;

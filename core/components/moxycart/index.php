@@ -11,7 +11,6 @@
  */
 $core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);
 require_once($core_path.'components/moxycart/model/moxycart/moxycart.class.php');
-require_once 'includes/functions.php';
 
 $Moxycart = new Moxycart($modx);
 

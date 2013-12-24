@@ -1338,7 +1338,7 @@ function getProductsFields(config){
 			dataIndex: 'id',
 			sortable: true,
 			renderer : function(value, metaData, record, rowIndex, colIndex, store) {
-			  return '<button role="edit" class="x-btn">Edit</button> <button role="view" class="x-btn">View</button>';
+			  return '<a role="edit" style="padding: 5px 10px 5px 10px;color: #53595f;font: bold 11px tahoma,verdana,helvetica,sans-serif;text-shadow: 0 1px 0 #fcfcfc;" class="x-btn">Edit</a> <button style="padding: 5px 10px 5px 10px;color: #53595f;font: bold 11px tahoma,verdana,helvetica,sans-serif;text-shadow: 0 1px 0 #fcfcfc;" role="view" class="x-btn">View</button>';
 			}
 		}
 	]);
