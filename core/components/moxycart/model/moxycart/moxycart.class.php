@@ -280,6 +280,7 @@
     
     }
     
+    
     /**
      * Generate a string to be used as the API key
      *
@@ -294,6 +295,35 @@
             $str .= $charset[mt_rand(0, $count-1)];
         }
         return self::MOXYID . $str;
+    }
+
+
+    /**
+     * Used via Ajax to get a raw HTML page component so we don't have to 
+     * duplicate formatting templates in PHP *and* javascript.  This ajax
+     * controller lets us keep everything in PHP.
+     *
+     * object: classname of the object
+     * view: name of the view
+     *
+     * @return string
+     */
+    public function ajax_template($args) {
+        $id = (int) $this->modx->getOption('id',$args);    
+        $object = $this->modx->getOption('object',$args);
+        $template = $this->modx->getOption('template',$args);
+        
+        $Obj = $this->modx->getObject($object, $id);
+        
+        if (!$Obj) {
+            $this->modx->log(1,'Object not found.');
+            return 'object not found: '.$object . ':'.$id;
+        }
+        $data = $Obj->toArray();
+        $data['value'] = '';
+        $data['spec'] = $data['name'];
+        
+        return $this->_load_view($template,$data);
     }
     
      //------------------------------------------------------------------------------
@@ -445,7 +475,7 @@
                     $out['success'] = false;
                     $out['msg'] = 'Failed to create directory at '.$target_path;    
                     $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create directory at '.$target_path);
-                    return json_decode($out);
+                    return json_encode($out);
                 }
             }
             // Image already exists?
@@ -453,7 +483,7 @@
                 $out['success'] = false;
                 $out['msg'] = 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file;
                 $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file);
-                return json_decode($out);
+                return json_encode($out);
             }
             if(move_uploaded_file($_FILES['file']['tmp_name'],MODX_ASSETS_PATH.$rel_file)) {
                 $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'SUCCESS UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
@@ -462,7 +492,7 @@
                 $out['success'] = false;
                 $out['msg'] = 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file;
                 $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
-                return json_decode($out);
+                return json_encode($out);
             }
             $out['rel_file'] = $rel_file;
             $out['file_size'] = $_FILES['file']['size'];
@@ -538,7 +568,7 @@
                     $out['success'] = false;
                     $out['msg'] = 'Failed to save Image object for product';
                     $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to save Image object for product '.$product_id .' '.MODX_ASSETS_PATH.$rel_file);
-                    return json_decode($out);
+                    return json_encode($out);
                 }
                 $out['msg'] = 'Successfully saved image';
                 $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'Successfully saved image '.$Image->getPrimaryKey() .' '.MODX_ASSETS_PATH.$rel_file);

@@ -1,4 +1,20 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+
+<script>
+function add_spec() {
+    var new_spec_id = $("#new_spec").val();
+    var postdata = {
+        "object" : 'Spec',
+        "template" : 'product_spec.php',
+        "id": new_spec_id
+    };
+
+    jQuery.post("<?php print $data['connector_url']; ?>ajax_template", postdata, function( data ) {
+      jQuery("#specs").append( data );
+    });
+}
+</script>
+
 <style>
 #sortable { list-style-type: none; margin: 0; padding: 0; width: 450px; }
 #sortable li { margin: 3px 3px 3px 0; padding: 1px; float: left; width: 100px; height: 90px; font-size: 4em; text-align: center; }
@@ -285,7 +301,7 @@
 						<th>Description</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="specs">
 	                <?php
 	                	if ($data['product_specs']) {
 	                    	print $data['product_specs'];
@@ -296,10 +312,10 @@
 					?>
 				</tbody>
 			</table>
-		<select>
+		<select id="new_spec">
             <?php print $data['specs']; ?>
 		</select>
-		<button onclick="alert('add a row to the table with this spec'); return false;">Attach Spec</button>
+		<button onclick="javascript:add_spec(); return false;">Attach Spec</button>
 	</div>
 
 	<div id="images_tab" class="content">		
