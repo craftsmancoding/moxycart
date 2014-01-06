@@ -239,13 +239,18 @@
     private function _load_tinyMCE() 
     {
         $_REQUEST['a'] = '';  /* fixes E_NOTICE bug in TinyMCE */
+
         $plugin= $this->modx->getObject('modPlugin',array('name'=>'TinyMCE'));
 
+        // Plugin not present.
+        if (!$plugin) {
+            return false;
+        }
 
         $tinyPath =  $this->modx->getOption('core_path').'components/tinymce/';
         $tinyUrl =  $this->modx->getOption('assets_url').'components/tinymce/';
-        /* @var $plugin modPlugin */
-        $tinyproperties=$plugin->getProperties();
+        
+        $tinyproperties = $plugin->getProperties();
         require_once $tinyPath.'tinymce.class.php';
         $tiny = new TinyMCE( $this->modx, $tinyproperties);
 

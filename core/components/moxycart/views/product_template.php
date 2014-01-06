@@ -52,9 +52,6 @@
                                 <input type="text" style="width:94%;" id="title" name="title" value=""/>
                                 <label for="content">Description</label>
                                 <textarea id="description" style="width:94%;" rows="3" name="description"></textarea>
-
-                              
-                                 
                             </td>
                             <td style="width:30%;vertical-align: top;">
                             	  <label for="alias">Alias</label>
