@@ -1,9 +1,8 @@
 <?php
 /**
- * UserCreate
- *
- * Called as a hook from the parseFoxycartDatafeed Snippet, this hook (snippet) will
- * create a local MODX user (if none exists), keyed off the user's email.
+ * @name UserCreate
+ * @description Called as a hook from the parseFoxycartDatafeed Snippet, this hook will create a local MODX user keyed off the user's email.
+ * 
  * If the email address already exists in the system, then no action is taken.
  *
  * We can only set the password and other info when we *create* a user to avoid 
@@ -38,6 +37,8 @@ $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
 $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
 /*
+SAMPLE CUSTOMER XML SECTION
+
       <paypal_payer_id><![CDATA[]]></paypal_payer_id>
       <third_party_id><![CDATA[]]></third_party_id>
       <customer_id><![CDATA[12940181]]></customer_id>

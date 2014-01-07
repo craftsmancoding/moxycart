@@ -1,16 +1,18 @@
 <?php
 /**
- * parseFoxycartDatafeed
  *
+ * @name parseFoxycartDatafeed
+ * @description Parses the FoxyCart XML Data Feed into local database records. Place this Snippet on one page and paste its URL into your Foxycart admin panel. Logs to foxycart.log
+ * 
  * Parses the FoxyCart XML Data Feed into local database records. The data objects are 
  * structured hierarchically, but the save() event is delayed until the very end. 
  * (See all tables using the "foxy_" prefix).
  * This snippet logs to the foxycart.log 
  *
- * You can tie any snippet you want to hook into any of the 3 events here:
- *  per-product 
- *  per-transaction
- *  per-postback
+ * You can tie any snippet you want to hook into any of 3 events:
+ *  per-product (via &product_hooks)
+ *  per-transaction (via &transaction_hooks)
+ *  per-postback (via &postback_hooks)
  *
  *  The Snippet will receive $scriptParameters corresponding to the relevant node of XML
  *  and the Snippet must return a message that evaluates to true on success, boolean false

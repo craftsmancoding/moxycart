@@ -1,9 +1,8 @@
 <?php
 /**
- * UpdateInventory
- *
- * Called as a hook from the parseFoxycartDatafeed Snippet, this hook (snippet) will
- * decrement the quantity of a product during each purchase.
+ * 
+ * @name UpdateInventory
+ * @description Called as a hook from the parseFoxycartDatafeed Snippet, this hook (snippet) will decrement the quantity of a product during each purchase.
  *
  * @return string message indicating completion.
  */

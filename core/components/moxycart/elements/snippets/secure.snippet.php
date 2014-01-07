@@ -1,8 +1,7 @@
 <?php
 /**
- * secure
- *
- * Custom output filter for securely signing Foxycart forms.
+ * @name secure
+ * @description Custom output filter for securely signing Foxycart forms.
  *
  * See:
  *  https://wiki.foxycart.com/v/1.1/hmac_validation

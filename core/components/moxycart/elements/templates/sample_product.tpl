@@ -1,3 +1,7 @@
+<!-- 
+@templatename Sample Product
+@description A sample Moxycart template for formatting a single product.
+-->
 <html>
 <head>
 <title>[[++site_name]] - [[+name]]</title>
@@ -21,8 +25,6 @@
 
 <input type="submit" value="Add a [[+name]]" class="submit" />
 </form>
-
-
 
 
 </body>

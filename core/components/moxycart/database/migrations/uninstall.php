@@ -1,0 +1,34 @@
+<?php
+$core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);
+
+$modx->addPackage('moxycart',"{$core_path}components/{$object['namespace']}/model/",'moxy_');
+$modx->addPackage('foxycart',"{$core_path}components/{$object['namespace']}/model/",'foxy_');
+
+$manager = $modx->getManager();
+
+// Moxycart
+$manager->removeObjectContainer('Currency');
+$manager->removeObjectContainer('Product');
+$manager->removeObjectContainer('Spec');
+$manager->removeObjectContainer('VariationType'); 
+$manager->removeObjectContainer('VariationTerm');
+$manager->removeObjectContainer('ProductVariationTypes');
+$manager->removeObjectContainer('ProductTaxonomy');
+$manager->removeObjectContainer('ProductTerms');
+$manager->removeObjectContainer('ProductSpecs');
+$manager->removeObjectContainer('Cart');
+$manager->removeObjectContainer('Image');
+
+// Foxycart
+$manager->removeObjectContainer('Foxydata');
+$manager->removeObjectContainer('Transaction');
+$manager->removeObjectContainer('Tax');
+$manager->removeObjectContainer('Discount');
+$manager->removeObjectContainer('CustomField');
+$manager->removeObjectContainer('Attribute');
+$manager->removeObjectContainer('TransactionDetail');
+$manager->removeObjectContainer('TransactionDetailOption');
+$manager->removeObjectContainer('ShiptoAddress');
+
+
+$modx->removeExtensionPackage($object['namespace']);
