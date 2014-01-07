@@ -8,6 +8,7 @@ $xpdo_meta_map['RelatedProducts']= array (
   array (
     'product_id' => NULL,
     'related_id' => NULL,
+    'type' => 'related',
     'seq' => NULL,
   ),
   'fieldMeta' => 
@@ -25,6 +26,14 @@ $xpdo_meta_map['RelatedProducts']= array (
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
+    ),
+    'type' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '32',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => 'related',
     ),
     'seq' => 
     array (

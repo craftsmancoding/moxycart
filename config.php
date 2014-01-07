@@ -20,5 +20,6 @@ return array(
     'copyright' => date('Y'),
     
     'category' => 'Moxycart',
+    'seed' => array('prod'),
 );
 /*EOF*/

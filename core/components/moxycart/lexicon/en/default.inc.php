@@ -33,7 +33,8 @@
  *
  * @package moxycart
  **/
-$_lang['menu_desc'] = 'Your turn-key eCommerce solution.';
+$_lang['moxycart'] = 'Moxycart'; 
+$_lang['moxycart_desc'] = 'Your turn-key eCommerce solution.';
 
 $_lang['product'] = 'Product';
 $_lang['products'] = 'Products';
