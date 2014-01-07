@@ -304,6 +304,7 @@
 	<object class="RelatedProducts" table="related_products" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="related_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="type" dbtype="varchar" precision="32" phptype="string" null="false" default="related"/>
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" collation="A" null="false" />
