@@ -1,4 +1,5 @@
 <?php
+
 $core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);
 
 // Add the package to the MODX extension_packages array
