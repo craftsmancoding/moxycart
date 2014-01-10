@@ -197,7 +197,9 @@
 		<select id="spec_id">
             <?php print $data['specs']; ?>
 		</select>
-		<button onclick="javascript:get_spec(jQuery('#spec_id').val()); return false;">Attach Spec</button>
+
+		<button class="btn" onclick="javascript:get_spec(jQuery('#spec_id').val()); return false;">Attach Spec</button>
+		<a class="btn btn-custom" href="<?php echo $data['mgr_connector_url'].'specs_manage';  ?>">Add New Spec</a>
 
 	</div>
 
