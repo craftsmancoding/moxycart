@@ -24,12 +24,17 @@ switch ($modx->event->name) {
     //  Query for our custom product and format it using a MODX template
     //------------------------------------------------------------------------------
     case 'OnPageNotFound':
+
         $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
         $placeholder_prefix = $modx->getOption('moxycart.placeholder_prefix');
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
-        $refresh = false; // used if you want to turn off caching (good for testing)
-        $uri = substr($_SERVER['REQUEST_URI'], 1);
+        $refresh = true; // used if you want to turn off caching (good for testing)
+        
+        $request = explode('/', $_SERVER['REQUEST_URI']);
+        $uris = array_slice($request, -2, 2, true);
+        $uri = implode('/', $uris);
+
         $cache_key = str_replace('/', '_', $uri);
         $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
         $fingerprint = 'product_'.$cache_key;
@@ -42,7 +47,7 @@ switch ($modx->event->name) {
         if ($refresh || empty($out)) {
 
             
-            $Product = $modx->getObject('Product',array('uri'=>$uri)); // ??? how can you tell the requested URI?
+            $Product = $modx->getObjectGraph('Product','{"Specs":{"Spec":{}}}',array('uri'=>$uri)); // ??? how can you tell the requested URI?
             if (!$Product) {
                 return;  // it's a real 404
             } 
@@ -50,7 +55,7 @@ switch ($modx->event->name) {
             $modx->resource = $modx->newObject('modResource');
             $product_attributes = $Product->toArray();
 
-            // set default value for calculated_price
+            
             
         
             // set date and time (unix)
@@ -70,15 +75,21 @@ switch ($modx->event->name) {
             if($sale_start >= $now) {
                 $lifetime = $sale_start - $now;
             }
-         
+            
+
             
           /*  $modx->log(MODX_LOG_LEVEL_ERROR, 'Sale Start ' . strtotime($product_attributes['sale_start']));
             $modx->log(MODX_LOG_LEVEL_ERROR, 'Sale End ' .  strtotime($product_attributes['sale_end']));
             $modx->log(MODX_LOG_LEVEL_ERROR, 'Today ' .  $now);*/
 
             // add calculated_price field
-            $product_attributes['calculated_price'] = $calculated_price;
+            $product_attributes['calculated_price'] = $calculated_price;            
 
+            foreach ($Product->Specs as $ps) {
+                $spec_name = $ps->Spec->get('name');
+                $product_attributes[$spec_name] = $ps->get('value');
+            }
+            
             $modx->setPlaceholders($product_attributes,$placeholder_prefix);
 
             // or?
