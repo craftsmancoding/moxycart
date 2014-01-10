@@ -86,10 +86,11 @@ switch ($modx->event->name) {
             $product_attributes['calculated_price'] = $calculated_price;            
 
             foreach ($Product->Specs as $ps) {
-                $spec_name = $ps->Spec->get('name');
+                $spec_name = str_replace(' ', '_', strtolower($ps->Spec->get('name')));
                 $product_attributes[$spec_name] = $ps->get('value');
             }
-            
+
+
             $modx->setPlaceholders($product_attributes,$placeholder_prefix);
 
             // or?
