@@ -21,5 +21,13 @@ return array(
     
     'category' => 'Moxycart',
     'seed' => array('prod'),
+    
+    'build_attributes' => array(
+        'Currency' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => true, 
+            xPDOTransport::UNIQUE_KEY => array('code'),
+        ),
+    ),
 );
 /*EOF*/
