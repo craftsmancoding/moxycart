@@ -1,18 +1,20 @@
 <script>
 function add_relation(product_id,name,sku) {
     var tpl = <?php print json_encode($data['related_products.tpl']); ?>;
-    tpl = tpl.replace(/\[\[\+product_id\]\]/g, product_id );
+    tpl = tpl.replace(/\[\[\+related_id\]\]/g, product_id );
     tpl = tpl.replace(/\[\[\+name\]\]/g, name );
     tpl = tpl.replace(/\[\[\+sku\]\]/g, sku );
     jQuery('#product_relations').append(tpl);
     // Grey out original
-    jQuery('#product_'+product_id).hide();
+    jQuery('#product_'+product_id+ ' span').hide();
+    jQuery('#product_'+product_id+' strong').css("color","gray");
     jQuery('#related_products_msg').hide();
 }
 
 function remove_relation(product_id) {
     jQuery('#product_relation_'+product_id).remove();
-    jQuery('#product_'+product_id).show();
+    jQuery('#product_'+product_id+ ' span').show();
+    jQuery('#product_'+product_id+' strong').css("color","black");    
 }
 </script>
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
@@ -223,7 +225,7 @@ function remove_relation(product_id) {
         <h3>Related Products</h3>
         <?php /* scrollable div here ... */ ?>
         <div>
-            <?php if (!$data['related_products']['total']): ?>
+            <?php if (!$data['related_products']): ?>
                 <div id="related_products_msg" style="display: table-cell; vertical-align: middle; text-align: center; background-color:#D8D8D8; height:30px; width:500px;">You have not defined any related products.</div>
             <?php endif; ?>                
 

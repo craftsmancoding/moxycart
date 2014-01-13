@@ -142,7 +142,7 @@
 		<composite alias="Terms" class="ProductTerm" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Taxonomies" class="ProductTaxonomy" local="product_id" foreign="product_id" cardinality="many" owner="local" />
         <composite alias="Specs" class="ProductSpec" local="product_id" foreign="product_id" cardinality="many" owner="local" />
-		<composite alias="Related" class="RelatedProducts" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+		<composite alias="Relations" class="ProductRelation" local="product_id" foreign="product_id" cardinality="many" owner="local" />
     </object>
 
 
@@ -299,9 +299,9 @@
 	</object>
     
 
-    <!-- ! RelatedProducts -->
+    <!-- ! ProductRelation -->
     <!-- for linking products together -->
-	<object class="RelatedProducts" table="related_products" extends="xPDOSimpleObject">
+	<object class="ProductRelation" table="products_relations" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="related_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="type" dbtype="varchar" precision="32" phptype="string" null="false" default="related"/>
@@ -311,7 +311,7 @@
 		</index>
 
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
-        <aggregate alias="Related" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Relation" class="Product" local="related_id" foreign="product_id" cardinality="one" owner="foreign" />
 	</object>
 
 	<!-- ! Image -->

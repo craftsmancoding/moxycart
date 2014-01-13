@@ -481,9 +481,9 @@ $xpdo_meta_map['Product']= array (
       'cardinality' => 'many',
       'owner' => 'local',
     ),
-    'Related' => 
+    'Relations' => 
     array (
-      'class' => 'RelatedProducts',
+      'class' => 'ProductRelation',
       'local' => 'product_id',
       'foreign' => 'product_id',
       'cardinality' => 'many',

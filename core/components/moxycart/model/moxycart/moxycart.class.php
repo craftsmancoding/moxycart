@@ -1087,15 +1087,16 @@ class Moxycart {
             $this->cache[ $t['term_id'] ] = true;
         }
         // Related Products
-        $data['products'] = $this->json_products(array(),true);
+        $skip_ids = array($product_id);
         $related_products = $this->json_product_relations(array('product_id'=>$product_id),true);
         $data['related_products'] = '';
         foreach ($related_products['results'] as $r) {
+            $skip_ids[] = $r['related_id'];
             $data['related_products'] .= $this->_load_view('product_relation.php',$r);
         }
         $data['related_products.tpl'] = $this->_load_view('product_relation.php', 
             array(
-                'product_id'=> '[[+product_id]]',
+                'related_id'=> '[[+related_id]]',
                 'related.is_selected'=> '',
                 'bundle.is_selected' => '',
                 'bundle_match_qty.is_selected' => '',
@@ -1103,7 +1104,8 @@ class Moxycart {
                 'sku' => '[[+sku]]',
             )
         );
-        
+
+        $data['products'] = $this->json_products(array('product_id:NOT IN'=>$skip_ids),true);        
         // Taxonomies (yowza!)
         $data['product_taxonomies'] = '';
         $product_taxonomies = $this->json_product_taxonomies(array('limit'=>0,'product_id'=>$product_id),true);
@@ -1390,7 +1392,7 @@ class Moxycart {
         switch ($action) {
             case 'update':
                 $product_id = (int) $this->modx->getOption('product_id', $args);
-                $this->modx->log(modX::LOG_LEVEL_DEBUG, 'product update args: '. print_r($args,true));        
+                $this->modx->log(modX::LOG_LEVEL_ERROR, 'product update args: '. print_r($args,true));        
                 
                 $Product = $this->modx->getObject('Product',$product_id);
                 
@@ -1412,15 +1414,19 @@ class Moxycart {
                 // The ones on the page now take precedence
                 $seq = 0;
                 foreach ($related as $related_id => $type) {
+                    if ($related_id == $product_id) {
+                        continue;
+                    }
                     $Rel = $this->modx->getObject('ProductRelation', array('product_id'=>$product_id,'related_id'=>$related_id));
                     if (!$Rel) {
-                        $Rel = $this->modx->getObject('ProductRelation');
+                        $Rel = $this->modx->newObject('ProductRelation');
                         $Rel->set('product_id', $product_id);
                         $Rel->set('related_id', $related_id);                    
                     }
-
+                    
                     $Rel->set('type', $type);
                     $Rel->set('seq', $seq);
+                    //$this->modx->log(modX::LOG_LEVEL_ERROR,'Adding ProductRelation '.$related_id.' of type '.$type);
                     $seq++;
                     $many[] = $Rel;
                 }
@@ -1542,7 +1548,9 @@ class Moxycart {
                 // Order any ones we didn't know about (i.e. newly uploaded ones)
                 $query = $this->modx->newQuery('Image');
                 $query->where(array('product_id' => $product_id));
-                $query->where(array('image_id:NOT IN' => $related));
+                if ($related) {
+                    $query->where(array('image_id:NOT IN' => $related));
+                }
                 if ($Images = $this->modx->getCollection('Image', $query)) {
                     foreach ($Images as $I) {
                         $I->set('seq',$seq);
@@ -2046,22 +2054,33 @@ class Moxycart {
             return false;
         }
 */
-        
+        //$this->modx->log(1, '[json_products] ' .print_r($args,true));
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'seq');
         $dir = $this->modx->getOption('dir',$args,'ASC');
         
-        $parent_id = (int) $this->modx->getOption('parent_id',$args);
-        $store_id = (int) $this->modx->getOption('store_id',$args);
+        unset($args['limit']);
+        unset($args['start']);
+        unset($args['sort']);
+        unset($args['dir']);
+        unset($args['_dc']);
+        unset($args['HTTP_MODAUTH']);
+        //$parent_id = (int) $this->modx->getOption('parent_id',$args);
+        //$store_id = (int) $this->modx->getOption('store_id',$args);
         
         $criteria = $this->modx->newQuery('Product');
+        if ($args) {
+            $criteria->where($args);
+        }
+/*
         if ($parent_id) {
             $criteria->where(array('parent_id'=>$parent_id));
         }
         if ($store_id) {
             $criteria->where(array('store_id'=>$store_id));
         } 
+*/
         $total_pages = $this->modx->getCount('Product',$criteria);
         
         $criteria->limit($limit, $start); 
@@ -2126,7 +2145,7 @@ class Moxycart {
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
-        $sort = $this->modx->getOption('sort',$args,'seq');
+        $sort = $this->modx->getOption('sort',$args,'ProductRelation.seq');
         $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $parent_id = (int) $this->modx->getOption('parent_id',$args);
@@ -2143,7 +2162,7 @@ class Moxycart {
         
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
-        $pages = $this->modx->getCollection('ProductRelation',$criteria);
+        $pages = $this->modx->getCollectionGraph('ProductRelation','{"Relation":{}}',$criteria);
 //        print $criteria->toSQL(); //<-- useful for debugging
 //        exit;
         // Init our array
@@ -2154,6 +2173,9 @@ class Moxycart {
                 
         foreach ($pages as $p) {
             $row = $p->toArray();
+//            $this->modx->log(1, print_r($row,true)); exit;
+            $row['sku'] = $p->Relation->get('sku');
+            $row['name'] = $p->Relation->get('name');
             $row['related.is_selected'] = ($row['type'] == 'related') ? ' selected="selected"' : '';
             $row['bundle.is_selected'] = ($row['type'] == 'bundle') ? ' selected="selected"' : '';
             $row['bundle_match_qty.is_selected'] = ($row['type'] == 'bundle_match_qty') ? ' selected="selected"' : '';

@@ -136,16 +136,7 @@ function get_spec(spec_id) {
         jQuery("#product_specs").append(data);
     });
 }
-/**
- * Simple JS sprintf
- *
- */
-function sprintf( format ) {
-  for( var i=1; i < arguments.length; i++ ) {
-    format = format.replace( /%s/, arguments[i] );
-  }
-  return format;
-}
+
 
 jQuery(function() {
 	INIT.update_product();

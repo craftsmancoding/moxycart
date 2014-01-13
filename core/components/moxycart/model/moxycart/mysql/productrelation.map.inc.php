@@ -1,8 +1,8 @@
 <?php
-$xpdo_meta_map['RelatedProduct']= array (
+$xpdo_meta_map['ProductRelation']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'related_products',
+  'table' => 'products_relations',
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
@@ -70,10 +70,10 @@ $xpdo_meta_map['RelatedProduct']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
-    'Related' => 
+    'Relation' => 
     array (
       'class' => 'Product',
-      'local' => 'product_id',
+      'local' => 'related_id',
       'foreign' => 'product_id',
       'cardinality' => 'one',
       'owner' => 'foreign',

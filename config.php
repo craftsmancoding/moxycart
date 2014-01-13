@@ -21,12 +21,20 @@ return array(
     
     'category' => 'Moxycart',
     'seed' => array('prod'),
-    
+    'packages' => array(
+        array('moxycart', $pkg_root_dir.'/core/components/moxycart/model/','moxy_'),
+        array('foxycart', $pkg_root_dir.'/core/components/moxycart/model/','foxy_'),
+    ),
     'build_attributes' => array(
         'Currency' => array(
             xPDOTransport::PRESERVE_KEYS => true,
             xPDOTransport::UPDATE_OBJECT => true, 
             xPDOTransport::UNIQUE_KEY => array('code'),
+        ),
+        'Product' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => true, 
+            xPDOTransport::UNIQUE_KEY => array('sku'),
         ),
     ),
 );
