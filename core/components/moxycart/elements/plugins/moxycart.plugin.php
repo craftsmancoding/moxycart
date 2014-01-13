@@ -31,14 +31,11 @@ switch ($modx->event->name) {
 
         $refresh = true; // used if you want to turn off caching (good for testing)
         
-        $request = explode('/', $_SERVER['REQUEST_URI']);
-        $uris = array_slice($request, -2, 2, true);
-        $uri = implode('/', $uris);
+        $uri = str_replace(MODX_BASE_URL, '', $_SERVER['REQUEST_URI']);
 
         $cache_key = str_replace('/', '_', $uri);
         $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
         $fingerprint = 'product_'.$cache_key;
-
 
         $out = $modx->cacheManager->get($fingerprint, $cache_opts);
 
@@ -46,18 +43,18 @@ switch ($modx->event->name) {
         // Cache our custom browser-specific version of the page.
         if ($refresh || empty($out)) {
 
-            
-            $Product = $modx->getObjectGraph('Product','{"Specs":{"Spec":{}}}',array('uri'=>$uri)); // ??? how can you tell the requested URI?
+            $Product = $modx->getObjectGraph('Product','{"Specs":{"Spec":{}}}',array('uri'=>$uri));
+
             if (!$Product) {
+                $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart] No Product found for uri '.$uri);
                 return;  // it's a real 404
             } 
-             // Create our new "fake" resource.  ??? how does this handle TVs? B/c products don't have the same attributes as resources
+
+             // Create our new "fake" resource.  
+             // ??? how does this handle TVs? B/c products don't have the same attributes as resources
             $modx->resource = $modx->newObject('modResource');
             $product_attributes = $Product->toArray();
 
-            
-            
-        
             // set date and time (unix)
             $now = strtotime(date('Y-m-d H:i:s'));
             $sale_start = strtotime($product_attributes['sale_start']);
@@ -85,20 +82,10 @@ switch ($modx->event->name) {
             // add calculated_price field
             $product_attributes['calculated_price'] = $calculated_price;            
 
-            $criteria = $modx->newQuery('Spec');
-            $Specs = $modx->getCollection('Spec',$criteria);
-           
-           foreach ($Specs as $spec) {
-                $value = '';
-                foreach ($Product->Specs as $ps) {
-                    if($spec->get('spec_id') == $ps->get('spec_id')) {
-                        $value =  $ps->get('value');
-                    }
-                }
-                $spec_name = str_replace(' ', '_', strtolower($spec->get('name')));
-                $product_attributes[$spec_name] = $value;
+           foreach ($Product->Specs as $S) {
+                $spec_name = str_replace(' ', '_', strtolower($S->Spec->get('name')));
+                $product_attributes[$spec_name] = $S->Spec->get('value');
             }
-
             $modx->setPlaceholders($product_attributes,$placeholder_prefix);
 
             // or?
@@ -110,7 +97,7 @@ switch ($modx->event->name) {
             $modx->cacheManager->set($fingerprint, $out, $lifetime, $cache_opts);
         }
         print $out;
-        die();
+        exit();
         break;
 
     //------------------------------------------------------------------------------

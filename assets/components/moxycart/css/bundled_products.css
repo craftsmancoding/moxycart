@@ -1,0 +1,12 @@
+input.fc_readonly {
+    color:#888;
+    border:1px solid #CCC;
+    background:#F1F1F1;
+}
+tr.fc_dependent td {
+    background:#F1f1f1 !important;
+}
+span.fc_dependent_text {
+    color:#AAA;
+    font-style:italic;
+}

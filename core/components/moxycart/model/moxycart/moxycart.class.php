@@ -1098,8 +1098,8 @@ class Moxycart {
             array(
                 'related_id'=> '[[+related_id]]',
                 'related.is_selected'=> '',
-                'bundle.is_selected' => '',
-                'bundle_match_qty.is_selected' => '',
+                'bundle-1:order.is_selected' => '',
+                'bundle-1:1.is_selected' => '',
                 'name' => '[[+name]]',
                 'sku' => '[[+sku]]',
             )
@@ -1560,7 +1560,12 @@ class Moxycart {
                 }
                 
                                 
-                $Product->fromArray($args);
+                //$Product->fromArray($args);
+                foreach ($args as $k => $v) {
+                    if (is_scalar($v)) {
+                        $Product->set($k, stripcslashes($v));
+                    }
+                }
                 if (!$Product->save()) {
                     $this->modx->log(modX::LOG_LEVEL_ERROR,'problem saving product_id '.$product_id);
                     $out['success'] = false;
@@ -2147,17 +2152,21 @@ class Moxycart {
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'ProductRelation.seq');
         $dir = $this->modx->getOption('dir',$args,'ASC');
-        
-        $parent_id = (int) $this->modx->getOption('parent_id',$args);
-        $store_id = (int) $this->modx->getOption('store_id',$args);
+
+        unset($args['limit']);
+        unset($args['start']);
+        unset($args['sort']);
+        unset($args['dir']);
+        unset($args['_dc']);
+        unset($args['HTTP_MODAUTH']);
+        //$parent_id = (int) $this->modx->getOption('parent_id',$args);
+        //$store_id = (int) $this->modx->getOption('store_id',$args);
         
         $criteria = $this->modx->newQuery('ProductRelation');
-        if ($parent_id) {
-            $criteria->where(array('parent_id'=>$parent_id));
+        if ($args) {
+            $criteria->where($args);
         }
-        if ($store_id) {
-            $criteria->where(array('store_id'=>$store_id));
-        } 
+
         $total_pages = $this->modx->getCount('ProductRelation',$criteria);
         
         $criteria->limit($limit, $start); 
@@ -2176,9 +2185,11 @@ class Moxycart {
 //            $this->modx->log(1, print_r($row,true)); exit;
             $row['sku'] = $p->Relation->get('sku');
             $row['name'] = $p->Relation->get('name');
+            $row['category'] = $p->Relation->get('category');
+            $row['price'] = $p->Relation->get('price');
             $row['related.is_selected'] = ($row['type'] == 'related') ? ' selected="selected"' : '';
-            $row['bundle.is_selected'] = ($row['type'] == 'bundle') ? ' selected="selected"' : '';
-            $row['bundle_match_qty.is_selected'] = ($row['type'] == 'bundle_match_qty') ? ' selected="selected"' : '';
+            $row['bundle-1:order.is_selected'] = ($row['type'] == 'bundle-1:order') ? ' selected="selected"' : '';
+            $row['bundle-1:1.is_selected'] = ($row['type'] == 'bundle-1:1') ? ' selected="selected"' : '';
             $data['results'][] = $row;
         }
 

@@ -36,6 +36,12 @@ return array(
             xPDOTransport::UPDATE_OBJECT => true, 
             xPDOTransport::UNIQUE_KEY => array('sku'),
         ),
+        'Image' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => true, 
+            xPDOTransport::UNIQUE_KEY => array('url'),
+        ),
+        
     ),
 );
 /*EOF*/
