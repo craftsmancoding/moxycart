@@ -136,24 +136,40 @@ function get_spec(spec_id) {
         jQuery("#product_specs").append(data);
     });
 }
+/**
+ * Simple JS sprintf
+ *
+ */
+function sprintf( format ) {
+  for( var i=1; i < arguments.length; i++ ) {
+    format = format.replace( /%s/, arguments[i] );
+  }
+  return format;
+}
 
-$(function() {
+jQuery(function() {
 	INIT.update_product();
 	INIT.create_product();
 	INIT.fill_form_fields();
 	INIT.remove_image();
 	INIT.edit_image_modal();
-	$('#moxytab').tabify();
-	$('.datepicker').datepicker();
-	$("#product_images").sortable();
-    $("#product_images").disableSelection();
+	jQuery('#moxytab').tabify();
+	jQuery('.datepicker').datepicker();
+	jQuery("#product_images").sortable();
+    jQuery("#product_images").disableSelection();
 
-	$( document ).on( "mouseenter", ".li_product_image", function() {
- 		$(this).find('a.remove-img').show();
+	jQuery( document ).on( "mouseenter", ".li_product_image", function() {
+ 		jQuery(this).find('a.remove-img').show();
 	});
-	$( document ).on( "mouseleave", ".li_product_image", function() {
+	jQuery( document ).on( "mouseleave", ".li_product_image", function() {
  		$(this).find('a.remove-img').hide();
 	});
+	
+    jQuery(function() {
+        jQuery(".sortable").sortable({
+            connectWith: ".connectedSortable",
+        }).disableSelection();
+    });    
 
 
 });

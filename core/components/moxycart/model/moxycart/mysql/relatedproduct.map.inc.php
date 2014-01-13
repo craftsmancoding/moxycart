@@ -1,5 +1,5 @@
 <?php
-$xpdo_meta_map['RelatedProducts']= array (
+$xpdo_meta_map['RelatedProduct']= array (
   'package' => 'moxycart',
   'version' => '1.0',
   'table' => 'related_products',

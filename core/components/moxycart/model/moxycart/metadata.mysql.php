@@ -23,6 +23,6 @@ $xpdo_meta_map = array (
     1 => 'ProductVariationTypes',
     2 => 'ProductTaxonomy',
     3 => 'ProductTerm',
-    4 => 'RelatedProducts',
+    4 => 'RelatedProduct',
   ),
 );

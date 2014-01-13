@@ -20,6 +20,7 @@ $manager->createObjectContainer('ProductVariationTypes');
 $manager->createObjectContainer('ProductTerm');
 $manager->createObjectContainer('ProductTaxonomy');
 $manager->createObjectContainer('ProductSpec');
+$manager->createObjectContainer('ProductRelation');
 $manager->createObjectContainer('Cart');
 $manager->createObjectContainer('Image');
 

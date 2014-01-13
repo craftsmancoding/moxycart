@@ -16,6 +16,7 @@ $manager->removeObjectContainer('ProductVariationTypes');
 $manager->removeObjectContainer('ProductTaxonomy');
 $manager->removeObjectContainer('ProductTerm');
 $manager->removeObjectContainer('ProductSpec');
+$manager->removeObjectContainer('ProductRelation');
 $manager->removeObjectContainer('Cart');
 $manager->removeObjectContainer('Image');
 

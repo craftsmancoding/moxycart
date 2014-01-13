@@ -1,3 +1,20 @@
+<script>
+function add_relation(product_id,name,sku) {
+    var tpl = <?php print json_encode($data['related_products.tpl']); ?>;
+    tpl = tpl.replace(/\[\[\+product_id\]\]/g, product_id );
+    tpl = tpl.replace(/\[\[\+name\]\]/g, name );
+    tpl = tpl.replace(/\[\[\+sku\]\]/g, sku );
+    jQuery('#product_relations').append(tpl);
+    // Grey out original
+    jQuery('#product_'+product_id).hide();
+    jQuery('#related_products_msg').hide();
+}
+
+function remove_relation(product_id) {
+    jQuery('#product_relation_'+product_id).remove();
+    jQuery('#product_'+product_id).show();
+}
+</script>
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
 <div class="moxy-msg">
@@ -10,7 +27,7 @@
 <div id="modx-panel-workspace" class="x-plain container">
 	<div class="moxy-header clearfix">
 		<div class="moxy-header-title">
-			<h2>Product Update</h2>
+			<h2><?php print $data['pagetitle']; ?></h2>
 		</div>
 			
 		<div class="moxy-buttons-wrapper">
@@ -36,6 +53,7 @@
 		<li class="settings-link" ><a href="#settings_tab">Product Settings</a></li>
 		<li class="variations-link" ><a href="#variations_tab">Variations</a></li>
 		<li class="specs-link" ><a href="#specs_tab">Specs</a></li>
+		<li class="related-link" ><a href="#related_tab">Related</a></li>
 		<li class="images-link" ><a href="#images_tab">Images</a></li>
 		<li class="product-link" ><a href="#taxonomies_tab">Taxonomies</a></li>
 	</ul>
@@ -93,9 +111,6 @@
 
                                 <label for="price">Price</label>
                                 <input type="text" style="width:94%;" id="price" name="price" value=""/>
-
-                                <label for="price_strike_thru">Strike-Through Price</label>
-                                <input type="text" style="width:94%;" id="price_strike_thru" name="price_strike_thru" value=""/>
 
                                 <label for="price_strike_thru">Strike-Through Price</label>
                                 <input type="text" style="width:94%;" id="price_strike_thru" name="price_strike_thru" value=""/>
@@ -201,6 +216,41 @@
 		<button class="btn" onclick="javascript:get_spec(jQuery('#spec_id').val()); return false;">Attach Spec</button>
 		<a class="btn btn-custom" href="<?php echo $data['mgr_connector_url'].'specs_manage';  ?>">Add New Spec</a>
 
+	</div>
+	
+	<div id="related_tab" class="content">		
+
+        <h3>Related Products</h3>
+        <?php /* scrollable div here ... */ ?>
+        <div>
+            <?php if (!$data['related_products']['total']): ?>
+                <div id="related_products_msg" style="display: table-cell; vertical-align: middle; text-align: center; background-color:#D8D8D8; height:30px; width:500px;">You have not defined any related products.</div>
+            <?php endif; ?>                
+
+            <ul id="product_relations" class="sortable" style="min-height:30px; width:500px;">
+                <?php print $data['related_products']; ?>
+            </ul>
+
+        </div>
+        
+        <h3>Find Products</h3>
+        <?php /* scrollable div here ... */ ?>
+
+        <?php if (!$data['products']['total']): ?>
+            <p>There are no other products defined.</p>
+        <?php else: ?>
+            <div style="height: 400px; width:400px; overflow: scroll;">
+                <ul class="">
+                <?php foreach ($data['products']['results'] as $p): ?>
+                    <li id="product_<?php print $p['product_id']; ?>">
+                        <strong><?php print $p['name']; ?></strong> (<?php print $p['sku']; ?>) 
+                        <span class="btn" style="height:10px;" onclick="javascript:add_relation(<?php print $p['product_id']; ?>,'<?php print $p['name']; ?>', '<?php print $p['sku']; ?>');">Add</span>
+                    </li>
+                <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+        
 	</div>
 
 	<div id="images_tab" class="content">		

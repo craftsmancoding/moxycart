@@ -25,7 +25,7 @@
  */
 
 
- class moxycart {
+class Moxycart {
     
     public $modx;
 
@@ -45,6 +45,12 @@
 
     private $cache; // for iterative ops
     private $depth = 0; //
+
+    // Classwide query params
+    private $limit;
+    private $start;
+    private $sort;
+    private $dir;
     
     const MOXYID = 'm42Ccf';
     
@@ -80,7 +86,7 @@
             $this->action = $Action->get('id');
         }
         else {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart] could not determine mgr action.');
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'[moxycart] could not determine mgr action.');
         }
         
         $this->mgr_connector_url = MODX_MANAGER_URL .'?a='.$this->action.'&f=';
@@ -91,7 +97,7 @@
      *
      */
     public function __call($name,$args) {
-        $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart] Invalid function name '.__FUNCTION__);
+        $this->modx->log(modX::LOG_LEVEL_ERROR,'[moxycart] Invalid function name '.__FUNCTION__);
         return $this->help($args);
     }
     //------------------------------------------------------------------------------
@@ -146,6 +152,29 @@
     }
 
     /**
+     * Filters out limit, start, sort, dir from the incoming $args so they
+     * can be passed as a criteria array to getCollection
+     *
+     * @param array $args
+     * @param string $default_sort column to sort by
+     * @param string $default_dir sorting direction for the sort
+     * @return array
+     */
+    private function _get_criteria($args, $default_sort, $default_dir) {
+        $limit = (int) $this->modx->getOption('limit', $args,$this->default_limit);
+        $start = (int) $this->modx->getOption('start', $args,0);
+        $sort = $this->modx->getOption('sort', $args, $default_sort);
+        $dir = $this->modx->getOption('dir', $args, $default_dir);
+        
+        unset($args['limit']);
+        unset($args['start']);
+        unset($args['sort']);
+        unset($args['dir']);
+        
+        return $args;
+    }
+    
+    /**
      * Generates HTML for select <options> (NOT the wrapping <select>)
      * @param $data array 
      * @param $selected $string
@@ -164,32 +193,7 @@
         } 
         return $output;
     }
-    
-    /**
-     * Load a view file. We put in some commonly used variables here for convenience
-     *
-     * @param string $file: name of a file inside of the "views" folder
-     * @param array $data: an associative array containing key => value pairs, passed to the view
-     * @return string
-     */
-    private function _load_view($file, $data=array(),$return=false) {
-        $file = basename($file);
-    	if (file_exists($this->core_path.'components/moxycart/views/'.$file)) {
-    	    if (!isset($return) || $return == false) {
-    	        ob_start();
-    	        include ($this->core_path.'components/moxycart/views/'.$file);
-    	        $output = ob_get_contents();
-    	        ob_end_clean();
-    	    }     
-    	} 
-    	else {
-    		$output = $this->modx->lexicon('view_not_found', array('file'=> 'views/'.$file));
-    	}
-    
-    	return $output;
-    
-    }
-    
+
     /** 
      * For iterative parsing of the Taxonomy/Terms properties
      * 
@@ -229,6 +233,32 @@
         
         return $this->_load_view('product_term_list.php',$data);
     }
+    
+    /**
+     * Load a view file. We put in some commonly used variables here for convenience
+     *
+     * @param string $file: name of a file inside of the "views" folder
+     * @param array $data: an associative array containing key => value pairs, passed to the view
+     * @return string
+     */
+    private function _load_view($file, $data=array(),$return=false) {
+        $file = basename($file);
+    	if (file_exists($this->core_path.'components/moxycart/views/'.$file)) {
+    	    if (!isset($return) || $return == false) {
+    	        ob_start();
+    	        include ($this->core_path.'components/moxycart/views/'.$file);
+    	        $output = ob_get_contents();
+    	        ob_end_clean();
+    	    }     
+    	} 
+    	else {
+    		$output = $this->modx->lexicon('view_not_found', array('file'=> 'views/'.$file));
+    	}
+    
+    	return $output;
+    
+    }
+    
 
     /**
     * Load TinyMCE
@@ -415,7 +445,7 @@
      */
     public function currency_save($args) {
         if (!is_object($this->modx->user)) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'currency_save 401 '.print_r($args,true));
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'currency_save 401 '.print_r($args,true));
             return $this->_send401();
         }
         $out = array(
@@ -425,7 +455,7 @@
         
         $token = $this->modx->getOption('HTTP_MODAUTH', $args);   
         if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'currency_save FAILED. Invalid token: '.print_r($args,true));
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'currency_save FAILED. Invalid token: '.print_r($args,true));
             $out['success'] = false;
             $out['msg'] = 'Invalid token';
         }
@@ -526,7 +556,7 @@
           if (!mkdir(MODX_ASSETS_PATH.$target_path_thumb,0777,true)) {
                 $out['success'] = false;
                 $out['msg'] = 'Failed to create directory at '.MODX_ASSETS_PATH.$target_path_thumb;    
-                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create directory at '.MODX_ASSETS_PATH.$target_path_thumb);
+                $this->modx->log(modX::LOG_LEVEL_ERROR, 'Failed to create directory at '.MODX_ASSETS_PATH.$target_path_thumb);
                 return json_encode($out);
           } 
         }
@@ -534,7 +564,7 @@
         if(!imagejpeg($nm, MODX_ASSETS_PATH.$target_path_thumb . $filename)) {
                 $out['success'] = false;
                 $out['msg'] = 'Failed to create thumb at '.MODX_ASSETS_PATH.$target_path_thumb;    
-                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create thumb at '.MODX_ASSETS_PATH.$target_path_thumb);
+                $this->modx->log(modX::LOG_LEVEL_ERROR, 'Failed to create thumb at '.MODX_ASSETS_PATH.$target_path_thumb);
                 return json_encode($out);
         }
         return $target_path_thumb . $filename;
@@ -622,7 +652,7 @@
                 if (!mkdir($target_path,0777,true)) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to create directory at '.$target_path;    
-                    $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to create directory at '.$target_path);
+                    $this->modx->log(modX::LOG_LEVEL_ERROR, 'Failed to create directory at '.$target_path);
                     return json_encode($out);
                 }
             }
@@ -630,16 +660,16 @@
             if (file_exists(MODX_ASSETS_PATH.$rel_file)) {
                 $out['success'] = false;
                 $out['msg'] = 'Upload Failed. File of same name exists';
-                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file);
+                $this->modx->log(modX::LOG_LEVEL_ERROR, 'Upload Cannot Continue. File of same name exists '.MODX_ASSETS_PATH.$rel_file);
                 return json_encode($out);
             }
             if(move_uploaded_file($_FILES['file']['tmp_name'],MODX_ASSETS_PATH.$rel_file)) {
-                $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'SUCCESS UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
+                $this->modx->log(modX::LOG_LEVEL_DEBUG, 'SUCCESS UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
             } 
             else {
                 $out['success'] = false;
                 $out['msg'] = 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file;
-                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
+                $this->modx->log(modX::LOG_LEVEL_ERROR, 'FAILED UPLOAD: '.MODX_ASSETS_PATH.$rel_file);
                 return json_encode($out);
             }
 
@@ -905,12 +935,12 @@
                 if (!$Image->save()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to save Image object for product';
-                    $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Failed to save Image object for product '.$product_id .' '.MODX_ASSETS_PATH.$rel_file);
+                    $this->modx->log(modX::LOG_LEVEL_ERROR, 'Failed to save Image object for product '.$product_id .' '.MODX_ASSETS_PATH.$rel_file);
                     return json_encode($out);
                 }
                 $out['msg'] = 'Successfully saved image';
                 $out['image_id'] = $this->modx->lastInsertId();
-                $this->modx->log(MODX_LOG_LEVEL_DEBUG, 'Successfully saved image '.$Image->getPrimaryKey() .' '.MODX_ASSETS_PATH.$rel_file);
+                $this->modx->log(modX::LOG_LEVEL_DEBUG, 'Successfully saved image '.$Image->getPrimaryKey() .' '.MODX_ASSETS_PATH.$rel_file);
                 
         }
 
@@ -930,6 +960,7 @@
 
         $data = array();
         $store_id = (int) $this->modx->getOption('store_id',$_GET);
+        $data['pagetitle'] = 'Create Product';
         $data['manager_url'] = $this->mgr_url.'?a=30&id='.$store_id;
         $data['product_form_action'] = 'product_create';
         $data['product_specs'] ='';
@@ -1010,6 +1041,7 @@
         }
         
         $data = $Product->toArray();
+        $data['pagetitle'] = 'Update Product: '. $data['name'];
         $data['manager_url'] = $this->mgr_url.'?a=30&id='.$Product->get('store_id');
         $data['connector_url'] = $this->connector_url;
         $data['product_form_action'] = 'product_update';
@@ -1054,6 +1086,23 @@
         foreach ($product_terms['results'] as $t) {
             $this->cache[ $t['term_id'] ] = true;
         }
+        // Related Products
+        $data['products'] = $this->json_products(array(),true);
+        $related_products = $this->json_product_relations(array('product_id'=>$product_id),true);
+        $data['related_products'] = '';
+        foreach ($related_products['results'] as $r) {
+            $data['related_products'] .= $this->_load_view('product_relation.php',$r);
+        }
+        $data['related_products.tpl'] = $this->_load_view('product_relation.php', 
+            array(
+                'product_id'=> '[[+product_id]]',
+                'related.is_selected'=> '',
+                'bundle.is_selected' => '',
+                'bundle_match_qty.is_selected' => '',
+                'name' => '[[+name]]',
+                'sku' => '[[+sku]]',
+            )
+        );
         
         // Taxonomies (yowza!)
         $data['product_taxonomies'] = '';
@@ -1193,7 +1242,7 @@
      *
      */
 	public function product_inventory_save($args) {
-        $this->modx->log(MODX_LOG_LEVEL_ERROR, 'product_inventory_save: '.print_r($args,true));
+        $this->modx->log(modX::LOG_LEVEL_ERROR, 'product_inventory_save: '.print_r($args,true));
         $out = array(
             'success' => true,
             'msg' => '',
@@ -1204,7 +1253,7 @@
             foreach ($products as $product_id => $data) {
                 $Product = $this->modx->getObject('Product', $product_id);
                 if(!$Product) {
-                    $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_inventory_save product_id not found '.$product_id);
+                    $this->modx->log(modX::LOG_LEVEL_ERROR,'product_inventory_save product_id not found '.$product_id);
                     continue;
                 }
                 
@@ -1215,7 +1264,7 @@
                 $Product->set('qty_alert',$alert);
                 
                 if (!$Product->save()) {
-                    $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_inventory_save failed to update inventory for product '.$product_id);
+                    $this->modx->log(modX::LOG_LEVEL_ERROR,'product_inventory_save failed to update inventory for product '.$product_id);
                     $out['success'] = false;
                     $out['msg'] = 'Failed to update inventory.';
                 }
@@ -1294,6 +1343,7 @@
      *
      * Related data should be stored in the following arrays:
      *
+     *  relations   = key/value where key is product_id, value is type
      *  taxonomies  = array(1,2,3)  a simple array of taxonomy_id's
      *  terms       = array(4,5,6)  a simple array of term_id's
      *  specs       = array(            An array of key/value pairs: keys=spec_ids, values=values for that spec
@@ -1340,9 +1390,42 @@
         switch ($action) {
             case 'update':
                 $product_id = (int) $this->modx->getOption('product_id', $args);
-                $this->modx->log(MODX_LOG_LEVEL_ERROR, 'product update args: '. print_r($args,true));        
+                $this->modx->log(modX::LOG_LEVEL_DEBUG, 'product update args: '. print_r($args,true));        
                 
                 $Product = $this->modx->getObject('Product',$product_id);
+                
+                // productRelations
+                $many = array();
+                $existing = array();
+                $related = $this->modx->getOption('relations',$args,array());
+                $related_ids = array_keys($related);
+                if ($Relations = $this->modx->getCollection('ProductRelation', array('product_id'=>$product_id))) {
+                    // Remove any unchecked items
+                    foreach ($Relations as $Rel) {
+                        if (!in_array($Rel->get('related_id'), $related_ids)) {
+                            if($Rel->remove() === false) {
+                                $this->modx->log(modX::LOG_LEVEL_ERROR,'product_save failed to remove ProductRelation '.$Rel->get('id'));
+                            }
+                        }
+                    }
+                } 
+                // The ones on the page now take precedence
+                $seq = 0;
+                foreach ($related as $related_id => $type) {
+                    $Rel = $this->modx->getObject('ProductRelation', array('product_id'=>$product_id,'related_id'=>$related_id));
+                    if (!$Rel) {
+                        $Rel = $this->modx->getObject('ProductRelation');
+                        $Rel->set('product_id', $product_id);
+                        $Rel->set('related_id', $related_id);                    
+                    }
+
+                    $Rel->set('type', $type);
+                    $Rel->set('seq', $seq);
+                    $seq++;
+                    $many[] = $Rel;
+                }
+                $Product->addMany($many);
+
                 
                 //taxonomies
                 $many = array();
@@ -1353,7 +1436,7 @@
                     foreach ($Taxonomies as $T) {
                         if (!in_array($T->get('taxonomy_id'), $related)) {
                             if($T->remove() === false) {
-                                $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_save failed to remove ProductTaxonomy '.$T->get('id'));
+                                $this->modx->log(modX::LOG_LEVEL_ERROR,'product_save failed to remove ProductTaxonomy '.$T->get('id'));
                             }
                         }
                         else {
@@ -1381,7 +1464,7 @@
                     foreach ($Terms as $T) {
                         if (!in_array($T->get('taxonomy_id'), $related)) {
                             if($T->remove() === false) {
-                                $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_save failed to remove ProductTerm '.$T->get('id'));
+                                $this->modx->log(modX::LOG_LEVEL_ERROR,'product_save failed to remove ProductTerm '.$T->get('id'));
                             }
                         }
                         else {
@@ -1410,7 +1493,7 @@
                     foreach ($Specs as $S) {
                         if (!in_array($S->get('spec_id'), array_keys($related))) {
                             if($S->remove() === false) {
-                                $this->modx->log(MODX_LOG_LEVEL_ERROR,'product_save failed to remove ProductSpec '.$S->get('id'));
+                                $this->modx->log(modX::LOG_LEVEL_ERROR,'product_save failed to remove ProductSpec '.$S->get('id'));
                             }
                         }
                         else {
@@ -1423,7 +1506,7 @@
                 foreach ($existing as $S) {
                     $S->set('value', $related[ $S->get('spec_id') ]);
                     if(!$S->save()){
-                        $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Error saving ProductSpec: '. $S->get('id'));
+                        $this->modx->log(modX::LOG_LEVEL_ERROR, 'Error saving ProductSpec: '. $S->get('id'));
                     }
                     unset($related[ $S->get('spec_id') ]);
                 }
@@ -1435,7 +1518,7 @@
                     $S->set('spec_id', $k);
                     $S->set('value', $v);
                     if (!$S->save()) {
-                        $this->modx->log(MODX_LOG_LEVEL_ERROR, 'Error creating ProductSpec product '. $product_id.' spec_id '.$k .' with value '.$v);
+                        $this->modx->log(modX::LOG_LEVEL_ERROR, 'Error creating ProductSpec product '. $product_id.' spec_id '.$k .' with value '.$v);
                     }
                 }
                 
@@ -1453,7 +1536,7 @@
                         $seq++;
                     }
                     else {
-                        $this->modx->log(MODX_LOG_LEVEL_ERROR,'failed to load image '.$image_id);
+                        $this->modx->log(modX::LOG_LEVEL_ERROR,'failed to load image '.$image_id);
                     }
                 }
                 // Order any ones we didn't know about (i.e. newly uploaded ones)
@@ -1471,7 +1554,7 @@
                                 
                 $Product->fromArray($args);
                 if (!$Product->save()) {
-                    $this->modx->log(MODX_LOG_LEVEL_ERROR,'problem saving product_id '.$product_id);
+                    $this->modx->log(modX::LOG_LEVEL_ERROR,'problem saving product_id '.$product_id);
                     $out['success'] = false;
                     $out['msg'] = 'Failed to update product.';    
                 }
@@ -1567,14 +1650,14 @@
             if (!$Prod) {
                 $out['success'] = false;
                 $out['msg'] = 'Invalid product id: '.$id;
-                $this->modx->log(MODX_LOG_LEVEL_ERROR,$out['msg']);
+                $this->modx->log(modX::LOG_LEVEL_ERROR,$out['msg']);
                 return json_encode($out);
             }
             $Prod->set('seq', $seq);
             if (!$Prod->save()) {
                 $out['success'] = false;
                 $out['msg'] = 'Error saving product: '.$id;
-                $this->modx->log(MODX_LOG_LEVEL_ERROR,$out['msg']);
+                $this->modx->log(modX::LOG_LEVEL_ERROR,$out['msg']);
                 return json_encode($out);
             }
             $seq++;
@@ -1609,7 +1692,7 @@
      */
     public function spec_save($args) {
         if (!is_object($this->modx->user)) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'spec_save 401 '.print_r($args,true));
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'spec_save 401 '.print_r($args,true));
             return $this->_send401();
         }
         $out = array(
@@ -1619,7 +1702,7 @@
         
         $token = $this->modx->getOption('HTTP_MODAUTH', $args);   
         if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'spec_save FAILED. Invalid token: '.print_r($args,true));
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'spec_save FAILED. Invalid token: '.print_r($args,true));
             $out['success'] = false;
             $out['msg'] = 'Invalid token';
         }
@@ -1734,7 +1817,7 @@
      */
     public function variation_term_save() {
         if (!is_object($this->modx->user)) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'variation_term_save 401 '.print_r($_POST,true));
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'variation_term_save 401 '.print_r($_POST,true));
             return $this->_send401();
         }
         $out = array(
@@ -1744,7 +1827,7 @@
         
         $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
         if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'variation_term_save FAILED. Invalid token: '.print_r($_POST,true));
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'variation_term_save FAILED. Invalid token: '.print_r($_POST,true));
             $out['success'] = false;
             $out['msg'] = 'Invalid token';
         }
@@ -1816,7 +1899,7 @@
      */
     public function variation_type_save() {
         if (!is_object($this->modx->user)) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'variation_type_save 401 '.print_r($_POST,true));
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'variation_type_save 401 '.print_r($_POST,true));
             return $this->_send401();
         }
         $out = array(
@@ -1826,7 +1909,7 @@
         
         $token = $this->modx->getOption('HTTP_MODAUTH', $_POST);   
         if ($token != $this->modx->user->getUserToken($this->modx->context->get('key'))) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'variation_type_save FAILED. Invalid token: '.print_r($_POST,true));
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'variation_type_save FAILED. Invalid token: '.print_r($_POST,true));
             $out['success'] = false;
             $out['msg'] = 'Invalid token';
         }
@@ -1959,7 +2042,7 @@
 
 /*
         if (!$this->modx->hasPermission($this->modx->getOption(__FUNCTION__, $this->perms, $this->default_perm))) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart::'.__FUNCTION__.'] User does not have sufficient privileges.');
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'[moxycart::'.__FUNCTION__.'] User does not have sufficient privileges.');
             return false;
         }
 */
@@ -2027,9 +2110,60 @@
         if ($raw) {
             return $data;
         }
-        return json_encode($data);
+        return json_encode($data);    
+    }
 
-    
+    /**
+     * Get a list of products related to the given produc
+     *
+     * @param array arguents including limit, start, sort, dir
+     *
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
+     */
+
+    public function json_product_relations($args,$raw=false) {
+        
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'seq');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
+        
+        $parent_id = (int) $this->modx->getOption('parent_id',$args);
+        $store_id = (int) $this->modx->getOption('store_id',$args);
+        
+        $criteria = $this->modx->newQuery('ProductRelation');
+        if ($parent_id) {
+            $criteria->where(array('parent_id'=>$parent_id));
+        }
+        if ($store_id) {
+            $criteria->where(array('store_id'=>$store_id));
+        } 
+        $total_pages = $this->modx->getCount('ProductRelation',$criteria);
+        
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('ProductRelation',$criteria);
+//        print $criteria->toSQL(); //<-- useful for debugging
+//        exit;
+        // Init our array
+        $data = array(
+            'results'=>array(),
+            'total' => $total_pages,
+        );
+                
+        foreach ($pages as $p) {
+            $row = $p->toArray();
+            $row['related.is_selected'] = ($row['type'] == 'related') ? ' selected="selected"' : '';
+            $row['bundle.is_selected'] = ($row['type'] == 'bundle') ? ' selected="selected"' : '';
+            $row['bundle_match_qty.is_selected'] = ($row['type'] == 'bundle_match_qty') ? ' selected="selected"' : '';
+            $data['results'][] = $row;
+        }
+
+        if ($raw) {
+            return $data;
+        }
+        return json_encode($data);    
     }
 
     /**
@@ -2746,7 +2880,7 @@
      */
     public function help() {
         if (!$this->modx->hasPermission($this->modx->getOption(__FUNCTION__, $this->perms, $this->default_perm))) {
-            $this->modx->log(MODX_LOG_LEVEL_ERROR,'[moxycart::'.__FUNCTION__.'] User does not have sufficient privileges.');
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'[moxycart::'.__FUNCTION__.'] User does not have sufficient privileges.');
         }    
         $methods = get_class_methods($this);
         
