@@ -85,11 +85,19 @@ switch ($modx->event->name) {
             // add calculated_price field
             $product_attributes['calculated_price'] = $calculated_price;            
 
-            foreach ($Product->Specs as $ps) {
-                $spec_name = str_replace(' ', '_', strtolower($ps->Spec->get('name')));
-                $product_attributes[$spec_name] = $ps->get('value');
+            $criteria = $modx->newQuery('Spec');
+            $Specs = $modx->getCollection('Spec',$criteria);
+           
+           foreach ($Specs as $spec) {
+                $value = '';
+                foreach ($Product->Specs as $ps) {
+                    if($spec->get('spec_id') == $ps->get('spec_id')) {
+                        $value =  $ps->get('value');
+                    }
+                }
+                $spec_name = str_replace(' ', '_', strtolower($spec->get('name')));
+                $product_attributes[$spec_name] = $value;
             }
-
 
             $modx->setPlaceholders($product_attributes,$placeholder_prefix);
 
