@@ -260,7 +260,7 @@ function remove_relation(product_id) {
                               </tr>
                             </thead>
                             <tbody>
-                                <?php if (!$data['products']['total']): ?>
+                                <?php if (!isset($data['products']['total']) || !$data['products']['total'] ): ?>
                                     <tr><td class="alert alert-danger" colspan="3"> There are no other products defined.</td></tr>
                                 <?php else : ?>
                                     <?php foreach ($data['products']['results'] as $p): ?>
