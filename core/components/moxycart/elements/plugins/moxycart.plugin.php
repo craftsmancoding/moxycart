@@ -30,12 +30,9 @@ switch ($modx->event->name) {
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
         $refresh = true; // used if you want to turn off caching (good for testing)
-        
         $uri = str_replace(MODX_BASE_URL, '', $_SERVER['REQUEST_URI']);
-
-        $cache_key = str_replace('/', '_', $uri);
         $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
-        $fingerprint = 'product_'.$cache_key;
+        $fingerprint = 'product/'.$uri;
 
         $out = $modx->cacheManager->get($fingerprint, $cache_opts);
 
@@ -52,7 +49,7 @@ switch ($modx->event->name) {
 
              // Create our new "fake" resource.  
              // ??? how does this handle TVs? B/c products don't have the same attributes as resources
-            $modx->resource = $modx->newObject('modResource');
+            // $modx->resource = $modx->newObject('modResource');
             $product_attributes = $Product->toArray();
 
             // set date and time (unix)
@@ -63,7 +60,7 @@ switch ($modx->event->name) {
             $lifetime = 3600; // cache 
         
              $calculated_price = $product_attributes['price'];
-            // if on sale use price sale
+            // if on sale use sale price
             if($sale_start <= $now && $sale_end >= $now) {
                 $calculated_price = $product_attributes['price_sale'];
                 $lifetime = $sale_end - $now;
@@ -72,30 +69,36 @@ switch ($modx->event->name) {
             if($sale_start >= $now) {
                 $lifetime = $sale_start - $now;
             }
-            
-
-            
+                        
           /*  $modx->log(MODX_LOG_LEVEL_ERROR, 'Sale Start ' . strtotime($product_attributes['sale_start']));
             $modx->log(MODX_LOG_LEVEL_ERROR, 'Sale End ' .  strtotime($product_attributes['sale_end']));
             $modx->log(MODX_LOG_LEVEL_ERROR, 'Today ' .  $now);*/
 
             // add calculated_price field
-            $product_attributes['calculated_price'] = $calculated_price;            
-
-           foreach ($Product->Specs as $S) {
-                $spec_name = str_replace(' ', '_', strtolower($S->Spec->get('name')));
-                $product_attributes[$spec_name] = $S->Spec->get('value');
+            $product_attributes['calculated_price'] = $calculated_price; 
+            foreach ($Product->Specs as $S) {
+                $product_attributes[$S->Spec->get('identifier')] = $S->Spec->get('value');
             }
             $modx->setPlaceholders($product_attributes,$placeholder_prefix);
+            
+            $Template = $modx->getObject('modTemplate', $Product->get('template_id'));
+            $tpl = $Template->getContent();
+            $uniqid = uniqid();
+            $chunk = $modx->newObject('modChunk', array('name' => "{tmp}-{$uniqid}"));
+            $chunk->setCacheable(false);
+            $out = $chunk->process($product_attributes, $tpl);
 
             // or?
-            $modx->resource->set('template', $Product->get('template_id'));    
+            //$modx->resource->set('template', $Product->get('template_id'));    
 
             // Disable built-in caching, otherwise the process method will return the cached version of the page
-            $modx->resource->set('cacheable',false);
-            $out = $modx->resource->process();
+            //$modx->resource->set('cacheable',false);
+            //$out = $modx->resource->process();
             $modx->cacheManager->set($fingerprint, $out, $lifetime, $cache_opts);
         }
+        
+        // Handle uncached tags
+        
         print $out;
         exit();
         break;
