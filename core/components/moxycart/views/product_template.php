@@ -95,7 +95,7 @@ function remove_relation(product_id) {
                         <tr>
                           <td colspan="2">
                               <legend>Content</legend>
-                              <textarea id="content" class="modx-richtext" rows="7" name="content"></textarea>
+                              <textarea id="content" class="span12 modx-richtext" rows="7" name="content"></textarea>
                           </td>
                         </tr>
                     </tbody>
@@ -221,37 +221,60 @@ function remove_relation(product_id) {
 	</div>
 	
 	<div id="related_tab" class="content">		
+        <table class="table no-top-border">
+            <tr>
+                <td style="vertical-align:top;">
+                    <legend>Related Products</legend>
+                    <?php /* scrollable div here ... */ ?>
+                    <div>
+       
+                        <table class="table table-striped sortable">
+                            <thead>
+                              <tr>
+                                <th>Product</th>
+                                <th>Option</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody id="product_relations">
+                                <?php if (!$data['related_products']): ?>
+                                <tr id="related_products_msg"><td class="alert alert-danger" colspan="3"> <strong>Heads up!</strong> You have not defined any related products.</td></tr>
+                                <?php endif; ?>      
+                                    
+                                <?php print $data['related_products']; ?>
+                            </tbody>
+                          </table>
 
-        <h3>Related Products</h3>
-        <?php /* scrollable div here ... */ ?>
-        <div>
-            <?php if (!$data['related_products']): ?>
-                <div id="related_products_msg" style="display: table-cell; vertical-align: middle; text-align: center; background-color:#D8D8D8; height:30px; width:500px;">You have not defined any related products.</div>
-            <?php endif; ?>                
 
-            <ul id="product_relations" class="sortable" style="min-height:30px; width:500px;">
-                <?php print $data['related_products']; ?>
-            </ul>
+                    </div>
+                </td>
+                <td style="vertical-align:top;width:400px;">
+                    <legend>Find Products</legend>
 
-        </div>
-        
-        <h3>Find Products</h3>
-        <?php /* scrollable div here ... */ ?>
-
-        <?php if (!$data['products']['total']): ?>
-            <p>There are no other products defined.</p>
-        <?php else: ?>
-            <div style="height: 400px; width:400px; overflow: scroll;">
-                <ul class="">
-                <?php foreach ($data['products']['results'] as $p): ?>
-                    <li id="product_<?php print $p['product_id']; ?>">
-                        <strong><?php print $p['name']; ?></strong> (<?php print $p['sku']; ?>) 
-                        <span class="btn" style="height:10px;" onclick="javascript:add_relation(<?php print $p['product_id']; ?>,'<?php print $p['name']; ?>', '<?php print $p['sku']; ?>');">Add</span>
-                    </li>
-                <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
+                  
+                    <table class="table table-striped sortable">
+                            <thead>
+                              <tr>
+                                <th>Product</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (!isset($data['products']['total']) || !$data['products']['total'] ): ?>
+                                    <tr><td class="alert alert-danger" colspan="3"> There are no other products defined.</td></tr>
+                                <?php else : ?>
+                                    <?php foreach ($data['products']['results'] as $p): ?>
+                                        <tr id="product_<?php print $p['product_id']; ?>">
+                                            <td><strong><?php print $p['name']; ?></strong> <?php print !empty($p['sku']) ? '('.$p['sku'].')' : ''; ?></td>
+                                            <td><span class="btn" style="height:10px;" onclick="javascript:add_relation(<?php print $p['product_id']; ?>,'<?php print $p['name']; ?>', '<?php print $p['sku']; ?>');">Add</span></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?> 
+                            </tbody>
+                          </table>
+                </td>
+            </tr>
+        </table>
         
 	</div>
 

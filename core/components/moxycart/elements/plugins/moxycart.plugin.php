@@ -16,7 +16,7 @@ switch ($modx->event->name) {
     //------------------------------------------------------------------------------
     case 'OnManagerPageInit':
         $assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
-        $modx->regClientCSS($assets_url.'components/moxycart/css/mgr.css');
+        //$modx->regClientCSS($assets_url.'components/moxycart/css/mgr2222.css');
         break;
         
     //------------------------------------------------------------------------------

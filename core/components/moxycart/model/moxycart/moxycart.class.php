@@ -69,6 +69,7 @@ class Moxycart {
     private $default_perm = 'view_document';
 
     public function __construct(&$modx) {
+
         $this->modx =& $modx;
         $this->core_path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
         $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
@@ -1023,7 +1024,9 @@ class Moxycart {
         if ($this->modx->getOption('use_editor')) {
             $this->_load_tinyMCE();
         }
-
+        $data['products'] ='';
+        $data['related_products'] ='';
+        $data['mgr_connector_url'] = $this->mgr_connector_url;
         return $this->_load_view('product_template.php',$data);
     }
 
@@ -1094,8 +1097,10 @@ class Moxycart {
             $skip_ids[] = $r['related_id'];
             $data['related_products'] .= $this->_load_view('product_relation.php',$r);
         }
+
         $data['related_products.tpl'] = $this->_load_view('product_relation.php', 
             array(
+                'product_id'=> '[[+product_id]]',
                 'related_id'=> '[[+related_id]]',
                 'related.is_selected'=> '',
                 'bundle-1:order.is_selected' => '',
