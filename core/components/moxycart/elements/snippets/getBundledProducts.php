@@ -10,13 +10,17 @@
  *
  * @param integer product_id, default is the current placeholder for product_id
  * @param integer qty, default is the current placeholder set for qty
- *
  */
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
 require_once $core_path . 'components/moxycart/model/moxycart/moxycart.class.php';
 
 $product_id = (int) $modx->getOption('product_id', $scriptProperties, $modx->getPlaceholder('product_id'));
 $qty = (int) $modx->getOption('product_id', $scriptProperties, $modx->getPlaceholder('qty'));
+$specs = $modx->getOption('specs', $scriptProperties);
+
+if (is_scalar($specs)) {
+    $specs = explode(',',$specs);
+}
 
 $Moxy = new Moxycart($modx);
 
@@ -24,6 +28,7 @@ $tpl = '
     <input type="hidden" name="[[+i]]:quantity" value="[[+qty]]" />
     <input type="hidden" name="[[+i]]:name" value="[[+name]]" />
     <input type="hidden" name="[[+i]]:sku" value="[[+sku]]" />
+    <input type="hidden" name="[[+i]]:weight" value="[[+weight]]" />
     <input type="hidden" name="[[+i]]:price" value="[[+price]]" />
     <input type="hidden" name="[[+i]]:code" value="[[+related_id]]" />';
     
@@ -39,16 +44,26 @@ if (!$data['total']) {
 $out = '';
 $i = 2;
 foreach ($data['results'] as $r) {
-    if ($type == 'bundle-1:order') {
+    if ($r['type'] == 'bundle-1:order') {
         $r['qty'] = 1;
     }
     else {
         $r['qty'] = $quantity;
     }
+
+    $r['i'] = $i;
+    
+    if($ProductSpecs = $modx->getCollectionGraph('ProductSpec','{"Spec":{}}', array('product_id'=>$r['related_id']))) {
+        foreach ($ProductSpecs as $PS) {
+            $r[ $PS->Spec->get('identifier') ] = $PS->get('value');
+        }
+    }
+    
     $uniqid = uniqid();
     $chunk = $modx->newObject('modChunk', array('name' => "{tmp}-{$uniqid}"));
     $chunk->setCacheable(false);
-    $out = $chunk->process($r, $tpl);    
+    $out .= $chunk->process($r, $tpl);
+    $i++;
 }
 
 return $out;

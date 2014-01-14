@@ -30,9 +30,12 @@ switch ($modx->event->name) {
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
         $refresh = true; // used if you want to turn off caching (good for testing)
+        
         $uri = str_replace(MODX_BASE_URL, '', $_SERVER['REQUEST_URI']);
+
+        $cache_key = str_replace('/', '_', $uri);
         $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
-        $fingerprint = 'product/'.$uri;
+        $fingerprint = 'product_'.$cache_key;
 
         $out = $modx->cacheManager->get($fingerprint, $cache_opts);
 
@@ -60,7 +63,7 @@ switch ($modx->event->name) {
             $lifetime = 3600; // cache 
         
              $calculated_price = $product_attributes['price'];
-            // if on sale use sale price
+            // if on sale use price sale
             if($sale_start <= $now && $sale_end >= $now) {
                 $calculated_price = $product_attributes['price_sale'];
                 $lifetime = $sale_end - $now;
@@ -75,9 +78,10 @@ switch ($modx->event->name) {
             $modx->log(MODX_LOG_LEVEL_ERROR, 'Today ' .  $now);*/
 
             // add calculated_price field
-            $product_attributes['calculated_price'] = $calculated_price; 
-            foreach ($Product->Specs as $S) {
-                $product_attributes[$S->Spec->get('identifier')] = $S->Spec->get('value');
+            $product_attributes['calculated_price'] = $calculated_price;            
+
+           foreach ($Product->Specs as $S) {
+                $product_attributes[$S->Spec->get('identifier')] = $S->get('value');
             }
             $modx->setPlaceholders($product_attributes,$placeholder_prefix);
             
@@ -96,9 +100,6 @@ switch ($modx->event->name) {
             //$out = $modx->resource->process();
             $modx->cacheManager->set($fingerprint, $out, $lifetime, $cache_opts);
         }
-        
-        // Handle uncached tags
-        
         print $out;
         exit();
         break;

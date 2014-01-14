@@ -34,6 +34,17 @@ if (fc_json["messages"]["warnings"] != "You are currently modifying a subscripti
               fc_TestCheckout(event);
             });
           }
+          else if (productBundles[c]["quantity-match"]=="bundle-1:order") {
+            jQuery(parentChildren).children("input").unbind().change(function() {
+              var id = jQuery(this).attr('class').match(/parent-(\d+)/)[1]
+              jQuery("input.child-"+id).val(1);
+              fc_TestCheckout();
+            }).keyup(function(event){
+              var id = jQuery(this).attr('class').match(/parent-(\d+)/)[1]
+              jQuery("input.child-"+id).val(1);
+              fc_TestCheckout(event);
+            });
+          }
           jQuery(parentChildren).children("span").children("a").attr("onclick","").click(function() {
             var id = jQuery(this).parent("span").siblings("input.fc_cart_item_quantity").attr('class').match(/parent-(\d+)/)[1];
             jQuery(this).parent("span").siblings("input.fc_cart_item_quantity").val(0);
@@ -70,6 +81,11 @@ if (fc_json["messages"]["warnings"] != "You are currently modifying a subscripti
               jQuery(dependentChildren).children("input").val(parentQuantity);
               showError("The product '"+fc_json.products[p].name+"' must have a matching quantity to '" + parentName.join("' and '") + "'. The quantity has been updated, please update the cart to save the new quantity.");
               fc_PreventCheckout();
+            }
+          }
+          else if (productBundles[c]["quantity-match"]=="bundle-1:order") {
+            if (jQuery(dependentChildren).children("input").val() != 1) {
+              jQuery(dependentChildren).children("input").val(1);
             }
           }
           p = fc_json.products.length; // Finishes the loop

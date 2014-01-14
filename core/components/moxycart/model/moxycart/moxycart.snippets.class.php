@@ -6,10 +6,13 @@ class MoxycartSnippet {
 
 	/** @var $modx modX */
     public $modx;
-
+    public $Moxycart;
+    
     public function __construct(&$modx) {
         $this->modx =& $modx;       
-		$this->modx->getService('moxycart');
+        $core_path = $this->modx->getOption('moxycart.core_path', '' , MODX_CORE_PATH);
+        require_once($core_path.'components/moxycart/model/moxycart/moxycart.class.php');
+        $this->Moxycart = new Moxycart($modx);
     }
 
     /**
@@ -22,8 +25,10 @@ class MoxycartSnippet {
     	$outerTpl = $this->modx->getOption('outerTpl',$args,'MoxyOuterTpl');
 		$innerTpl = $this->modx->getOption('innerTpl',$args,'MoxyInnerTpl');
 		$args['limit'] = 0;
-
-		$records = $this->modx->moxycart->$method($args, true);
+        unset($args['outerTpl']);
+        unset($args['innerTpl']);
+        //return 'method: '.$method . ' ' .print_r($args,true);
+		$records = $this->Moxycart->$method($args, true);
 
 		if($records['total'] == 0) {
 			return 'No Record Found.';
