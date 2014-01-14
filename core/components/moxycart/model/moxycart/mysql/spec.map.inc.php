@@ -7,6 +7,7 @@ $xpdo_meta_map['Spec']= array (
   'fields' => 
   array (
     'spec_id' => NULL,
+    'identifier' => NULL,
     'name' => NULL,
     'description' => NULL,
     'seq' => NULL,
@@ -24,12 +25,21 @@ $xpdo_meta_map['Spec']= array (
       'index' => 'pk',
       'generated' => 'native',
     ),
-    'name' => 
+    'identifier' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '32',
       'phptype' => 'string',
       'null' => false,
+      'comment' => 'Lowercase slug',
+    ),
+    'name' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '64',
+      'phptype' => 'string',
+      'null' => false,
+      'comment' => 'Human readable, translated.',
     ),
     'description' => 
     array (
@@ -77,15 +87,15 @@ $xpdo_meta_map['Spec']= array (
         ),
       ),
     ),
-    'name' => 
+    'identifier' => 
     array (
-      'alias' => 'name',
+      'alias' => 'identifier',
       'primary' => false,
       'unique' => true,
       'type' => 'BTREE',
       'columns' => 
       array (
-        'name' => 
+        'identifier' => 
         array (
           'collation' => 'A',
           'null' => false,

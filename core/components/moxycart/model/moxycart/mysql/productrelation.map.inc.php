@@ -2,7 +2,7 @@
 $xpdo_meta_map['ProductRelation']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'products_relations',
+  'table' => 'product_relations',
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (

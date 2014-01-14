@@ -13,6 +13,7 @@ function renderManageSpecs(){
 			totalProperty: 'total',
 			fields:[
 				{name: 'spec_id'},
+				{name: 'identifier'},
 				{name: 'name'},
 				{name: 'description'},
 				{name: 'group'},
@@ -191,7 +192,7 @@ function createUpdateSpec(record){
 	var createSpecWin = new Ext.Window({
 		title:(isUpdate?'Update Spec : ' + record.get('name'):'Create Spec'),
 		modal:true,
-		height:300,
+		height:400,
 		width:600,
 		layout:'fit',
 		items:[
@@ -221,6 +222,13 @@ function createUpdateSpec(record){
 						fieldLabel:'Name',
 						width:'70%',
 						name: 'name',
+						allowBlank:false
+					},
+					{
+						xtype:'textfield',
+						fieldLabel:'Identifier',
+						width:'70%',
+						name: 'identifier',
 						allowBlank:false
 					},
 					{
@@ -343,7 +351,7 @@ function onSpecsDelete(spec_id){
 
 	Ext.Msg.show({
 	   title:'Confirm',
-	   msg: 'Are you sure want to delete specs?',
+	   msg: 'Are you sure want to delete this spec?',
 	   buttons: Ext.Msg.YESNO,
 	   fn: function(buttonId ){
 			if(buttonId=='yes'){

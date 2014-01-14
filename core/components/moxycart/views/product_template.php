@@ -88,8 +88,8 @@ function remove_relation(product_id) {
 								</select>
 								<label for="template_id">Template</label>
                                 <select style="width:90%;" name="template_id" id="template_id">
-                                <?php print $data['templates']; ?>
-							</select> 
+                                    <?php print $data['templates']; ?>
+				                </select> 
                             </td>
                         </tr>
                         <tr>
@@ -126,7 +126,7 @@ function remove_relation(product_id) {
                                 <input type="text" style="width:94%;" id="qty_inventory" name="qty_inventory" value=""/>
 
                                 <label for="qty_alert">Alert Qty</label>
-                                <input type="text" style="width:94%;" id="qty_alert" name="qty_alert" value=""/>
+                                <input type="text" style="width:94%;" id="qty_alert" name="qty_alert" value="<?php print $data['qty_alert']; ?>"/>
 
                                 <label for="track_inventory">Track Inventory</label>
 								<select name="track_inventory" style="width:40%;" id="track_inventory">
@@ -205,7 +205,7 @@ function remove_relation(product_id) {
 	                    	print $data['product_specs'];
 		                }
 		                else {
-						    print '<tr><td colspan="3">No Specs Found</td></tr>';
+						    print '<tr id="no_specs_msg"><td colspan="3">No Specs Found</td></tr>';
 						}
 					?>
 				</tbody>

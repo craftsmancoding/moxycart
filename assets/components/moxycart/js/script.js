@@ -66,6 +66,7 @@ INIT = {
 	},
 
 	fill_form_fields : function() {
+        // var product is def'd in the productcontainer.js
 		$.each(product, function(name, val){
 	        var $el = $('#'+name),
 	            type = $el.attr('type');	    
@@ -131,10 +132,17 @@ INIT = {
  * Ajax call to dynamically update the form
  */
 function get_spec(spec_id) {
+    jQuery('#no_specs_msg').remove();
+    jQuery("#spec_id option[value='"+spec_id+"']").attr("disabled","disabled");
     var url = connector_url + "get_spec&spec_id=" + spec_id;
     jQuery.post( url, function(data){
         jQuery("#product_specs").append(data);
     });
+}
+
+function remove_spec(spec_id) {
+    jQuery('#tr_spec_'+spec_id).remove();
+    jQuery("#spec_id option[value='"+spec_id+"']").attr("disabled",false);
 }
 
 

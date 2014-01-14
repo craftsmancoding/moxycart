@@ -41,7 +41,26 @@ return array(
             xPDOTransport::UPDATE_OBJECT => true, 
             xPDOTransport::UNIQUE_KEY => array('url'),
         ),
-        
+        'Spec' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => true, 
+            xPDOTransport::UNIQUE_KEY => array('identifier'),
+        ),
+        'ProductSpec' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => true, 
+            xPDOTransport::UNIQUE_KEY => array('product_id','spec_id'),
+        ),
+        'VariationTerm' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => true, 
+            xPDOTransport::UNIQUE_KEY => array('vtype_id','name'),
+        ),
+        'VariationType' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => true, 
+            xPDOTransport::UNIQUE_KEY => array('name'),
+        ),        
     ),
 );
 /*EOF*/

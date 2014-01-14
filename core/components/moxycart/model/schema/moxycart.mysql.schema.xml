@@ -150,7 +150,8 @@
 	<!-- a la custom fields-->
 	<object class="Spec" table="specs" extends="xPDOObject">
 		<field key="spec_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-		<field key="name" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="identifier" dbtype="varchar" precision="32" phptype="string" null="false" comment="Lowercase slug"/>
+		<field key="name" dbtype="varchar" precision="64" phptype="string" null="false" comment="Human readable, translated."/>
 		<field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
 		<field key="group" dbtype="varchar" precision="32" phptype="string" null="true" />
@@ -159,8 +160,8 @@
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="spec_id" collation="A" null="false" />
 		</index>
-        <index alias="name" name="name" primary="false" unique="true"  type="BTREE">
-			<column key="name" collation="A" null="false" />
+        <index alias="identifier" name="identifier" primary="false" unique="true"  type="BTREE">
+			<column key="identifier" collation="A" null="false" />
 		</index>
 
 
@@ -217,6 +218,21 @@
         <aggregate alias="Type" class="VariationType" local="vtype_id" foreign="vtype_id" cardinality="one" owner="foreign" />
 	</object>
 
+    <!-- ! ProductRelation -->
+    <!-- for linking products together -->
+	<object class="ProductRelation" table="product_relations" extends="xPDOSimpleObject">
+		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="related_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="type" dbtype="varchar" precision="32" phptype="string" null="false" default="related"/>
+		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />		
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="id" collation="A" null="false" />
+		</index>
+
+        <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Relation" class="Product" local="related_id" foreign="product_id" cardinality="one" owner="foreign" />
+	</object>
+	
 	<!-- ! Product Variation Types -->
 	<!-- 
 	e.g. says "this parent product varies by Color, Size, and Material 
@@ -298,22 +314,6 @@
         
 	</object>
     
-
-    <!-- ! ProductRelation -->
-    <!-- for linking products together -->
-	<object class="ProductRelation" table="products_relations" extends="xPDOSimpleObject">
-		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-        <field key="related_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-        <field key="type" dbtype="varchar" precision="32" phptype="string" null="false" default="related"/>
-		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />		
-		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="id" collation="A" null="false" />
-		</index>
-
-        <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
-        <aggregate alias="Relation" class="Product" local="related_id" foreign="product_id" cardinality="one" owner="foreign" />
-	</object>
-
 	<!-- ! Image -->
 	<!-- Each Product can have multiple images -->
 	<object class="Image" table="images" extends="xPDOObject">

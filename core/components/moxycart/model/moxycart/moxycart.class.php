@@ -957,9 +957,28 @@ class Moxycart {
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
     public function product_create($args) {
-
-        $data = array();
         $store_id = (int) $this->modx->getOption('store_id',$_GET);
+        
+        $data = array();
+        
+        // Defaults inherited from the Store
+        $template_id = $this->modx->getOption('default_template');
+        $product_type = '';
+        $data['qty_alert'] = 0;
+        if ($Store = $this->modx->getObject('Store',$store_id)) {
+            $properties = $Store->get('properties');
+            if (isset($properties['moxycart']['product_template'])) {
+                $template_id = $properties['moxycart']['product_template'];
+            }
+            if (isset($properties['moxycart']['product_type'])) {
+                $product_type = $properties['moxycart']['product_type'];
+            }
+            if (isset($properties['moxycart']['qty_alert'])) {
+                $data['qty_alert'] = $properties['moxycart']['qty_alert'];
+            }
+//            print_r($properties);exit;
+        }
+
         $data['pagetitle'] = 'Create Product';
         $data['manager_url'] = $this->mgr_url.'?a=30&id='.$store_id;
         $data['product_form_action'] = 'product_create';
@@ -971,9 +990,11 @@ class Moxycart {
         $currencies = $this->json_currencies(array('limit'=>0,'is_active'=>1),true);
         $currency_id = $this->modx->getOption('moxycart.currency_id','',109); // TODO
         $data['currencies'] = $this->_get_options($currencies,$currency_id,'currency_id'); 
-                
+
+
+
         $templates = $this->json_templates(array('limit'=>0),true);
-        $data['templates'] = $this->_get_options($templates); 
+        $data['templates'] = $this->_get_options($templates,$template_id); 
 
         $categories = $this->json_categories(array('limit'=>0),true);
         $data['categories'] = $this->_get_options($categories); 
@@ -983,7 +1004,7 @@ class Moxycart {
         $data['stores'] = $this->_get_options($stores,$store_id); 
 
         $types = $this->json_types(array('limit'=>0),true);
-        $data['types'] = $this->_get_options($types);       
+        $data['types'] = $this->_get_options($types,$product_type);       
 
         // Taxonomies (yowza!)
         $data['product_taxonomies'] = '';       
@@ -1019,7 +1040,7 @@ class Moxycart {
             });
             </script>
         ');
-
+        
         if ($this->modx->getOption('use_editor')) {
             $this->_load_tinyMCE();
         }
@@ -1152,11 +1173,10 @@ class Moxycart {
                     // Refresh the list on success (append new tile to end)
                     myDropzone.on("success", function(file,response) {
 
-                         console.log(response);
+                        //console.log(response);
                         response = jQuery.parseJSON(response);
-                        console.log(response);
+                        //console.log(response);
                         if (response.success) {
-                           
                             var url = connector_url + "get_image&image_id=" + response.image_id;
                             jQuery.post( url, function(data){
                                 jQuery("#product_images").append(data);
@@ -1165,11 +1185,10 @@ class Moxycart {
                        } 
                        // TODO: better formatting
                        else {
-                           
                             $(".dz-success-mark").hide();
-                           $(".dz-error-mark").show();
-                           $(".moxy-msg").show();
-                           $("#moxy-result").html("Failed");
+                            $(".dz-error-mark").show();
+                            $(".moxy-msg").show();
+                            $("#moxy-result").html("Failed");
                             $("#moxy-result-msg").html(response.msg);
                             $(".moxy-msg").delay(3200).fadeOut(400);
                        }
@@ -1322,16 +1341,6 @@ class Moxycart {
 
         return $this->_load_view('product_list.php',$products);
         
-    }
-
-    /**
-     * Handles editing of a single product spec
-     * @param int id (from $_GET).
-     */
-    public function product_specs_update($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Update Product spec</div>';
     }
 
     /**
@@ -2246,6 +2255,7 @@ class Moxycart {
                $data['results'][] = array(
                 'product_id' => $p->get('product_id'), 
                 'spec_id' => $p->get('spec_id'), 
+                'identifier' => $p->get('identifier'), 
                 'product' => $p->Product->get('name'),
                 'spec' => $p->Spec->get('name'),
                 'value' => $p->get('value'),
