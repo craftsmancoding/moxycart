@@ -103,4 +103,15 @@ $xpdo_meta_map['Spec']= array (
       ),
     ),
   ),
+  'composites' => 
+  array (
+    'Products' => 
+    array (
+      'class' => 'ProductSpec',
+      'local' => 'spec_id',
+      'foreign' => 'spec_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
+    ),
+  ),
 );

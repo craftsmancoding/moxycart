@@ -164,7 +164,7 @@
 			<column key="identifier" collation="A" null="false" />
 		</index>
 
-
+        <composite alias="Products" class="ProductSpec" local="spec_id" foreign="spec_id" cardinality="many" owner="local" />
 		
 	</object>
 

@@ -34,6 +34,7 @@
  * @package moxycart
  */
 $core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);
+require_once($core_path . 'components/moxycart/model/foxycart/rc4crypt.class.php');
 $modx->addPackage('foxycart',$core_path.'components/moxycart/model/','foxy_');
 
 $product_hooks_tmp = $modx->getOption('product_hooks',$scriptProperties);
@@ -42,13 +43,13 @@ $postback_hooks_tmp = $modx->getOption('postback_hooks',$scriptProperties);
 
 $log_level = $modx->getOption('log_level',$scriptProperties, $modx->getOption('log_level'));
 
-$product_hooks = explode(',',$product_hooks_tmp);
-$transaction_hooks = explode(',',$transaction_hooks_tmp);
-$postback_hooks = explode(',',$postback_hooks_tmp);
+// "Dear Developer: exploding a null does NOT make an empty array!  FU. Sincerely, PHP"
+$product_hooks = ($product_hooks_tmp) ? explode(',',$product_hooks_tmp) : array(); 
+$transaction_hooks = ($transaction_hooks_tmp) ? explode(',',$transaction_hooks_tmp) : array();
+$postback_hooks = ($postback_hooks_tmp)? explode(',',$postback_hooks_tmp) : array();
 
-
+// Set up Logging
 $modx->setLogLevel($log_level);
-
 $log = array(
     'target'=>'FILE',
     'options' => array(
@@ -56,10 +57,20 @@ $log = array(
     )
 );
 
+// For the record
+$msg = "parseFoxycartDatafeed running with the following parameters:\n";
+$msg .= "core_path: {$core_path}\n";
+$msg .= "log_level {$log_level}\n";
+$msg .= "product_hooks: ".print_r($product_hooks,true)."\n";
+$msg .= "transaction_hooks: ".print_r($transaction_hooks,true)."\n";
+$msg .= "postback_hooks: ".print_r($postback_hooks,true)."\n";
+
+$modx->log(modX::LOG_LEVEL_DEBUG, $msg, $log, 'parseFoxycartDatafeed',__FILE__,__LINE__);
+
 $api_key = $modx->getOption('moxycart.api_key'); // your foxy cart datafeed key
 if(empty($api_key)) {
 	$err_msg = 'moxycart.api_key is not set in your System Settings. Paste your Foxycart API key there before continuing.';
-    $modx->log(xPDO::LOG_LEVEL_ERROR,$err_msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
+    $modx->log(modX::LOG_LEVEL_ERROR,$err_msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
     return $err_msg;
 }
 
@@ -68,17 +79,20 @@ if(empty($api_key)) {
 // Check for the post back
 if($encrypted_data = $modx->getOption('FoxyData', $_POST)) {
 
-    $modx->log(xPDO::LOG_LEVEL_DEBUG,'FoxyData detected',$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
+    $modx->log(modX::LOG_LEVEL_DEBUG,'FoxyData detected',$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
     
     $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-    $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
-    require_once($core_path . 'components/moxycart/model/moxycart/foxycartdatafeed.class.php');
-    require_once($core_path . 'components/moxycart/model/moxycart/rc4crypt.class.php');
-    
-    $rc4crypt = new rc4crypt();
-    $fc_datafeed = new FC_Datafeed($rc4crypt);
 
-	$FoxyData_decrypted = $fc_datafeed->decrypt($encrypted_data,$api_key);
+    // Decrypt the posted Data : Todo try/catch?
+    $rc4crypt = new rc4crypt();
+	$FoxyData_decrypted = $rc4crypt->decrypt($api_key,urldecode($encrypted_data));
+	$xml = new SimpleXMLElement($FoxyData_decrypted);
+	$dom = new DOMDocument('1.0');
+	$dom->preserveWhiteSpace = false;
+	$dom->formatOutput = true;
+	$dom->loadXML($xml->asXML());
+	$FoxyData_decrypted = $dom->saveXML();
+	
 	
 	// uniquely identifies the payload so we don't store the same thing twice
     $md5 = md5($FoxyData_decrypted); 
@@ -88,16 +102,16 @@ if($encrypted_data = $modx->getOption('FoxyData', $_POST)) {
         $msg = 'Existing FoxyData detected ('.$Foxydata->get('foxydata_id').'). Data will NOT be re-parsed.  
         This condition might have been caused due to a fatal error in this script or any referenced hooks
         before the "foxy" success message was returned. Reparsing data could create problems with your inventory.';
-        $modx->log(xPDO::LOG_LEVEL_ERROR,$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
+        $modx->log(modX::LOG_LEVEL_ERROR,$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
         // If you're here, it means your transactions either failed to save
         // or you DID save them and did not return the "foxy" success message.
         // Either way it's a problem.  Reparsing could create problems with your inventory.
         return $msg;
     }
-    // We don't have this stored!  Create a copy of the  data.
-
     
-        $modx->log(xPDO::LOG_LEVEL_DEBUG,'New data signature detected: '.$md5,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
+    // We don't have this stored yet!  Create a copy of the  data.
+    
+    $modx->log(modX::LOG_LEVEL_DEBUG,'New data signature detected: '.$md5,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
         
     // Start storing the data (maybe put this into the datafeed class?)
     $Foxydata = $modx->newObject('Foxydata');
@@ -192,49 +206,49 @@ if($encrypted_data = $modx->getOption('FoxyData', $_POST)) {
         // Call per-product hooks
         foreach ($details as $TD) {
             foreach ($product_hooks as $hook) {
-                $modx->log(xPDO::LOG_LEVEL_DEBUG,'Calling product-hook '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
+                $modx->log(modX::LOG_LEVEL_DEBUG,'Calling product-hook '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
                 if (!$msg = $modx->runSnippet(trim($hook),$TD->toArray())) {
-                    $modx->log(xPDO::LOG_LEVEL_ERROR,'product-hook failed to execute: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
+                    $modx->log(modX::LOG_LEVEL_ERROR,'product-hook failed to execute: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
                 }
-                $modx->log(xPDO::LOG_LEVEL_DEBUG,'Completed product-hook '.$hook.' with result: '.$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
+                $modx->log(modX::LOG_LEVEL_DEBUG,'Completed product-hook '.$hook.' with result: '.$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
             }
         }
         // Call per-transaction hooks
         foreach ($transaction_hooks as $hook) {
-            $modx->log(xPDO::LOG_LEVEL_DEBUG,'Calling transaction-hook '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
+            $modx->log(modX::LOG_LEVEL_DEBUG,'Calling transaction-hook '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
             if (!$msg = $modx->runSnippet(trim($hook),$Transaction->toArray())) {
-                $modx->log(xPDO::LOG_LEVEL_ERROR,'transaction-hook failed to execute: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);            
+                $modx->log(modX::LOG_LEVEL_ERROR,'transaction-hook failed to execute: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);            
             }
-            $modx->log(xPDO::LOG_LEVEL_DEBUG,'Completed transaction-hook '.$hook.' with result: '.$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
+            $modx->log(modX::LOG_LEVEL_DEBUG,'Completed transaction-hook '.$hook.' with result: '.$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
         }
 
-        $modx->log(xPDO::LOG_LEVEL_DEBUG,'Transaction ('.$Transaction->getPrimaryKey().') saved successfully with all related data.',$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
+        $modx->log(modX::LOG_LEVEL_DEBUG,'Transaction ('.$Transaction->getPrimaryKey().') saved successfully with all related data.',$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
     }
 
     // Call per-postback hooks
     foreach ($postback_hooks as $hook) {    
-        $modx->log(xPDO::LOG_LEVEL_DEBUG,'Calling postback-hook '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
+        $modx->log(modX::LOG_LEVEL_DEBUG,'Calling postback-hook '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
         if (!$msg = $modx->runSnippet(trim($hook),$Foxydata->toArray())) {
-            $modx->log(xPDO::LOG_LEVEL_ERROR,'postback-hook failed to execute: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);  
+            $modx->log(modX::LOG_LEVEL_ERROR,'postback-hook failed to execute: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);  
         }
-        $modx->log(xPDO::LOG_LEVEL_DEBUG,'Completed postback-hook '.$hook.' with result: '.$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);    
+        $modx->log(modX::LOG_LEVEL_DEBUG,'Completed postback-hook '.$hook.' with result: '.$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);    
     }
     
     $Foxydata->addMany($transactions);
 
     if (!$Foxydata->save()) {
-        $modx->log(xPDO::LOG_LEVEL_ERROR,'Foxydata failed to save!',$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
+        $modx->log(modX::LOG_LEVEL_ERROR,'Foxydata failed to save!',$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
         return 'Failed to save Foxydata post!';
     }    
 
-    $modx->log(xPDO::LOG_LEVEL_DEBUG,'Success. foxy.'.$Foxydata->get('id'),$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
+    $modx->log(modX::LOG_LEVEL_DEBUG,'Success. foxy.'.$Foxydata->get('id'),$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
     
     // Per Foxycart's rules
     return 'foxy';
 }
 else {
     $url = $modx->makeUrl($modx->resource->get('id'),'','','full');
-    return '<div style="margin:10px; padding:20px; border:1px solid green; background-color:#00CC66; border-radius: 5px; width:500px;">Welcome to Moxycart.  This page is contains the parseFoxycartDatafeed. In your 
+    return '<div style="margin:10px; padding:20px; border:1px solid green; background-color:#00CC66; border-radius: 5px; width:500px;">Welcome to <a href="https://github.com/craftsmancoding/moxycart/wiki/Datafeed">Moxycart</a>.  This page is contains the parseFoxycartDatafeed. In your 
     Foxycart dashboard, point the datafeed to this URL: <br/>
-    <input type="text" value="'.$url.'" size="50"/></div>';
+    <input type="text" value="'.$url.'" size="100"/></div>';
 }
