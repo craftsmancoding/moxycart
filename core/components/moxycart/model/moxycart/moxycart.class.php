@@ -1115,8 +1115,10 @@ class Moxycart {
             $skip_ids[] = $r['related_id'];
             $data['related_products'] .= $this->_load_view('product_relation.php',$r);
         }
+
         $data['related_products.tpl'] = $this->_load_view('product_relation.php', 
             array(
+                'product_id'=> '[[+product_id]]',
                 'related_id'=> '[[+related_id]]',
                 'related.is_selected'=> '',
                 'bundle-1:order.is_selected' => '',
