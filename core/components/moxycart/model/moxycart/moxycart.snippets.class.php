@@ -21,7 +21,6 @@ class MoxycartSnippet {
     public function execute($method,$args) {
     	$outerTpl = $this->modx->getOption('outerTpl',$args,'MoxyOuterTpl');
 		$innerTpl = $this->modx->getOption('innerTpl',$args,'MoxyInnerTpl');
-		$args['limit'] = 0;
 
 		$records = $this->modx->moxycart->$method($args, true);
 
