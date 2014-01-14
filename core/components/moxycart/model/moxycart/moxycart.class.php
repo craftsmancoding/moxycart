@@ -605,7 +605,7 @@ class Moxycart {
             return 'Image not found : '.$image_id;
         }
         $data = $Image->toArray(); 
-        
+        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
         $this->modx->regClientStartupScript($this->jquery_url);
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
@@ -1021,7 +1021,7 @@ class Moxycart {
             $data['taxonomies'] .= $this->_load_view('product_taxonomy.php',$t); // TODO: react to the spec "type"
         }
 
-
+        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
         $this->modx->regClientCSS($this->assets_url.'components/moxycart/css/datepicker.css');
         $this->modx->regClientStartupScript($this->jquery_url);
@@ -1045,8 +1045,8 @@ class Moxycart {
         if ($this->modx->getOption('use_editor')) {
             $this->_load_tinyMCE();
         }
-         $data['products'] ='';
-          $data['related_products'] ='';
+        $data['products'] ='';
+        $data['related_products'] ='';
         $data['mgr_connector_url'] = $this->mgr_connector_url;
         return $this->_load_view('product_template.php',$data);
     }
@@ -1155,7 +1155,7 @@ class Moxycart {
               
         
                 
-
+        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
         $this->modx->regClientCSS($this->assets_url.'components/moxycart/css/datepicker.css');
         $this->modx->regClientStartupScript($this->jquery_url);
@@ -1338,7 +1338,7 @@ class Moxycart {
 
         $this->modx->regClientStartupScript($this->jquery_url);
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
-
+		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');		
 		
         $products = $this->json_products($args,true);
 

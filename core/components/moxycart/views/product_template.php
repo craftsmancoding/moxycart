@@ -95,7 +95,7 @@ function remove_relation(product_id) {
                         <tr>
                           <td colspan="2">
                               <legend>Content</legend>
-                              <textarea id="content" class="modx-richtext" rows="7" name="content"></textarea>
+                              <textarea id="content" class="span12 modx-richtext" rows="7" name="content"></textarea>
                           </td>
                         </tr>
                     </tbody>
