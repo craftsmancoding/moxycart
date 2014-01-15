@@ -16,7 +16,7 @@ switch ($modx->event->name) {
     //------------------------------------------------------------------------------
     case 'OnManagerPageInit':
         $assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
-        //$modx->regClientCSS($assets_url.'components/moxycart/css/mgr2222.css');
+        $modx->regClientCSS($assets_url.'components/moxycart/css/mgr.css');
         break;
         
     //------------------------------------------------------------------------------
@@ -31,7 +31,8 @@ switch ($modx->event->name) {
 
         $refresh = true; // used if you want to turn off caching (good for testing)
         
-        $uri = str_replace(MODX_BASE_URL, '', $_SERVER['REQUEST_URI']);
+        // Trim the base url off the front of the request uri
+        $uri = preg_replace('/^'.preg_quote(MODX_BASE_URL,'/').'/','', $_SERVER['REQUEST_URI']);
 
         $cache_key = str_replace('/', '_', $uri);
         $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
@@ -46,7 +47,7 @@ switch ($modx->event->name) {
             $Product = $modx->getObjectGraph('Product','{"Specs":{"Spec":{}}}',array('uri'=>$uri));
 
             if (!$Product) {
-                $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart] No Product found for uri '.$uri);
+                $modx->log(modX::LOG_LEVEL_ERROR,'[moxycart] No Product found for uri '.$uri);
                 return;  // it's a real 404
             } 
 
