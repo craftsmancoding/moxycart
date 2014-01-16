@@ -26,14 +26,15 @@ class MoxycartSnippet {
 		$records = $this->modx->moxycart->$method($args, true);
 
 		if($records['total'] == 0) {
-			return 'No Record Found.';
+			return '';
 		}
 
 		$innerOut = '';
 		$output = '';
 		if (isset($records['results']) && is_array($records['results'])) {
 
-				foreach ($records['results'] as $row) {
+				foreach ($records['results'] as $index => $row) {
+					$row['index'] = $index+1;
 			   		$innerOut .= $this->modx->getChunk($innerTpl,$row);
 				}
 
