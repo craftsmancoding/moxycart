@@ -586,6 +586,52 @@ class Moxycart {
 
     }
 
+    /**
+     * product_id ?
+     * @param boolean $raw if true, results are returned as PHP array default: false
+     * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
+     */
+    public function json_product_reviews($args,$raw=false) {
+        $product_id = (int) $this->modx->getOption('product_id',$args);
+        
+        $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
+        $start = (int) $this->modx->getOption('start',$args,0);
+        $sort = $this->modx->getOption('sort',$args,'seq');
+        $dir = $this->modx->getOption('dir',$args,'ASC');
+        
+        $criteria = $this->modx->newQuery('ProductReview');
+        
+        if ($product_id) {
+            $criteria->where(array('product_id'=>$product_id));
+        }
+                
+        $total_pages = $this->modx->getCount('ProductReview',$criteria);
+        
+        $criteria->limit($limit, $start); 
+        $criteria->sortby($sort,$dir);
+        $pages = $this->modx->getCollection('ProductReview',$criteria);
+
+        // return $criteria->toSQL(); <-- useful for debugging
+        // Init our array
+        $data = array(
+            'results'=>array(),
+            'total' => $total_pages,
+        );
+        foreach ($pages as $p) {
+            $data['results'][] = $p->toArray();
+        }
+
+        echo '<pre>';
+        print_r($data);
+        die();
+        if ($raw) {
+            return $data;
+        }
+
+        return json_encode($data);
+
+    }
+
 
     /**
      * @param boolean $raw if true, results are returned as PHP array default: false

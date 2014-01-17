@@ -56,6 +56,7 @@ function remove_relation(product_id) {
 		<li class="variations-link" ><a href="#variations_tab">Variations</a></li>
 		<li class="specs-link" ><a href="#specs_tab">Specs</a></li>
 		<li class="related-link" ><a href="#related_tab">Related</a></li>
+        <li class="reviews-link" ><a href="#reviews_tab">Reviews</a></li>
 		<li class="images-link" ><a href="#images_tab">Images</a></li>
 		<li class="product-link" ><a href="#taxonomies_tab">Taxonomies</a></li>
 	</ul>
@@ -277,6 +278,44 @@ function remove_relation(product_id) {
         </table>
         
 	</div>
+
+    <div id="reviews_tab" class="content">
+            <div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder" id="ext-gen68">
+                <p>Here you can Published/Unpublished Reviews.</p>
+            </div><br>
+
+            <table id="survey-list" class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Review</th>
+                        <th>Rating</th>
+                        <th>Published</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="review-row" data-review_id="1">
+                            <td>1</td>
+                            <td>Test</td>
+                            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</td>
+                            <td>3</td>
+                            <td>
+                                <form action="#">
+                                <select name="is_published" id="is_published">
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </form></td>
+                        </tr>                               
+                    </tbody>
+                  </table>
+    </div>
 
 	<div id="images_tab" class="content">		
 

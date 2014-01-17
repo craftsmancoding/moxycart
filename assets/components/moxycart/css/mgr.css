@@ -25,6 +25,12 @@
 .table th {
   font-weight: bold;
 }
+
+.table thead {
+  background: #626262;
+  color: #fff;
+}
+
 .table thead th {
   vertical-align: bottom;
 }

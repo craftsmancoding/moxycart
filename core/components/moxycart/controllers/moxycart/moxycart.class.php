@@ -1997,5 +1997,8 @@ class MoxycartController {
     public function json_variation_terms($args,$raw=false) {
         return $this->Moxycart->json_variation_terms($args,$raw);
     }
+    public function json_product_reviews($args,$raw=false) {
+        return $this->Moxycart->json_product_reviews($args,$raw);
+    }
 
 }
