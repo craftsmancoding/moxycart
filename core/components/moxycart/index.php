@@ -10,9 +10,9 @@
  *      default: help
  */
 $core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);
-require_once($core_path.'components/moxycart/model/moxycart/moxycart.class.php');
+require_once($core_path.'components/moxycart/controllers/moxycart/moxycart.class.php');
 
-$Moxycart = new Moxycart($modx);
+$Moxycart = new MoxycartController($modx);
 
 $log_level = $modx->getOption('log_level',$_GET, $modx->getOption('log_level'));
 $old_level = $modx->setLogLevel($log_level);
