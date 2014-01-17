@@ -20,10 +20,9 @@ $xpdo_meta_map = array (
   'xPDOSimpleObject' => 
   array (
     0 => 'ProductSpec',
-    1 => 'ProductReview',
-    2 => 'ProductRelation',
-    3 => 'ProductVariationTypes',
-    4 => 'ProductTaxonomy',
-    5 => 'ProductTerm',
+    1 => 'ProductRelation',
+    2 => 'ProductVariationTypes',
+    3 => 'ProductTaxonomy',
+    4 => 'ProductTerm',
   ),
 );

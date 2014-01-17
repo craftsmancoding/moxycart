@@ -1,14 +1,16 @@
 <?php
-$xpdo_meta_map['ProductTerm']= array (
+$xpdo_meta_map['ProductReview']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'product_terms',
+  'table' => 'product_reviews',
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
     'product_id' => NULL,
-    'term_id' => NULL,
-    'seq' => NULL,
+    'name' => NULL,
+    'email' => NULL,
+    'rating' => NULL,
+    'content' => '',
   ),
   'fieldMeta' => 
   array (
@@ -19,19 +21,33 @@ $xpdo_meta_map['ProductTerm']= array (
       'phptype' => 'integer',
       'null' => false,
     ),
-    'term_id' => 
+    'name' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '100',
+      'phptype' => 'string',
+      'null' => false,
+    ),
+    'email' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '64',
+      'phptype' => 'string',
+      'null' => false,
+    ),
+    'rating' => 
     array (
       'dbtype' => 'int',
-      'precision' => '11',
+      'precision' => '1',
       'phptype' => 'integer',
       'null' => false,
     ),
-    'seq' => 
+    'content' => 
     array (
-      'dbtype' => 'tinyint',
-      'precision' => '3',
-      'phptype' => 'integer',
-      'null' => true,
+      'dbtype' => 'mediumtext',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
     ),
   ),
   'indexes' => 
@@ -53,14 +69,6 @@ $xpdo_meta_map['ProductTerm']= array (
   ),
   'aggregates' => 
   array (
-    'Term' => 
-    array (
-      'class' => 'Term',
-      'local' => 'term_id',
-      'foreign' => 'id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
     'Product' => 
     array (
       'class' => 'Product',

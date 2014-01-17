@@ -182,6 +182,21 @@
         <aggregate alias="Spec" class="Spec" local="spec_id" foreign="spec_id" cardinality="one" owner="foreign" />
 	</object>
 
+	<!-- ! ProductReview -->
+	<object class="ProductReview" table="product_reviews" extends="xPDOSimpleObject">
+		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="name" dbtype="varchar" precision="100" phptype="string" null="false" />
+        <field key="email" dbtype="varchar" precision="64" phptype="string" null="false" />
+        <field key="rating" dbtype="int" precision="1" phptype="integer" null="false"/>
+        <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />
+        <field key="is_published" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0"/>
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="id" collation="A" null="false" />
+		</index>
+
+        <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+	</object>
+
 
 	<!-- ! Variation Types -->
 	<!-- eg. "Color", "Size", "Material" -->
