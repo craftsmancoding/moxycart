@@ -48,7 +48,7 @@ $modx->log(MODX_LOG_LEVEL_DEBUG, print_r($args,true),'','',__FILE__,__LINE__);
 
 
 $core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);
-require_once($core_path.'components/moxycart/controllers/moxycart/moxycart.class.php');
+require_once($core_path.'components/moxycart/controllers/moxycartcontroller.class.php');
 
 $Moxycart = new MoxycartController($modx);
 
