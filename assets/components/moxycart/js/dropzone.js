@@ -1067,7 +1067,11 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         item = items[_i];
         if (item.webkitGetAsEntry != null) {
+          
+          // https://github.com/enyo/dropzone/issues/285
+          // Fix on Chrome Bug
           if (item.kind != 'file') {continue;}
+
           entry = item.webkitGetAsEntry();
           if (entry.isFile) {
             this.addFile(item.getAsFile());
