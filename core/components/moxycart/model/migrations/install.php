@@ -23,7 +23,7 @@ $manager->createObjectContainer('ProductSpec');
 $manager->createObjectContainer('ProductRelation');
 $manager->createObjectContainer('Cart');
 $manager->createObjectContainer('Image');
-$manager->createObjectContainer('ProductReview');
+$manager->createObjectContainer('Review');
 
 // Foxycart Stuff
 $manager->createObjectContainer('Foxydata');

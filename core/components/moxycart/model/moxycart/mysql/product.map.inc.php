@@ -35,6 +35,7 @@ $xpdo_meta_map['Product']= array (
     'category' => NULL,
     'image_id' => NULL,
     'is_active' => 1,
+    'in_menu' => 1,
     'billing_unit' => NULL,
     'billing_interval' => 1,
     'duration_unit' => NULL,
@@ -266,6 +267,15 @@ $xpdo_meta_map['Product']= array (
       'default' => 1,
       'comment' => 'Used to disable/enable products',
     ),
+    'in_menu' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'phptype' => 'integer',
+      'null' => false,
+      'default' => 1,
+      'comment' => 'For hiding products from menu',
+    ),
     'billing_unit' => 
     array (
       'dbtype' => 'enum',
@@ -484,6 +494,14 @@ $xpdo_meta_map['Product']= array (
     'Relations' => 
     array (
       'class' => 'ProductRelation',
+      'local' => 'product_id',
+      'foreign' => 'product_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
+    ),
+    'Reviews' => 
+    array (
+      'class' => 'Review',
       'local' => 'product_id',
       'foreign' => 'product_id',
       'cardinality' => 'many',

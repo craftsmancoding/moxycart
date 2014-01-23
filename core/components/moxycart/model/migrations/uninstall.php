@@ -19,7 +19,7 @@ $manager->removeObjectContainer('ProductSpec');
 $manager->removeObjectContainer('ProductRelation');
 $manager->removeObjectContainer('Cart');
 $manager->removeObjectContainer('Image');
-$manager->removeObjectContainer('ProductReview');
+$manager->removeObjectContainer('Review');
 
 // Foxycart
 $manager->removeObjectContainer('Foxydata');
