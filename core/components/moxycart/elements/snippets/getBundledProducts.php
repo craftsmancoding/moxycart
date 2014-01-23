@@ -39,16 +39,18 @@ if (!$data['total']) {
 $out = '';
 $i = 2;
 foreach ($data['results'] as $r) {
-    if ($type == 'bundle-1:order') {
+    if ($r['type'] == 'bundle-1:order') {
         $r['qty'] = 1;
     }
     else {
         $r['qty'] = $quantity;
     }
+    $r['i'] = $i;
     $uniqid = uniqid();
     $chunk = $modx->newObject('modChunk', array('name' => "{tmp}-{$uniqid}"));
     $chunk->setCacheable(false);
     $out = $chunk->process($r, $tpl);    
+    $i++;
 }
 
 return $out;
