@@ -128,9 +128,8 @@ INIT = {
 	},
 
 	multi_select: function() {
-		 $('.li_product_image').on('click',function(e) {
-	    	if (e.shiftKey) {
-	    		$( this ).toggleClass("selected");
+		 $('.li_product_image, .edit-img').on('click',function(e) {
+	    	if (e.shiftKey || e.ctrlKey) {
 		        return false;
 		    } 
 	    });
@@ -209,6 +208,7 @@ jQuery(function() {
 	INIT.multi_select();
 	jQuery('#moxytab').tabify();
 	jQuery('.datepicker').datepicker();
+	jQuery("#product_images").multisortable();
 	jQuery("#product_images").sortable();
     jQuery("#product_images").disableSelection();
 
@@ -225,15 +225,6 @@ jQuery(function() {
         }).disableSelection();
     });  
 
-/*$('.li_product_image').draggable({
-    helper: function(){
-      var selected = $($('.selected'));
-      
-      var container = $('<div/>').attr('id', 'draggingContainer');
-      container.append(selected.clone());
-      return container; 
-    }
-  });
-*/
+
 
 });
