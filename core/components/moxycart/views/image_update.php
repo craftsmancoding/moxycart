@@ -2,6 +2,12 @@
 		<script src="<?php print $data['jcrop_js']; ?>" type="text/javascript"></script>
 		<script>
 			$(function(){
+				
+				$(".loader-ajax").hide();
+				$('#update-image').on('hidden.bs.modal', function (e) {
+					$('.update-container').empty();
+					 $(".loader-ajax").show();	
+				});
 
 				/**
 				* Update thumb on images tab
@@ -24,10 +30,6 @@
 				$('#image_update_form').on('submit',function(e){
 		           	var values = $(this).serialize();
 		           	var image_id = $('#image_id').val();
-					/*var fileInput = document.getElementById('file');
-					var file = fileInput.files[0];
-					var formData = new FormData();
-					formData.append('file', file);*/
 					$.ajax({
 		                type: "POST",
 		                url: connector_url+"image_save&action=update&image_id="+image_id,  
@@ -75,6 +77,7 @@
 
 				$('#close-update').on('click', function(){
 					if($(this).hasClass('has-cropped')) {
+
 						var image_id = $(this).data('image_id');
 						update_thumb(image_id);
 					}
@@ -124,13 +127,7 @@
 	    }
 
 		</script>
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	        <h4 class="modal-title" id="myModalLabel">Update Image</h4>
-	        
-	      </div>
+	 
 	      <div id="update-img-msg" class="alert"></div>
 	      
 	      <form id="image_update_form"  method="POST" action="#" class="form-horizontal">
@@ -186,6 +183,5 @@
 <form action="/file-upload"
       class="dropzone"
       id="my-awesome-dropzone"></form>
-	    </div><!-- /.modal-content -->
-	  </div><!-- /.modal-dialog -->
+
 </div>

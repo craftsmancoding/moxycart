@@ -25,6 +25,12 @@
 .table th {
   font-weight: bold;
 }
+
+.table thead {
+  background: #626262;
+  color: #fff;
+}
+
 .table thead th {
   vertical-align: bottom;
 }
@@ -4347,14 +4353,17 @@ ol.terms_taxonomy {
 
 .crop-btn {
   float: left;
-  margin-left: -100px;
+/*   margin-left: -100px; */
   margin-top: 5px;
+  margin-left: 120px;
 }
 
 
 #image_stuff-inner {
   float: left;
   margin-top: 5px;
+ /*  margin-right: 70px; */
+ margin-left: 30px;
 }
 
 .warning {
@@ -4390,6 +4399,27 @@ ol.terms_taxonomy {
   margin-left: 200px;
 } */
 
+#product_relations select {
+  margin-bottom: 0px;
+}
+
+
+.drop-delete {
+/*   display: none; */
+  width: 50px;
+  height: 50px;
+  border: 1px solid #ddd;
+  float: right;
+}
+.over-trash {
+  width: 100px;
+  height: 100px;
+  border: 1px solid red;
+}
+
+.selected {
+  background: #eae9eb;
+}
 
 
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.

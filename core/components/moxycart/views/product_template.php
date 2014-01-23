@@ -56,6 +56,7 @@ function remove_relation(product_id) {
 		<li class="variations-link" ><a href="#variations_tab">Variations</a></li>
 		<li class="specs-link" ><a href="#specs_tab">Specs</a></li>
 		<li class="related-link" ><a href="#related_tab">Related</a></li>
+        <li class="reviews-link" ><a href="#reviews_tab">Reviews</a></li>
 		<li class="images-link" ><a href="#images_tab">Images</a></li>
 		<li class="product-link" ><a href="#taxonomies_tab">Taxonomies</a></li>
 	</ul>
@@ -95,7 +96,7 @@ function remove_relation(product_id) {
                         <tr>
                           <td colspan="2">
                               <legend>Content</legend>
-                              <textarea id="content" class="modx-richtext" rows="7" name="content"></textarea>
+                              <textarea id="content" class="span12 modx-richtext" rows="7" name="content"></textarea>
                           </td>
                         </tr>
                     </tbody>
@@ -221,47 +222,137 @@ function remove_relation(product_id) {
 	</div>
 	
 	<div id="related_tab" class="content">		
+        <table class="table no-top-border">
+            <tr>
+                <td style="vertical-align:top;">
+                    <legend>Related Products</legend>
+                    <?php /* scrollable div here ... */ ?>
+                    <div>
+       
+                        <table class="table table-striped sortable">
+                            <thead>
+                              <tr>
+                                <th>Product</th>
+                                <th>Option</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody id="product_relations">
+                                <?php if (!$data['related_products']): ?>
+                                <tr id="related_products_msg"><td class="alert alert-danger" colspan="3"> <strong>Heads up!</strong> You have not defined any related products.</td></tr>
+                                <?php endif; ?>      
+                                    
+                                <?php print $data['related_products']; ?>
+                            </tbody>
+                          </table>
 
-        <h3>Related Products</h3>
-        <?php /* scrollable div here ... */ ?>
-        <div>
-            <?php if (!$data['related_products']): ?>
-                <div id="related_products_msg" style="display: table-cell; vertical-align: middle; text-align: center; background-color:#D8D8D8; height:30px; width:500px;">You have not defined any related products.</div>
-            <?php endif; ?>                
 
-            <ul id="product_relations" class="sortable" style="min-height:30px; width:500px;">
-                <?php print $data['related_products']; ?>
-            </ul>
+                    </div>
+                </td>
+                <td style="vertical-align:top;width:400px;">
+                    <legend>Find Products</legend>
 
-        </div>
-        
-        <h3>Find Products</h3>
-        <?php /* scrollable div here ... */ ?>
-
-        <?php if (!$data['products']['total']): ?>
-            <p>There are no other products defined.</p>
-        <?php else: ?>
-            <div style="height: 400px; width:400px; overflow: scroll;">
-                <ul class="">
-                <?php foreach ($data['products']['results'] as $p): ?>
-                    <li id="product_<?php print $p['product_id']; ?>">
-                        <strong><?php print $p['name']; ?></strong> (<?php print $p['sku']; ?>) 
-                        <span class="btn" style="height:10px;" onclick="javascript:add_relation(<?php print $p['product_id']; ?>,'<?php print $p['name']; ?>', '<?php print $p['sku']; ?>');">Add</span>
-                    </li>
-                <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
+                  
+                    <table class="table table-striped sortable">
+                            <thead>
+                              <tr>
+                                <th>Product</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (!isset($data['products']['total']) || !$data['products']['total'] ): ?>
+                                    <tr><td class="alert alert-danger" colspan="3"> There are no other products defined.</td></tr>
+                                <?php else : ?>
+                                    <?php foreach ($data['products']['results'] as $p): ?>
+                                        <tr id="product_<?php print $p['product_id']; ?>">
+                                            <td><strong><?php print $p['name']; ?></strong> <?php print !empty($p['sku']) ? '('.$p['sku'].')' : ''; ?></td>
+                                            <td><span class="btn" style="height:10px;" onclick="javascript:add_relation(<?php print $p['product_id']; ?>,'<?php print $p['name']; ?>', '<?php print $p['sku']; ?>');">Add</span></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?> 
+                            </tbody>
+                          </table>
+                </td>
+            </tr>
+        </table>
         
 	</div>
 
-	<div id="images_tab" class="content">		
+    <div id="reviews_tab" class="content">
+            <div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder" id="ext-gen68">
+                <p>Here you can Published/Unpublished Reviews.</p>
+            </div><br>
 
+            <table id="survey-list" class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Review</th>
+                        <th>Rating</th>
+                        <th>Published</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="review-row" data-review_id="1">
+                            <td>1</td>
+                            <td>Test</td>
+                            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</td>
+                            <td>3</td>
+                            <td>
+                                <form action="#">
+                                <select name="is_published" id="is_published">
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </form></td>
+                        </tr>                               
+                    </tbody>
+                  </table>
+    </div>
+
+	<div id="images_tab" class="content">	
+
+<h2>List 1</h2>
         <div class="dropzone-wrap" id="image_upload">
-        	<ul class="clearfix" id="product_images"><?php print isset($data['images']) ? $data['images'] : ''; ?></ul>
+        	<ul class="clearfix" id="product_images">
+                <?php print isset($data['images']) ? $data['images'] : ''; ?>
+                
+            </ul>
+
+            <div id="trash-can" class="drop-delete"></div>
+            <div class="clear"></div>
+
         	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
         </div>
-		<div class="modal fade" id="update-image"></div><!--/.modal -->
+
+		<div class="modal fade" id="update-image">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Update Image</h4>
+
+                    <div class="loader-ajax">
+                        <img src="<?php print $data['loader_path']; ?>" alt="">
+                    </div>
+                    
+                  </div>
+
+                  <div class="update-container"></div>
+                 
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!--/.modal -->
+
+        
+
 	</div>
 	<div id="taxonomies_tab" class="content"><br>
 		<legend>Taxonomy List</legend>
