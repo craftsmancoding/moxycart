@@ -1111,6 +1111,7 @@ class MoxycartController {
         }
 
         $data['mgr_connector_url'] = $this->mgr_connector_url;
+        $data['loader_path'] = $this->assets_url.'components/moxycart/images/gif-load.gif';
 
         return $this->_load_view('product_template.php',$data);
     }

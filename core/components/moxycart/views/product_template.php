@@ -323,7 +323,26 @@ function remove_relation(product_id) {
         	<ul class="clearfix" id="product_images"><?php print isset($data['images']) ? $data['images'] : ''; ?></ul>
         	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
         </div>
-		<div class="modal fade" id="update-image"></div><!--/.modal -->
+
+		<div class="modal fade" id="update-image">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Update Image</h4>
+
+                    <div class="loader-ajax">
+                        <img src="<?php print $data['loader_path']; ?>" alt="">
+                    </div>
+                    
+                  </div>
+
+                  <div class="update-container"></div>
+                 
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!--/.modal -->
+
 	</div>
 	<div id="taxonomies_tab" class="content"><br>
 		<legend>Taxonomy List</legend>

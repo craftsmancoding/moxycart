@@ -113,8 +113,10 @@ INIT = {
                     url: url_img_update,
                     success: function(data)
                     {	
+                      
                        var form = $(data).find('#modal-container').html();
-                       $("#update-image").html(form);
+                       $(".update-container").html(form);
+
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown)
                     {
