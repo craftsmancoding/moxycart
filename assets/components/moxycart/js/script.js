@@ -127,7 +127,14 @@ INIT = {
 		});
 	},
 
-
+	multi_select: function() {
+		 $('.li_product_image').on('click',function(e) {
+	    	if (e.shiftKey) {
+	    		$( this ).toggleClass("selected");
+		        return false;
+		    } 
+	    });
+	},
 
 	drag_drop_delete: function() {
 
@@ -199,7 +206,7 @@ jQuery(function() {
 	INIT.remove_image();
 	INIT.edit_image_modal();
 	INIT.drag_drop_delete();
-
+	INIT.multi_select();
 	jQuery('#moxytab').tabify();
 	jQuery('.datepicker').datepicker();
 	jQuery("#product_images").sortable();
@@ -216,9 +223,17 @@ jQuery(function() {
         jQuery(".sortable").sortable({
             connectWith: ".connectedSortable",
         }).disableSelection();
-    });   
+    });  
 
-
-
+/*$('.li_product_image').draggable({
+    helper: function(){
+      var selected = $($('.selected'));
+      
+      var container = $('<div/>').attr('id', 'draggingContainer');
+      container.append(selected.clone());
+      return container; 
+    }
+  });
+*/
 
 });

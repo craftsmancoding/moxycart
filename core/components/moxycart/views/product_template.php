@@ -317,8 +317,7 @@ function remove_relation(product_id) {
                   </table>
     </div>
 
-	<div id="images_tab" class="content">		
-        
+	<div id="images_tab" class="content">	
 
         <div class="dropzone-wrap" id="image_upload">
         	<ul class="clearfix" id="product_images">

@@ -4403,6 +4403,7 @@ ol.terms_taxonomy {
   margin-bottom: 0px;
 }
 
+
 .drop-delete {
 /*   display: none; */
   width: 50px;
@@ -4414,6 +4415,10 @@ ol.terms_taxonomy {
   width: 100px;
   height: 100px;
   border: 1px solid red;
+}
+
+.selected {
+  background: #eae9eb;
 }
 
 
