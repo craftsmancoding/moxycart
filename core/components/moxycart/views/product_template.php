@@ -318,9 +318,17 @@ function remove_relation(product_id) {
     </div>
 
 	<div id="images_tab" class="content">		
+        
 
         <div class="dropzone-wrap" id="image_upload">
-        	<ul class="clearfix" id="product_images"><?php print isset($data['images']) ? $data['images'] : ''; ?></ul>
+        	<ul class="clearfix" id="product_images">
+                <?php print isset($data['images']) ? $data['images'] : ''; ?>
+                
+            </ul>
+
+            <div id="trash-can" class="drop-delete"></div>
+            <div class="clear"></div>
+
         	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
         </div>
 
@@ -342,6 +350,8 @@ function remove_relation(product_id) {
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!--/.modal -->
+
+        
 
 	</div>
 	<div id="taxonomies_tab" class="content"><br>
