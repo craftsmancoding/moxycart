@@ -593,14 +593,20 @@ class Moxycart {
      */
     public function json_reviews($args,$raw=false) {
         $product_id = (int) $this->modx->getOption('product_id',$args);
+        $state = $this->modx->getOption('state',$args);
+  
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
-        $sort = $this->modx->getOption('sort',$args,'seq');
+        //$sort = $this->modx->getOption('sort',$args,'seq');
         $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('Review');
         
+        if ($state) {
+            $criteria->where(array('state'=>$state));
+        }
+
         if ($product_id) {
             $criteria->where(array('product_id'=>$product_id));
         }
@@ -608,10 +614,10 @@ class Moxycart {
         $total_pages = $this->modx->getCount('Review',$criteria);
         
         $criteria->limit($limit, $start); 
-        $criteria->sortby($sort,$dir);
+        //$criteria->sortby($sort,$dir);
         $pages = $this->modx->getCollection('Review',$criteria);
 
-        // return $criteria->toSQL(); <-- useful for debugging
+        //return $criteria->toSQL(); 
         // Init our array
         $data = array(
             'results'=>array(),
@@ -620,10 +626,6 @@ class Moxycart {
         foreach ($pages as $p) {
             $data['results'][] = $p->toArray();
         }
-
-        echo '<pre>';
-        print_r($data);
-        die(); // TESTING
         if ($raw) {
             return $data;
         }

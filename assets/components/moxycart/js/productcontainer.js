@@ -518,7 +518,7 @@ function getProductSettingsFields(){
 
 function getSpecs(container){
 	Ext.Ajax.request({
-		url: connector_url+'json_specs',
+		url: connector_url+'json_specs&t=data',
 		success: function(response, opts) {
 			var obj = Ext.decode(response.responseText);
 			if(obj && obj.results){
@@ -532,7 +532,7 @@ function getSpecs(container){
 
 function getTaxonomies(container){
 	Ext.Ajax.request({
-		url: connector_url+'json_store_taxonomies',
+		url: connector_url+'json_store_taxonomies&t=data',
 		params : {
 			store_id : pid
 		},
@@ -556,7 +556,7 @@ function getTaxonomies(container){
 
 function getVariations(container){
 	Ext.Ajax.request({
-		url: connector_url+'json_store_variation_types',
+		url: connector_url+'json_store_variation_types&t=data',
 		params : {
 			store_id : pid
 		},
@@ -618,7 +618,7 @@ function getTemplateStore(dtmp){
 		proxy : new Ext.data.HttpProxy({
 			method: 'GET',
 			prettyUrls: false,
-			url: connector_url+'json_templates'
+			url: connector_url+'json_templates&t=data'
 		}),
 		listeners : {
 			load : function(){
@@ -651,7 +651,7 @@ function getCurrencyStore(){
 		proxy : new Ext.data.HttpProxy({
 			method: 'GET',
 			prettyUrls: false,
-			url: connector_url+'json_currencies'
+			url: connector_url+'json_currencies&t=data'
 		}),
 		listeners : {
 			load : function(){
@@ -682,7 +682,7 @@ function getProductContainerStore(){
 		proxy : new Ext.data.HttpProxy({
 			method: 'GET',
 			prettyUrls: false,
-			url: connector_url+'json_stores'
+			url: connector_url+'json_stores&t=data'
 		}),
 		listeners : {
 			load : function(){
@@ -1016,7 +1016,7 @@ function getProductsTabFields(){
 		proxy : new Ext.data.HttpProxy({
 			method: 'GET',
 			prettyUrls: false,
-			url: connector_url+'json_categories',
+			url: connector_url+'json_categories&t=data',
 		}),
 		listeners : {
 			load : function(){
@@ -1312,7 +1312,7 @@ function getProductStoreStore(){
 		proxy : new Ext.data.HttpProxy({
 			method: 'GET',
 			prettyUrls: false,
-			url: connector_url+'json_products&store_id='+pid
+			url: connector_url+'json_products&t=data&store_id='+pid
 		})
 	});
 }
@@ -1593,7 +1593,7 @@ function renderProductVariationProductsGrid(){
 		proxy : new Ext.data.HttpProxy({
 			method: 'GET',
 			prettyUrls: false,
-			url: variation_url+'&f=json_products'
+			url: variation_url+'&f=json_products&t=data'
 		})
 	});
 

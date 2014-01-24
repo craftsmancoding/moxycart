@@ -2,7 +2,7 @@ function renderManageCurrencies(){
 
 	var currenciesStore = new Ext.data.Store({
 		autoLoad:true,
-		url: connector_url + 'json_currencies',
+		url: connector_url + 'json_currencies&t=data',
 		sortInfo:{
 			field:'name',
 			direction: 'ASC'

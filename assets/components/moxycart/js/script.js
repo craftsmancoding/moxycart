@@ -33,6 +33,28 @@ INIT = {
 	    })
 	},
 
+	update_review: function(){
+		$('select#state').on('change',function(e){
+			var review_id = $(this).data('review_id'),
+				state	= $(this).val(),
+            	values = { id: review_id, state: state };
+	    	var url = connector_url + 'review_save';
+		    $.post( url, values, function(data){
+		    	console.log(data)
+		    	$('.moxy-msg').show();
+		    	data = $.parseJSON(data);
+		    	if(data.success == true) {
+		    		$('#moxy-result').html('Success');
+		    	} else{
+		    		$('#moxy-result').html('Failed');
+		    	}
+		    	$('#moxy-result-msg').html(data.msg);
+		    	$(".moxy-msg").delay(3200).fadeOut(300);
+		    } );
+		    e.preventDefault();
+	    })
+	},
+
 	create_product: function(){
 		$('#product_create').on('submit',function(e){
 			
@@ -222,6 +244,7 @@ function remove_spec(spec_id) {
 
 jQuery(function() {
 	INIT.update_product();
+	INIT.update_review();
 	INIT.create_product();
 	INIT.fill_form_fields();
 	INIT.edit_image_modal();

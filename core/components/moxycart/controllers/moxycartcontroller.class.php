@@ -957,7 +957,7 @@ class MoxycartController {
             $data['taxonomies'] .= $this->_load_view('product_taxonomy.php',$t); // TODO: react to the spec "type"
         }
               
-        
+        $data['reviews'] = $this->Moxycart->json_reviews(array('product_id'=>$product_id),true);   
                 
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
@@ -1558,6 +1558,38 @@ class MoxycartController {
                 
         return json_encode($out);
     }  
+
+     /**
+     * Post data here to save it
+     */
+    public function review_save($args) {
+        $action = $this->modx->getOption('action', $args);        
+        unset($args['action']);
+        $out = array(
+            'success' => true,
+            'msg' => '',
+        );
+
+        switch ($action) {
+            case 'update' :
+            default:
+                $product_id = (int) $this->modx->getOption('product_id',$args);
+                $state = $this->modx->getOption('state',$args);
+
+                $Review = $this->modx->getObject('Review',$this->modx->getOption('id', $args));
+                
+                $Review->fromArray($args);
+                if (!$Review->save()) {
+                    $out['success'] = false;
+                    $out['msg'] = 'Failed to Update Review.';    
+                }
+                $out['msg'] = 'Review is now <strong>' . ucfirst($state) . '</strong>';  
+
+                break;               
+        }
+
+        return json_encode($out);
+    }  
  
 
     
@@ -1766,66 +1798,5 @@ class MoxycartController {
         return $out;
     }
 
-    public function json_categories($args,$raw=false) {
-        return $this->Moxycart->json_categories($args,$raw);
-    }
-
-    public function json_currencies($args,$raw=false) {
-        return $this->Moxycart->json_currencies($args,$raw);
-    }
-    public function json_products($args,$raw=false) {
-        return $this->Moxycart->json_products($args,$raw);
-    }
-    public function json_product_relations($args,$raw=false) {
-        return $this->Moxycart->json_product_relations($args,$raw);
-    }
-    public function json_product_specs($args,$raw=false) {
-        return $this->Moxycart->json_product_specs($args,$raw);
-    }
-    public function json_product_taxonomies($args,$raw=false) {
-        return $this->Moxycart->json_product_taxonomies($args,$raw);
-    }
-    public function json_product_terms($args,$raw=false) {
-        return $this->Moxycart->json_product_terms($args,$raw);
-    }
-    public function json_images($args,$raw=false) {
-        return $this->Moxycart->json_images($args,$raw);
-    }
-    public function json_specs($args,$raw=false) {
-        return $this->Moxycart->json_specs($args,$raw);
-    }
-    public function json_stores($args,$raw=false) {
-        return $this->Moxycart->json_stores($args,$raw);
-    }
-    public function json_store_specs($args,$raw=false) {
-        return $this->Moxycart->json_store_specs($args,$raw);
-    }
-    public function json_store_taxonomies($args,$raw=false) {
-        return $this->Moxycart->json_store_taxonomies($args,$raw);
-    }
-    public function json_store_variation_types($args,$raw=false) {
-        return $this->Moxycart->json_store_taxonomies($args,$raw);
-    }
-    public function json_taxonomies($args,$raw=false) {
-        return $this->Moxycart->json_taxonomies($args,$raw);
-    }
-    public function json_terms($args,$raw=false) {
-        return $this->Moxycart->json_terms($args,$raw);
-    }
-    public function json_templates($args,$raw=false) {
-        return $this->Moxycart->json_templates($args,$raw);
-    }
-    public function json_types($args,$raw=false) {
-        return $this->Moxycart->json_types($args,$raw);
-    }
-    public function json_variation_types($args,$raw=false) {
-        return $this->Moxycart->json_variation_types($args,$raw);
-    }
-    public function json_variation_terms($args,$raw=false) {
-        return $this->Moxycart->json_variation_terms($args,$raw);
-    }
-    public function json_product_reviews($args,$raw=false) {
-        return $this->Moxycart->json_product_reviews($args,$raw);
-    }
 
 }

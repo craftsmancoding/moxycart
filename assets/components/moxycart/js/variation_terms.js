@@ -2,7 +2,7 @@ function renderVariationTerms(vtype_id){
 
 	var variationTermsStore = new Ext.data.Store({
 		autoLoad:true,
-		url: connector_url + 'json_variation_terms&vtype_id=' + vtype_id,
+		url: connector_url + 'json_variation_terms&t=data&vtype_id=' + vtype_id,
 		sortInfo:{
 			field:'seq',
 			direction: 'ASC'

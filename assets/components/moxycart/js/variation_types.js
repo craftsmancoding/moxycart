@@ -2,7 +2,7 @@ function renderVariationTypes(){
 
 	var variationTypesStore = new Ext.data.Store({
 		autoLoad:true,
-		url: connector_url + 'json_variation_types',
+		url: connector_url + 'json_variation_types&t=data',
 		sortInfo:{
 			field:'seq',
 			direction: 'ASC'

@@ -133,7 +133,7 @@ function remove_relation(product_id) {
                                 <input type="text" style="width:94%;" id="qty_inventory" name="qty_inventory" value=""/>
 
                                 <label for="qty_alert">Alert Qty</label>
-                                <input type="text" style="width:94%;" id="qty_alert" name="qty_alert" value="<?php print $data['qty_alert']; ?>"/>
+                                <input type="text" style="width:94%;" id="qty_alert" name="qty_alert" value="<?php print isset($data['qty_alert']) ? $data['qty_alert'] : ''; ?>"/>
 
                                 <label for="track_inventory">Track Inventory</label>
 								<select name="track_inventory" style="width:40%;" id="track_inventory">
@@ -294,31 +294,34 @@ function remove_relation(product_id) {
                     <thead>
                       <tr>
                         <th>ID</th>
-                        <th>Name</th>
+                        <th>Customer Name</th>
                         <th>Review</th>
                         <th>Rating</th>
-                        <th>Published</th>
+                        <th>Status</th>
                       </tr>
                     </thead>
                     <tbody>
-                        <tr class="review-row" data-review_id="1">
-                            <td>1</td>
-                            <td>Test</td>
-                            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-                            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</td>
-                            <td>3</td>
-                            <td>
-                                <form action="#">
-                                <select name="is_published" id="is_published">
-                                    <option value="1">Yes</option>
-                                    <option value="0">No</option>
-                                </select>
-                            </form></td>
-                        </tr>                               
+                        <?php if (!isset($data['reviews']['total']) || !$data['reviews']['total'] ): ?>
+                            <tr><td class="alert alert-danger" colspan="5"> No Reviews Found for this Product.</td></tr>
+                        <?php else : ?>
+                            <?php foreach ($data['reviews']['results'] as $r): ?>
+                                 <tr class="review-row">
+                                   <td><?php print $r['id']; ?></td>
+                                    <td><?php print $r['name']; ?></td>
+                                    <td><?php print $r['content']; ?></td>
+                                    <td><?php print $r['rating']; ?></td>
+                                    <td>
+                                        <form action="#" method="post" id="review-form">
+                                            <select data-review_id="<?php print $r['id']; ?>" name="state" id="state">
+                                                <option value="pending" <?php print ($r['state']=='pending') ? 'selected' : ''; ?>>Pending</option>
+                                                <option value="approved" <?php print ($r['state']=='approved') ? 'selected' : ''; ?>>Approved</option>
+                                                <option value="archived" <?php print ($r['state']=='archived') ? 'selected' : ''; ?>>Archived</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>                               
                     </tbody>
                   </table>
     </div>

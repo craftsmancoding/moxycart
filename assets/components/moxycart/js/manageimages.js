@@ -1,7 +1,7 @@
 ProductImages = Ext.extend(Ext.Panel,{
 	imageStore:new Ext.data.Store({
 		autoLoad:true,
-		url: connector_url + 'json_images',
+		url: connector_url + 'json_images&t=data',
 		sortInfo:{
 			field:'seq',
 			direction: 'ASC'

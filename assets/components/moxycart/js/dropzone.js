@@ -1,4 +1,4 @@
-;(function(){
+(function(){
 
 /**
  * Require the given path.

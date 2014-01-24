@@ -2,7 +2,7 @@ function renderManageSpecs(){
 
 	var specsStore = new Ext.data.Store({
 		autoLoad:true,
-		url: connector_url + 'json_specs',
+		url: connector_url + 'json_specs&t=data',
 		sortInfo:{
 			field:'seq',
 			direction: 'ASC'
