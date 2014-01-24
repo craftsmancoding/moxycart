@@ -82,7 +82,7 @@
         <field key="category" dbtype="varchar" precision="32" phptype="string" null="true" comment="Foxycart category (not a taxonomy)"/>
         <field key="image_id" dbtype="int" precision="11" phptype="integer" null="true" comment="Thumbnail image"/>
         <field key="is_active" dbtype="tinyint" precision="1" phptype="integer" null="false" default="1" comment="Used to disable/enable products"/>
-        
+        <field key="in_menu" dbtype="tinyint" precision="1" phptype="integer" null="false" default="1" comment="For hiding products from menu"/>        
         
         <!-- subscription/membership products Only -->
         <field key="billing_unit" dbtype="enum" precision="'hours','days','weeks','months','years'" phptype="string" null="true" />
@@ -143,6 +143,7 @@
 		<composite alias="Taxonomies" class="ProductTaxonomy" local="product_id" foreign="product_id" cardinality="many" owner="local" />
         <composite alias="Specs" class="ProductSpec" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Relations" class="ProductRelation" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+		<composite alias="Reviews" class="Review" local="product_id" foreign="product_id" cardinality="many" owner="local" />
     </object>
 
 
@@ -183,17 +184,24 @@
 	</object>
 
 	<!-- ! ProductReview -->
-	<object class="ProductReview" table="product_reviews" extends="xPDOSimpleObject">
+	<!-- Some fields may be redundant because conf allows for anonymous users to post reviews -->
+	<object class="Review" table="reviews" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="author_id" dbtype="int" precision="11" phptype="integer" null="true" comment="user may not be logged in"/>
         <field key="name" dbtype="varchar" precision="100" phptype="string" null="false" />
         <field key="email" dbtype="varchar" precision="64" phptype="string" null="false" />
-        <field key="rating" dbtype="int" precision="1" phptype="integer" null="false"/>
+        <field key="rating" dbtype="int" precision="3" phptype="integer" null="false"/>
         <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />
-        <field key="is_published" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0"/>
+        <field key="state" dbtype="varchar" precision="16" phptype="string" null="false" default="pending" comment="pending, approved, archived"/>
+
+		<field key="timestamp_created" dbtype="timestamp" phptype="timestamp" null="true" default="CURRENT_TIMESTAMP" />
+		<field key="timestamp_modified" dbtype="timestamp" phptype="timestamp" null="true" />
+        
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" collation="A" null="false" />
 		</index>
-
+			
+        <aggregate alias="Author" class="modUser" local="author_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 	</object>
 

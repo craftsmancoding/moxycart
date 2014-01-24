@@ -1,16 +1,20 @@
 <?php
-$xpdo_meta_map['ProductReview']= array (
+$xpdo_meta_map['Review']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'product_reviews',
+  'table' => 'reviews',
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
     'product_id' => NULL,
+    'author_id' => NULL,
     'name' => NULL,
     'email' => NULL,
     'rating' => NULL,
     'content' => '',
+    'state' => 'pending',
+    'timestamp_created' => 'CURRENT_TIMESTAMP',
+    'timestamp_modified' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -20,6 +24,14 @@ $xpdo_meta_map['ProductReview']= array (
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
+    ),
+    'author_id' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => true,
+      'comment' => 'user may not be logged in',
     ),
     'name' => 
     array (
@@ -38,7 +50,7 @@ $xpdo_meta_map['ProductReview']= array (
     'rating' => 
     array (
       'dbtype' => 'int',
-      'precision' => '1',
+      'precision' => '3',
       'phptype' => 'integer',
       'null' => false,
     ),
@@ -48,6 +60,28 @@ $xpdo_meta_map['ProductReview']= array (
       'phptype' => 'string',
       'null' => false,
       'default' => '',
+    ),
+    'state' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '16',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => 'pending',
+      'comment' => 'pending, approved, archived',
+    ),
+    'timestamp_created' => 
+    array (
+      'dbtype' => 'timestamp',
+      'phptype' => 'timestamp',
+      'null' => true,
+      'default' => 'CURRENT_TIMESTAMP',
+    ),
+    'timestamp_modified' => 
+    array (
+      'dbtype' => 'timestamp',
+      'phptype' => 'timestamp',
+      'null' => true,
     ),
   ),
   'indexes' => 
@@ -69,6 +103,14 @@ $xpdo_meta_map['ProductReview']= array (
   ),
   'aggregates' => 
   array (
+    'Author' => 
+    array (
+      'class' => 'modUser',
+      'local' => 'author_id',
+      'foreign' => 'id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
     'Product' => 
     array (
       'class' => 'Product',
