@@ -71,12 +71,18 @@ function remove_relation(product_id) {
                                 <input type="hidden" name="product_id" id="product_id" value="">
                                  <label for="title">Browser Title</label>
                                 <input type="text" style="width:94%;" id="title" name="title" value=""/>
+                                <label for="alias">Alias</label>
+                                <input type="text"  style="width:94%;" name="alias" id="alias" value="">
                                 <label for="content">Description</label>
                                 <textarea id="description" style="width:94%;" rows="3" name="description"></textarea>
                             </td>
                             <td style="width:30%;vertical-align: top;">
-                            	  <label for="alias">Alias</label>
-                                <input type="text"  style="width:90%;" name="alias" id="alias" value="">
+                            	<label for="category">In Menu</label>
+                                <select style="width:90%;" name="in_menu" id="in_menu">
+                                   <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+
                             	<label for="category">Category</label>
                                 <select style="width:90%;" name="category" id="category">
                                 	<?php print $data['categories']; ?>

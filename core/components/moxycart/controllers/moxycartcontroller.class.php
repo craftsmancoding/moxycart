@@ -45,7 +45,6 @@ class MoxycartController {
     private $cache; // for iterative ops
     private $depth = 0; //
     
-    const MOXYID = 'm42Ccf';
     
     /**
      * Map a function name to a MODX permission, e.g. 
@@ -250,53 +249,8 @@ class MoxycartController {
         return $out;
     
     }
-    
-    
-    /**
-     * Generate a string to be used as the API key
-     *
-     * @return string
-     */
-    public function generate_api_key() {
-        $length = 54;
-        $charset='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        $str = '';
-        $count = strlen($charset);
-        while ($length--) {
-            $str .= $charset[mt_rand(0, $count-1)];
-        }
-        return self::MOXYID . $str;
-    }
 
 
-    /**
-     * Used via Ajax to get a raw HTML page component so we don't have to 
-     * duplicate formatting templates in PHP *and* javascript.  This ajax
-     * controller lets us keep everything in PHP.
-     *
-     * object: classname of the object
-     * view: name of the view
-     *
-     * @return string
-     */
-    public function ajax_template($args) {
-        $id = (int) $this->modx->getOption('id',$args);    
-        $object = $this->modx->getOption('object',$args);
-        $template = $this->modx->getOption('template',$args);
-        
-        $Obj = $this->modx->getObject($object, $id);
-        
-        if (!$Obj) {
-            $this->modx->log(1,'Object not found.');
-            return 'object not found: '.$object . ':'.$id;
-        }
-        $data = $Obj->toArray();
-        $data['value'] = '';
-        $data['spec'] = $data['name'];
-        
-        return $this->_load_view($template,$data);
-    }
-    
      //------------------------------------------------------------------------------
     //! Currencies
     //------------------------------------------------------------------------------
@@ -468,26 +422,6 @@ class MoxycartController {
         return $target_path_thumb . $filename;
     }
 
-    //------------------------------------------------------------------------------
-    //! Images
-    //------------------------------------------------------------------------------
-    /**
-     *
-     */
-    public function images_manage($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Manage Images here.</div>';
-    }
-
-    /**
-     *
-     */
-    public function image_create($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Upload an image here.</div>';
-    }
 
     /**
      * Hosts the "Update Image" form.
@@ -520,16 +454,6 @@ class MoxycartController {
 
         return $this->_load_view('image_update.php',$data);
     }
-
-
-    /**
-     * @param int image_id
-     */
-    public function image_delete($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Delete Image here</div>';
-    } 
 
     /**
     * upload_image
@@ -1101,16 +1025,6 @@ class MoxycartController {
         return $this->_load_view('product_template.php',$data);
     }
 
-    /**
-     * Hosts the "Update Variation" form.
-     *
-     * @param int product_id (from $_GET). Defines the id of the product
-     */
-    public function product_delete($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Delete Product Page.</div>';
-    }
 
 
     /**
@@ -1186,17 +1100,6 @@ class MoxycartController {
 	}
 
     /**
-     * Handles updates to a product's images, e.g. drag and drop
-     *
-     * @param int product_id (from $_GET) defines the product_id
-     */
-    public function product_images($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Handles Product Image updates</div>';
-    }
-
-    /**
      * Hosts the "Manual Sort Order" modal window: used when a user wants to specify a manual
      * sort order for the products in a container.
      *
@@ -1233,15 +1136,7 @@ class MoxycartController {
         
     }
 
-    /**
-     * Handles editing of a single product spec
-     * @param int id (from $_GET).
-     */
-    public function product_specs_update($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Update Product spec</div>';
-    }
+
 
     /**
      * Post data here to save it.  Data should be in the following format:
@@ -1664,47 +1559,7 @@ class MoxycartController {
         return json_encode($out);
     }  
  
-    //------------------------------------------------------------------------------`
-    //! Variation
-    //------------------------------------------------------------------------------
-    /**
-     *
-     * @param int product_id (from $_GET). Defines the id of the parent product.
-     */
-    public function variation_create($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">This is the Create Variation Page.</div>';
-    }
 
-    /**
-     * Hosts the "Update Variation" form.
-     *
-     * @param int product_id (from $_GET). Defines the id of the product
-     */
-    public function variation_update($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">This is the Update Variation Page.</div>';
-    }
-
-    /**
-     * Hosts the "Delete Variation" form.
-     *
-     * @param int product_id (from $_GET). Defines the id of the product
-     */
-    public function variation_delete($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Delete Variation Page.</div>';
-    }
-    
-    /**
-     * Post data here to save it
-     */
-    public function variation_save() {
-        // $_POST... todo
-    }  
     
     //------------------------------------------------------------------------------
     //! Variation Terms
