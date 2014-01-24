@@ -215,22 +215,6 @@ class MoxycartController {
         </script>');
     }
     
-    //------------------------------------------------------------------------------
-    //! Public
-    //------------------------------------------------------------------------------
-    
-    /**
-     *
-     *
-     */
-    public function dashboard() {
-        $data = array();
-        $data['mgr_connector_url'] = $this->mgr_connector_url;
-        $out = $this->_load_view('dashboard_header.php',$data);
-        $out .= $this->_load_view('dashboard.php',$data);
-        $out .= $this->_load_view('dashboard_footer.php',$data);        
-        return $out;
-    }
     
     /**
      *
@@ -1885,20 +1869,6 @@ class MoxycartController {
         }
                 
         return json_encode($out);   
-    }
-
-    //------------------------------------------------------------------------------
-    //!
-    //------------------------------------------------------------------------------
-
-    /**
-     * Hosts the "Delete Variation Term" page
-     * @param int vterm_id
-     */
-    public function welcome($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-        return '<div id="moxycart_canvas">Welcome page!</div>';
     }
 
     

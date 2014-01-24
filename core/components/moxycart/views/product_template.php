@@ -318,8 +318,6 @@ function remove_relation(product_id) {
     </div>
 
 	<div id="images_tab" class="content">	
-
-<h2>List 1</h2>
         <div class="dropzone-wrap" id="image_upload">
         	<ul class="clearfix" id="product_images">
                 <?php print isset($data['images']) ? $data['images'] : ''; ?>

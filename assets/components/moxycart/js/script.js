@@ -178,11 +178,21 @@ INIT = {
 		  }
 		});*/
 		$( "#trash-can" ).droppable({
-			over: function() {
+			
+			over: function( event, ui ) {
 				$(this).addClass('over-trash');
+				var id = $(ui.draggable).attr('id');
+				$('#'+id).addClass('li-to-be-removed');
+				$('#'+id).find('img').addClass('img-to-be-removed');
 			},
-			out: function() {
+			out: function(event, ui) {
+				var id = $(ui.draggable).attr('id');
 				$(this).removeClass('over-trash');
+			},
+			deactivate: function( event, ui ) {
+				var id = $(ui.draggable).attr('id');
+				$('#'+id).removeClass('li-to-be-removed');
+				$('#'+id).find('img').removeClass('img-to-be-removed');
 			},
 		    drop: function( event, ui ) {
 		      	var id = $(ui.draggable).attr('id');
@@ -237,10 +247,8 @@ jQuery(function() {
 	INIT.remove_image();
 	INIT.edit_image_modal();
 	INIT.drag_drop_delete();
-	INIT.multi_select_drag();
 	jQuery('#moxytab').tabify();
 	jQuery('.datepicker').datepicker();
-	//jQuery("#product_images").multisortable();
 	jQuery("#product_images").sortable();
     jQuery("#product_images").disableSelection();
 
