@@ -83,26 +83,6 @@ INIT = {
 	    });
 	},
 
-	remove_image : function() {
-		var url = connector_url + 'image_save';
-		$( document ).on( "click", "a.remove-img", function() {
-		  	if(confirm('Are you sure you want to delete this image?')) {
-				var current_img = $(this).parents('.li_product_image');
-	            var img_id = $(this).data('image_id');
-	            $.post( url+"&action=delete", { image_id: img_id }, function( data ){
-			    	data = $.parseJSON(data);
-			    	if(data.success == true) {
-			    		current_img.remove();
-			    	} else{
-			    		$('#moxy-result').html('Failed');
-			    		$('#moxy-result-msg').html(data.msg);
-			    		$(".moxy-msg").delay(3200).fadeOut(300);
-			    	}
-			    } );
-	        }
-			return false;
-		});
-	},
 
 	edit_image_modal: function() {
 
@@ -244,20 +224,14 @@ jQuery(function() {
 	INIT.update_product();
 	INIT.create_product();
 	INIT.fill_form_fields();
-	INIT.remove_image();
 	INIT.edit_image_modal();
 	INIT.drag_drop_delete();
+	//INIT.multi_select_drag();
 	jQuery('#moxytab').tabify();
 	jQuery('.datepicker').datepicker();
+	//jQuery("#product_images").multisortable();
 	jQuery("#product_images").sortable();
     jQuery("#product_images").disableSelection();
-
-	jQuery( document ).on( "mouseenter", ".li_product_image", function() {
- 		jQuery(this).find('a.remove-img').show();
-	});
-	jQuery( document ).on( "mouseleave", ".li_product_image", function() {
- 		$(this).find('a.remove-img').hide();
-	});
 	
     jQuery(function() {
         jQuery(".sortable").sortable({
