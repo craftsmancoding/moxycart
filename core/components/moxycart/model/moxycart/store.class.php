@@ -253,8 +253,9 @@ class StoreCreateProcessor extends modResourceCreateProcessor {
     public function beforeSave() {
         $raw = $this->getProperties(); // <-- this will have raw values
         $properties = $this->object->getProperties('moxycart'); //<-- we need to update these values
-        $this->modx->log(1,'beforeSave raw values: '.print_r($raw,true));
-        $this->modx->log(1,'beforeSave raw POST values: '.print_r($_POST,true));
+        $this->object->set('class_key','Store');
+        //$this->modx->log(1,'beforeSave raw values: '.print_r($raw,true));
+        //$this->modx->log(1,'beforeSave raw POST values: '.print_r($_POST,true));
         
         $properties['product_type'] = $this->modx->getOption('product_type',$raw);
         $properties['product_template'] = $this->modx->getOption('product_template',$raw);
@@ -310,6 +311,7 @@ class StoreUpdateProcessor extends modResourceUpdateProcessor {
     public function beforeSave() {
         $raw = $this->getProperties(); // <-- this will have raw values
         $properties = $this->object->getProperties('moxycart'); //<-- we need to update these values
+        $this->object->set('class_key','Store');
         //$this->modx->log(1,'beforeSave raw values: '.print_r($raw,true));
         //$this->modx->log(1,'existing values: '.print_r($properties,true));
         //$this->modx->log(1,'beforeSave raw POST values: '.print_r($_POST,true));

@@ -136,15 +136,22 @@ $_lang['creating_product_container_content2'] = 'This explains how to do this.';
 
 
 // Settings...
+//Name: setting_ + Key
+// Description: setting_ + Key + _desc
 
 $_lang['default_product_template'] = 'Default Product Template';
-
 $_lang['moxycart.default_product_template'] = 'Default Product Template';
 $_lang['moxycart.default_taxonomy_template'] = 'Default Taxonomy Template';
 $_lang['moxycart.default_term_template'] = 'Default Term Template';
 $_lang['moxycart.default_product_type'] = 'Default Term Template';
 
+$_lang['setting_moxycart.approve_reviews'] = 'Approve Reviews';
+$_lang['setting_moxycart.approve_reviews_desc'] = 'If set to "Yes", customer reviews will be automatically approved. This is not recommended. You can override this global setting in your writeReview Snippet.  Default is "No".';
+
 $_lang['view_not_found'] = 'The view file you requested could not be found: [[+file]]';
+
+
+
 
 // foxycart_store_url
 //

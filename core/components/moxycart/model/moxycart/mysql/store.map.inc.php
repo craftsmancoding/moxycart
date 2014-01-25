@@ -15,7 +15,7 @@ $xpdo_meta_map['Store']= array (
     array (
       'class' => 'Product',
       'local' => 'id',
-      'foreign' => 'parent',
+      'foreign' => 'store_id',
       'cardinality' => 'many',
       'owner' => 'local',
     ),

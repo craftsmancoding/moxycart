@@ -26,5 +26,12 @@ return array(
 		'namespace' => 'moxycart',
 		'area' => 'moxycart:default'
     ),
+    array(
+        'key'  =>     'moxycart.approve_reviews',
+		'value'=>     0,
+		'xtype'=>     'combo-boolean',
+		'namespace' => 'moxycart',
+		'area' => 'moxycart:default'
+    ),
 );
 /*EOF*/

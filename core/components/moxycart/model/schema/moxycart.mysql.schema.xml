@@ -13,7 +13,7 @@
         track_inventory : 
     -->
     <object class="Store" extends="modResource">
-        <composite alias="Products" class="Product" local="id" foreign="parent" cardinality="many" owner="local" />
+        <composite alias="Products" class="Product" local="id" foreign="store_id" cardinality="many" owner="local" />
     </object>
 
     <!-- ! Taxonomy: a container for Terms -->

@@ -20,7 +20,7 @@ return array(
     'copyright' => date('Y'),
     
     'category' => 'Moxycart',
-    'seed' => array('prod'),
+    'seed' => array('base'),
     'packages' => array(
         array('moxycart', $pkg_root_dir.'/core/components/moxycart/model/','moxy_'),
         array('foxycart', $pkg_root_dir.'/core/components/moxycart/model/','foxy_'),
@@ -60,7 +60,12 @@ return array(
             xPDOTransport::PRESERVE_KEYS => true,
             xPDOTransport::UPDATE_OBJECT => true, 
             xPDOTransport::UNIQUE_KEY => array('name'),
-        ),        
+        ),    
+        'Store' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => true, 
+            xPDOTransport::UNIQUE_KEY => array('uri'),
+        ),            
     ),
 );
 /*EOF*/
