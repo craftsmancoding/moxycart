@@ -40,6 +40,7 @@ $props = $Product->toArray();
 $props['success_msg'] = '';
 $props['error_msg'] = '';
 
+
 if($_POST) {
 	$purifier = new HTMLPurifier();
 
@@ -55,8 +56,6 @@ if($_POST) {
     } else {
     	$props['success_msg'] = 'Review Successfully Posted.';
     }
-	
-
 
 }
 
