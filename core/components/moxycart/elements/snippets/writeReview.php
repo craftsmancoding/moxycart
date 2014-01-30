@@ -54,7 +54,7 @@ if($_POST) {
     if (!$Review->save()) {
         $props['error_msg'] = 'Sorry, Failed to Post your Review.';
     } else {
-    	$props['success_msg'] = 'Review Successfully Posted.';
+    	$props['success_msg'] = 'Review Successfully Submitted.';
     }
 
 }
