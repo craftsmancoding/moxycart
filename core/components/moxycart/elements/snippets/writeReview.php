@@ -50,6 +50,7 @@ if($_POST) {
     $Review->set('name',strip_tags($modx->getOption('name', $_POST)));
     $Review->set('email',strip_tags($modx->getOption('email', $_POST)));
     $Review->set('rating',(int) $modx->getOption('rating', $_POST));
+    $Review->set('state', $approve_reviews ? 'approved' : 'pending');
     $Review->set('content',$purifier->purify($modx->getOption('content', $_POST)));
     if (!$Review->save()) {
         $props['error_msg'] = 'Sorry, Failed to Post your Review.';
