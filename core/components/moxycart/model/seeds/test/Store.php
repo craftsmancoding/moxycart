@@ -61,6 +61,68 @@ return array(
                 'in_menu' => 1,
                 'timestamp_created' => date('Y-m-d H:i:s')
             ),
+            array(
+                'name' => 'Another Sweater',
+                'title' => 'Another Sweater',
+                'description' => '100% Wool for hairless homeboys',
+                'content' => '<p>Just imagine this awesome sweater.</p>',
+                'type' => 'regular',
+                'sku' => 'ANOTHER-SWEATER',
+                'sku_vendor' => '',
+                'alias' => 'another-sweater',
+                'track_inventory' => 1,
+                'qty_inventory' => 10,
+                'qty_alert' => 3,
+                'qty_min' => 1,
+                'qty_max' => 0,
+                'qty_backorder_max' => 5,
+                'price' => '49.00',
+                'price_strike_thru' => '99.00',
+                'price_sale' => '',
+                'sale_start' => '',
+                'sale_end' => '',
+                'category' => 'Default',
+                'is_active' => 1,
+                'in_menu' => 1,
+                'timestamp_created' => date('Y-m-d H:i:s')
+            ),
+            array(
+                'name' => 'Yet Another Sweater',
+                'title' => 'Yet Another Sweater',
+                'description' => '100% Wool for hairless homeboys',
+                'content' => '<p>Just imagine this awesome sweater.</p>',
+                'type' => 'regular',
+                'sku' => 'YET-ANOTHER-SWEATER',
+                'sku_vendor' => '',
+                'alias' => 'yet-another-sweater',
+                'track_inventory' => 1,
+                'qty_inventory' => 10,
+                'qty_alert' => 3,
+                'qty_min' => 1,
+                'qty_max' => 0,
+                'qty_backorder_max' => 5,
+                'price' => '49.00',
+                'price_strike_thru' => '99.00',
+                'price_sale' => '',
+                'sale_start' => '',
+                'sale_end' => '',
+                'category' => 'Default',
+                'is_active' => 1,
+                'in_menu' => 1,
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Specs' => array(
+                    array(
+                        'value' => 32,
+                        'Spec' => array('identifier'=>'length')
+                    ),
+                    // There's a bug somewhere here... I can only add 1 Spec...
+                    array(
+                        'value' => 12,
+                        'Spec' => array('identifier'=>'weight')
+                    ),
+                    
+                ),
+            ),
 
         ),  
     ),

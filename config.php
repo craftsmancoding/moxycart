@@ -65,6 +65,30 @@ return array(
             xPDOTransport::PRESERVE_KEYS => true,
             xPDOTransport::UPDATE_OBJECT => true, 
             xPDOTransport::UNIQUE_KEY => array('uri'),
+            xPDOTransport::RELATED_OBJECTS => true,
+            xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array (            
+                'Products' => array(
+                    xPDOTransport::PRESERVE_KEYS => true,
+                    xPDOTransport::UPDATE_OBJECT => true, 
+                    xPDOTransport::UNIQUE_KEY => array('sku'),
+                    xPDOTransport::RELATED_OBJECTS => true,
+                    xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array (            
+                        'Specs' => array(
+                            xPDOTransport::PRESERVE_KEYS => true,
+                            xPDOTransport::UPDATE_OBJECT => true, 
+                            xPDOTransport::UNIQUE_KEY => array('product_id','store_id'),
+                            xPDOTransport::RELATED_OBJECTS => true,
+                            xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array (            
+                                'Spec' => array(
+                                    xPDOTransport::PRESERVE_KEYS => false,
+                                    xPDOTransport::UPDATE_OBJECT => true, 
+                                    xPDOTransport::UNIQUE_KEY => array('identifier'),
+                                )    
+                            )                            
+                        ),            
+                    ),
+                ),
+            ),            
         ),            
     ),
 );
