@@ -26,7 +26,6 @@ $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
 $class_path = $core_path . 'components/moxycart/model/moxycart/moxycart.snippets.class.php';
 require_once($class_path);
 $moxySnippet = new MoxycartSnippet($modx);
-$out = $moxySnippet->execute('json_reviews',$scriptProperties);
-
+$out = $moxySnippet->get_rate_average('json_reviews',$scriptProperties);
 return $out;
 

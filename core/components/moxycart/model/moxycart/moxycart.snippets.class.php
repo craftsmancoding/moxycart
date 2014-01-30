@@ -46,6 +46,26 @@ class MoxycartSnippet {
 		$output = $this->modx->getChunk($outerTpl,$innerPlaceholder); 
 		return $output;
     }
+
+    public function get_rate_average($method,$args) {
+    	$records = $this->modx->moxycart->$method($args, true);
+
+    	$total = 0;
+    	$rating = 0;
+		if($records['total'] == 0) {
+			return '';
+		}
+
+		foreach ($records['results'] as $row) {
+	   		$total += $row['rating'];
+		}
+
+		$rating = ($total / $records['total']) / $records['total'];
+		return round($rating, 2);
+
+    }
+
+
 }
 
 
