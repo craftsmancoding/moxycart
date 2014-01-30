@@ -222,7 +222,7 @@ class Moxycart {
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
 
-    public function json_products($args,$raw=false) {
+    public function json_products($args=array(),$raw=false) {
 //        print '<pre>'.print_r($args,true).'</pre>'; exit;
 /*
         if (!$this->modx->hasPermission($this->modx->getOption(__FUNCTION__, $this->perms, $this->default_perm))) {
@@ -304,7 +304,6 @@ class Moxycart {
                 $row[ $s->Spec->get('identifier') ] = $s->get('value');
             }
             $row['variant'] = $this->_get_variant_info($p->get('variant_matrix'));
-//            print_r($row); exit;
             $data['results'][] = $row;
         }
 
@@ -324,7 +323,7 @@ class Moxycart {
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
 
-    public function json_product_relations($args,$raw=false) {
+    public function json_product_relations($args=array(),$raw=false) {
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
@@ -384,12 +383,11 @@ class Moxycart {
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
 
-    public function json_product_specs($args,$raw=false) {
+    public function json_product_specs($args=array(),$raw=false) {
         
         $product_id = (int) $this->modx->getOption('product_id',$args);
         $spec_id = (int) $this->modx->getOption('spec_id',$args);
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
-
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
         $dir = $this->modx->getOption('dir',$args,'ASC');
@@ -448,7 +446,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_product_taxonomies($args,$raw=false) {
+    public function json_product_taxonomies($args=array(),$raw=false) {
         $product_id = (int) $this->modx->getOption('product_id',$args);
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
@@ -496,7 +494,7 @@ class Moxycart {
         * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)     
      */
-    public function json_product_terms($args,$raw=false) {
+    public function json_product_terms($args=array(),$raw=false) {
          
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
@@ -549,7 +547,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_images($args,$raw=false) {
+    public function json_images($args=array(),$raw=false) {
         $product_id = (int) $this->modx->getOption('product_id',$args);
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
@@ -591,7 +589,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_reviews($args,$raw=false) {
+    public function json_reviews($args=array(),$raw=false) {
         $product_id = (int) $this->modx->getOption('product_id',$args);
         $state = $this->modx->getOption('state',$args);
   
@@ -639,7 +637,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_specs($args,$raw=false) {
+    public function json_specs($args=array(),$raw=false) {
 
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
@@ -676,7 +674,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_stores($args,$raw=false) {
+    public function json_stores($args=array(),$raw=false) {
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'menuindex');
@@ -724,7 +722,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_store_specs($args,$raw=false) {
+    public function json_store_specs($args=array(),$raw=false) {
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'spec_id');
@@ -783,7 +781,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)     
      */
-    public function json_store_taxonomies($args,$raw=false) {
+    public function json_store_taxonomies($args=array(),$raw=false) {
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
@@ -841,7 +839,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)     
      */
-    public function json_store_variation_types($args,$raw=false) {
+    public function json_store_variation_types($args=array(),$raw=false) {
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'vtype_id');
@@ -896,7 +894,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */         
-    public function json_taxonomies($args,$raw=false) {
+    public function json_taxonomies($args=array(),$raw=false) {
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'id');
@@ -935,7 +933,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */     
-    public function json_terms($args,$raw=false) {
+    public function json_terms($args=array(),$raw=false) {
 
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
@@ -975,7 +973,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_templates($args,$raw=false) {
+    public function json_templates($args=array(),$raw=false) {
 
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
@@ -1017,7 +1015,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_types($args,$raw=false) {
+    public function json_types($args=array(),$raw=false) {
 
         // Init our array
         $data = array(
@@ -1041,7 +1039,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */    
-    public function json_variation_types($args,$raw=false) {
+    public function json_variation_types($args=array(),$raw=false) {
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = 'VariationType.'.$this->modx->getOption('sort',$args,'vtype_id');
@@ -1095,7 +1093,7 @@ class Moxycart {
      * @param boolean $raw if true, results are returned as PHP array default: false
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
-    public function json_variation_terms($args,$raw=false) {
+    public function json_variation_terms($args=array(),$raw=false) {
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
         $sort = $this->modx->getOption('sort',$args,'vterm_id');

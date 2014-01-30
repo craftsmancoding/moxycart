@@ -26,7 +26,7 @@ class modelTest extends PHPUnit_Framework_TestCase {
 
     // Must be static because we set it up inside a static function
     public static $modx;
-    
+    public static $moxycart;
     
     /**
      * Load up MODX for our tests.
@@ -53,7 +53,13 @@ class modelTest extends PHPUnit_Framework_TestCase {
         include_once MODX_CORE_PATH . 'model/modx/modx.class.php';
          
         self::$modx = new modX();
-        self::$modx->initialize('mgr');        
+        self::$modx->initialize('mgr');  
+        
+        $core_path = self::$modx->getOption('moxycart.core_path', '', MODX_CORE_PATH);
+        include_once $core_path . 'components/moxycart/model/moxycart/moxycart.class.php';
+        
+        self::$moxycart = new Moxycart(self::$modx);
+        
     }
 
     /**
@@ -63,12 +69,30 @@ class modelTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(defined('MODX_CORE_PATH'), 'MODX_CORE_PATH not defined.');
         $this->assertTrue(defined('MODX_ASSETS_PATH'), 'MODX_ASSETS_PATH not defined.');
         $this->assertTrue(is_a(self::$modx, 'modX'), 'Invalid modX instance.');
+    
     }
-
+    
     public function testProducts() {
-        $Products = self::$modx->getCollection('Product');
+        // The basic test:   
+        $Products = self::$moxycart->json_products(array(), true);
         $this->assertTrue(!empty($Products), 'Unable to retrieve collection "Product"');
+
+        // Get the first product
+        $P = array_shift($Products['results']); 
+        $this->assertTrue($P['sku'] == 'MOUSTACHE-HOODIE', 'Product sku is '.$P['sku']);        
+        
+        
+        // Test sorting:
+        $Products = self::$moxycart->json_products(array('sort'=>'name', 'dir'=>'ASC'),true);
+        $P = array_shift($Products['results']); 
+        $this->assertTrue($P['sku'] == 'ANOTHER-SWEATER', 'Product sku is '.$P['sku']);    
+
+        // Test filters -- 
+        $Products = self::$moxycart->json_products(array('in_menu'=>0),true);
+        $this->assertTrue($P['sku'] == 'ANOTHER-SWEATER', 'Product sku is '.$P['sku']);    
+
         
     }
+    
 
 }

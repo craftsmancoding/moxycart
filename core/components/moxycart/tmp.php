@@ -13,6 +13,9 @@
  *  @param string dir (ASC|DESC) -- sort direction
  *  @param string 
  */
+if (php_sapi_name() !== 'cli') {
+    die('CLI access only.');
+}
 
 // It's hard to find stuff when you're developing
 // We climb up the dir structure looking for config.core.php...
@@ -38,40 +41,36 @@ include_once MODX_CORE_PATH . 'model/modx/modx.class.php';
 $modx = new modX();
 $modx->initialize('mgr');
 
-$log_level = $modx->getOption('log_level',$_GET, $modx->getOption('log_level'));
-$old_level = $modx->setLogLevel($log_level);
-
-$function = $modx->getOption('f',$_GET,'help');
-$type = $modx->getOption('t',$_GET,'');
-
-unset($_GET['f']);
-unset($_GET['t']);
-$args = array_merge($_POST,$_GET); // skip the cookies, more explicit than $_REQUEST
-$modx->log(MODX_LOG_LEVEL_DEBUG, print_r($args,true),'','',__FILE__,__LINE__);
-
-$core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);
-
-if($type == 'data') {
-	require_once $core_path.'components/moxycart/model/moxycart/moxycart.class.php';
-	$Moxycart = new Moxycart($modx);
-} else {
-	require_once $core_path.'components/moxycart/controllers/moxycartcontroller.class.php';
-	$Moxycart = new MoxycartController($modx);
-}
+//require_once $core_path.'components/moxycart/model/moxycart/moxycart.class.php';
+//$Moxycart = new Moxycart($modx);
 
 
+$P = $modx->newObject('Product');
+
+$P->set('name', 'test');
+$P->set('sku', 'X');
+$P->set('alias', 'x');
+
+$P->set('in_menu', 0);
+
+$P->save();
+/*
+$many = array();
+$many[0] = $modx->newObject('ProductSpec');
+$many[0]->set('value', 1234);
+$S = $modx->getObject('Spec', 1);
+$many[0]->addOne($S);
+
+$many[1] = $modx->newObject('ProductSpec');
+$many[1]->set('value', 5678);
+$S = $modx->getObject('Spec', 2);
+$many[1]->addOne($S);
+
+$P->addMany($many);
+
+$P->save();
+*/
 
 
 
-$results = $Moxycart->$function($args);
-
-if ($results===false) {
-    header('HTTP/1.0 401 Unauthorized');
-    print 'Operation not allowed.';
-    exit;
-}
-
-$modx->setLogLevel($old_level);
-print $results;
-exit;
 /*EOF*/
