@@ -24,7 +24,6 @@ switch ($modx->event->name) {
     //  Query for our custom product and format it using a MODX template
     //------------------------------------------------------------------------------
     case 'OnPageNotFound':
-        
         $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
         $placeholder_prefix = $modx->getOption('moxycart.placeholder_prefix');
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
