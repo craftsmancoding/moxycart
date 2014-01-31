@@ -291,6 +291,7 @@ class Moxycart {
                 'name' => $p->get('name'),
                 'sku' => $p->get('sku'),
                 'type' => $p->get('type'),
+                'track_inventory' => $p->get('track_inventory'),
                 'qty_inventory' => $p->get('qty_inventory'),
                 'qty_alert' => $p->get('qty_alert'), 
                 'price' => $p->get('price'),
