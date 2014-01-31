@@ -22,7 +22,7 @@
  *
  */
  
-class modelTest extends PHPUnit_Framework_TestCase {
+class controllerTest extends PHPUnit_Framework_TestCase {
 
     // Must be static because we set it up inside a static function
     public static $modx;
@@ -56,9 +56,9 @@ class modelTest extends PHPUnit_Framework_TestCase {
         self::$modx->initialize('mgr');  
         
         $core_path = self::$modx->getOption('moxycart.core_path', '', MODX_CORE_PATH);
-        include_once $core_path . 'components/moxycart/model/moxycart/moxycart.class.php';
+        include_once $core_path . 'components/moxycart/controllers/moxycartcontroller.class.php';
         
-        self::$moxycart = new Moxycart(self::$modx);
+        self::$moxycart = new MoxycartController(self::$modx);
         
     }
 
@@ -71,36 +71,15 @@ class modelTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(is_a(self::$modx, 'modX'), 'Invalid modX instance.');
     
     }
-    
-    public function testProducts() {
-        // The basic test:   
-        $Products = self::$moxycart->json_products(array(), true);
-        $this->assertTrue(!empty($Products), 'Unable to retrieve collection "Product"');
 
-        // Product ID exist test:   
-        $product_id = 1;
-        $Product = self::$moxycart->json_products(array('product_id'=>$product_id), true);
-        $this->assertTrue($Product['total'] == 1, 'No Product Found with an id of ' . $product_id);
-
-        // Get the first product
-        $P = array_shift($Products['results']); 
-        $this->assertTrue($P['sku'] == 'MOUSTACHE-HOODIE', 'Product sku is '.$P['sku']);        
-        
-        
-        // Test sorting:
-        $Products = self::$moxycart->json_products(array('sort'=>'name', 'dir'=>'ASC'),true);
-        $P = array_shift($Products['results']); 
-        $this->assertTrue($P['sku'] == 'ANOTHER-SWEATER', 'Product sku is '.$P['sku']);    
-
-        // Test filters -- 
-        $Products = self::$moxycart->json_products(array('in_menu'=>0),true);
-        $this->assertTrue($P['sku'] == 'ANOTHER-SWEATER', 'Product sku is '.$P['sku']);     
+    public function testLoadView() {
+        $file = 'product_template.php';
+        $method = new ReflectionMethod(
+          'MoxycartController', '_load_view'
+        );
+        $method->setAccessible(TRUE);
+        $this->assertTrue($method->invokeArgs(self::$moxycart,array($file)) != 'view_not_found','View Not Found');
     }
 
-    public function testSpecs() {
-        // The basic test:   
-        $Specs = self::$moxycart->json_specs(array(), true);
-        $this->assertTrue(!empty($Specs), 'Unable to retrieve collection "Spec"');
-    }
     
 }

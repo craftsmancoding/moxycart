@@ -171,6 +171,10 @@ class MoxycartController {
     	return $output;
     
     }
+
+    private function _testing($test) {
+        return 'blah ' . $test;
+    }
     
 
     /**
