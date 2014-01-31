@@ -1,7 +1,10 @@
 <?php
-/*
-* List all Product which set to track their inventory
-*/
+/**
+ * @name ProductQtyAlert
+ * @description List all Product which set to track their inventory.
+ *
+ * @package moxycart
+ **/
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
 require_once $core_path . 'components/moxycart/model/moxycart/moxycart.class.php';
 $moxycart = new Moxycart($modx);
