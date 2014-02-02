@@ -24,14 +24,16 @@ switch ($modx->event->name) {
     //  Query for our custom product and format it using a MODX template
     //------------------------------------------------------------------------------
     case 'OnPageNotFound':
+        // Trim the base url off the front of the request uri
+        $uri = preg_replace('/^'.preg_quote(MODX_BASE_URL,'/').'/','', $_SERVER['REQUEST_URI']);
+    
+        $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin] URI requested : '.$uri);
+        
         $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
         $placeholder_prefix = $modx->getOption('moxycart.placeholder_prefix');
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
-        $refresh = true; // used if you want to turn off caching (good for testing)
-        
-        // Trim the base url off the front of the request uri
-        $uri = preg_replace('/^'.preg_quote(MODX_BASE_URL,'/').'/','', $_SERVER['REQUEST_URI']);
+        $refresh = true; // used if you want to turn off caching (good for testing)        
 
         $cache_key = str_replace('/', '_', $uri);
         $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
@@ -39,20 +41,16 @@ switch ($modx->event->name) {
 
         $out = $modx->cacheManager->get($fingerprint, $cache_opts);
 
-
         // Cache our custom browser-specific version of the page.
         if ($refresh || empty($out)) {
 
             $Product = $modx->getObjectGraph('Product','{"Specs":{"Spec":{}}}',array('uri'=>$uri));
 
             if (!$Product) {
-                $modx->log(modX::LOG_LEVEL_ERROR,'[moxycart] No Product found for uri '.$uri);
+                $modx->log(modX::LOG_LEVEL_INFO,'[moxycart plugin] No Product found for uri '.$uri);
                 return;  // it's a real 404
             } 
 
-             // Create our new "fake" resource.  
-             // ??? how does this handle TVs? B/c products don't have the same attributes as resources
-            // $modx->resource = $modx->newObject('modResource');
             $product_attributes = $Product->toArray();
 
             // set date and time (unix)
@@ -72,10 +70,6 @@ switch ($modx->event->name) {
             if($sale_start >= $now) {
                 $lifetime = $sale_start - $now;
             }
-                        
-          /*  $modx->log(MODX_LOG_LEVEL_ERROR, 'Sale Start ' . strtotime($product_attributes['sale_start']));
-            $modx->log(MODX_LOG_LEVEL_ERROR, 'Sale End ' .  strtotime($product_attributes['sale_end']));
-            $modx->log(MODX_LOG_LEVEL_ERROR, 'Today ' .  $now);*/
 
             // add calculated_price field
             $product_attributes['calculated_price'] = $calculated_price;            
@@ -85,23 +79,28 @@ switch ($modx->event->name) {
             }
             $modx->setPlaceholders($product_attributes,$placeholder_prefix);
             
-            $Template = $modx->getObject('modTemplate', $Product->get('template_id'));
+            if (!$Template = $modx->getObject('modTemplate', $Product->get('template_id'))) {
+                print 'No template for product '.$Product->get('product_id');
+                exit;
+            }
             $tpl = $Template->getContent();
             $uniqid = uniqid();
             $chunk = $modx->newObject('modChunk', array('name' => "{tmp}-{$uniqid}"));
             $chunk->setCacheable(false);
             $out = $chunk->process($product_attributes, $tpl);
-
-            // or?
-            //$modx->resource->set('template', $Product->get('template_id'));    
-
-            // Disable built-in caching, otherwise the process method will return the cached version of the page
-            //$modx->resource->set('cacheable',false);
-            //$out = $modx->resource->process();
             $modx->cacheManager->set($fingerprint, $out, $lifetime, $cache_opts);
         }
-        print $out;
-        exit();
+
+        // We spin up a resource with the minimal attributes
+        $modx->resource = $modx->newObject('modResource');
+        $modx->resource->set('contentType', 'text/html');
+        $modx->resource->setContent($out);
+        if (!$response = $modx->getResponse()) {
+            print 'Response did not load.';
+            $modx->log(modX::LOG_LEVEL_ERROR,'[moxycart plugin] getResponse failed in moxycart plugin.');
+            exit;
+        }
+        $modx->response->outputContent();
         break;
 
     //------------------------------------------------------------------------------

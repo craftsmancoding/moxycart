@@ -16,7 +16,6 @@
 
 <p>[[+content]]</p>
 
-
 <!-- form example -->
 <form action="https://[[++moxycart.domain]]/cart" method="post" accept-charset="utf-8">
     <input type="text" name="quantity" value="[[+qty_min]]" />
