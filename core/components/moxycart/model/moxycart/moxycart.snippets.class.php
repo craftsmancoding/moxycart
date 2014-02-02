@@ -19,31 +19,26 @@ class MoxycartSnippet {
 	* @return string $output
     **/
     public function execute($method,$args) {
-    	$outerTpl = $this->modx->getOption('outerTpl',$args,'MoxyOuterTpl');
-		$innerTpl = $this->modx->getOption('innerTpl',$args,'MoxyInnerTpl');
+    	$outerTpl = $this->modx->getOption('outerTpl',$args);
+		$innerTpl = $this->modx->getOption('innerTpl',$args);
 	
-		//$args['limit'] = 0;
-
 		$records = $this->modx->moxycart->$method($args, true);
 
 		if($records['total'] == 0) {
 			return '';
 		}
 
-		$innerOut = '';
 		$output = '';
 		if (isset($records['results']) && is_array($records['results'])) {
-
-				foreach ($records['results'] as $index => $row) {
-					$row['index'] = $index+1;
-			   		$innerOut .= $this->modx->getChunk($innerTpl,$row);
-				}
-
-			
+        	foreach ($records['results'] as $index => $row) {
+        		$row['index'] = $index+1;
+           		$output .= $this->modx->getChunk($innerTpl,$row);
+        	}			
 		}
-	
-		$innerPlaceholder = array('moxy.items' => $innerOut);
-		$output = $this->modx->getChunk($outerTpl,$innerPlaceholder); 
+
+        if ($outerTpl) {
+    		$output = $this->modx->getChunk($outerTpl,array('moxy.items' => $innerOut)); 
+		}
 		return $output;
     }
 

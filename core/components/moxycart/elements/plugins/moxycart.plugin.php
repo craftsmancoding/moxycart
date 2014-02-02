@@ -33,7 +33,7 @@ switch ($modx->event->name) {
         $placeholder_prefix = $modx->getOption('moxycart.placeholder_prefix');
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
-        //$refresh = true; // used if you want to turn off caching (good for testing)        
+        $refresh = true; // used if you want to turn off caching (good for testing)        
 
         $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
         $fingerprint = 'product/'.$uri;
@@ -88,14 +88,18 @@ switch ($modx->event->name) {
     //  Clear out our custom cache files.
     //------------------------------------------------------------------------------
     case 'OnBeforeCacheUpdate':
+        print 'asfdasdf'; exit;
+//        $modx->log(1, '[moxycart plugin] clearing cache...');
+        $modx->cacheManager->clean(array(xPDO::OPT_CACHE_KEY => $cache_dir));
+error_log('ha...');
         $dir = MODX_CORE_PATH .'cache/'.$cache_dir;
         if (file_exists($dir) && is_dir($dir)) {
-            
+            $modx->log(1, '[moxycart plugin] clearing '.$dir);    
             $objects = scandir($dir);
             foreach ($objects as $object) {
                 if ($object != '.' && $object != '..') {
                     if (filetype($dir.'/'.$object) != 'dir') {
-                        @unlink($dir.'/'.$object);
+                        unlink($dir.'/'.$object);
                     } 
                 }
             }

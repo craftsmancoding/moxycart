@@ -691,6 +691,8 @@ class MoxycartController {
      */
     public function image_save($args) {
         $action = $this->modx->getOption('action', $args);     
+        $product_id = (int) $this->modx->getOption('product_id',$args);
+
         unset($args['action']);
         $out = array(
             'success' => true,
@@ -698,10 +700,7 @@ class MoxycartController {
         );
 
         switch ($action) {
-            case 'update' :
-                $product_id = (int) $this->modx->getOption('product_id',$args);
-
-         
+            case 'update' :         
                 if (isset($_FILES['file']['name']) ) {
                     $uploaded_img = json_decode($this->upload_image($product_id),true);
                     $rel_file = $uploaded_img['rel_file'];
@@ -733,8 +732,7 @@ class MoxycartController {
                 break;
             case 'create':
             default:
-                $product_id = (int) $this->modx->getOption('product_id',$args);
-
+                
                 if (isset($_FILES['file']['name']) ) {
                     $uploaded_img = json_decode($this->upload_image($product_id),true);
 
@@ -768,6 +766,12 @@ class MoxycartController {
                 $out['image_id'] = $this->modx->lastInsertId();
                 $this->modx->log(modX::LOG_LEVEL_DEBUG, 'Successfully saved image '.$Image->getPrimaryKey() .' '.MODX_ASSETS_PATH.$rel_file);
                 
+        }
+
+        if ($Product = $this->modx->getObject('Product', $product_id)) {        
+            $this->modx->cacheManager->refresh(
+                array('moxycart' =>  array('products' => array($Product->get('uri'))))
+            );
         }
 
         return json_encode($out);
@@ -871,7 +875,7 @@ class MoxycartController {
 
         
         $data = $Product->toArray();
-        $data['pagetitle'] = 'Update Product: '. $data['name'];
+        $data['pagetitle'] = 'Update Product: <span id="product_name">'. $data['name'].'</span>';
         $data['manager_url'] = $this->mgr_url.'?a=30&id='.$Product->get('store_id');
         $data['connector_url'] = $this->connector_url;
         $data['product_form_action'] = 'product_update';
@@ -1379,6 +1383,9 @@ class MoxycartController {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to update product.';    
                 }
+                $this->modx->cacheManager->refresh(
+                    array('moxycart' =>  array('products' => array($Product->get('uri'))))
+                );
                 $out['msg'] = 'Product updated successfully.';    
                 break;
                 

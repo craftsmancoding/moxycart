@@ -23,8 +23,9 @@
  **/
 
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-$class_path = $core_path . 'components/moxycart/model/moxycart/moxycart.snippets.class.php';
-require_once($class_path);
+require_once $core_path . 'components/moxycart/model/moxycart/moxycart.snippets.class.php';
+
+$scriptProperties['innerTpl'] = $modx->getOption('innerTpl',$scriptProperties, 'ProductImage');
 
 $moxySnippet = new MoxycartSnippet($modx);
 $out = $moxySnippet->execute('json_images',$scriptProperties);

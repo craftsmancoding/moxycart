@@ -549,6 +549,7 @@ class Moxycart {
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
     public function json_images($args=array(),$raw=false) {
+
         $product_id = (int) $this->modx->getOption('product_id',$args);
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);

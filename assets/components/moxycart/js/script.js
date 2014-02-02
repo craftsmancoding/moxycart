@@ -28,6 +28,7 @@ INIT = {
 		    	}
 		    	$('#moxy-result-msg').html(data.msg);
 		    	$(".moxy-msg").delay(3200).fadeOut(300);
+		    	$('#product_name').text( $('#name').val() );
 		    } );
 		    e.preventDefault();
 	    })
