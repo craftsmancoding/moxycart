@@ -35,7 +35,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Shaved Sweater',
@@ -61,7 +62,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Another Sweater',
@@ -89,7 +91,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Yet Another Sweater',
@@ -115,7 +118,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Plain White Tee',
@@ -141,7 +145,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Red Cool Tee',
@@ -167,7 +172,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Blue Cool Tee',
@@ -193,7 +199,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Purple Cool Tee',
@@ -219,7 +226,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'White Black Stripe Tee',
@@ -245,7 +253,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Red Black Stripe Tee',
@@ -271,7 +280,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'White Plain Polo Shirt',
@@ -297,7 +307,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Black Plain Polo Shirt',
@@ -323,7 +334,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'White Sleeveless Undershirt',
@@ -349,7 +361,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Black Sleeveless Undershirt',
@@ -375,7 +388,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Red Black White Trucker Cap',
@@ -401,7 +415,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Orange Black White Trucker Cap',
@@ -427,7 +442,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Blue Black White Trucker Cap',
@@ -453,7 +469,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Black Slack Pants',
@@ -479,7 +496,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Slim Fit Jeans',
@@ -505,7 +523,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Black Boxer Short',
@@ -531,7 +550,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'White Boxer Short',
@@ -557,7 +577,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
             array(
                 'name' => 'Dotted Boxer Short',
@@ -583,7 +604,8 @@ return array(
                 'category' => 'Default',
                 'is_active' => 0,
                 'in_menu' => 0,
-                'timestamp_created' => date('Y-m-d H:i:s')
+                'timestamp_created' => date('Y-m-d H:i:s'),
+                'Template' => array('templatename' => 'Sample Product'),
             ),
         ),  
     ),

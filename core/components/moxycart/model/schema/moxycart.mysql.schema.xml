@@ -60,8 +60,8 @@
         <field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
         <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />
         <field key="type" dbtype="enum" precision="'regular','subscription','download'" phptype="string" null="true" />
-        <field key="sku" dbtype="varchar" precision="20" phptype="string" null="false" />
-        <field key="sku_vendor" dbtype="varchar" precision="20" phptype="string" null="false" comment="SKU from your provider"/>
+        <field key="sku" dbtype="varchar" precision="255" phptype="string" null="false" />
+        <field key="sku_vendor" dbtype="varchar" precision="255" phptype="string" null="false" comment="SKU from your provider"/>
         <field key="variant_matrix" dbtype="varchar" precision="255" phptype="string" null="false" comment="JSON hash to identify specific type:term combo(s)"/>
         <field key="alias" dbtype="varchar" precision="255" phptype="string" null="false" />
         <field key="uri" dbtype="varchar" precision="255" phptype="string" null="false" />

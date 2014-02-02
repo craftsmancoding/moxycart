@@ -127,14 +127,14 @@ $xpdo_meta_map['Product']= array (
     'sku' => 
     array (
       'dbtype' => 'varchar',
-      'precision' => '20',
+      'precision' => '255',
       'phptype' => 'string',
       'null' => false,
     ),
     'sku_vendor' => 
     array (
       'dbtype' => 'varchar',
-      'precision' => '20',
+      'precision' => '255',
       'phptype' => 'string',
       'null' => false,
       'comment' => 'SKU from your provider',

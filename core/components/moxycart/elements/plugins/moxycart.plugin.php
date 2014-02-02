@@ -33,17 +33,17 @@ switch ($modx->event->name) {
         $placeholder_prefix = $modx->getOption('moxycart.placeholder_prefix');
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
-        $refresh = true; // used if you want to turn off caching (good for testing)        
+        //$refresh = true; // used if you want to turn off caching (good for testing)        
 
-        $cache_key = str_replace('/', '_', $uri);
         $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
-        $fingerprint = 'product_'.$cache_key;
+        $fingerprint = 'product/'.$uri;
 
         $out = $modx->cacheManager->get($fingerprint, $cache_opts);
 
         // Cache our custom browser-specific version of the page.
         if ($refresh || empty($out)) {
-
+            $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin] Refresh requested or no cached data detected.');
+            
             $Product = $modx->getObjectGraph('Product','{"Specs":{"Spec":{}}}',array('uri'=>$uri));
 
             if (!$Product) {
@@ -53,28 +53,7 @@ switch ($modx->event->name) {
 
             $product_attributes = $Product->toArray();
 
-            // set date and time (unix)
-            $now = strtotime(date('Y-m-d H:i:s'));
-            $sale_start = strtotime($product_attributes['sale_start']);
-            $sale_end = strtotime($product_attributes['sale_end']);
-        
-            $lifetime = 3600; // cache 
-        
-             $calculated_price = $product_attributes['price'];
-            // if on sale use price sale
-            if($sale_start <= $now && $sale_end >= $now) {
-                $calculated_price = $product_attributes['price_sale'];
-                $lifetime = $sale_end - $now;
-            } 
-
-            if($sale_start >= $now) {
-                $lifetime = $sale_start - $now;
-            }
-
-            // add calculated_price field
-            $product_attributes['calculated_price'] = $calculated_price;            
-
-           foreach ($Product->Specs as $S) {
+            foreach ($Product->Specs as $S) {
                 $product_attributes[$S->Spec->get('identifier')] = $S->get('value');
             }
             $modx->setPlaceholders($product_attributes,$placeholder_prefix);
@@ -88,6 +67,8 @@ switch ($modx->event->name) {
             $chunk = $modx->newObject('modChunk', array('name' => "{tmp}-{$uniqid}"));
             $chunk->setCacheable(false);
             $out = $chunk->process($product_attributes, $tpl);
+            $lifetime = $Product->get_lifetime();
+            $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin] Product cache liftetime = '.$lifetime);
             $modx->cacheManager->set($fingerprint, $out, $lifetime, $cache_opts);
         }
 
@@ -96,9 +77,8 @@ switch ($modx->event->name) {
         $modx->resource->set('contentType', 'text/html');
         $modx->resource->setContent($out);
         if (!$response = $modx->getResponse()) {
-            print 'Response did not load.';
             $modx->log(modX::LOG_LEVEL_ERROR,'[moxycart plugin] getResponse failed in moxycart plugin.');
-            exit;
+            return; // fall back to regular 404 behavior?
         }
         $modx->response->outputContent();
         break;
