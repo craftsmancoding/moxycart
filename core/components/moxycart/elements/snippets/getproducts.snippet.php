@@ -6,12 +6,12 @@
  * 
  * Available Placeholders
  * ---------------------------------------
- * id, name, sku, type, qty_inventory, qty_alert, price, category, uri, is_active
+ * product_id,alias,content,name,sku,type,track_inventory,qty_inventory,qty_alert,price,category,uri,is_active,seq,calculated_price,calculated_price,
  * use as [[+name]] on Template Parameters
  * 
  * Parameters
  * -----------------------------
- * @param string $outerTpl Format the Outer Wrapper of List
+ * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
  *
  * Variables
@@ -26,17 +26,8 @@
  * @package moxycart
  **/
 
-/*
-$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-require_once $core_path . 'components/moxycart/model/moxycart/moxycart.snippets.class.php';
-
-$moxySnippet = new MoxycartSnippet($modx);
-$out = $moxySnippet->execute('json_products',$scriptProperties);
-return $out;
-*/
-
-$outerTpl = $modx->getOption('outerTpl',$scriptProperties,'MoxyOuterTpl');
-$innerTpl = $modx->getOption('innerTpl',$scriptProperties,'MoxyInnerTpl');
+$outerTpl = $modx->getOption('outerTpl',$scriptProperties,'ProductOuterTpl');
+$innerTpl = $modx->getOption('innerTpl',$scriptProperties,'ProductInnerTpl');
 
 $limit = (int) $modx->getOption('limit',$scriptProperties,0);
 $start = (int) $modx->getOption('start',$scriptProperties,0);

@@ -11,7 +11,7 @@
  * 
  * Parameters
  * -----------------------------
- * @param string $outerTpl Format the Outer Wrapper of List
+ * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
  * @param int $product_id get records for this specific product
  * @param int $limit Limit the result

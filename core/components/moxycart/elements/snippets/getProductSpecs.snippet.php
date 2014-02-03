@@ -10,7 +10,7 @@
  * 
  * Parameters
  * -----------------------------
- * @param string $outerTpl Format the Outer Wrapper of List
+ * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
  * @param int $product_id get records for this specific product
  * @param int $limit Limit the result
@@ -30,6 +30,8 @@
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
 $class_path = $core_path . 'components/moxycart/model/moxycart/moxycart.snippets.class.php';
 require_once($class_path);
+
+$scriptProperties['innerTpl'] = $modx->getOption('innerTpl',$scriptProperties, 'ProductSpec');
 
 $moxySnippet = new MoxycartSnippet($modx);
 $out = $moxySnippet->execute('json_product_specs',$scriptProperties);

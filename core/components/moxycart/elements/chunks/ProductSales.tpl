@@ -1,6 +1,4 @@
 <canvas id="sales-canvas" height="450" width="850"></canvas>
-
-
 <script>
 
 	var lineChartData = {

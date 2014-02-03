@@ -11,7 +11,7 @@
  * 
  * Parameters
  * -----------------------------
- * @param string $outerTpl Format the Outer Wrapper of List
+ * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
  *
  * Variables
