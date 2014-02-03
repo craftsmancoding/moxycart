@@ -30,18 +30,17 @@ switch ($modx->event->name) {
         $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin] URI requested : '.$uri);
         
         $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-        $placeholder_prefix = $modx->getOption('moxycart.placeholder_prefix');
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
-        $refresh = true; // used if you want to turn off caching (good for testing)        
+        $refresh = false; // used if you want to turn off caching (good for testing)        
 
         $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
         $fingerprint = 'product/'.$uri;
 
-        $out = $modx->cacheManager->get($fingerprint, $cache_opts);
+        $product_attributes = $modx->cacheManager->get($fingerprint, $cache_opts);
 
         // Cache our custom browser-specific version of the page.
-        if ($refresh || empty($out)) {
+        if ($refresh || empty($product_attributes)) {
             $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin] Refresh requested or no cached data detected.');
             
             $Product = $modx->getObjectGraph('Product','{"Specs":{"Spec":{}}}',array('uri'=>$uri));
@@ -56,26 +55,22 @@ switch ($modx->event->name) {
             foreach ($Product->Specs as $S) {
                 $product_attributes[$S->Spec->get('identifier')] = $S->get('value');
             }
-            $modx->setPlaceholders($product_attributes,$placeholder_prefix);
             
             if (!$Template = $modx->getObject('modTemplate', $Product->get('template_id'))) {
                 print 'No template for product '.$Product->get('product_id');
                 exit;
             }
-            $tpl = $Template->getContent();
-            $uniqid = uniqid();
-            $chunk = $modx->newObject('modChunk', array('name' => "{tmp}-{$uniqid}"));
-            $chunk->setCacheable(false);
-            $out = $chunk->process($product_attributes, $tpl);
+
             $lifetime = $Product->get_lifetime();
             $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin] Product cache liftetime = '.$lifetime);
-            $modx->cacheManager->set($fingerprint, $out, $lifetime, $cache_opts);
+            $modx->cacheManager->set($fingerprint, $product_attributes, $lifetime, $cache_opts);
+            
         }
-
         // We spin up a resource with the minimal attributes
+        $modx->setPlaceholders($product_attributes,$modx->getOption('moxycart.placeholder_prefix'));
         $modx->resource = $modx->newObject('modResource');
         $modx->resource->set('contentType', 'text/html');
-        $modx->resource->setContent($out);
+        $modx->resource->set('template' , $product_attributes['template_id']);
         if (!$response = $modx->getResponse()) {
             $modx->log(modX::LOG_LEVEL_ERROR,'[moxycart plugin] getResponse failed in moxycart plugin.');
             return; // fall back to regular 404 behavior?

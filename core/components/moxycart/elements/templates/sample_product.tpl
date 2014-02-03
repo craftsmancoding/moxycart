@@ -31,7 +31,7 @@
     
 </form>
 
-xImages: [[getProductImages]]
+Images: [[getProductImages]]
 
 </body>
 </html>
