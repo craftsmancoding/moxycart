@@ -524,7 +524,7 @@ class Moxycart {
             'results'=>array(),
             'total' => $total_pages,
         );
-
+     
         foreach ($pages as $p) {
             $data['results'][] = array(
                 'id' => $p->get('id'),

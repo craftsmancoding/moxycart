@@ -5,18 +5,23 @@
  * 
  * Available Placeholders
  * ---------------------------------------
- * id, term, title
+ * id, product_id, term_id,term,properties
  * use as [[+term]] on Template Parameters
  * 
  * Parameters
  * -----------------------------
  * @param string $outerTpl Format the Outer Wrapper of List
  * @param string $innerTpl Format the Inner Item of List
+ * @param int $limit Limit the result
  *
  * Variables
  * ---------
  * @var $modx modX
  * @var $scriptProperties array
+ *
+ * Usage
+ * ------------------------------------------------------------
+ * [[!getProductTerms? &product_id=`[[+product_id]]` &outerTpl=`sometpl` &innerTpl=`othertpl` &limit=`0`]]
  *
  * @package moxycart
  **/
@@ -28,4 +33,3 @@ require_once($class_path);
 $moxySnippet = new MoxycartSnippet($modx);
 $out = $moxySnippet->execute('json_product_terms',$scriptProperties);
 return $out;
-

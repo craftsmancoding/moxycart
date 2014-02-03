@@ -19,6 +19,10 @@
  * @var $modx modX
  * @var $scriptProperties array
  *
+ * Usage
+ * ------------------------------------------------------------
+ * [[!getProducts? &outerTpl=`sometpl` &innerTpl=`othertpl` &limit=`0`]]
+ *
  * @package moxycart
  **/
 

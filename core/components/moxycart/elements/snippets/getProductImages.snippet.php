@@ -19,6 +19,12 @@
  * @var $modx modX
  * @var $scriptProperties array
  *
+ * Usage
+ * ------------------------------------------------------------
+ * To get all Images on certain product
+ * [[!getProductImages? &product_id=`[[+product_id]]` &outerTpl=`sometpl` &innerTpl=`othertpl` &limit=`0`]]
+ * [[!getProductImages? &product_id=`[[+product_id]]` &outerTpl=`sometpl` &innerTpl=`othertpl` &limit=`1`]]
+ *
  * @package moxycart
  **/
 
@@ -30,4 +36,3 @@ $scriptProperties['innerTpl'] = $modx->getOption('innerTpl',$scriptProperties, '
 $moxySnippet = new MoxycartSnippet($modx);
 $out = $moxySnippet->execute('json_images',$scriptProperties);
 return $out;
-

@@ -1,24 +1,23 @@
 <?php
 /**
- * @name getProductReviews
- * @description Returns a list of product_reviews.
- *
- * 
- * Available Placeholders
- * ---------------------------------------
- * id, product_id, author_id, name, email, rating, content, state
- * use as [[+name]] on Template Parameters
+ * @name getProductReviewsRating
+ * @description Returns a Product Reviews Average Rate
  * 
  * Parameters
  * -----------------------------
- * @param string $outerTpl Format the Outer Wrapper of List
- * @param string $innerTpl Format the Inner Item of List
+ * @param int $product_id get records for this specific product
  *
  * Variables
  * ---------
  * @var $modx modX
  * @var $scriptProperties array
  *
+   * Usage
+ * ------------------------------------------------------------
+ * [[!getProductReviewsRating? &product_id=`[[+product_id]]`]]
+ * 
+ * @return decimal product review ratign average
+ * 
  * @package moxycart
  **/
 

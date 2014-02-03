@@ -12,12 +12,18 @@
  * -----------------------------
  * @param string $outerTpl Format the Outer Wrapper of List
  * @param string $innerTpl Format the Inner Item of List
+ * @param int $product_id get records for this specific product
+ * @param int $limit Limit the result
  *
  * Variables
  * ---------
  * @var $modx modX
  * @var $scriptProperties array
  *
+  * Usage
+ * ------------------------------------------------------------
+ * [[!getProductSpecs? &product_id=`[[+product_id]]` &outerTpl=`sometpl` &innerTpl=`othertpl` &limit=`0`]]
+ * 
  * @package moxycart
  **/
 
@@ -28,4 +34,3 @@ require_once($class_path);
 $moxySnippet = new MoxycartSnippet($modx);
 $out = $moxySnippet->execute('json_product_specs',$scriptProperties);
 return $out;
-

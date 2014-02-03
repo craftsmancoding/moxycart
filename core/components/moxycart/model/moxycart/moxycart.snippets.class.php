@@ -27,7 +27,6 @@ class MoxycartSnippet {
 		if($records['total'] == 0) {
 			return '';
 		}
-
 		$output = '';
 		if (isset($records['results']) && is_array($records['results'])) {
         	foreach ($records['results'] as $index => $row) {

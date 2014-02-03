@@ -18,6 +18,10 @@
  * @var $modx modX
  * @var $scriptProperties array
  *
+ * Usage
+ * ------------------------------------------------------------
+ * [[!getTaxonomies? &outerTpl=`sometpl` &innerTpl=`othertpl` &limit=`0`]]
+ *
  * @package moxycart
  **/
 
@@ -28,4 +32,3 @@ require_once($class_path);
 $moxySnippet = new MoxycartSnippet($modx);
 $out = $moxySnippet->execute('json_taxonomies',$scriptProperties);
 return $out;
-
