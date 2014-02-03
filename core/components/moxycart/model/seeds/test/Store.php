@@ -606,6 +606,16 @@ return array(
                 'in_menu' => 0,
                 'timestamp_created' => date('Y-m-d H:i:s'),
                 'Template' => array('templatename' => 'Sample Product'),
+                'Specs' => array(
+                    array(
+                        'value'=>123,
+                        'Spec' => array('identifier' => 'weight')
+                    ),
+                    array(
+                        'value'=>456,
+                        'Spec' => array('identifier' => 'length')
+                    ),
+                )
             ),
         ),  
     ),

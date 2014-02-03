@@ -991,7 +991,7 @@ class MoxycartController {
                     // Refresh the list on success (append new tile to end)
                     myDropzone.on("success", function(file,response) {
 
-                         console.log(response);
+                        console.log(response);
                         response = jQuery.parseJSON(response);
                         console.log(response);
                         if (response.success) {
@@ -1003,12 +1003,11 @@ class MoxycartController {
                             });
                        } 
                        // TODO: better formatting
-                       else {
-                           
+                       else {                           
                             $(".dz-success-mark").hide();
-                           $(".dz-error-mark").show();
-                           $(".moxy-msg").show();
-                           $("#moxy-result").html("Failed");
+                            $(".dz-error-mark").show();
+                            $(".moxy-msg").show();
+                            $("#moxy-result").html("Failed");
                             $("#moxy-result-msg").html(response.msg);
                             $(".moxy-msg").delay(3200).fadeOut(400);
                        }
@@ -1204,7 +1203,7 @@ class MoxycartController {
         switch ($action) {
             case 'update':
                 $product_id = (int) $this->modx->getOption('product_id', $args);
-                $this->modx->log(modX::LOG_LEVEL_ERROR, 'product update args: '. print_r($args,true));        
+                $this->modx->log(modX::LOG_LEVEL_DEBUG, 'product update args: '. print_r($args,true));        
                 
                 $Product = $this->modx->getObject('Product',$product_id);
                 
