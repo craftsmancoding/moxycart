@@ -11,13 +11,19 @@
  * 
  * Parameters
  * -----------------------------
- * @param string $outerTpl Format the Outer Wrapper of List
+ * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
  *
  * Variables
  * ---------
  * @var $modx modX
  * @var $scriptProperties array
+ *
+ * Usage
+ * ------------------------------------------------------------
+ * To get all Images on certain product
+ * [[!getProductImages? &product_id=`[[+product_id]]` &outerTpl=`sometpl` &innerTpl=`othertpl` &is_active=`1` &limit=`0`]]
+ * [[!getProductImages? &product_id=`[[+product_id]]` &outerTpl=`sometpl` &innerTpl=`othertpl` &is_active=`1` &limit=`1`]]
  *
  * @package moxycart
  **/
@@ -30,4 +36,3 @@ $scriptProperties['innerTpl'] = $modx->getOption('innerTpl',$scriptProperties, '
 $moxySnippet = new MoxycartSnippet($modx);
 $out = $moxySnippet->execute('json_images',$scriptProperties);
 return $out;
-

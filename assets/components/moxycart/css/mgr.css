@@ -4311,6 +4311,9 @@ padding: 5px 20px;
   position: relative;
   width: 100px;
   height: 100px;
+  -webkit-box-shadow: 0 8px 6px -6px #ddd;
+     -moz-box-shadow: 0 8px 6px -6px #ddd;
+          box-shadow: 0 8px 6px -6px #ddd;
 }
 
 
@@ -4443,6 +4446,44 @@ div > input.x-form-field {
 .state {
   margin-bottom: 0px !important;
 }
+
+.img-info-wrap {
+  height:98px;
+  overflow: hidden;
+}
+#product_images li.inactive {
+  border: 1px solid #ddd;
+}
+
+#product_images li.inactive .img-info-wrap a img {
+    filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"); /* Firefox 10+, Firefox on Android */
+    filter: gray; /* IE6-9 */
+    -webkit-filter: grayscale(100%); /* Chrome 19+, Safari 6+, Safari 6+ iOS */
+    opacity:0.4;
+    filter:alpha(opacity=40); /* For IE8 and earlier */
+}
+
+#image_upload {
+  position: relative;
+}
+
+.featured-img {
+  position: absolute;
+  top: -1px;
+  left: 0px;
+  z-index: 1000;
+  cursor: pointer;
+}
+/* #product_images .first {
+  clear: left !important;
+   border: 1px solid yellow !important;
+}
+
+#product_images .last {
+  margin-right: 0 !important;;
+  border: 1px solid red !important;
+}  */
+
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */
 .clear:before, .clear:after,

@@ -1,13 +1,26 @@
 <?php
 /**
-*This is the Snippet used to generate a form to the front-end. Reviews can include full text reviews (e.g. "this product is awesome!"), or they can be a simple "star" review where the user simply rates the product as a number (the database supports 1 - 100). The writeReview snippet should handle both cases easily.
-*
-*&public (boolean) default is zero. If 1 (true), then any public user can leave a review. If the review is not public, then the user must be logged in, otherwise we show a message.
-*&publicTpl (string) Chunk name for the message to show if public=0 and the user is not logged in. E.g. "You must log in to leave a review."
-*&tpl (string) -- include 2 default options: one for "start" where a simple star rating is included, or "text"
-*&approve_reviews (boolean) -- defaults to system setting moxycart.approve_reviews. Default is false: that means the admin must approve the reviews manually.
- */
-// Get args
+    * @name writeReview
+    * @description This is the Snippet used to generate a form to the front-end. Reviews can include full text reviews (e.g. "this product is awesome!"), or they can be a simple "star" review where the user simply rates the product as a number (the database supports 1 - 100). The writeReview snippet should handle both cases easily.
+    *
+    * Available Paramaters
+    * ---------------------------------------------------
+    * @param &public (boolean) default is zero. If 1 (true), then any public user can leave a review. If the review is not public, then the user must be logged in, otherwise we show a message.
+    * @param &publicTpl (string) Chunk name for the message to show if public=0 and the user is not logged in. E.g. "You must log in to leave a review."
+    * @param &tpl (string) -- include 2 default options: one for "start" where a simple star rating is included, or "text"
+    * @param &approve_reviews (boolean) -- defaults to system setting moxycart.approve_reviews. Default is false: that means the admin must approve the reviews manually.
+    * 
+    *
+    * Sample Usage
+    * -----------------------------------------------------------
+    * [[writeReview? &tpl=`MoxycartProductFullReview` &product_id=`[[+product_id]]`]]
+    *
+    * Success and error messages Placeholder  
+    * ---------------------------------------------------------------------------
+    * [[+moxy.review_success_msg]] and [[+moxy.review_error_msg]]
+    *
+    * @package moxycart
+*/
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
 require_once $core_path .'components/moxycart/model/htmlpurifier/library/HTMLPurifier.auto.php';
 
@@ -37,8 +50,8 @@ if (!$Product) {
     return 'No Product Found.';  // it's a real 404
 } 
 $props = $Product->toArray();
-$props['success_msg'] = '';
-$props['error_msg'] = '';
+$props['moxy.review_success_msg'] = '';
+$props['moxy.review_error_msg'] = '';
 
 
 if($_POST) {
@@ -53,9 +66,9 @@ if($_POST) {
     $Review->set('state', $approve_reviews ? 'approved' : 'pending');
     $Review->set('content',$purifier->purify($modx->getOption('content', $_POST)));
     if (!$Review->save()) {
-        $props['error_msg'] = 'Sorry, Failed to Post your Review.';
+        $props['moxy.review_error_msg'] = 'Sorry, Failed to Post your Review.';
     } else {
-    	$props['success_msg'] = 'Review Successfully Submitted.';
+    	$props['moxy.review_success_msg'] = 'Review Successfully Submitted.';
     }
 
 }

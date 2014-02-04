@@ -1,8 +1,19 @@
 <?php
 /**
  * @name ProductSales
- * @description Show All Time Sales.
+ * @description Show All Time Sales. This was entended to be used only as Dashboard widget Content
  *
+ * See : http://rtfm.modx.com/revolution/2.x/administering-your-site/dashboards/dashboard-widget-types/dashboard-widget-type-snippet
+ * See : http://rtfm.modx.com/revolution/2.x/administering-your-site/dashboards/creating-a-dashboard-widget
+ * 
+ * On the Content Area of the Widget Create Page Put in
+ * ------------------------------------------------------------------
+ * ProductSales
+ *
+ * Required File Chunk
+ * ------------------------------------------------------------------
+ * /assets/mycomponents/moxycart/core/components/moxycart/elements/chunks/ProductSales.tpl
+ * 
  * @package moxycart
  **/
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);

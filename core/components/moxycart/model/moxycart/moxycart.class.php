@@ -524,7 +524,7 @@ class Moxycart {
             'results'=>array(),
             'total' => $total_pages,
         );
-
+     
         foreach ($pages as $p) {
             $data['results'][] = array(
                 'id' => $p->get('id'),
@@ -551,6 +551,7 @@ class Moxycart {
     public function json_images($args=array(),$raw=false) {
 
         $product_id = (int) $this->modx->getOption('product_id',$args);
+        $is_active = (int) $this->modx->getOption('is_active',$args);
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
@@ -561,6 +562,10 @@ class Moxycart {
         
         if ($product_id) {
             $criteria->where(array('product_id'=>$product_id));
+        }
+
+         if ($is_active) {
+            $criteria->where(array('is_active'=>$is_active));
         }
                 
         $total_pages = $this->modx->getCount('Image',$criteria);

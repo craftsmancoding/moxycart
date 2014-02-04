@@ -15,9 +15,9 @@
 				**/
 				function update_thumb(image_id) {
 					$.get(connector_url+"get_image&image_id="+image_id, function( data ) {
-						var img_markup = $(data).filter('#product-image-'+image_id).find('.img-info-wrap');
-						console.log(img_markup)
-					 	$('#product-image-'+image_id).html(img_markup);
+						var img_markup = $(data).filter('#product-image-'+image_id);
+
+					 	$('#product-image-'+image_id).replaceWith(img_markup);
 					});
 				}
 
@@ -30,6 +30,7 @@
 				$('#image_update_form').on('submit',function(e){
 		           	var values = $(this).serialize();
 		           	var image_id = $('#image_id').val();
+		           	console.log(values);
 					$.ajax({
 		                type: "POST",
 		                url: connector_url+"image_save&action=update&image_id="+image_id,  
@@ -61,7 +62,7 @@
 	            	var img_file = $(this).data('file');
 				  	if(confirm('Are you sure you want to delete this image?')) {
 			            $.post( url+"&action=delete", { image_id: img_id, file: img_file }, function( data ){
-			            	console.log(data)
+
 					    	data = $.parseJSON(data);
 					    	if(data.success == true) {
 					    		$('#update-image').modal('hide');
@@ -164,7 +165,7 @@
 
 				<div class="form-group">
 					<label for="checkbox_id" class="control-label">Is Active</label>
-					<input type="checkbox" class="form-control" name="is_active" id="checkbox_id" <?php if($data['is_active'] == 1){ print 'checked'; } ?> value="1"> 
+					<input type="checkbox" class="form-control" name="is_active" id="checkbox_id" <?php if($data['is_active'] == 1){ print 'checked'; } ?> value="1" /> 
 				</div>
 				
 				<div class="form-group">
@@ -180,7 +181,7 @@
                             <img id="thumbnail_preview_dynamic" src="<?php print $data['url']; ?>" style="display:none;"/>
                         </div>
                     </div>
-                </div>
+            
                 
 				<div class="clearfix" id="image_stuff">
 					<span class="btn crop-btn" onclick="javascript:crop(); return false;">Crop</span>

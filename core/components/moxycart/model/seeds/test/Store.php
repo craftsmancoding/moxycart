@@ -36,7 +36,7 @@ return array(
                 'is_active' => 1,
                 'in_menu' => 1,
                 'timestamp_created' => date('Y-m-d H:i:s'),
-                'Template' => array('templatename' => 'Sample Product'),
+                'Template' => array('templatename' => 'Sample Product')
             ),
             array(
                 'name' => 'Shaved Sweater',
@@ -63,7 +63,7 @@ return array(
                 'is_active' => 1,
                 'in_menu' => 1,
                 'timestamp_created' => date('Y-m-d H:i:s'),
-                'Template' => array('templatename' => 'Sample Product'),
+                'Template' => array('templatename' => 'Sample Product')
             ),
             array(
                 'name' => 'Another Sweater',
@@ -92,7 +92,7 @@ return array(
                 'is_active' => 1,
                 'in_menu' => 1,
                 'timestamp_created' => date('Y-m-d H:i:s'),
-                'Template' => array('templatename' => 'Sample Product'),
+                'Template' => array('templatename' => 'Sample Product')
             ),
             array(
                 'name' => 'Yet Another Sweater',
@@ -118,8 +118,7 @@ return array(
                 'category' => 'Default',
                 'is_active' => 1,
                 'in_menu' => 1,
-                'timestamp_created' => date('Y-m-d H:i:s'),
-                'Template' => array('templatename' => 'Sample Product'),
+                'timestamp_created' => date('Y-m-d H:i:s')
             ),
             array(
                 'name' => 'Plain White Tee',

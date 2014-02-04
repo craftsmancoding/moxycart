@@ -1,6 +1,5 @@
 <?php
 return array(
-  array(
     'dashboard' => 1,
     'rank' => 1,
     'Widget' => array(
@@ -12,6 +11,5 @@ return array(
         'namespace' => 'moxycart',
         'lexicon' =>  'core:dashboards'
      )
-  )
 );
 /*EOF*/
