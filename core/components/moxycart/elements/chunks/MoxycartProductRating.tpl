@@ -1,3 +1,7 @@
+<!--  
+@name MoxycartProductRating
+@description RAdio Button for Product Rating
+-->
 <p>[[+success_msg]]</p>
 <p>[[+error_msg]]</p>
 <form action="[[++site_url]][[+uri]]" method="post">

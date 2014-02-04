@@ -27,4 +27,3 @@ require_once($class_path);
 $moxySnippet = new MoxycartSnippet($modx);
 $out = $moxySnippet->get_rate_average('json_reviews',$scriptProperties);
 return $out;
-

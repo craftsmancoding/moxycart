@@ -4,5 +4,5 @@
 Placeholders [[+moxy.items]]
 -->
 <div class="product-wrapper">
-[[moxy.items]]
+[[+moxy.items]]
 </div>

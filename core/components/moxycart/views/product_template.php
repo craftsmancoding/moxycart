@@ -328,6 +328,9 @@ function remove_relation(product_id) {
 
 	<div id="images_tab" class="content">	
         <div class="dropzone-wrap" id="image_upload">
+            <div class="featured-img">
+                <img src="/assets/mycomponents/moxycart/assets/components/moxycart/images/featured-img.png" alt=""  title="Primary Thumbnail">
+            </div>
         	<ul class="clearfix" id="product_images">
                 <?php print isset($data['images']) ? $data['images'] : ''; ?>
                 

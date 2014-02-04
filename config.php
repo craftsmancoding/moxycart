@@ -85,7 +85,7 @@ return array(
                                     xPDOTransport::UNIQUE_KEY => array('identifier'),
                                 )    
                             )                            
-                        ),            
+                        )           
                     ),
                 ),
             ),            

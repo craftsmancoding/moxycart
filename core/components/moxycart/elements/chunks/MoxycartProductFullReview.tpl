@@ -1,3 +1,7 @@
+<!--  
+@name MoxycartProductFullReview
+@description Format Full Review Form
+-->
 <p>[[+moxy.review_success_msg]]</p>
 <p>[[+moxy.review_error_msg]]</p>
 <form action="[[++site_url]][[+uri]]" method="post">

@@ -4,11 +4,11 @@
 -->
 <html>
 <head>
-<title>[[++site_name]] - [[+name]]</title>
+<title>[[++site_name]]</title>
 <base href="[[++site_url]]" />
 </head>
 <body>
-<h1>[[+name]]</h1>
+<h1>[[+name]]--[[+index]]</h1>
 
 <p>[[+description]]</p>
 
@@ -31,7 +31,7 @@
     
 </form>
 
-Images: [[getProductImages]]
+Images: [[getProductImages? &is_active=`1` &limit=`1`]]
 
 </body>
 </html>

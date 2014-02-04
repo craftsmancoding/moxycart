@@ -710,6 +710,7 @@ class MoxycartController {
                     $args['width'] = $width;
                     $args['height'] = $height;
                 }
+                $args['is_active'] = isset($args['is_active']) ? $args['is_active'] : 0;
                 $Image = $this->modx->getObject('Image',$this->modx->getOption('image_id', $args));
                 
                 $Image->fromArray($args);
