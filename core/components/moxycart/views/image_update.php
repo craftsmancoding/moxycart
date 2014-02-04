@@ -175,7 +175,7 @@
                     <span>Thumbnail Preview</span>
 
                         
-                        <div style="width:100px;height:100px;overflow:hidden;margin-left:5px;">
+                        <div style="width:<?php print $data['moxycart.thumbnail_width'] ;?>px;height:<?php print $data['moxycart.thumbnail_height'] ;?>px;overflow:hidden;margin-left:5px;">
                             <img id="thumbnail_preview_static" src="<?php print $data['thumbnail_url']; ?>" />
                             <img id="thumbnail_preview_dynamic" src="<?php print $data['url']; ?>" style="display:none;"/>
                         </div>

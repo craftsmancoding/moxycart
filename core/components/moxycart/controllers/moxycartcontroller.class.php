@@ -453,6 +453,8 @@ class MoxycartController {
             $data['visible_height'] = (int) ($data['height'] * $ratio);
             $data['visible_width'] = $this->max_image_width;
         }
+        $data['moxycart.thumbnail_width'] = $this->modx->getOption('moxycart.thumbnail_width','',240);
+        $data['moxycart.thumbnail_height'] = $this->modx->getOption('moxycart.thumbnail_height','',180);
         $data['jcrop_js'] = $this->assets_url.'components/moxycart/js/jcrop.js';
         $data['loader_path'] = $this->assets_url.'components/moxycart/images/gif-load.gif';
 
