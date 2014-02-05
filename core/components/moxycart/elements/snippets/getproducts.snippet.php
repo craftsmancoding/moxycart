@@ -13,6 +13,9 @@
  * -----------------------------
  * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
+ * @param boolean $is_active Get all active records only
+ * @param int $limit Limit the records to be shown (if set to 0, all records will be pulled)
+ * @param int $firstClass set class name on the first item (Optional)
  *
  * Variables
  * ---------

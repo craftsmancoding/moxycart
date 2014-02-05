@@ -13,6 +13,7 @@
  * -----------------------------
  * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
+ * @param string $state retrieve the records with specific state (pending,approved,archived)
  * @param int $product_id get records for this specific product
  * @param int $limit Limit the result
  *
@@ -23,7 +24,7 @@
  *
  * Usage
  * ------------------------------------------------------------
- * [[!getProductReviews? &product_id=`[[+product_id]]` &outerTpl=`sometpl` &innerTpl=`othertpl` &limit=`0`]]
+ * [[!getProductReviews? &product_id=`[[+product_id]]` &state=`approved` &outerTpl=`sometpl` &innerTpl=`othertpl` &limit=`0`]]
  *
  * @package moxycart
  **/
