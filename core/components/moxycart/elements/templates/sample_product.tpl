@@ -114,6 +114,8 @@
 <article class="row shop-product-single">
 <div class="col-md-6 space-right-20">
 
+
+
 	[[getProductImages:gte=`1`:then=`
 		 <!-- thumbnailSlider -->
 		  <div class="thumbnailSlider">
@@ -124,7 +126,7 @@
 		    </div>
 
 		    <ul class="smallThumbnails clearfix">
-		    	[[getProductImages? &product_id=`[[+product_id]]` &innerTpl=`ProductImageThumb` &is_active=`1` &limit=`0`]]
+		    	[[getProductImages? &product_id=`[[+product_id]]` &innerTpl=`ProductImageThumb` &firstClass=`active` &is_active=`1` &limit=`0`]]
 		    </ul>
 		  </div>
 		  <!-- / thumbnailSlider -->
