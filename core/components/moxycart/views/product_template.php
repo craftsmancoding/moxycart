@@ -336,10 +336,15 @@ function remove_relation(product_id) {
                 
             </ul>
 
-            <div id="trash-can" class="drop-delete"></div>
+           
             <div class="clear"></div>
 
         	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
+
+             <div id="trash-can" class="drop-delete">
+                <span>Drag Image Here to Delete</span>
+            </div>
+
         </div>
 
 		<div class="modal fade" id="update-image">

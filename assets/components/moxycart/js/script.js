@@ -184,18 +184,10 @@ INIT = {
 			
 			over: function( event, ui ) {
 				$(this).addClass('over-trash');
-				var id = $(ui.draggable).attr('id');
-				$('#'+id).addClass('li-to-be-removed');
-				$('#'+id).find('img').addClass('img-to-be-removed');
 			},
 			out: function(event, ui) {
 				var id = $(ui.draggable).attr('id');
 				$(this).removeClass('over-trash');
-			},
-			deactivate: function( event, ui ) {
-				var id = $(ui.draggable).attr('id');
-				$('#'+id).removeClass('li-to-be-removed');
-				$('#'+id).find('img').removeClass('img-to-be-removed');
 			},
 		    drop: function( event, ui ) {
 		      	var id = $(ui.draggable).attr('id');
