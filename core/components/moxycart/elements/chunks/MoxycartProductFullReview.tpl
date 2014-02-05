@@ -1,24 +1,40 @@
 <!--  
 @name MoxycartProductFullReview
-@description Format Full Review Form
+@description Chunk use to format The navigation for Sample Templates
 -->
-<p>[[+moxy.review_success_msg]]</p>
-<p>[[+moxy.review_error_msg]]</p>
+<br><h2>Write a Review</h2>
+<p>[[+success_msg]]</p>
+<p>[[+error_msg]]</p>
 <form action="[[++site_url]][[+uri]]" method="post">
-	<label for="name">Name: </label>
-	<input type="text" name="name" id="name" /><br>
-	<label for="email">Email: </label>
-	<input type="text" name="email" id="email" /><br>
-	<label for="product_name">Product Name: </label>
-	<input type="text" name="product_name" id="product_name" value="[[+name]]"/><br>
-	<label for="rating">Rating: </label>
-	<input type="radio" name="rating" value="1" checked="checked">1
-	<input type="radio" name="rating" value="2">2
-	<input type="radio" name="rating" value="3">3
-	<input type="radio" name="rating" value="4">4
-	<input type="radio" name="rating" value="5">5<br>
-	<label for="content">Message: </label>
-	<textarea name="content" id="content" cols="30" rows="10"></textarea><br>
-	<input type="submit" name="submit" value="Submit">
 
+	<fieldset>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="name">Your name</label>
+            <input type="text" required="" name="name" class="form-control" id="name">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="email">Your email</label>
+            <input type="email" required="" name="email" class="form-control" id="email">
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="raty-label">
+          Your rating for this item<br>
+          <span class="rate"></span>
+        </label>
+      </div>
+
+      
+
+      <div class="form-group">
+        <label for="content">Your message</label>
+        <textarea name="content" class="form-control" id="content" rows="5"></textarea>
+      </div>
+      <input type="submit" class="btn btn-primary" value="Send message">
+      </fieldset>
 </form>

@@ -31,9 +31,7 @@ $class_path = $core_path . 'components/moxycart/model/moxycart/moxycart.snippets
 require_once($class_path);
 
 $scriptProperties['innerTpl'] = $modx->getOption('innerTpl',$scriptProperties, 'ProductInnerTpl');
-$scriptProperties['outerTpl'] = $modx->getOption('outerTpl',$scriptProperties, 'ProductOuterTpl');
 
 $moxySnippet = new MoxycartSnippet($modx);
 $out = $moxySnippet->execute('json_products',$scriptProperties);
-
 return $out;
