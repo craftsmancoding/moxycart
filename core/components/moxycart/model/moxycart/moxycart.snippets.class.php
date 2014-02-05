@@ -21,12 +21,17 @@ class MoxycartSnippet {
     public function execute($method,$args) {
     	$outerTpl = $this->modx->getOption('outerTpl',$args);
 		$innerTpl = $this->modx->getOption('innerTpl',$args);
+		$total = $this->modx->getOption('total',$args,0);
 
 		unset($args['outerTpl']);
 		unset($args['innerTpl']);
 
 		$records = $this->modx->moxycart->$method($args, true);
-
+		
+        if($total) {
+        	return $records['total'];
+        }
+        		
 		if($records['total'] == 0) {
 			return '';
 		}
@@ -34,10 +39,12 @@ class MoxycartSnippet {
 		$output = '';
 		if (isset($records['results']) && is_array($records['results'])) {
         	foreach ($records['results'] as $index => $row) {
-        		$row['index'] = $index+1;		
+        		$row['index'] = $index+1;	
+        		
            		$output .= $this->modx->getChunk($innerTpl,$row);
         	}			
 		}
+
 
         if ($outerTpl) {
     		$output = $this->modx->getChunk($outerTpl,array('moxy.items' => $output)); 

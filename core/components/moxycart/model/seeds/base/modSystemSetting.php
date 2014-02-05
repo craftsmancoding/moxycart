@@ -7,7 +7,7 @@ Description: setting_ + $key + _desc
 return array(
     array(
         'key'  =>     'moxycart.domain',
-		'value'=>     '',
+		'value'=>     'https://fireproofsocks.foxycart.com',
 		'xtype'=>     'textfield',
 		'namespace' => 'moxycart',
 		'area' => 'moxycart:default'
