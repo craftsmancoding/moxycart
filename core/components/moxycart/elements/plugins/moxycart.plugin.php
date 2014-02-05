@@ -71,6 +71,8 @@ switch ($modx->event->name) {
         $modx->resource = $modx->newObject('modResource');
         $modx->resource->set('contentType', 'text/html');
         $modx->resource->set('template' , $product_attributes['template_id']);
+        $modx->resource->set('pagetitle', $product_attributes['title']);
+        $modx->resource->set('description', $product_attributes['description']);        
         if (!$response = $modx->getResponse()) {
             $modx->log(modX::LOG_LEVEL_ERROR,'[moxycart plugin] getResponse failed in moxycart plugin.');
             return; // fall back to regular 404 behavior?
