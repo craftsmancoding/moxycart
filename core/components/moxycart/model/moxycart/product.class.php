@@ -55,6 +55,8 @@ class Product extends xPDOObject {
                 $data['sort_order'] = (isset($properties['moxycart']['sort_order'])) ? $properties['moxycart']['sort_order'] : 'name';
                 $data['qty_alert'] = (isset($properties['moxycart']['qty_alert'])) ? $properties['moxycart']['qty_alert'] : 0;
                 $data['track_inventory'] = (isset($properties['moxycart']['track_inventory'])) ? $properties['moxycart']['track_inventory'] : 0;
+                $data['specs'] = (isset($properties['moxycart']['specs'])) ? $properties['moxycart']['specs'] : array();
+                $data['taxonomies'] = (isset($properties['moxycart']['taxonomies'])) ? $properties['moxycart']['taxonomies'] : array();
             }
         }
         else {

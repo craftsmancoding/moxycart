@@ -425,7 +425,7 @@ class Moxycart {
                 'spec_id' => $p->get('spec_id'), 
                 'identifier' => $p->Spec->get('identifier'),
                 'product' => $p->Product->get('name'),
-                'spec' => $p->Spec->get('name'),
+                'name' => $p->Spec->get('name'),
                 'value' => $p->get('value'),
                 'description' => $p->Spec->get('description'),
                 'type' => $p->Spec->get('type')

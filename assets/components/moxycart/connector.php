@@ -44,9 +44,9 @@ $old_level = $modx->setLogLevel($log_level);
 $function = $modx->getOption('f',$_GET,'help');
 $type = $modx->getOption('t',$_GET,'');
 
-unset($_GET['f']);
-unset($_GET['t']);
 $args = array_merge($_POST,$_GET); // skip the cookies, more explicit than $_REQUEST
+unset($args['f']);
+unset($args['t']);
 $modx->log(MODX_LOG_LEVEL_DEBUG, print_r($args,true),'','',__FILE__,__LINE__);
 
 $core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);

@@ -51,7 +51,7 @@ function product_save_seq() {
                         <input type="hidden" name="seq[]" value="<?php print $p['product_id']; ?>" />
                     </td>
                     <td><?php print $p['sku']; ?></td>
-                    <td><?php print $p['price']; ?></td>
+                    <td><?php print number_format($p['price'],2); ?></td>
                 </tr>
             <?php
             endforeach;

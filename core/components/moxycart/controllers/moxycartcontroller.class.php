@@ -781,7 +781,7 @@ class MoxycartController {
     }    
     
 
-        //------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------
     //! Products
     //------------------------------------------------------------------------------
     /**
@@ -798,8 +798,17 @@ class MoxycartController {
         $data['manager_url'] = $this->mgr_url.'?a=30&id='.$store_id;
         $data['product_form_action'] = 'product_create';
         $data['product_specs'] ='';
+
+        foreach ($data['specs'] as $spec_id => $tmp) {
+            if ($Spec = $this->modx->getObject('Spec', $spec_id)) {
+                $s = $Spec->toArray();
+                $s['value'] = '';
+                $data['product_specs'] .= $this->_load_view('product_spec.php',$s); // TODO: react to the spec "type"
+            }
+        }
+        
         $data['currencies'] = '';
-         $specs = $this->Moxycart->json_specs(array('limit'=>0),true);
+        $specs = $this->Moxycart->json_specs(array('limit'=>0),true);
         $data['specs'] = $this->Moxycart->_get_options($specs,'','spec_id');  
 
         $currencies = $this->Moxycart->json_currencies(array('limit'=>0,'is_active'=>1),true);
@@ -811,7 +820,6 @@ class MoxycartController {
 
         $categories = $this->Moxycart->json_categories(array('limit'=>0),true);
         $data['categories'] = $this->Moxycart->_get_options($categories); 
-
 
         $stores = $this->Moxycart->json_stores(array('limit'=>0),true);
         $data['stores'] = $this->Moxycart->_get_options($stores,$store_id); 
@@ -863,7 +871,10 @@ class MoxycartController {
         return $this->_load_view('product_template.php',$data);
     }
 
-
+    public function product_delete($product_id) {
+    
+    }
+    
      /**
      * Hosts the "Update Product" form.
      *
@@ -1050,13 +1061,13 @@ class MoxycartController {
         $store_url = $this->connector_url.'json_products';
         if ($store_id) {
             $back_url = '?a=30&id='.$store_id;
-            $store_url .= '&store_id='.$store_id;
+            $store_url .= '&t=data&store_id='.$store_id;
         }
         else {
             $back_url = '?a='.$this->action.'&f=product_update&product_id='.$product_id;
-            $store_url .= '&parent_id='.$product_id;
+            $store_url .= '&t=data&parent_id='.$product_id;
         }
-
+            print '<pre>'.$store_url.'</pre>';
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
             var connector_url = "'.$this->connector_url.'";
     		var back_url = "'.$back_url.'";
@@ -1119,7 +1130,7 @@ class MoxycartController {
     public function product_sort_order($args) {
         $args['limit'] = 0; // get 'em all
         $args['sort'] = 'seq';
-
+        
         // You can get here 2 ways: all products in a store, or all variations in a product.
         $store_id = (int) $this->modx->getOption('store_id', $args);
         $product_id = (int) $this->modx->getOption('product_id', $args);
@@ -1127,7 +1138,7 @@ class MoxycartController {
             $back_url = '?a=30&id='.$store_id;
         }
         else {
-            $back_url = '?a='.$this->action.'&f=product_update&product_id=2'.$product_id;
+            $back_url = '?a='.$this->action.'&f=product_update&product_id='.$product_id;
         }
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
             var connector_url = "'.$this->connector_url.'";
@@ -1138,13 +1149,13 @@ class MoxycartController {
         $this->modx->regClientStartupScript($this->jquery_url);
         $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
 		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');		
-		
+
         $products = $this->Moxycart->json_products($args,true);
 
         $products['back_url'] = $back_url;        
 
         return $this->_load_view('product_list.php',$products);
-        
+   
     }
 
 
@@ -1811,6 +1822,4 @@ class MoxycartController {
         $out .= '</ul>';
         return $out;
     }
-
-
 }
