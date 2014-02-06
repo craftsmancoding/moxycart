@@ -29,27 +29,18 @@ $sql = "SELECT YEAR( transaction_date ) AS SalesYear, MONTH( transaction_date ) 
 		WHERE YEAR( transaction_date ) =$year
 		GROUP BY YEAR( transaction_date ) , MONTH( transaction_date ) 
 		ORDER BY YEAR( transaction_date ) , MONTH( transaction_date )";
-
-
 $result = $modx->query($sql);
 $rows = $result->fetchAll(PDO::FETCH_ASSOC);
-echo '<pre>';
-print_r($rows);
+
 $sales_data = array();
 $total = 0;
-$index =0;
-/*for ($i=1; $i <= 12 ; $i++) { 
-		$total += $rows[$index]['TotalSales'];
-		$sales_data[] = !empty($rows[$index]['SalesMonth']) && $i == $rows[$index]['SalesMonth'] ? 0 : $rows[$index]['TotalSales'];
-		$index++;
 
-}*/
-foreach ($rows as $key => $value) {
-	# code...
+
+foreach ($rows as $sale) {
+	$total += (int) $sale['TotalSales'];
+	$sales_data[] = (int) $sale['TotalSales'];
 }
-echo '<pre>';
-print_r($sales_data);
-die();
+
 $sales_data = json_encode($sales_data);
 $props['total'] = $total;
 
