@@ -35,11 +35,18 @@ $rows = $result->fetchAll(PDO::FETCH_ASSOC);
 $sales_data = array();
 $total = 0;
 
+//COnsturct months
+$months = array();
+for ($i=1; $i <= 12 ; $i++) { 
+	$months[] = 0;
+}
 
 foreach ($rows as $sale) {
-	$total += (int) $sale['TotalSales'];
-	$sales_data[] = (int) $sale['TotalSales'];
+	$sales_data[$sale['SalesMonth']-1] = (int) $sale['TotalSales'];
 }
+
+$sales_data += $months;
+ksort($sales_data);
 
 $sales_data = json_encode($sales_data);
 $props['total'] = $total;
