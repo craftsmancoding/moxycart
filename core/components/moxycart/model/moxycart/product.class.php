@@ -45,6 +45,7 @@ class Product extends xPDOObject {
 
         $data = $this->xpdo->getFields('Product');
         if (!$store_id) {
+            $data['template_id'] = $this->xpdo->getOption('default_template');
             return $data;
         }
         // Set defaults from the parent Store

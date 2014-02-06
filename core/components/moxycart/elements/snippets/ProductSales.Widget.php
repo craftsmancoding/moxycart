@@ -12,7 +12,7 @@
  *
  * Required File Chunk
  * ------------------------------------------------------------------
- * /assets/mycomponents/moxycart/core/components/moxycart/elements/chunks/ProductSales.tpl
+ * core/components/moxycart/elements/chunks/ProductSales.tpl
  * 
  * @package moxycart
  **/

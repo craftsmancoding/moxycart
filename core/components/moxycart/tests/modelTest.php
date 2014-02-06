@@ -93,8 +93,31 @@ class modelTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($P['sku'] == 'ANOTHER-SWEATER', 'Product sku is '.$P['sku']);    
 
         // Test filters -- 
-        $Products = self::$moxycart->json_products(array('in_menu'=>0),true);
-        $this->assertTrue($P['sku'] == 'ANOTHER-SWEATER', 'Product sku is '.$P['sku']);     
+        $Products = self::$moxycart->json_products(array('in_menu'=>0),true);        
+        $this->assertTrue($Products['total'] == 1, 'Only 1 product is flagged with in_menu 0');     
+    }
+
+
+    /**
+     * We have some logic that determines default product attributes based on values set in the 
+     * the parent Store.  This ensures the defaults are set correctly.
+     */
+    public function testProductDefaults() {
+        $P = self::$modx->newObject('Product');
+        // First, we test it with no store_id passed
+        $defaults = $P->get_defaults();
+        $this->assertTrue($defaults['template_id'] == self::$modx->getOption('default_template'), 'Default template not correct.');
+        // defaults should be inherited from the parent store
+        if ($Store = self::$modx->getObject('Store', array('alias'=> 'sample-store'))) {
+            $store_id = $Store->get('id');
+            $defaults = $P->get_defaults($store_id);
+            $this->assertTrue($defaults['template_id'] == 2, 'Default template not inherited from store.');    
+            $this->assertTrue($defaults['product_type'] == 'regular', 'Product type not inherited from store.');    
+            $this->assertTrue($defaults['sort_order'] == 'SKU', 'Sort order not inherited from store.');    
+            $this->assertTrue($defaults['qty_alert'] == 5, 'qty_alert not inherited from store.');
+            $this->assertTrue(isset($defaults['specs'][1]), 'Product specs not inherited from store.');    
+            $this->assertTrue(isset($defaults['specs'][3]), 'Product specs not inherited from store.');
+        }
     }
 
     public function testSpecs() {

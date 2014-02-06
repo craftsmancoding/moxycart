@@ -10,7 +10,7 @@ Placeholders: product_id,alias,content,name,sku,type,track_inventory,qty_invento
     <a href="#">
 
     	[[getProductImages:isequalto=``:then=`
-			<img src="/assets/mycomponents/moxycart/assets/components/moxycart/images/templates/images/content/prod-002.jpg" alt=" ">
+			<img src="[[++moxycart.assets_url]]components/moxycart/images/templates/images/content/prod-002.jpg" alt=" ">
     	`:else=`[[getProductImages? &product_id=`[[+product_id]]` &innerTpl=`ProductImageFeature` &is_active=`1` &limit=`1`]]`? &product_id=`[[+product_id]]` &innerTpl=`ProductImageFeature` &is_active=`1` &limit=`1`]]
     
     </a>
