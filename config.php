@@ -108,6 +108,11 @@ return array(
                 )
             )
         ),   
+        'Transaction' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => true, 
+            xPDOTransport::UNIQUE_KEY => array('transaction_id'),
+        ),    
     ),
 );
 /*EOF*/

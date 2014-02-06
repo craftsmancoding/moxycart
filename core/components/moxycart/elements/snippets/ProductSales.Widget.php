@@ -19,20 +19,45 @@
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
 $assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
 
+$year = $modx->getOption('year',$_GET, date("Y"));
+
+$modx->regClientStartupScript($assets_url . 'components/moxycart/js/jquery-2.0.3.min.js');
 $modx->regClientStartupScript($assets_url . 'components/moxycart/js/Chart.min.js');
-
-
+$props = array();
 $sql = "SELECT YEAR( transaction_date ) AS SalesYear, MONTH( transaction_date ) AS SalesMonth, SUM( order_total ) AS TotalSales
 		FROM foxy_transactions
+		WHERE YEAR( transaction_date ) =$year
 		GROUP BY YEAR( transaction_date ) , MONTH( transaction_date ) 
 		ORDER BY YEAR( transaction_date ) , MONTH( transaction_date )";
+
+
 $result = $modx->query($sql);
 $rows = $result->fetchAll(PDO::FETCH_ASSOC);
 echo '<pre>';
 print_r($rows);
-die();
+$sales_data = array();
+$total = 0;
+$index =0;
+/*for ($i=1; $i <= 12 ; $i++) { 
+		$total += $rows[$index]['TotalSales'];
+		$sales_data[] = !empty($rows[$index]['SalesMonth']) && $i == $rows[$index]['SalesMonth'] ? 0 : $rows[$index]['TotalSales'];
+		$index++;
 
-$props = array();
+}*/
+foreach ($rows as $key => $value) {
+	# code...
+}
+echo '<pre>';
+print_r($sales_data);
+die();
+$sales_data = json_encode($sales_data);
+$props['total'] = $total;
+
+$modx->regClientStartupHTMLBlock('<script type="text/javascript">
+    var sales_data = '.$sales_data.';
+    var selected_year = '.$year.';
+	</script>
+');
 
 $tpl = file_get_contents($core_path.'components/moxycart/elements/chunks/ProductSales.tpl');
 

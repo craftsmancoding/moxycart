@@ -1136,4 +1136,5 @@ class Moxycart {
         return json_encode($data);
     
     }
+
 }
