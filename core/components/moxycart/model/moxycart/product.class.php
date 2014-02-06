@@ -34,7 +34,36 @@ class Product extends xPDOObject {
             return parent::get($k, $format, $formatTemplate);
         }
     }
-    
+
+    /**
+     * Get the default values for a new product
+     *
+     * @param integer $store_id
+     * @return array
+     */
+    public function get_defaults($store_id=null) {
+
+        $data = $this->xpdo->getFields('Product');
+        if (!$store_id) {
+            return $data;
+        }
+        // Set defaults from the parent Store
+        if ($Store = $this->xpdo->getObject('Store', $store_id)) {
+            if ($properties = $Store->get('properties')) {
+                $data['template_id'] = (isset($properties['moxycart']['product_template'])) ? $properties['moxycart']['product_template'] : $this->xpdo->getOption('default_template');
+                $data['product_type'] = (isset($properties['moxycart']['product_type'])) ? $properties['moxycart']['product_type'] : 'regular';
+                $data['sort_order'] = (isset($properties['moxycart']['sort_order'])) ? $properties['moxycart']['sort_order'] : 'name';
+                $data['qty_alert'] = (isset($properties['moxycart']['qty_alert'])) ? $properties['moxycart']['qty_alert'] : 0;
+                $data['track_inventory'] = (isset($properties['moxycart']['track_inventory'])) ? $properties['moxycart']['track_inventory'] : 0;
+            }
+        }
+        else {
+            $this->xpdo->log(modX::LOG_LEVEL_ERROR, 'store_id does not exist',__CLASS__);
+        } 
+        
+        return $data;
+    }
+        
     /**
      * Used to calculate how long a product could be cached for.
      * If there is a sale, the cache is good until the end of the 

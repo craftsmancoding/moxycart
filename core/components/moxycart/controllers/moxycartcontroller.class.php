@@ -790,9 +790,10 @@ class MoxycartController {
      * @param int parent (from $_GET). Defines the id of the parent page.
      */
     public function product_create($args) {
-
-        $data = array();
-        $store_id = (int) $this->modx->getOption('store_id',$_GET);
+        $store_id = (int) $this->modx->getOption('store_id',$_GET);    
+        $Product = $this->modx->newObject('Product');
+        $data = $Product->get_defaults($store_id);
+        
         $data['pagetitle'] = 'Create Product';
         $data['manager_url'] = $this->mgr_url.'?a=30&id='.$store_id;
         $data['product_form_action'] = 'product_create';
@@ -806,7 +807,7 @@ class MoxycartController {
         $data['currencies'] = $this->Moxycart->_get_options($currencies,$currency_id,'currency_id'); 
                 
         $templates = $this->Moxycart->json_templates(array('limit'=>0),true);
-        $data['templates'] = $this->Moxycart->_get_options($templates); 
+        $data['templates'] = $this->Moxycart->_get_options($templates,$data['template_id']); 
 
         $categories = $this->Moxycart->json_categories(array('limit'=>0),true);
         $data['categories'] = $this->Moxycart->_get_options($categories); 
@@ -816,7 +817,7 @@ class MoxycartController {
         $data['stores'] = $this->Moxycart->_get_options($stores,$store_id); 
 
         $types = $this->Moxycart->json_types(array('limit'=>0),true);
-        $data['types'] = $this->Moxycart->_get_options($types);       
+        $data['types'] = $this->Moxycart->_get_options($types, $data['product_type']);       
 
         // Taxonomies (yowza!)
         $data['product_taxonomies'] = '';       
