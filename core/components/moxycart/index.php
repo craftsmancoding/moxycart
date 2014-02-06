@@ -21,6 +21,9 @@ $args = array_merge($_POST,$_GET); // skip the cookies, more explicit than $_REQ
 
 $function = $modx->getOption('f',$_GET,'help');
 
+unset($args['f']);
+unset($args['t']);
+unset($args['a']);
 $results = $Moxycart->$function($args);
 
 // It doesn't work to try and disable smarty:

@@ -130,10 +130,10 @@ class Moxycart {
     
     /**
      * Generates HTML for select <options> (NOT the wrapping <select>)
-     * @param $data array 
-     * @param $selected $string
-     * @param $column_id $string
-     * @param $label $string
+     * @param array $data recordset
+     * @param string $selected which value is selected
+     * @param string $column which column holds the id?
+     * @param string $label which column holds the label?
      * @return string 
      */
     public function _get_options($data = array(),$selected=null, $column_id='id',$label='name') {
@@ -425,7 +425,7 @@ class Moxycart {
                 'spec_id' => $p->get('spec_id'), 
                 'identifier' => $p->Spec->get('identifier'),
                 'product' => $p->Product->get('name'),
-                'spec' => $p->Spec->get('name'),
+                'name' => $p->Spec->get('name'),
                 'value' => $p->get('value'),
                 'description' => $p->Spec->get('description'),
                 'type' => $p->Spec->get('type')

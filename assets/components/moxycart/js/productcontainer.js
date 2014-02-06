@@ -1338,7 +1338,7 @@ function getProductsFields(config){
 			dataIndex: 'id',
 			sortable: true,
 			renderer : function(value, metaData, record, rowIndex, colIndex, store) {
-			  return '<a role="edit" style="padding: 5px 10px 5px 10px;color: #53595f;font: bold 11px tahoma,verdana,helvetica,sans-serif;text-shadow: 0 1px 0 #fcfcfc;" class="x-btn">Edit</a> <button style="padding: 5px 10px 5px 10px;color: #53595f;font: bold 11px tahoma,verdana,helvetica,sans-serif;text-shadow: 0 1px 0 #fcfcfc;" role="view" class="x-btn">View</button>';
+			  return '<a role="edit" style="padding: 5px 10px 5px 10px;color: #53595f;font: bold 11px tahoma,verdana,helvetica,sans-serif;text-shadow: 0 1px 0 #fcfcfc;" class="x-btn">Edit</a> <button style="padding: 5px 10px 5px 10px;color: #53595f;font: bold 11px tahoma,verdana,helvetica,sans-serif;text-shadow: 0 1px 0 #fcfcfc;" role="view" class="x-btn">View</button> <a role="delete" style="padding: 5px 10px 5px 10px;color: #53595f;font: bold 11px tahoma,verdana,helvetica,sans-serif;text-shadow: 0 1px 0 #fcfcfc;" class="x-btn">Delete</a>';
 			}
 		}
 	]);
@@ -1366,6 +1366,9 @@ function getProductsFields(config){
 						MODx.loadPage(MODx.action['moxycart:index'], 'f=product_update&product_id='+record.data.product_id);
 					} else if(e.target.innerHTML === 'View'){
 						window.open(site_url + record.data.uri, '_blank');
+					} else if(e.target.innerHTML === 'Delete'){
+					   alert('Delete? f=product_delete&product_id='+record.data.product_id);
+						//window.open(site_url + record.data.uri, '_blank');
 					}
 				}
 			}
