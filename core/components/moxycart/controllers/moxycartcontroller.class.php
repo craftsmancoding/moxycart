@@ -871,8 +871,44 @@ class MoxycartController {
         return $this->_load_view('product_template.php',$data);
     }
 
-    public function product_delete($product_id) {
-    
+    /**
+     * Handles deleting a product. Use must be authorized.
+     * See core/model/modx/modconnectorresponse.class.php
+     */
+    public function product_delete() {
+        $product_id = (isset($_POST['product_id']))? $_POST['product_id']: null;
+        if (!is_object($this->modx->user)) {
+            $this->modx->sendUnauthorizedPage();
+        }
+        $siteId = $this->modx->user->getUserToken($this->modx->context->get('key'));
+        
+        if (!isset($_POST['HTTP_MODAUTH'])) {
+            $this->modx->sendUnauthorizedPage();
+        }
+        if ($_POST['HTTP_MODAUTH'] != $siteId) {
+            $this->modx->sendUnauthorizedPage();
+        }
+        
+        $result = array();
+        $result['success'] = false;
+        $result['msg'] = 'Invalid product';
+        
+        if ($product_id) {
+            if($Product = $this->modx->getObject('Product', $product_id)) {
+                if ($Product->remove() == false) {
+                    $result['msg'] = 'There was a problem deleting the product.';
+                }
+                else {
+                    $result['success'] = true;
+                    $result['msg'] = 'Product deleted successfully.';                    
+                }
+            }
+            else {
+                $result['msg'] = 'Product not found.';
+            }
+        }
+        
+        return json_encode($result);
     }
     
      /**

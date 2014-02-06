@@ -1367,8 +1367,27 @@ function getProductsFields(config){
 					} else if(e.target.innerHTML === 'View'){
 						window.open(site_url + record.data.uri, '_blank');
 					} else if(e.target.innerHTML === 'Delete'){
-					   alert('Delete? f=product_delete&product_id='+record.data.product_id);
-						//window.open(site_url + record.data.uri, '_blank');
+                        Ext.Msg.confirm('Confirm Delete', 'Are you sure you want to delete this product?', function(buttonText) {
+                        	if (buttonText == "yes") {
+                        		Ext.Ajax.request({
+                                    params: {product_id: record.data.product_id},
+                                    url: connector_url+'product_delete', // &t=data','?a='+MODx.action['moxycart:index']+'f=product_delete',
+                                    success: function (resp) {
+                                        var data;
+                                        data = Ext.decode(resp.responseText);
+                                        if (data.success === true) {
+                                            Ext.MessageBox.alert('Success', data.msg);
+                                            store.load(); // refresh
+                                        } else {
+                                            Ext.MessageBox.alert('Error', data.msg);
+                                        }
+                                    },
+                                    failure: function () {
+                                        Ext.MessageBox.alert('Error', 'A problem occurred.');
+                                    }
+                                });
+                        	}
+                        });					
 					}
 				}
 			}
