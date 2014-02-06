@@ -10,6 +10,7 @@ return array(
         'lexicon' =>  'core:dashboards',
         'Placements' => array(
             'dashboard' => 1,
+            'widget' => 6,
             'rank' => 5,
         )
      ),
@@ -23,7 +24,7 @@ return array(
         'lexicon' =>  'core:dashboards',
         'Placements' => array(
             'dashboard' => 1,
-            'widget' => 7
+            'widget' => 7,
             'rank' => 6,
         )
      )
