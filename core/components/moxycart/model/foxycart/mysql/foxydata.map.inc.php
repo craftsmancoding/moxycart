@@ -7,6 +7,8 @@ $xpdo_meta_map['Foxydata']= array (
   'fields' => 
   array (
     'foxydata_id' => NULL,
+    'type' => 'FoxyData',
+    'api_key' => '',
     'md5' => NULL,
     'xml' => '',
     'timestamp_created' => 'CURRENT_TIMESTAMP',
@@ -22,13 +24,31 @@ $xpdo_meta_map['Foxydata']= array (
       'index' => 'pk',
       'generated' => 'native',
     ),
+    'type' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '32',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => 'FoxyData',
+      'comment' => 'FoxyData or FoxySubscriptionData',
+    ),
+    'api_key' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+      'comment' => 'IDs the source of the data, e.g. if a site uses 2 API keys.',
+    ),
     'md5' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '32',
       'phptype' => 'string',
       'null' => false,
-      'comment' => 'Used to uniquely id the data payload',
+      'comment' => 'Unique payload signature',
     ),
     'xml' => 
     array (

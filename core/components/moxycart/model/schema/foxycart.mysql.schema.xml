@@ -4,10 +4,13 @@ See https://wiki.foxycart.com/v/1.1/transaction_xml_datafeed
 -->
 <model package="foxycart" version="1.0" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM">
     <!-- ! Foxydata -->
+    <!-- Stores raw postback from Foxycart -->
     <object class="Foxydata" table="foxydata" extends="xPDOObject">
         <field key="foxydata_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
         <!--field key="store_version" dbtype="varchar" precision="32" phptype="string" null="false" /-->
-        <field key="md5" dbtype="varchar" precision="32" phptype="string" null="false" comment="Used to uniquely id the data payload"/>
+        <field key="type" dbtype="varchar" precision="32" phptype="string" null="false" default="FoxyData" comment="FoxyData or FoxySubscriptionData"/>
+        <field key="api_key" dbtype="varchar" precision="255" phptype="string" null="false" default="" comment="IDs the source of the data, e.g. if a site uses 2 API keys."/>
+        <field key="md5" dbtype="varchar" precision="32" phptype="string" null="false" comment="Unique payload signature"/>
         <field key="xml" dbtype="mediumtext" phptype="string" null="false" default="" comment="Decrypted XML body"/>
         <field key="timestamp_created" dbtype="timestamp" phptype="timestamp" null="true" default="CURRENT_TIMESTAMP" />
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
