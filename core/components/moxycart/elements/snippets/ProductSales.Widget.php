@@ -34,9 +34,6 @@ $sql = "SELECT YEAR( ft.transaction_date ) AS SalesYear, MONTHNAME( ft.transacti
 $result = $modx->query($sql);
 $rows = $result->fetchAll(PDO::FETCH_ASSOC);
 
-echo '<pre>';
-print_r($rows);
-die();
 if(empty($rows)) {
 	return 'Your store does not have any transactions yet.';
 }
