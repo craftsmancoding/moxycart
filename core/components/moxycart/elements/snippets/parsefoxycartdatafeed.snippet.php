@@ -28,6 +28,11 @@
  *       that comes through the datafeed.
  * &transaction_hooks (string) comma-separated Snippet(s) to execute for each transaction
  *      that comes through the datafeed.
+ * &postback_hooks (string) comma-separated Snippet(s) to execute for each post-back.
+ *
+ * &api_key (string) not the actual key, but the name of the System Setting containing the
+ *      API key.  Default: moxycart.api_key
+ *
  * &log_level (int) use this to provide more verbose logging for this snippet. 
  *      Defaults to the system log_level setting.
  *
@@ -40,6 +45,7 @@ $modx->addPackage('foxycart',$core_path.'components/moxycart/model/','foxy_');
 $product_hooks_tmp = $modx->getOption('product_hooks',$scriptProperties);
 $transaction_hooks_tmp = $modx->getOption('transaction_hooks',$scriptProperties);
 $postback_hooks_tmp = $modx->getOption('postback_hooks',$scriptProperties);
+$api_key_name = $modx->getOption('api_key', $scriptProperties, 'moxycart.api_key');
 
 $log_level = $modx->getOption('log_level',$scriptProperties, $modx->getOption('log_level'));
 
@@ -67,9 +73,9 @@ $msg .= "postback_hooks: ".print_r($postback_hooks,true)."\n";
 
 $modx->log(modX::LOG_LEVEL_DEBUG, $msg, $log, 'parseFoxycartDatafeed',__FILE__,__LINE__);
 
-$api_key = $modx->getOption('moxycart.api_key'); // your foxy cart datafeed key
+$api_key = $modx->getOption($api_key_name); // your foxy cart datafeed key
 if(empty($api_key)) {
-	$err_msg = 'moxycart.api_key is not set in your System Settings. Paste your Foxycart API key there before continuing.';
+	$err_msg = $api_key_name.' is not set in your System Settings. Paste your Foxycart API key there before continuing.';
     $modx->log(modX::LOG_LEVEL_ERROR,$err_msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
     return $err_msg;
 }
@@ -77,7 +83,8 @@ if(empty($api_key)) {
 // Other tests go here ??
 
 // Check for the post back
-if($encrypted_data = $modx->getOption('FoxyData', $_POST)) {
+// Note: the subscription data feed sets this attribute: FoxySubscriptionData
+if($encrypted_data = (isset($_POST['FoxyData']))? $_POST['FoxyData']:null) {
 
     $modx->log(modX::LOG_LEVEL_DEBUG,'FoxyData detected',$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
     
@@ -117,6 +124,8 @@ if($encrypted_data = $modx->getOption('FoxyData', $_POST)) {
     $Foxydata = $modx->newObject('Foxydata');
     $Foxydata->set('md5', $md5);
     $Foxydata->set('xml', $FoxyData_decrypted);
+    $Foxydata->set('type', 'FoxyData');
+    $Foxydata->set('api_key', $api_key);
     
     $transactions = array();
     
