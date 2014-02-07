@@ -5,47 +5,26 @@ return array(
     	'foxydata_id'	=> 1,
     	'id'	=> 1,
     	'store_id'	=> 2,
-    	'transaction_date'	=> '2014-02-06 07:59:52',
-    	'order_total'	=> '1000'
+        'is_test'   => 0,
+    	'transaction_date'	=> '2013-06-06 07:59:52',
+    	'order_total'	=> '1005'
     ),
     array(
-    	'transaction_id' => 2,
-    	'foxydata_id'	=> 1,
-    	'id'	=> 1,
-    	'store_id'	=> 2,
-    	'transaction_date'	=> '2014-03-06 07:59:52',
-    	'order_total'	=> '2500'
-    ),
-     array(
-    	'transaction_id' => 3,
-    	'foxydata_id'	=> 1,
-    	'id'	=> 1,
-    	'store_id'	=> 2,
-    	'transaction_date'	=> '2014-03-09 07:59:52',
-    	'order_total'	=> '123'
+        'transaction_id' => 16,
+        'foxydata_id'   => 1,
+        'id'    => 1,
+        'store_id'  => 2,
+        'is_test'   => 0,
+        'transaction_date'  => '2012-11-06 07:59:52',
+        'order_total'   => '2345'
     ),
     array(
-    	'transaction_id' => 4,
-    	'foxydata_id'	=> 1,
-    	'id'	=> 1,
-    	'store_id'	=> 2,
-    	'transaction_date'	=> '2014-05-09 07:59:52',
-    	'order_total'	=> '1500'
-    ),
-     array(
-    	'transaction_id' => 5,
-    	'foxydata_id'	=> 1,
-    	'id'	=> 1,
-    	'store_id'	=> 2,
-    	'transaction_date'	=> '2013-05-09 07:59:52',
-    	'order_total'	=> '2012'
-    ),
-     array(
-    	'transaction_id' => 6,
-    	'foxydata_id'	=> 1,
-    	'id'	=> 1,
-    	'store_id'	=> 2,
-    	'transaction_date'	=> '2013-06-09 07:59:52',
-    	'order_total'	=> '1003'
+        'transaction_id' => 17,
+        'foxydata_id'   => 1,
+        'id'    => 1,
+        'store_id'  => 2,
+        'is_test'   => 1,
+        'transaction_date'  => '2014-02-13 07:59:52',
+        'order_total'   => '2500'
     )
 );

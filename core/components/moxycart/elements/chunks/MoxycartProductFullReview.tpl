@@ -3,8 +3,8 @@
 @description Chunk use to format The navigation for Sample Templates
 -->
 <br><h2>Write a Review</h2>
-<p>[[+success_msg]]</p>
-<p>[[+error_msg]]</p>
+<p>[[+moxy.review_success_msg]]</p>
+<p>[[+moxy.review_error_msg]]</p>
 <form action="[[++site_url]][[+uri]]" method="post">
 
 	<fieldset>

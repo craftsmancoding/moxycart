@@ -95,8 +95,8 @@ return array(
                 ),
             ),            
         ),  
-/*
-        'modDashboardWidgetPlacement'   => array(
+
+/*        'modDashboardWidgetPlacement'   => array(
             xPDOTransport::PRESERVE_KEYS => false,
             xPDOTransport::UPDATE_OBJECT => true, 
             xPDOTransport::UNIQUE_KEY => array('dashboard','widget','rank'),
@@ -108,8 +108,8 @@ return array(
                     xPDOTransport::UNIQUE_KEY => array('name'),
                 )
             )
-        ),   
-*/
+        ),  */ 
+
         'Transaction' => array(
             xPDOTransport::PRESERVE_KEYS => true,
             xPDOTransport::UPDATE_OBJECT => true, 

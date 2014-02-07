@@ -1,7 +1,7 @@
 <?php
-return array(
+/*return array(
     array(
-        'dashboard' => 1,
+     'dashboard' => 1,
         'rank' => 1,
         'Widget' => array(
             'name' => 'Product Quantity Alert',
@@ -22,5 +22,5 @@ return array(
             'lexicon' =>  'core:dashboards'
          )
     )
-);
+);*/
 /*EOF*/

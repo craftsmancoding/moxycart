@@ -45,7 +45,7 @@ class MoxycartSnippet {
         		if($index == 0) {
         			$row['firstClass'] = $firstClass;
         		}
-        		$row['index'] = $index;
+        		$row['index'] = $index+1;
            		$output .= $this->modx->getChunk($innerTpl,$row);
         	}			
 		}
