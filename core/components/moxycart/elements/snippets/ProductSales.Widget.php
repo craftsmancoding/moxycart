@@ -24,13 +24,11 @@ $modx->regClientStartupScript($assets_url . 'components/moxycart/js/Chart.min.js
 
 $props = array();
 
-$sql = "SELECT YEAR( ft.transaction_date ) AS SalesYear, MONTHNAME( ft.transaction_date ) AS SalesMonth, SUM( ft.order_total ) AS TotalSales
-		FROM (SELECT * from foxy_transactions WHERE is_test = 0) AS ft
-		WHERE DATE( ft.transaction_date ) 
-		BETWEEN DATE_ADD(LAST_DAY(DATE_SUB(NOW(), INTERVAL 12 MONTH)), INTERVAL 1 DAY) 
-		AND LAST_DAY(DATE_SUB(NOW(), INTERVAL 0 MONTH))
-		GROUP BY YEAR( ft.transaction_date ) , MONTH( ft.transaction_date ) 
-		ORDER BY YEAR( ft.transaction_date ) , MONTH( ft.transaction_date )";
+$sql = "SELECT YEAR( transaction_date ) AS SalesYear, MONTHNAME( transaction_date ) AS SalesMonth, SUM( order_total ) AS TotalSales FROM foxy_transactions
+		WHERE transaction_date >= date_sub(now(), interval 12 month)
+		AND is_test = 0
+		GROUP BY YEAR( transaction_date ) , MONTH( transaction_date ) 
+		ORDER BY YEAR( transaction_date ) , MONTH( transaction_date )";
 $result = $modx->query($sql);
 $rows = $result->fetchAll(PDO::FETCH_ASSOC);
 
