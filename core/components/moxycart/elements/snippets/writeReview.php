@@ -21,8 +21,12 @@
     *
     * @package moxycart
 */
+
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
+$assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
 require_once $core_path .'components/moxycart/model/htmlpurifier/library/HTMLPurifier.auto.php';
+
+
 
 $product_id = $modx->getOption('product_id', $scriptProperties); 
 $public = $modx->getOption('public', $scriptProperties,1); 
@@ -72,6 +76,8 @@ if($_POST) {
     }
 
 }
+
+
 
 // Create the temporary chunk
 $uniqid = uniqid();
