@@ -331,7 +331,7 @@
 
 <!-- SCRIPTS -->
 <!-- core -->
-<script src="[[++moxycart.assets_url]]components/moxycart/js/templates/jquery.min.js"></script>
+<script src="[[++moxycart.assets_url]]components/moxycart/js/jquery-2.0.3.min.js"></script>
 <script src="[[++moxycart.assets_url]]components/moxycart/js/templates/bootstrap/js/bootstrap.min.js"></script>
 
 <!-- !core -->
