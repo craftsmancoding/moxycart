@@ -16,4 +16,7 @@
     background-image: url(../images/term-icon.png) !important;
 }
 
-#sales-canvas {}
+.custom-close-btn {
+	left: 540px !important;
+	top: -13px !important;
+}

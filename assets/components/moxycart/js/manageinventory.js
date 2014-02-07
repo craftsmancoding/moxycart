@@ -142,6 +142,7 @@ function renderManageInventoryPanel(){
 		}
 	});
 
+
 	productSortStore.load({
 		params: {
 			start: 0,          
@@ -201,6 +202,7 @@ function renderManageInventoryPanel(){
 					{
 						xtype:'button',
 						text:'Close',
+						cls: 'custom-close-btn',
 						handler:function(){						
 							backToParent();
 						}
