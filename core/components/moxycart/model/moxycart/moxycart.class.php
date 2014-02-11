@@ -549,8 +549,10 @@ class Moxycart {
      * @return mixed A JSON array (string), a PHP array (array), or false on fail (false)
      */
     public function json_images($args=array(),$raw=false) {
-
+      
         $product_id = (int) $this->modx->getOption('product_id',$args);
+        $seq = (int) $this->modx->getOption('seq',$args);
+        $nav_dir = $this->modx->getOption('nav_dir',$args);
         $is_active = (int) $this->modx->getOption('is_active',$args);
         
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
@@ -558,8 +560,23 @@ class Moxycart {
         $sort = $this->modx->getOption('sort',$args,'seq');
         $dir = $this->modx->getOption('dir',$args,'ASC');
         
+
         $criteria = $this->modx->newQuery('Image');
-        
+
+
+        if($nav_dir == 'next') {
+            if(isset($seq) && is_int($seq)) {
+                $criteria->where(array('seq:>'=>$seq));
+            } 
+        }
+
+         if($nav_dir == 'prev') {
+            if(isset($seq) && is_int($seq)) {
+                 $criteria->where(array('seq:<'=>$seq));
+            } 
+        }
+
+       
         if ($product_id) {
             $criteria->where(array('product_id'=>$product_id));
         }
@@ -569,10 +586,11 @@ class Moxycart {
         }
                 
         $total_pages = $this->modx->getCount('Image',$criteria);
-        
+   
         $criteria->limit($limit, $start); 
         $criteria->sortby($sort,$dir);
         $pages = $this->modx->getCollection('Image',$criteria);
+     
         // return $criteria->toSQL(); <-- useful for debugging
         // Init our array
         $data = array(
@@ -587,6 +605,9 @@ class Moxycart {
             return $data;
         }
 
+   echo '<pre>';
+        print_r($data);
+        die();
         return json_encode($data);
 
     }

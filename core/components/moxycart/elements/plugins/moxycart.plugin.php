@@ -55,6 +55,7 @@ switch ($modx->event->name) {
             foreach ($Product->Specs as $S) {
                 $product_attributes[$S->Spec->get('identifier')] = $S->get('value');
             }
+          
             
             if (!$Template = $modx->getObject('modTemplate', $Product->get('template_id'))) {
                 print 'No template for product '.$Product->get('product_id');

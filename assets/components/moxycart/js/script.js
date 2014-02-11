@@ -2,9 +2,9 @@ INIT = {
 	
 	update_product: function(){
 		$('#product_update').on('submit',function(e){
-            console.log('Updating product.');
+            //console.log('Updating product.');
             var values = $(this).serializeArray();
-            if(use_editor == "1") {
+            /*if(use_editor == "1") {
 		    	var content_val = $('#content_ifr').contents().find('#tinymce').html();
 		    	for (var item in values)
 				{
@@ -12,8 +12,9 @@ INIT = {
 				    values[item].value = content_val;
 				  }
 				}
-			}
+			}*/
 			values = jQuery.param(values);
+
 			//console.log(values);
 			//return false;
 
@@ -111,6 +112,7 @@ INIT = {
 
 		$( document ).on( "click", "a.edit-img", function() {
 			var url_img_update = $(this).attr('href');
+			console.log(url_img_update);
 			 $.ajax({
                     type: "GET",
                     url: url_img_update,

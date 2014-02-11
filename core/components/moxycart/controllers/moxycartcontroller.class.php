@@ -191,7 +191,7 @@ class MoxycartController {
 
         // Plugin not present.
         if (!$plugin) {
-            return false;
+            return '';
         }
 
         $tinyPath =  $this->modx->getOption('core_path').'components/tinymce/';
@@ -282,15 +282,21 @@ class MoxycartController {
      * Get a single image for Ajax update.
      */
     public function get_image($args) {
+        if (isset($args['image_navigate']) && $args['image_navigate'] == 1) {
+            $args['limit'] = 1;
+            $Image = $this->Moxycart->json_images($args,true);
+      
+            if ($Image['total'] == 0) {
+                return 'Error loading image. '.print_r($args,true);
+            }
+            $data = $Image['results'][0];
+            return $this->_load_view('form_image_update.php',$data);
+        }
         $id = (int) $this->modx->getOption('image_id', $args);
-        
         $Image = $this->modx->getObject('Image',$id);
-
-        
         if (!$Image) {
             return 'Error loading image. '.print_r($args,true);
         }
-        
         $data = $Image->toArray();
         $data['action'] = $this->action;
         return $this->_load_view('product_image.php',$data);
@@ -694,7 +700,7 @@ class MoxycartController {
     public function image_save($args) {
         $action = $this->modx->getOption('action', $args);     
         $product_id = (int) $this->modx->getOption('product_id',$args);
-
+       
         unset($args['action']);
         $out = array(
             'success' => true,
@@ -735,7 +741,7 @@ class MoxycartController {
                 break;
             case 'create':
             default:
-                
+                $ImageCount = $this->Moxycart->json_images(array('product_id'=>$product_id),true);
                 if (isset($_FILES['file']['name']) ) {
                     $uploaded_img = json_decode($this->upload_image($product_id),true);
 
@@ -756,12 +762,14 @@ class MoxycartController {
                     $Image->set('width',$width);
                     $Image->set('height',$height);
                     $Image->set('size',$uploaded_img['file_size']);
+                    $Image->set('seq',$ImageCount['total']);
                     $Image->set('is_active',1);
                 }
                 
                 if (!$Image->save()) {
                     $out['success'] = false;
                     $out['msg'] = 'Failed to save Image object for product';
+
                     $this->modx->log(modX::LOG_LEVEL_ERROR, 'Failed to save Image object for product '.$product_id .' '.MODX_ASSETS_PATH.$rel_file);
                     return json_encode($out);
                 }
@@ -1072,7 +1080,7 @@ class MoxycartController {
     	');
  	
         $this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
-        
+
         if ($this->modx->getOption('use_editor')) {
             $this->_load_tinyMCE();
         }
