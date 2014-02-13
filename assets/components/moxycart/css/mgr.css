@@ -4149,6 +4149,7 @@ button.close {
   }
 }
 
+
 @media (min-width: 768px) and (max-width: 979px) {
  
   .span12 {
@@ -4475,6 +4476,11 @@ div > input.x-form-field {
   z-index: 1000;
   cursor: pointer;
 }
+
+.image-nav {
+  display: none;
+}
+
 /* #product_images .first {
   clear: left !important;
    border: 1px solid yellow !important;

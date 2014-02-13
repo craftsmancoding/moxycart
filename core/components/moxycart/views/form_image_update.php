@@ -43,7 +43,7 @@
             
                 
 				<div class="clearfix" id="image_stuff">
-					<span class="btn crop-btn" onclick="javascript:crop(); return false;">Crop</span>
+					<span class="btn crop-btn" id="edit-in-modal">Edit Image</span>
 					
                      <div id="image_stuff-inner">
                         <div id="target_image">
@@ -64,4 +64,9 @@
 		      </div>
 			      
 	      	</form>
+	<div class="modal-footer">
+			        <button type="button" data-image_id="<?php print $data['image_id']; ?>" class="btn btn-default" id="close-update" data-dismiss="modal">Close</button>
+			        <button type="button" id="remove-img-modal" data-image_id="<?php print $data['image_id']; ?>"  data-file="<?php print $data['url']; ?>" class="btn btn-default">Delete</button>
+			        <button type="submit" id="update-save" class="btn btn-custom">Save changes</button>
+			      </div>
 </div>

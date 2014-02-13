@@ -21,11 +21,6 @@
 					});
 				}
 
-				jQuery('#jcrop_target').Jcrop({
-		    		onChange: set_coords,
-		    		onSelect: set_coords
-		        });
-
 				$('#update-img-msg').hide();
 				$('#update-save').on('click',function(e){
 		           	var values = $('#image_update_form').serialize();
@@ -56,13 +51,13 @@
 				    e.preventDefault();
 			    });
 
-				$('#remove-img-modal').on('click', function(){
+			    $('#remove-img-modal').on('click', function(){
 					var url = connector_url + 'image_save';
 					var img_id = $(this).data('image_id');
 	            	var img_file = $(this).data('file');
 				  	if(confirm('Are you sure you want to delete this image?')) {
 			            $.post( url+"&action=delete", { image_id: img_id, file: img_file }, function( data ){
-
+			            	console.log(data)
 					    	data = $.parseJSON(data);
 					    	if(data.success == true) {
 					    		$('#update-image').modal('hide');
@@ -76,6 +71,7 @@
 			        return false;
 				});
 
+
 				$('#close-update').on('click', function(){
 					if($(this).hasClass('has-cropped')) {
 
@@ -87,9 +83,11 @@
 				
 
 			});
+			
 
 
 			$(document).on('click', '.image-nav', function() {
+
 					var seq = $(this).data('seq');
 					var	nav_dir = $(this).data('nav_dir');
 					var	product_id = $(this).data('product_id');
@@ -101,9 +99,17 @@
 					return false;
 			});
 
-			$(document).on('load',"#jcrop_target",function() {
-			  // Handler for .load() called.
-			  alert('test');
+			$(document).on('click',"#edit-in-modal",function() {
+				$(this).text('Crop Image').addClass('crop-now');
+			  	$('#jcrop_target').Jcrop({
+		    		onChange: set_coords,
+		    		onSelect: set_coords
+		        });
+			});
+
+			$(document).on('click',".crop-now",function() {
+				crop();
+				$(this).text('Edit Image').removeClass('crop-now');
 			});
 
 		/**
@@ -209,7 +215,7 @@
 	            
 	                
 					<div class="clearfix" id="image_stuff">
-						<span class="btn crop-btn" onclick="javascript:crop(); return false;">Crop</span>
+						<span class="btn crop-btn" id="edit-in-modal">Edit Image</span>
 						
 	                     <div id="image_stuff-inner">
 	                        <div id="target_image">
@@ -230,13 +236,13 @@
 			      </div>
 				      
 		      	</form>
-	      	</div>
+	      	
 	      	<div class="modal-footer">
 			        <button type="button" data-image_id="<?php print $data['image_id']; ?>" class="btn btn-default" id="close-update" data-dismiss="modal">Close</button>
 			        <button type="button" id="remove-img-modal" data-image_id="<?php print $data['image_id']; ?>"  data-file="<?php print $data['url']; ?>" class="btn btn-default">Delete</button>
 			        <button type="submit" id="update-save" class="btn btn-custom">Save changes</button>
 			      </div>
-
+</div>
 <form action="/file-upload"
       class="dropzone"
       id="my-awesome-dropzone"></form>
