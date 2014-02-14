@@ -32,7 +32,7 @@ switch ($modx->event->name) {
         $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
         $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
 
-        $refresh = false; // used if you want to turn off caching (good for testing)        
+        $refresh = true; // used if you want to turn off caching (good for testing)        
 
         $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
         $fingerprint = 'product/'.$uri;
