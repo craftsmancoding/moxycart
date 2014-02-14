@@ -289,8 +289,8 @@ function remove_relation(product_id) {
             <div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder" id="ext-gen68">
                 <p>Here you can Published/Unpublished Reviews.</p>
             </div><br>
-
-            <table id="survey-list" class="table table-hover">
+            <?php print $data['review_pagination_links']; ?>
+            <table id="reviews_list" class="table table-hover">
                     <thead>
                       <tr>
                         <th>ID</th>
@@ -304,11 +304,15 @@ function remove_relation(product_id) {
                         <?php if (!isset($data['reviews']['total']) || !$data['reviews']['total'] ): ?>
                             <tr><td class="alert alert-danger" colspan="5"> No Reviews Found for this Product.</td></tr>
                         <?php else : ?>
-                            <?php foreach ($data['reviews']['results'] as $r): ?>
+                            <?php                 
+                            foreach ($data['reviews']['results'] as $r): 
+                            ?>
                                  <tr class="review-row">
                                    <td><?php print $r['id']; ?></td>
                                     <td><?php print $r['name']; ?></td>
-                                    <td><?php print $r['content']; ?></td>
+                                    <td><?php 
+                                        print (strlen($r['content']) >= 50) ? substr($r['content'],0,50) .'&#8230;': $r['content'];
+                                        ?></td>
                                     <td><?php print $r['rating']; ?></td>
                                     <td>
                                         <form action="#" method="post" id="review-form">

@@ -18,13 +18,10 @@ class Product extends xPDOObject {
             $sale_start = strtotime($this->get('sale_start'));
             $sale_end = strtotime($this->get('sale_end'));
         
-            $lifetime = 3600; // cache 
-        
-             $calculated_price = $this->get('price');
+            $calculated_price = $this->get('price');
             // if on sale use price sale
             if($sale_start <= $now && $sale_end >= $now) {
                 $calculated_price = $this->get('price_sale');
-                $lifetime = $sale_end - $now;
             } 
 
             return $calculated_price;            

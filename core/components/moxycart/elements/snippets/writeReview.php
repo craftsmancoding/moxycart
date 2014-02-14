@@ -1,14 +1,15 @@
 <?php
 /**
     * @name writeReview
-    * @description This is the Snippet used to generate a form to the front-end. Reviews can include full text reviews (e.g. "this product is awesome!"), or they can be a simple "star" review where the user simply rates the product as a number (the database supports 1 - 100). The writeReview snippet should handle both cases easily.
+    * @description This is the Snippet used to generate a form to the front-end. Reviews can include full text reviews (e.g. "this product is awesome!"), or they can be a simple "star" review where the user simply rates the product as a number (the database supports 1 - 100). The writeReview snippet should handle both cases easily. System Setting moxycart.enable_reviews must be set to "Yes" for this to work.
+    *
     *
     * Available Paramaters
     * ---------------------------------------------------
     * @param &public (boolean) default is zero. If 1 (true), then any public user can leave a review. If the review is not public, then the user must be logged in, otherwise we show a message.
     * @param &publicTpl (string) Chunk name for the message to show if public=0 and the user is not logged in. E.g. "You must log in to leave a review."
     * @param &tpl (string) -- include 2 default options: one for "start" where a simple star rating is included, or "text"
-    * @param &approve_reviews (boolean) -- defaults to system setting moxycart.approve_reviews. Default is false: that means the admin must approve the reviews manually.
+    * @param &auto_approve_reviews (boolean) -- defaults to system setting moxycart.auto_approve_reviews. Default is false: that means the admin must approve the reviews manually.
     * 
     *
     * Sample Usage
@@ -21,18 +22,19 @@
     *
     * @package moxycart
 */
-
+if (!$modx->getOption('moxycart.enable_reviews')) {
+    $modx->log(modX::LOG_LEVEL_INFO, '[writeReview] moxycart.enable_reviews is set to 0; reviews are not enabled.');
+    return;
+}
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
 $assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
 require_once $core_path .'components/moxycart/model/htmlpurifier/library/HTMLPurifier.auto.php';
 
-
-
 $product_id = $modx->getOption('product_id', $scriptProperties); 
-$public = $modx->getOption('public', $scriptProperties,1); 
+$public = $modx->getOption('public', $scriptProperties,0); 
 $pubicTpl = $modx->getOption('publicTpl', $scriptProperties,'You must log in to leave a review.'); 
 $tpl = $modx->getOption('tpl', $scriptProperties,'MoxycartProductFullReview'); 
-$approve_reviews = $modx->getOption('approve_reviews', $scriptProperties, 0); 
+$auto_approve_reviews = $modx->getOption('auto_approve_reviews', $scriptProperties, $modx->getOption('moxycart.auto_approve_reviews')); 
 
 
 $props = array();

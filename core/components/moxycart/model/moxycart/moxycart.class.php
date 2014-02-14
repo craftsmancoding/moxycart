@@ -605,11 +605,7 @@ class Moxycart {
             return $data;
         }
 
-   echo '<pre>';
-        print_r($data);
-        die();
         return json_encode($data);
-
     }
 
     /**
@@ -621,10 +617,9 @@ class Moxycart {
         $product_id = (int) $this->modx->getOption('product_id',$args);
         $state = $this->modx->getOption('state',$args);
   
-        
         $limit = (int) $this->modx->getOption('limit',$args,$this->default_limit);
         $start = (int) $this->modx->getOption('start',$args,0);
-        //$sort = $this->modx->getOption('sort',$args,'seq');
+        $sort = $this->modx->getOption('sort',$args,'timestamp_created');
         $dir = $this->modx->getOption('dir',$args,'ASC');
         
         $criteria = $this->modx->newQuery('Review');
@@ -640,7 +635,7 @@ class Moxycart {
         $total_pages = $this->modx->getCount('Review',$criteria);
         
         $criteria->limit($limit, $start); 
-        //$criteria->sortby($sort,$dir);
+        $criteria->sortby($sort,$dir);
         $pages = $this->modx->getCollection('Review',$criteria);
 
         //return $criteria->toSQL(); 

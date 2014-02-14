@@ -21,18 +21,8 @@
  * @package moxycart
  */
 
-/**
- * Description
- * -----------
- * en default topic lexicon strings
- *
- * Variables
- * ---------
- * @var $modx modX
- * @var $scriptProperties array
- *
- * @package moxycart
- **/
+// TODO... we got barebones stuff in here until the product settles down enough to translate it.
+// Too hard to translate a moving target... stay tuned.
 $_lang['moxycart'] = 'Moxycart'; 
 $_lang['moxycart_desc'] = 'Your turn-key eCommerce solution.';
 
@@ -140,13 +130,31 @@ $_lang['creating_product_container_content2'] = 'This explains how to do this.';
 // Description: setting_ + Key + _desc
 
 $_lang['default_product_template'] = 'Default Product Template';
+
 $_lang['moxycart.default_product_template'] = 'Default Product Template';
 $_lang['moxycart.default_taxonomy_template'] = 'Default Taxonomy Template';
 $_lang['moxycart.default_term_template'] = 'Default Term Template';
 $_lang['moxycart.default_product_type'] = 'Default Term Template';
 
-$_lang['setting_moxycart.approve_reviews'] = 'Approve Reviews';
-$_lang['setting_moxycart.approve_reviews_desc'] = 'If set to "Yes", customer reviews will be automatically approved. This is not recommended. You can override this global setting in your writeReview Snippet.  Default is "No".';
+$_lang['setting_moxycart.enable_reviews'] = 'Enable Product Reviews';
+$_lang['setting_moxycart.enable_reviews_desc'] = 'When enabled, you can solicit reviews from customers. A special "Reviews" tab will be shown on your product edit page.';
+$_lang['setting_moxycart.auto_approve_reviews'] = 'Approve Reviews';
+$_lang['setting_moxycart.auto_approve_reviews_desc'] = 'If set to "Yes", customer reviews will be automatically approved. This is not recommended. You can override this global setting in your writeReview Snippet.  Default is "No".';
+
+$_lang['setting_moxycart.upload_dir'] = 'Upload Directory';
+$_lang['setting_moxycart.upload_dir_desc'] = 'Define a directory where product assets will be uploaded, relative to MODX_ASSETS_PATH';
+
+$_lang['setting_moxycart.foxycart_categories'] = 'Foxycart Categories';
+$_lang['setting_moxycart.foxycart_categories_desc'] = 'JSON array of Foxycart categories copied from the Foxycart dashboard (temporary until API is completed)';
+
+
+$_lang['setting_moxycart.enable_variations'] = 'Enable Product Variations';
+$_lang['setting_moxycart.enable_variations_desc'] = 'Some shops require a more complicated setup that tracks prices and inventory counts (or other attributes) differently between variations of the same basic product (e.g. the Blue T-shirt costs more than the Red T-shirt).  Although you can manually create different products for each variation, Moxycart can help you track the matrix of variations under a single parent product.';
+
+
+
+
+
 
 $_lang['view_not_found'] = 'The view file you requested could not be found: [[+file]]';
 

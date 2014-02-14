@@ -64,7 +64,7 @@ class MoxycartController {
 
         $this->modx =& $modx;
         $this->core_path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-        require_once($this->core_path.'components/moxycart/model/moxycart/moxycart.class.php');
+        require_once $this->core_path.'components/moxycart/model/moxycart/moxycart.class.php';
 
         $this->Moxycart = new Moxycart($this->modx);
 
@@ -925,9 +925,11 @@ class MoxycartController {
      * @param int product_id (from $_GET). Defines the id of the product
      */
     public function product_update($args) {
+        
+        require_once $this->core_path . 'components/moxycart/model/moxycart/pagination.class.php';
+
         $product_id = (int) $this->modx->getOption('product_id', $args);
-
-
+        
         if (!$Product = $this->modx->getObject('Product', $product_id)) {        
             return 'Product not found : '.$product_id;
         }
@@ -1024,7 +1026,10 @@ class MoxycartController {
             $data['taxonomies'] .= $this->_load_view('product_taxonomy.php',$t); // TODO: react to the spec "type"
         }
               
-        $data['reviews'] = $this->Moxycart->json_reviews(array('product_id'=>$product_id),true);   
+        $data['reviews'] = $this->Moxycart->json_reviews(array('product_id'=>$product_id),true);
+        $P = new Pagination();
+        $P->set_results_per_page($this->modx->getOption('default_per_page'));
+        $data['review_pagination_links'] = $P->paginate($data['reviews']['total']);                
                 
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
         $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');

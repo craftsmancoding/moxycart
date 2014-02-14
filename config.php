@@ -94,7 +94,12 @@ return array(
                     ),
                 ),
             ),            
-        ),  
+        ),
+        'Review' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => true, 
+            xPDOTransport::UNIQUE_KEY => array('email'),
+        ),        
 
 /*        'modDashboardWidgetPlacement'   => array(
             xPDOTransport::PRESERVE_KEYS => false,

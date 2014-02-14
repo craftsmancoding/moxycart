@@ -40,6 +40,162 @@ return array(
                 'timestamp_created' => date('Y-m-d H:i:s'),
                 'currency_id' => 109,
                 'Template' => array('templatename' => 'Sample Product'),
+                'Reviews' => array(
+                    array(
+                        'name' => 'Elijah Jenkins',
+                        'email' => 'mr@manly.dude1',
+                        'state' => 'pending',
+                        'rating' => 55,
+                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vulputate congue massa. Fusce tempus, felis vel aliquet gravida, dolor dolor ultricies mi, ac fringilla nunc tortor ac nisi. Proin eu mollis elit, ut ultricies nisl. Maecenas quis augue non nisi pellentesque varius. Quisque facilisis sagittis magna, nec interdum mi ullamcorper sed. In quis neque non dui cursus tempus at eu nunc. Maecenas mauris sapien, tincidunt vel euismod id, adipiscing sed lectus.
+
+Ut nec urna ante. Vivamus nulla tortor, vehicula accumsan semper ac, pretium sed lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed ac consectetur tellus. Ut luctus tincidunt lacus, eget fermentum ipsum pretium id. Vivamus feugiat nibh sem, id congue purus fermentum sit amet. Ut ut lacus risus.
+
+Integer nulla dui, tincidunt ac rutrum eu, mattis non elit. Proin condimentum lacus non arcu dictum, quis fringilla risus ultricies. Praesent molestie nulla a leo elementum vestibulum. Ut malesuada augue metus, ut lobortis dui viverra ac. Duis consequat metus augue, a tincidunt lorem adipiscing a. Etiam id sem sed neque ornare bibendum. Proin sit amet nibh et lorem viverra tristique ac non lacus. Sed felis nibh, pulvinar at blandit at, venenatis ac elit. Morbi justo est, eleifend eget molestie sed, sollicitudin et elit. Donec id sapien eget nibh venenatis consequat. Nam fermentum metus ut ipsum scelerisque, quis euismod erat adipiscing.
+
+Nam neque felis, ultrices at dapibus feugiat, eleifend tincidunt erat. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Integer ut orci mauris. Etiam mauris nisi, convallis a orci id, tristique vulputate orci. Sed non risus mi. Cras consectetur, justo eget venenatis porttitor, libero neque cursus ligula, eget viverra velit erat sollicitudin purus. Duis luctus pellentesque erat, ut consequat eros pulvinar ac. Nunc ac elit malesuada, auctor leo a, viverra arcu. Nulla molestie nec nibh at iaculis. Sed tincidunt erat ut sem dignissim, venenatis accumsan erat dignissim. Aliquam mattis felis nibh, quis sollicitudin est vestibulum sed. Cras aliquet mi sit amet purus luctus, viverra ultricies ipsum tincidunt. Cras eu varius massa. Donec risus lectus, luctus non eros sed, ultricies sodales nisi. Aenean tincidunt sodales nunc, sit amet egestas massa tincidunt et. Suspendisse ut lectus venenatis, egestas nunc non, porttitor massa.',
+                    ),
+                    array(
+                        'name' => 'Gordon	 Obrien',
+                        'email' => 'mr@manly.dude2',
+                        'state' => 'approved',
+                        'rating' => 99,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Ana	 Ramos',
+                        'email' => 'mr@manly.dude3',
+                        'state' => 'archived',
+                        'rating' => 66,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Desiree	 Zimmerman',
+                        'email' => 'mr@manly.dude4',
+                        'state' => 'pending',
+                        'rating' => 77,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Juanita	 Carpenter',
+                        'email' => 'mr@manly.dude5',
+                        'state' => 'pending',
+                        'rating' => 88,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Alfred	 Ruiz',
+                        'email' => 'mr@manly.dude6',
+                        'state' => 'pending',
+                        'rating' => 42,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Warren	 Schneider',
+                        'email' => 'mr@manly.dude7',
+                        'state' => 'pending',
+                        'rating' => 1,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Felicia	 Flowers',
+                        'email' => 'mr@manly.dude8',
+                        'state' => 'pending',
+                        'rating' => 56,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Yvette	 Elliott',
+                        'email' => 'mr@manly.dude9',
+                        'state' => 'pending',
+                        'rating' => 67,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Roderick	 Bush',
+                        'email' => 'mr@manly.dude10',
+                        'state' => 'pending',
+                        'rating' => 78,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Veronica	 Graves',
+                        'email' => 'mr@manly.dude11',
+                        'state' => 'pending',
+                        'rating' => 89,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Helen	 Harmon',
+                        'email' => 'mr@manly.dude12',
+                        'state' => 'pending',
+                        'rating' => 90,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Sonya	 Bradley',
+                        'email' => 'mr@manly.dude13',
+                        'state' => 'pending',
+                        'rating' => 100,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Stephanie	 Gregory',
+                        'email' => 'mr@manly.dude14',
+                        'state' => 'pending',
+                        'rating' => 22,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Mike	 Hicks',
+                        'email' => 'mr@manly.dude15',
+                        'state' => 'pending',
+                        'rating' => 33,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Kayla	 Lopez',
+                        'email' => 'mr@manly.dude16',
+                        'state' => 'pending',
+                        'rating' => 44,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Johnnie	 George',
+                        'email' => 'mr@manly.dude17',
+                        'state' => 'pending',
+                        'rating' => 44,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Willie	 Kelly',
+                        'email' => 'mr@manly.dude18',
+                        'state' => 'pending',
+                        'rating' => 44,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Nellie	 Garner',
+                        'email' => 'mr@manly.dude19',
+                        'state' => 'pending',
+                        'rating' => 44,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Dora	 Morton',
+                        'email' => 'mr@manly.dude20',
+                        'state' => 'pending',
+                        'rating' => 44,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),
+                    array(
+                        'name' => 'Roosevelt	 Oliver',
+                        'email' => 'mr@manly.dude21',
+                        'state' => 'pending',
+                        'rating' => 44,
+                        'content' => 'Wow, this thing is awesome.',
+                    ),                    
+                    
+                )
             ),
             array(
                 'name' => 'Shaved Sweater',
