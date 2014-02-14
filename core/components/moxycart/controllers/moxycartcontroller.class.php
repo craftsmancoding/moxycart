@@ -1200,9 +1200,10 @@ class MoxycartController {
 		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');		
 
         $products = $this->Moxycart->json_products($args,true);
+        $products['assets_url'] = $this->assets_url;
 
         $products['back_url'] = $back_url;        
-
+        
         return $this->_load_view('product_list.php',$products);
    
     }
