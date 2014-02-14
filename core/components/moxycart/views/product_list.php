@@ -60,6 +60,7 @@ function product_save_seq() {
                         <th>Name</th>
                         <th>SKU</th>
                         <th>Price</th>
+                        <th>&nbsp;</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,6 +73,7 @@ function product_save_seq() {
                             </td>
                             <td><?php print $p['sku']; ?></td>
                             <td><?php print number_format($p['price'],2); ?></td>
+                            <td><img src="<?php print $data['assets_url']; ?>components/moxycart/images/sortable.png" alt="Product Sort"></td>
                         </tr>
                     <?php
                     endforeach;
