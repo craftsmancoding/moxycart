@@ -39,7 +39,8 @@
     "repoman": {
         "name": "Moxycart",
         "namespace": "moxycart",
-        "version": "0.0.8-dev",
+        "version": "0.8.0",
+        "release": "dev",
         "category":"Moxycart",
         "core_path": "",
         "assets_path" : "assets/",
