@@ -4,30 +4,20 @@
  * namespace. This home controller is loaded by default because of
  * our IndexManagerController.
  */
-class MoxycartHomeManagerController extends MoxycartManagerController {
-    /** @var bool Set to false to prevent loading of the header HTML. */
-    public $loadHeader = true;
-    /** @var bool Set to false to prevent loading of the footer HTML. */
-    public $loadFooter = true;
-    /** @var bool Set to false to prevent loading of the base MODExt JS classes. */
-    public $loadBaseJavascript = true;
+class MoxycartTestManagerController extends MoxycartManagerController {
     /**
      * Any specific processing we want to do here. Return a string of html.
      * @param array $scriptProperties
      */
     public function process(array $scriptProperties = array()) {
-        // You can set these at run time.
-        //$this->loadHeader = false;
-        //$this->loadFooter = false;
-        //$this->loadBaseJavascript = false;
-        return '<h2 class="modx-page-header">Moxycart</h2><p><a href="'. $this->getURL('currencies_manage') .'">Manage Currencies</a></p>';
+        return '<h2 class="modx-page-header">Test</h2><p>Testttt...</p>';
     }
     /**
      * The pagetitle to put in the <title> attribute.
      * @return null|string
      */
     public function getPageTitle() {
-        return 'Moxycart';
+        return 'My 2nd CMP!';
     }
     /**
      * Register needed assets. Using this method, it will automagically
@@ -46,4 +36,3 @@ class MoxycartHomeManagerController extends MoxycartManagerController {
 */
     }
 }
-/*EOF*/

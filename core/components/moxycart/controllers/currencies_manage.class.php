@@ -4,7 +4,7 @@
  * namespace. This home controller is loaded by default because of
  * our IndexManagerController.
  */
-class MoxycartHomeManagerController extends MoxycartManagerController {
+class MoxycartCurrenciesManageManagerController extends MoxycartManagerController {
     /** @var bool Set to false to prevent loading of the header HTML. */
     public $loadHeader = true;
     /** @var bool Set to false to prevent loading of the footer HTML. */
@@ -16,34 +16,32 @@ class MoxycartHomeManagerController extends MoxycartManagerController {
      * @param array $scriptProperties
      */
     public function process(array $scriptProperties = array()) {
-        // You can set these at run time.
-        //$this->loadHeader = false;
-        //$this->loadFooter = false;
-        //$this->loadBaseJavascript = false;
-        return '<h2 class="modx-page-header">Moxycart</h2><p><a href="'. $this->getURL('currencies_manage') .'">Manage Currencies</a></p>';
+        //return '<pre>'.print_r($this->config,true).'</pre>';
+        return '<h2 class="modx-page-header">Manage Currencies</h2><div id="moxycart_canvas"></div>
+        <br/><a href="'.$this->getUrl('home').'">Back</a>';
     }
     /**
      * The pagetitle to put in the <title> attribute.
      * @return null|string
      */
     public function getPageTitle() {
-        return 'Moxycart';
+        return 'Manage Currencies';
     }
     /**
      * Register needed assets. Using this method, it will automagically
      * combine and compress them if that is enabled in system settings.
      */
     public function loadCustomCssJs() {
-/*
-        $this->addCss('url/to/some/css_file.css');
-        $this->addJavascript('url/to/some/javascript.js');
-        $this->addLastJavascript('url/to/some/javascript_load_last.js');
+        $this->addCss($this->assets_url.'components/moxycart/css/moxycart.css');
+        $this->addJavascript($this->assets_url.'components/moxycart/js/currencies.js');
+        $this->addJavascript($this->assets_url.'components/moxycart/js/RowEditor.js');
+        $this->addLastJavascript($this->assets_url.'url/to/some/javascript_load_last.js');
         $this->addHtml('<script type="text/javascript">
-        Ext.onReady(function() {
-            // We could run some javascript here
-        });
-        </script>');
-*/
+            var connector_url = "'.$this->connector_url.'";
+    		Ext.onReady(function() {   		
+    			renderManageCurrencies();
+    		});
+    		</script>');
     }
 }
 /*EOF*/

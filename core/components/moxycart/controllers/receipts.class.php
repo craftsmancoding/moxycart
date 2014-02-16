@@ -4,7 +4,7 @@
  * namespace. This home controller is loaded by default because of
  * our IndexManagerController.
  */
-class MoxycartHomeManagerController extends MoxycartManagerController {
+class MoxycartReceiptsManagerController extends MoxycartManagerController {
     /** @var bool Set to false to prevent loading of the header HTML. */
     public $loadHeader = true;
     /** @var bool Set to false to prevent loading of the footer HTML. */
@@ -20,7 +20,7 @@ class MoxycartHomeManagerController extends MoxycartManagerController {
         //$this->loadHeader = false;
         //$this->loadFooter = false;
         //$this->loadBaseJavascript = false;
-        return '<h2 class="modx-page-header">Moxycart</h2><p><a href="'. $this->getURL('currencies_manage') .'">Manage Currencies</a></p>';
+        return '<h2 class="modx-page-header">Moxycart</h2><p>This is your first custom manager page. You are awesome!</p>';
     }
     /**
      * The pagetitle to put in the <title> attribute.

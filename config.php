@@ -27,98 +27,98 @@ return array(
     ),
     'build_attributes' => array(
         'Currency' => array(
-            xPDOTransport::PRESERVE_KEYS => true,
-            xPDOTransport::UPDATE_OBJECT => true, 
-            xPDOTransport::UNIQUE_KEY => array('code'),
+            'preserve_keys' => true,
+            'update_object' => true, 
+            'unique_key' => array('code'),
         ),
         'Product' => array(
-            xPDOTransport::PRESERVE_KEYS => true,
-            xPDOTransport::UPDATE_OBJECT => true, 
-            xPDOTransport::UNIQUE_KEY => array('sku'),
+            'preserve_keys' => true,
+            'update_object' => true, 
+            'unique_key' => array('sku'),
         ),
         'Image' => array(
-            xPDOTransport::PRESERVE_KEYS => true,
-            xPDOTransport::UPDATE_OBJECT => true, 
-            xPDOTransport::UNIQUE_KEY => array('url'),
+            'preserve_keys' => true,
+            'update_object' => true, 
+            'unique_key' => array('url'),
         ),
         'Spec' => array(
-            xPDOTransport::PRESERVE_KEYS => true,
-            xPDOTransport::UPDATE_OBJECT => true, 
-            xPDOTransport::UNIQUE_KEY => array('identifier'),
+            'preserve_keys' => true,
+            'update_object' => true, 
+            'unique_key' => array('identifier'),
         ),
         'ProductSpec' => array(
-            xPDOTransport::PRESERVE_KEYS => true,
-            xPDOTransport::UPDATE_OBJECT => true, 
-            xPDOTransport::UNIQUE_KEY => array('product_id','spec_id'),
+            'preserve_keys' => true,
+            'update_object' => true, 
+            'unique_key' => array('product_id','spec_id'),
         ),
         'VariationTerm' => array(
-            xPDOTransport::PRESERVE_KEYS => true,
-            xPDOTransport::UPDATE_OBJECT => true, 
-            xPDOTransport::UNIQUE_KEY => array('vtype_id','name'),
+            'preserve_keys' => true,
+            'update_object' => true, 
+            'unique_key' => array('vtype_id','name'),
         ),
         'VariationType' => array(
-            xPDOTransport::PRESERVE_KEYS => true,
-            xPDOTransport::UPDATE_OBJECT => true, 
-            xPDOTransport::UNIQUE_KEY => array('name'),
+            'preserve_keys' => true,
+            'update_object' => true, 
+            'unique_key' => array('name'),
         ),    
         'Store' => array(
-            xPDOTransport::PRESERVE_KEYS => true,
-            xPDOTransport::UPDATE_OBJECT => true, 
-            xPDOTransport::UNIQUE_KEY => array('uri'),
-            xPDOTransport::RELATED_OBJECTS => true,
-            xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array (            
+            'preserve_keys' => true,
+            'update_object' => true, 
+            'unique_key' => array('uri'),
+            'related_objects' => true,
+            'related_object_attributes' => array (            
                 'Products' => array(
-                    xPDOTransport::PRESERVE_KEYS => true,
-                    xPDOTransport::UPDATE_OBJECT => true, 
-                    xPDOTransport::UNIQUE_KEY => array('sku'),
-                    xPDOTransport::RELATED_OBJECTS => true,
-                    xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array (            
+                    'preserve_keys' => true,
+                    'update_object' => true, 
+                    'unique_key' => array('sku'),
+                    'related_objects' => true,
+                    'related_object_attributes' => array (            
                         'Specs' => array(
-                            xPDOTransport::PRESERVE_KEYS => true,
-                            xPDOTransport::UPDATE_OBJECT => true, 
-                            xPDOTransport::UNIQUE_KEY => array('product_id','store_id'),
-                            xPDOTransport::RELATED_OBJECTS => true,
-                            xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array (            
+                            'preserve_keys' => true,
+                            'update_object' => true, 
+                            'unique_key' => array('product_id','store_id'),
+                            'related_objects' => true,
+                            'related_object_attributes' => array (            
                                 'Spec' => array(
-                                    xPDOTransport::PRESERVE_KEYS => false,
-                                    xPDOTransport::UPDATE_OBJECT => true, 
-                                    xPDOTransport::UNIQUE_KEY => array('identifier'),
+                                    'preserve_keys' => false,
+                                    'update_object' => true, 
+                                    'unique_key' => array('identifier'),
                                 )    
                             )                            
                         ),           
                         'Template' => array(
-                            xPDOTransport::PRESERVE_KEYS => false,
-                            xPDOTransport::UPDATE_OBJECT => true,
-                            xPDOTransport::UNIQUE_KEY => 'templatename',
+                            'preserve_keys' => false,
+                            'update_object' => true,
+                            'unique_key' => 'templatename',
                         )
                     ),
                 ),
             ),            
         ),
         'Review' => array(
-            xPDOTransport::PRESERVE_KEYS => true,
-            xPDOTransport::UPDATE_OBJECT => true, 
-            xPDOTransport::UNIQUE_KEY => array('email'),
+            'preserve_keys' => true,
+            'update_object' => true, 
+            'unique_key' => array('email'),
         ),        
 
 /*        'modDashboardWidgetPlacement'   => array(
-            xPDOTransport::PRESERVE_KEYS => false,
-            xPDOTransport::UPDATE_OBJECT => true, 
-            xPDOTransport::UNIQUE_KEY => array('dashboard','widget','rank'),
-            xPDOTransport::RELATED_OBJECTS => true,
-            xPDOTransport::RELATED_OBJECT_ATTRIBUTES    => array(
+            'preserve_keys' => false,
+            'update_object' => true, 
+            'unique_key' => array('dashboard','widget','rank'),
+            'related_objects' => true,
+            'related_object_attributes'    => array(
                 'Widget'    =>  array (
-                    xPDOTransport::PRESERVE_KEYS => false,
-                    xPDOTransport::UPDATE_OBJECT => true, 
-                    xPDOTransport::UNIQUE_KEY => array('name'),
+                    'preserve_keys' => false,
+                    'update_object' => true, 
+                    'unique_key' => array('name'),
                 )
             )
         ),  */ 
 
         'Transaction' => array(
-            xPDOTransport::PRESERVE_KEYS => true,
-            xPDOTransport::UPDATE_OBJECT => true, 
-            xPDOTransport::UNIQUE_KEY => array('transaction_id'),
+            'preserve_keys' => true,
+            'update_object' => true, 
+            'unique_key' => array('transaction_id'),
         ),    
     ),
 );

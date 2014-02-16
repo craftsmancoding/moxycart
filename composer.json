@@ -1,0 +1,142 @@
+{
+    "name": "craftsmancoding/moxycart",
+    "description": "A turnkey FoxyCart eCommerce solution for MODX Revolution.",
+    "type": "library",
+    "keywords": ["modx", "foxycart", "ecommerce"],
+    "homepage": "github.com/craftsmancoding/moxycart",
+    "license": "GPL2",
+    "authors": [
+        {
+            "name": "Everett Griffiths",
+            "email": "everett@craftsmancoding.com",
+            "homepage": "http://craftsmancoding.com"
+        },
+        {
+            "name": "Nick Hoag",
+            "email": "nick@craftsmancoding.com",
+            "homepage": "http://craftsmancoding.com"
+        },
+        {
+            "name": "Daniel Edano",
+            "email": "daniel@craftsmancoding.com",
+            "homepage": "http://craftsmancoding.com"
+        }        
+    ],
+    "support": {
+        "email": "donotreply@craftsmancoding.org",
+        "issues": "github.com/craftsmancoding/moxycart/issues",
+        "forum": "forums.modx.com/",
+        "wiki": "github.com/craftsmancoding/moxycart/wiki",
+        "source": "github.com/craftsmancoding/moxycart"
+    },    
+    "require": {
+        "php": ">=5.3",
+        "ezyang/htmlpurifier": "dev-master"
+    },
+    "autoload": {
+        "classmap":["model/moxycart/"]
+    },
+    "repoman": {
+        "name": "Moxycart",
+        "namespace": "moxycart",
+        "version": "0.0.8-dev",
+        "category":"Moxycart",
+        "core_path": "",
+        "assets_path" : "assets/",
+        "docs_path" : "docs/",
+        "seed": ["base"],
+        "packages":[
+            {
+                "pkg":"moxycart",
+                "path":"model/",
+                "table_prefix": "moxy_"
+            },
+            {
+                "pkg":"foxycart",
+                "path":"model/",
+                "table_prefix": "foxy_"
+            }
+        ],
+        "build_attributes":{
+            "Currency": {
+                "preserve_keys":true,
+                "update_object":true,
+                "unique_key":true
+            },
+            "Product": {
+                "preserve_keys": true,
+                "update_object": true, 
+                "unique_key": "sku"
+            },
+            "Image": {
+                "preserve_keys": true,
+                "update_object": true, 
+                "unique_key": "url"
+            },
+            "Spec": {
+                "preserve_keys": true,
+                "update_object": true, 
+                "unique_key": "identifier"
+            },
+            "ProductSpec": {
+                "preserve_keys": true,
+                "update_object": true, 
+                "unique_key": ["product_id","spec_id"]
+            },
+            "VariationTerm" : {
+                "preserve_keys": true,
+                "update_object": true, 
+                "unique_key": ["vtype_id","name"]
+            },
+            "VariationType" : {
+                "preserve_keys": true,
+                "update_object": true, 
+                "unique_key": ["name"]
+            },    
+            "Store": {
+                "preserve_keys": true,
+                "update_object": true, 
+                "unique_key": ["uri"],
+                "related_objects": true,
+                "related_object_attributes": {  
+                    "Products": {
+                        "preserve_keys": true,
+                        "update_object": true, 
+                        "unique_key": ["sku"],
+                        "related_objects": true,
+                        "related_object_attributes": {
+                            "Specs": {
+                                "preserve_keys": true,
+                                "update_object": true, 
+                                "unique_key": ["product_id","store_id"],
+                                "related_objects": true,
+                                "related_object_attributes": {            
+                                    "Spec" : {
+                                        "preserve_keys": false,
+                                        "update_object": true, 
+                                        "unique_key": ["identifier"]
+                                    }    
+                                }                
+                            },           
+                            "Template": {
+                                "preserve_keys": false,
+                                "update_object": true,
+                                "unique_key": "templatename"
+                            }
+                        }
+                    }
+                }         
+            },
+            "Review": {
+                "preserve_keys": true,
+                "update_object": true, 
+                "unique_key" : ["email"]
+            },        
+            "Transaction": {
+                "preserve_keys": true,
+                "update_object": true, 
+                "unique_key": ["transaction_id"]
+            }
+        }
+    }
+}
