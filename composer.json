@@ -4,7 +4,7 @@
     "type": "library",
     "keywords": ["modx", "foxycart", "ecommerce"],
     "homepage": "github.com/craftsmancoding/moxycart",
-    "license": "GPL2",
+    "license": "GPL-2.0",
     "authors": [
         {
             "name": "Everett Griffiths",
@@ -37,15 +37,14 @@
         "classmap":["model/moxycart/"]
     },
     "repoman": {
-        "name": "Moxycart",
+        "package_name": "Moxycart",
         "namespace": "moxycart",
         "version": "0.8.0",
         "release": "dev",
         "category":"Moxycart",
         "core_path": "",
         "assets_path" : "assets/",
-        "docs_path" : "docs/",
-        "seed": ["base"],
+        "seeds_path": ["base"],
         "packages":[
             {
                 "pkg":"moxycart",

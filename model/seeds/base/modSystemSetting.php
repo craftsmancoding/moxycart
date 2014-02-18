@@ -62,7 +62,7 @@ return array(
 		'area' => 'moxycart:default'
     ),
     array(
-        'key'  =>     'moxycart.foxycart_categories',
+        'key'  =>     'moxycart.categories',
 		'value'=>     '["Default"]',
 		'xtype'=>     'textfield',
 		'namespace' => 'moxycart',

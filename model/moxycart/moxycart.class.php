@@ -161,9 +161,15 @@ class Moxycart {
         $total_pages = 1;
         
         // Init our array
+        $str = $this->modx->getOption('moxycart.categories','','["Default"]');
+        $array = json_decode($str,true);
+        $results = array();
+        foreach ($array as $a) {
+            $results[$a] = $a;
+        }
         $data = array(
-            'results'=>array(array('id'=>'default','name'=>'Default')),
-            'total' => $total_pages,
+            'results'=>array($results),
+            'total' => count($results),
         );
 
         if ($raw) {

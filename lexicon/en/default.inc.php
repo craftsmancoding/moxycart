@@ -144,8 +144,8 @@ $_lang['setting_moxycart.auto_approve_reviews_desc'] = 'If set to "Yes", custome
 $_lang['setting_moxycart.upload_dir'] = 'Upload Directory';
 $_lang['setting_moxycart.upload_dir_desc'] = 'Define a directory where product assets will be uploaded, relative to MODX_ASSETS_PATH';
 
-$_lang['setting_moxycart.foxycart_categories'] = 'Foxycart Categories';
-$_lang['setting_moxycart.foxycart_categories_desc'] = 'JSON array of Foxycart categories copied from the Foxycart dashboard (temporary until API is completed)';
+$_lang['setting_moxycart.categories'] = 'Foxycart Categories';
+$_lang['setting_moxycart.categories_desc'] = 'JSON array of Foxycart categories copied from the Foxycart dashboard (temporary until API is completed)';
 
 
 $_lang['setting_moxycart.enable_variations'] = 'Enable Product Variations';
