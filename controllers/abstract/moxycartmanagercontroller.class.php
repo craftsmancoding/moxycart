@@ -63,19 +63,19 @@ abstract class MoxycartManagerController extends modExtraManagerController {
     public function __construct(&$modx) {
 
         $this->modx =& $modx;
-        $this->core_path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-        require_once $this->core_path.'components/moxycart/model/moxycart/moxycart.class.php';
+        $this->core_path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+        $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
+        
+        require_once $this->core_path.'model/moxycart/moxycart.class.php';
 
         $this->Moxycart = new Moxycart($this->modx);
-
-
-        $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
+        
         $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $this->connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
-        $this->modx->addPackage('moxycart',$this->core_path.'components/moxycart/model/','moxy_');
+        $this->connector_url = $this->assets_url.'connector.php?f=';
+        $this->modx->addPackage('moxycart',$this->core_path.'model/','moxy_');
         // relative to the MODX_ASSETS_PATH or MODX_ASSETS_URL
         $this->upload_dir = $this->modx->getOption('moxycart.upload_dir',null,'images/products/');
-        $this->jquery_url = $this->assets_url.'components/moxycart/js/jquery-2.0.3.min.js';
+        $this->jquery_url = $this->assets_url.'js/jquery-2.0.3.min.js';
         
         // Like controller_url, but in the mgr
         // MODx.action['moxycart:index'] + '?f=';
@@ -156,10 +156,10 @@ abstract class MoxycartManagerController extends modExtraManagerController {
      */
     private function _load_view($file, $data=array(),$return=false) {
         $file = basename($file);
-    	if (file_exists($this->core_path.'components/moxycart/views/'.$file)) {
+    	if (file_exists($this->core_path.'views/'.$file)) {
     	    if (!isset($return) || $return == false) {
     	        ob_start();
-    	        include ($this->core_path.'components/moxycart/views/'.$file);
+    	        include ($this->core_path.'views/'.$file);
     	        $output = ob_get_contents();
     	        ob_end_clean();
     	    }     
@@ -229,8 +229,8 @@ abstract class MoxycartManagerController extends modExtraManagerController {
         //$this->addHtml();
         $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
         $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $this->connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
-        $this->modx->addPackage('moxycart',$this->core_path.'components/moxycart/model/','moxy_');
+        $this->connector_url = $this->assets_url.'connector.php?f=';
+        $this->modx->addPackage('moxycart',$this->core_path.'model/','moxy_');
     }
     /**
      * Defines the lexicon topics to load in our controller.

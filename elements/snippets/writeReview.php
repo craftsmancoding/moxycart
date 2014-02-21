@@ -26,9 +26,9 @@ if (!$modx->getOption('moxycart.enable_reviews')) {
     $modx->log(modX::LOG_LEVEL_INFO, '[writeReview] moxycart.enable_reviews is set to 0; reviews are not enabled.');
     return;
 }
-$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-$assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
-require_once $core_path .'components/moxycart/model/htmlpurifier/library/HTMLPurifier.auto.php';
+$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+$assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
+require_once $core_path .'model/htmlpurifier/library/HTMLPurifier.auto.php';
 
 $product_id = $modx->getOption('product_id', $scriptProperties); 
 $public = $modx->getOption('public', $scriptProperties,0); 

@@ -12,8 +12,8 @@
  *
  * @package moxycart
  **/
-$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-require_once $core_path . 'components/moxycart/model/moxycart/moxycart.class.php';
+$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+require_once $core_path . 'model/moxycart/moxycart.class.php';
 $moxycart = new Moxycart($modx);
 $Products = $moxycart->json_products(array('limit'=>0,'track_inventory'=>1),true);
 if($Products['total'] == 0) {

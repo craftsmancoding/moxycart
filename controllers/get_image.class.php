@@ -49,10 +49,10 @@ class MoxycartGetImageManagerController extends MoxycartManagerController {
      * combine and compress them if that is enabled in system settings.
      */
     public function loadCustomCssJs() {
-        $this->addCss($this->assets_url.'components/moxycart/css/moxycart.css');
-        $this->addJavascript($this->assets_url.'components/moxycart/js/currencies.js');
-        $this->addJavascript($this->assets_url.'components/moxycart/js/RowEditor.js');
-        $this->addLastJavascript($this->assets_url.'url/to/some/javascript_load_last.js');
+        $this->addCss($this->assets_url.'css/moxycart.css');
+        $this->addJavascript($this->assets_url.'js/currencies.js');
+        $this->addJavascript($this->assets_url.'js/RowEditor.js');
+//        $this->addLastJavascript($this->assets_url.'url/to/some/javascript_load_last.js');
         $this->addHtml('<script type="text/javascript">
             var connector_url = "'.$this->connector_url.'";
     		Ext.onReady(function() {   		

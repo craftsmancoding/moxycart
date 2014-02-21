@@ -38,9 +38,9 @@
  *
  * @package moxycart
  */
-$core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);
-require_once($core_path . 'components/moxycart/model/foxycart/rc4crypt.class.php');
-$modx->addPackage('foxycart',$core_path.'components/moxycart/model/','foxy_');
+$core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH.'components/moxycart/');
+require_once $core_path.'model/foxycart/rc4crypt.class.php';
+$modx->addPackage('foxycart',$core_path.'model/','foxy_');
 
 $product_hooks_tmp = $modx->getOption('product_hooks',$scriptProperties);
 $transaction_hooks_tmp = $modx->getOption('transaction_hooks',$scriptProperties);

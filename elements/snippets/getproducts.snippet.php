@@ -29,9 +29,9 @@
  * @package moxycart
  **/
 
-$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-$class_path = $core_path . 'components/moxycart/model/moxycart/moxycart.snippets.class.php';
-require_once($class_path);
+$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+require_once $core_path . 'model/moxycart/moxycart.snippets.class.php';
+
 
 $scriptProperties['innerTpl'] = $modx->getOption('innerTpl',$scriptProperties, 'ProductInnerTpl');
 

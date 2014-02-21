@@ -11,8 +11,8 @@
  * @param integer product_id, default is the current placeholder for product_id
  * @param integer qty, default is the current placeholder set for qty
  */
-$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-require_once $core_path . 'components/moxycart/model/moxycart/moxycart.class.php';
+$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+require_once $core_path . 'model/moxycart/moxycart.class.php';
 
 $product_id = (int) $modx->getOption('product_id', $scriptProperties, $modx->getPlaceholder('product_id'));
 $qty = (int) $modx->getOption('product_id', $scriptProperties, $modx->getPlaceholder('qty'));

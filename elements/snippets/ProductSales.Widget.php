@@ -16,11 +16,11 @@
  * 
  * @package moxycart
  **/
-$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-$assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
+$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+$assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
 
-$modx->regClientStartupScript($assets_url . 'components/moxycart/js/jquery-2.0.3.min.js');
-$modx->regClientStartupScript($assets_url . 'components/moxycart/js/Chart.min.js');
+$modx->regClientStartupScript($assets_url . 'js/jquery-2.0.3.min.js');
+$modx->regClientStartupScript($assets_url . 'js/Chart.min.js');
 
 $props = array();
 

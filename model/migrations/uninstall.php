@@ -1,8 +1,8 @@
 <?php
-$core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH);
+$core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH.'components/moxycart/');
 
-$modx->addPackage('moxycart',"{$core_path}components/{$object['namespace']}/model/",'moxy_');
-$modx->addPackage('foxycart',"{$core_path}components/{$object['namespace']}/model/",'foxy_');
+$modx->addPackage('moxycart',"{$core_path}model/",'moxy_');
+$modx->addPackage('foxycart',"{$core_path}model/",'foxy_');
 
 $manager = $modx->getManager();
 

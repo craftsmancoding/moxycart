@@ -36,15 +36,15 @@
     "autoload": {
         "classmap":["model/moxycart/"]
     },
-    "repoman": {
+    "extra": {
         "package_name": "Moxycart",
         "namespace": "moxycart",
-        "version": "0.8.0",
+        "version": "0.8.1",
         "release": "dev",
         "category":"Moxycart",
         "core_path": "",
         "assets_path" : "assets/",
-        "seeds_path": ["base"],
+        "seeds_path": ["model/seeds/base"],
         "packages":[
             {
                 "pkg":"moxycart",

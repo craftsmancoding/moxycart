@@ -63,19 +63,19 @@ class MoxycartController {
     public function __construct(&$modx) {
 
         $this->modx =& $modx;
-        $this->core_path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-        require_once $this->core_path.'components/moxycart/model/moxycart/moxycart.class.php';
+        $this->core_path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+        require_once $this->core_path.'model/moxycart/moxycart.class.php';
 
         $this->Moxycart = new Moxycart($this->modx);
 
 
-        $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
+        $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
         $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $this->connector_url = $this->assets_url.'components/moxycart/connector.php?f=';
-        $this->modx->addPackage('moxycart',$this->core_path.'components/moxycart/model/','moxy_');
+        $this->connector_url = $this->assets_url.'connector.php?f=';
+        $this->modx->addPackage('moxycart',$this->core_path.'model/','moxy_');
         // relative to the MODX_ASSETS_PATH or MODX_ASSETS_URL
         $this->upload_dir = $this->modx->getOption('moxycart.upload_dir',null,'images/products/');
-        $this->jquery_url = $this->assets_url.'components/moxycart/js/jquery-2.0.3.min.js';
+        $this->jquery_url = $this->assets_url.'js/jquery-2.0.3.min.js';
         
         // Like controller_url, but in the mgr
         // MODx.action['moxycart:index'] + '?f=';
@@ -156,10 +156,10 @@ class MoxycartController {
      */
     private function _load_view($file, $data=array(),$return=false) {
         $file = basename($file);
-    	if (file_exists($this->core_path.'components/moxycart/views/'.$file)) {
+    	if (file_exists($this->core_path.'views/'.$file)) {
     	    if (!isset($return) || $return == false) {
     	        ob_start();
-    	        include ($this->core_path.'components/moxycart/views/'.$file);
+    	        include ($this->core_path.'views/'.$file);
     	        $output = ob_get_contents();
     	        ob_end_clean();
     	    }     
@@ -223,7 +223,7 @@ class MoxycartController {
      *
      */
     public function receipts() {
-        $this->modx->addPackage('foxycart',$this->core_path.'components/moxycart/model/','foxy_');
+        $this->modx->addPackage('foxycart',$this->core_path.'model/','foxy_');
         
         $data = array();
         $data['mgr_connector_url'] = $this->mgr_connector_url;
@@ -263,9 +263,9 @@ class MoxycartController {
      *
      */
     public function currencies_manage($args) {
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/currencies.js');
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
-		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');
+		$this->modx->regClientStartupScript($this->assets_url . 'js/currencies.js');
+		$this->modx->regClientStartupScript($this->assets_url . 'js/RowEditor.js');
+		$this->modx->regClientCSS($this->assets_url . 'css/moxycart.css');
 
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
             var connector_url = "'.$this->connector_url.'";
@@ -446,10 +446,10 @@ class MoxycartController {
             return 'Image not found : '.$image_id;
         }
         $data = $Image->toArray(); 
-        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
+        $this->modx->regClientCSS($this->assets_url . 'css/mgr.css');
         $this->modx->regClientStartupScript($this->jquery_url);
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
+        $this->modx->regClientStartupScript($this->assets_url.'js/jquery-ui.js');
+        $this->modx->regClientStartupScript($this->assets_url.'js/bootstrap.js');
         $data['wide_load'] = '';
         $data['visible_height'] = $data['height'];
         $data['visible_width'] = $data['width'];        
@@ -461,8 +461,8 @@ class MoxycartController {
         }
         $data['moxycart.thumbnail_width'] = $this->modx->getOption('moxycart.thumbnail_width','',240);
         $data['moxycart.thumbnail_height'] = $this->modx->getOption('moxycart.thumbnail_height','',180);
-        $data['jcrop_js'] = $this->assets_url.'components/moxycart/js/jcrop.js';
-        $data['loader_path'] = $this->assets_url.'components/moxycart/images/gif-load.gif';
+        $data['jcrop_js'] = $this->assets_url.'js/jcrop.js';
+        $data['loader_path'] = $this->assets_url.'images/gif-load.gif';
 
         return $this->_load_view('image_update.php',$data);
     }
@@ -849,15 +849,15 @@ class MoxycartController {
             $data['taxonomies'] .= $this->_load_view('product_taxonomy.php',$t); // TODO: react to the spec "type"
         }
 
-        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
-        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
-        $this->modx->regClientCSS($this->assets_url.'components/moxycart/css/datepicker.css');
+        $this->modx->regClientCSS($this->assets_url . 'css/mgr.css');
+        $this->modx->regClientCSS($this->assets_url . 'css/dropzone.css');
+        $this->modx->regClientCSS($this->assets_url.'css/datepicker.css');
         $this->modx->regClientStartupScript($this->jquery_url);
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/dropzone.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
+        $this->modx->regClientStartupScript($this->assets_url.'js/jquery-ui.js');
+        $this->modx->regClientStartupScript($this->assets_url.'js/jquery.tabify.js');
+        $this->modx->regClientStartupScript($this->assets_url.'js/bootstrap.js');
+        $this->modx->regClientStartupScript($this->assets_url.'js/dropzone.js');
+        $this->modx->regClientStartupScript($this->assets_url.'js/script.js');
         $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">          
             var connector_url = "'.$this->connector_url.'";
             var use_editor = "'.$this->modx->getOption('use_editor').'";
@@ -926,7 +926,7 @@ class MoxycartController {
      */
     public function product_update($args) {
         
-        require_once $this->core_path . 'components/moxycart/model/moxycart/pagination.class.php';
+        require_once $this->core_path . 'model/moxycart/pagination.class.php';
 
         $product_id = (int) $this->modx->getOption('product_id', $args);
         
@@ -1031,16 +1031,16 @@ class MoxycartController {
         $P->set_results_per_page($this->modx->getOption('default_per_page'));
         $data['review_pagination_links'] = $P->paginate($data['reviews']['total']);                
                 
-        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');
-        $this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/dropzone.css');
-        $this->modx->regClientCSS($this->assets_url.'components/moxycart/css/datepicker.css');
+        $this->modx->regClientCSS($this->assets_url . 'css/mgr.css');
+        $this->modx->regClientCSS($this->assets_url . 'css/dropzone.css');
+        $this->modx->regClientCSS($this->assets_url.'css/datepicker.css');
         $this->modx->regClientStartupScript($this->jquery_url);
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery.tabify.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/dropzone.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/bootstrap.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/multisortable.js');
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/script.js');
+        $this->modx->regClientStartupScript($this->assets_url.'js/jquery-ui.js');
+        $this->modx->regClientStartupScript($this->assets_url.'js/jquery.tabify.js');
+        $this->modx->regClientStartupScript($this->assets_url.'js/dropzone.js');
+        $this->modx->regClientStartupScript($this->assets_url.'js/bootstrap.js');
+        $this->modx->regClientStartupScript($this->assets_url.'js/multisortable.js');
+        $this->modx->regClientStartupScript($this->assets_url.'js/script.js');
 
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.$Product->toJson().';            
@@ -1084,14 +1084,14 @@ class MoxycartController {
     		</script>
     	');
  	
-        $this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/productcontainer.js');
+        $this->modx->regClientStartupScript($this->assets_url . 'js/productcontainer.js');
 
         if ($this->modx->getOption('use_editor')) {
             $this->_load_tinyMCE();
         }
 
         $data['mgr_connector_url'] = $this->mgr_connector_url;
-        $data['loader_path'] = $this->assets_url.'components/moxycart/images/gif-load.gif';
+        $data['loader_path'] = $this->assets_url.'images/gif-load.gif';
 
         return $this->_load_view('product_template.php',$data);
     }
@@ -1126,9 +1126,9 @@ class MoxycartController {
     		});
     		</script>
     	');
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/manageinventory.js');
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
-		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');	
+		$this->modx->regClientStartupScript($this->assets_url . 'js/manageinventory.js');
+		$this->modx->regClientStartupScript($this->assets_url . 'js/RowEditor.js');
+		$this->modx->regClientCSS($this->assets_url . 'css/moxycart.css');	
 		
         return '<div id="moxycart_canvas"></div>';
     }
@@ -1196,8 +1196,8 @@ class MoxycartController {
     	');
 
         $this->modx->regClientStartupScript($this->jquery_url);
-        $this->modx->regClientStartupScript($this->assets_url.'components/moxycart/js/jquery-ui.js');
-		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/mgr.css');		
+        $this->modx->regClientStartupScript($this->assets_url.'js/jquery-ui.js');
+		$this->modx->regClientCSS($this->assets_url . 'css/mgr.css');		
 
         $products = $this->Moxycart->json_products($args,true);
         $products['assets_url'] = $this->assets_url;
@@ -1565,9 +1565,9 @@ class MoxycartController {
      * Hosts the "Manage Variation Terms" page
      */
     public function specs_manage($args) {
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/specs.js');
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
-		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');
+		$this->modx->regClientStartupScript($this->assets_url . 'js/specs.js');
+		$this->modx->regClientStartupScript($this->assets_url . 'js/RowEditor.js');
+		$this->modx->regClientCSS($this->assets_url . 'css/moxycart.css');
 
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
             var connector_url = "'.$this->connector_url.'";
@@ -1675,10 +1675,7 @@ class MoxycartController {
      * Hosts the "Manage Variation Terms" page
      */
     public function variation_terms_manage($args) {
-        // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
-
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/variation_terms.js');
+		$this->modx->regClientStartupScript($this->assets_url . 'js/variation_terms.js');
 
 		$vtype_id = (int) $this->modx->getOption('vtype_id',$args);
 		
@@ -1690,8 +1687,8 @@ class MoxycartController {
     		</script>
     	');	
 		
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
-		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');		
+		$this->modx->regClientStartupScript($this->assets_url . 'js/RowEditor.js');
+		$this->modx->regClientCSS($this->assets_url . 'css/moxycart.css');		
 		
         return '<div id="moxycart_canvas"></div>';
     }
@@ -1759,9 +1756,8 @@ class MoxycartController {
      */
     public function variation_types_manage($args) {
         // Add Required JS files here:
-        //$this->regClientStartupScript($this->assets_url'components/moxycart/test.js');
 
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/variation_types.js');
+		$this->modx->regClientStartupScript($this->assets_url . 'js/variation_types.js');
 
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
             var connector_url = "'.$this->connector_url.'";
@@ -1771,8 +1767,8 @@ class MoxycartController {
     		</script>
     	');	
 		
-		$this->modx->regClientStartupScript($this->assets_url . 'components/moxycart/js/RowEditor.js');
-		$this->modx->regClientCSS($this->assets_url . 'components/moxycart/css/moxycart.css');
+		$this->modx->regClientStartupScript($this->assets_url . 'js/RowEditor.js');
+		$this->modx->regClientCSS($this->assets_url . 'css/moxycart.css');
 		
         return '<div id="moxycart_canvas"></div>';		
 		
@@ -1856,7 +1852,7 @@ class MoxycartController {
                     $a = (int) $_GET['a'];
                     
                     if (substr($m, 0, 4) == 'json') {
-                        $out .= '<li>'.$m.' <a href="'.$this->assets_url.'components/moxycart/connector.php?f='.$m.'">(Ajax)</a></li>';
+                        $out .= '<li>'.$m.' <a href="'.$this->assets_url.'connector.php?f='.$m.'">(Ajax)</a></li>';
                     }
                     else {
                         $out .= '<li>'.$m.' <a href="'.$this->mgr_url.'?a='.$a.'&f='.$m.'">(Manager Page)</a></li>';
@@ -1864,7 +1860,7 @@ class MoxycartController {
                 }
                 else {
                     if (substr($m, 0, 4) == 'json') {
-                        $out .= '<li>'.$m.' <a href="'.$this->assets_url.'components/moxycart/connector.php?f='.$m.'">(Ajax)</a></li>';
+                        $out .= '<li>'.$m.' <a href="'.$this->assets_url.'connector.php?f='.$m.'">(Ajax)</a></li>';
                     }                
                 }
             }

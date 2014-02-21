@@ -33,8 +33,8 @@ $log = array(
 );
 
 $modx->log(xPDO::LOG_LEVEL_DEBUG,'UserCreate',$log,'UserCreate Snippet',__FILE__,__LINE__);
-$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-$modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
+$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+$modx->addPackage('moxycart',$core_path.'model/','moxy_');
 
 /*
 SAMPLE CUSTOMER XML SECTION
