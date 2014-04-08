@@ -1,6 +1,6 @@
 <?php
 class Product extends xPDOObject {
-
+    public static $x;
     /**
      * Override to provide calculated fields
      */

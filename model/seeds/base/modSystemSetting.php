@@ -68,5 +68,19 @@ return array(
 		'namespace' => 'moxycart',
 		'area' => 'moxycart:default'
     ),
+    array(
+        'key'  =>     'moxycart.results_per_page',
+		'value'=>     '50',
+		'xtype'=>     'textfield',
+		'namespace' => 'moxycart',
+		'area' => 'moxycart:default'
+    ),
+    array(
+        'key'  =>     'moxycart.product_columns',
+		'value'=>     '',
+		'xtype'=>     'textfield',
+		'namespace' => 'moxycart',
+		'area' => 'moxycart:default'
+    ),
 );
 /*EOF*/

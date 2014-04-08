@@ -3,7 +3,7 @@
     "description": "A turnkey FoxyCart eCommerce solution for MODX Revolution.",
     "type": "library",
     "keywords": ["modx", "foxycart", "ecommerce"],
-    "homepage": "github.com/craftsmancoding/moxycart",
+    "homepage": "http://github.com/craftsmancoding/moxycart",
     "license": "GPL-2.0",
     "authors": [
         {
@@ -24,10 +24,10 @@
     ],
     "support": {
         "email": "donotreply@craftsmancoding.org",
-        "issues": "github.com/craftsmancoding/moxycart/issues",
-        "forum": "forums.modx.com/",
-        "wiki": "github.com/craftsmancoding/moxycart/wiki",
-        "source": "github.com/craftsmancoding/moxycart"
+        "issues": "http://github.com/craftsmancoding/moxycart/issues",
+        "forum": "http://forums.modx.com/",
+        "wiki": "http://github.com/craftsmancoding/moxycart/wiki",
+        "source": "http://github.com/craftsmancoding/moxycart"
     },    
     "require": {
         "php": ">=5.3",

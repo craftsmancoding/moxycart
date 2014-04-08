@@ -3,6 +3,7 @@
  * The abstract Manager Controller.
  * In this class, we define stuff we want on all of our controllers.
  */
+require_once dirname(dirname(dirname(__FILE__))).'/vendor/autoload.php';
 abstract class MoxycartManagerController extends modExtraManagerController {
     /** @var bool Set to false to prevent loading of the header HTML. */
     public $loadHeader = true;
@@ -278,5 +279,57 @@ Array
         return MODX_MANAGER_URL . '?a='.$this->config['id'].'&action='.$action.$url;
     }
 
+    /**
+     * Gotta look up the URL of our CMP and its actions
+     * 
+     * @param array any optional arguments, e.g. array('action'=>'children','parent'=>123)
+     * @param string $controller inside the moxycart namespace
+     * @return string
+     */
+    public function getControllerUrl($args=array(),$controller='index') {
+        // future: pass as args:
+        $namespace='moxycart';
+        
+        $url = MODX_MANAGER_URL;
+        if ($Action = $this->modx->getObject('modAction', array('namespace'=>$namespace,'controller'=>$controller))) {
+            $url .= '?a='.$Action->get('id');
+            if ($args) {
+                foreach ($args as $k=>$v) {
+                    $url.='&'.$k.'='.$v;
+                }
+            }
+        }
+        return $url;
+    }
 
+    /**
+     * Override Smarty. Don't want it.
+     *
+     * @param string $file (relative to the views directory)
+     * @return rendered string (e.g. HTML)
+     */
+    public function fetchTemplate($file) {
+        $path = $this->modx->getOption('moxycart.core_path','', MODX_CORE_PATH.'components/moxycart/').'/views/';
+
+        $data =& $this->getPlaceholders();
+
+
+		if (is_file($path.$file)) {
+			ob_start();
+			include $path.$file;
+			return ob_get_clean();
+		}
+		$this->modx->log(modX::LOG_LEVEL_ERROR, 'View file does not exist: ' .$path.$file, __CLASS__,__LINE__);
+		return $this->modx->lexicon('view_not_found', array('file'=> 'views/'.$file));
+    }
+
+    /**
+     * Clean out the "scaffolding" gunk from $scriptProperties array.
+     */
+    public function reduce($scriptProperties = array()) {
+        unset($scriptProperties['a']);
+        unset($scriptProperties['HTTP_MODAUTH']);
+        unset($scriptProperties['action']);
+        return $scriptProperties;
+    }
 }

@@ -10,11 +10,11 @@ class StoreCreateManagerController extends ResourceCreateManagerController {
         parent::loadCustomCssJs();
 
         // Req'd for dev overrides
-        $assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
+        $assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
         
 		//Add below for customization
-        $this->addJavascript($assets_url . 'components/moxycart/js/productcontainer.js');
-    	$moxycart_connector_url = $assets_url.'components/moxycart/connector.php?f=';
+        $this->addJavascript($assets_url . 'js/productcontainer.js');
+    	$moxycart_connector_url = $assets_url.'connector.php?f=';
     	$this->addHtml('
 			<script type="text/javascript">
                 var connector_url = "'.$moxycart_connector_url.'";
@@ -29,7 +29,7 @@ class StoreCreateManagerController extends ResourceCreateManagerController {
 				});
 			</script>');
 			
-        $this->addCss($assets_url.'components/moxycart/css/mgr.css');
+        $this->addCss($assets_url.'css/mgr.css');
     }    
     
     public function getLanguageTopics() {

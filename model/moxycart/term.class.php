@@ -70,7 +70,7 @@ class Term extends modResource {
     }
     
     public static function getControllerPath(xPDO &$modx) {
-        $x = $modx->getOption('moxycart.core_path',null,$modx->getOption('core_path')).'components/moxycart/controllers/term/';
+        $x = $modx->getOption('moxycart.core_path',null,$modx->getOption('core_path').'components/moxycart/').'controllers/term/';
         return $x;
     }
     
