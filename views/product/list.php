@@ -24,3 +24,7 @@
 <?php endforeach; ?>
     </tbody>
 </table>
+
+<div>
+Pagination Links here
+</div>

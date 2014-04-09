@@ -67,27 +67,14 @@ abstract class MoxycartManagerController extends modExtraManagerController {
         $this->core_path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
         $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
         
-        require_once $this->core_path.'model/moxycart/moxycart.class.php';
+        //require_once $this->core_path.'model/moxycart/moxycart.class.php';
 
         $this->Moxycart = new Moxycart($this->modx);
         
         $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $this->connector_url = $this->assets_url.'connector.php?f=';
         $this->modx->addPackage('moxycart',$this->core_path.'model/','moxy_');
         // relative to the MODX_ASSETS_PATH or MODX_ASSETS_URL
         $this->upload_dir = $this->modx->getOption('moxycart.upload_dir',null,'images/products/');
-        $this->jquery_url = $this->assets_url.'js/jquery-2.0.3.min.js';
-        
-        // Like controller_url, but in the mgr
-        // MODx.action['moxycart:index'] + '?f=';
-        if ($Action = $this->modx->getObject('modAction', array('namespace'=>'moxycart','controller'=>'index'))) {
-            $this->action = $Action->get('id');
-        }
-        else {
-            $this->modx->log(modX::LOG_LEVEL_ERROR,'[moxycart] could not determine mgr action.');
-        }
-        
-        $this->mgr_connector_url = MODX_MANAGER_URL .'?a='.$this->action.'&f=';
 
     }
     
@@ -173,51 +160,6 @@ abstract class MoxycartManagerController extends modExtraManagerController {
     
     }
 
-    private function _testing($test) {
-        return 'blah ' . $test;
-    }
-    
-
-    /**
-    * Load TinyMCE
-    * Add modx-richtext class on textarea
-    * @param
-    * @return
-    **/
-    private function _load_tinyMCE() 
-    {
-        $_REQUEST['a'] = '';  /* fixes E_NOTICE bug in TinyMCE */
-
-        $plugin= $this->modx->getObject('modPlugin',array('name'=>'TinyMCE'));
-
-        // Plugin not present.
-        if (!$plugin) {
-            return '';
-        }
-
-        $tinyPath =  $this->modx->getOption('core_path').'components/tinymce/';
-        $tinyUrl =  $this->modx->getOption('assets_url').'components/tinymce/';
-        
-        $tinyproperties = $plugin->getProperties();
-        require_once $tinyPath.'tinymce.class.php';
-        $tiny = new TinyMCE( $this->modx, $tinyproperties);
-
-        //$tinyproperties['language'] =  $modx->getOption('fe_editor_lang',array(),$language);
-        $tinyproperties['frontend'] = true;
-        $tinyproperties['cleanup'] = true; /* prevents "bogus" bug */
-        $tinyproperties['width'] = empty ( $props['tinywidth'] )? '95%' :  $props['tinywidth'];
-        $tinyproperties['height'] = empty ( $props['tinyheight'])? '400px' :  $props['tinyheight'];
-       //$tinyproperties['resource'] =  $resource;
-        $tiny->setProperties($tinyproperties);
-        $tiny->initialize();
-
-         $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-            delete Tiny.config.setup; // remove manager specific initialization code (depending on ModExt)
-            Ext.onReady(function() {
-                MODx.loadRTE();
-            });
-        </script>');
-    }
 
     /**
      * Initializes the main manager controller. You may want to load certain classes,
@@ -227,10 +169,8 @@ abstract class MoxycartManagerController extends modExtraManagerController {
      *
      */
     public function initialize() {
-        //$this->addHtml();
-        $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL);
+        $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/assets/');
         $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $this->connector_url = $this->assets_url.'connector.php?f=';
         $this->modx->addPackage('moxycart',$this->core_path.'model/','moxy_');
     }
     /**

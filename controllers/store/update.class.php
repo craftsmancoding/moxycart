@@ -25,7 +25,7 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
                 var site_url = "'.MODX_SITE_URL.'";
 				isProductContainerCreate = false;
 				Ext.onReady(function(){
-					renderProductContainer(isProductContainerCreate, MODx.config);
+					renderProductContainer(isProductContainerCreate, MODx.config);					
 					Ext.Ajax.request({
                         url: connector_url+"&action=products&store_id='.$store_id.'",
                         params: {},
