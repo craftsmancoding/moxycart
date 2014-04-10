@@ -7,12 +7,10 @@
 namespace Moxycart\Controller;
 require_once MODX_CORE_PATH.'model/modx/modmanagercontroller.class.php'; 
 class Product extends Base {
-    /** @var bool Set to false to prevent loading of the header HTML. */
     public $loadHeader = false;
-    /** @var bool Set to false to prevent loading of the footer HTML. */
     public $loadFooter = false;
-    /** @var bool Set to false to prevent loading of the base MODExt JS classes. */
     public $loadBaseJavascript = false;
+    
     /**
      * Any specific processing we want to do here. Return a string of html.
      * @param array $scriptProperties
@@ -20,7 +18,7 @@ class Product extends Base {
     public function getIndex(array $scriptProperties = array()) {
 
         $this->setPlaceholders($scriptProperties);
-        $P = new \Moxycart\Product($this->modx);
+        $P = new \Moxycart\Model\Product($this->modx);
         $results = $P::all($scriptProperties);
         $count = $P::count($scriptProperties);
         // Both array and string input seem to work

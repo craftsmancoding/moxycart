@@ -6,6 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Moxycart\\Model\\' => array($baseDir . '/model'),
     'Moxycart\\Controller\\' => array($baseDir . '/controllers'),
-    'Moxycart\\' => array($baseDir . '/model'),
 );

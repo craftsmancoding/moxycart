@@ -4,6 +4,7 @@
     <input type="text" placeholder="Search..." />
     <span class="btn">Filter</span>
 </div>
+<?php if ($data['results']): ?>
 <table>
     <thead>
         <tr>
@@ -25,6 +26,11 @@
     </tbody>
 </table>
 
+<?php else: ?>
+
+    <p>Sorry, no products were found.</p>
+
+<?php endif; ?>
 <div>
-Pagination Links here
+Total Records: <?php print $data['count']; ?>
 </div>

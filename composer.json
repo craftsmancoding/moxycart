@@ -39,7 +39,7 @@
             "model/orm/foxycart/"
         ],
         "psr-4": {
-            "Moxycart\\": "model/",
+            "Moxycart\\Model\\": "model/",
             "Moxycart\\Controller\\": "controllers/"
         }
     },
