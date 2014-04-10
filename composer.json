@@ -34,26 +34,34 @@
         "ezyang/htmlpurifier": "dev-master"
     },
     "autoload": {
-        "classmap":["model/moxycart/"]
+        "classmap":[
+            "model/orm/moxycart/",
+            "model/orm/foxycart/"
+        ],
+        "psr-4": {
+            "Moxycart\\": "model/",
+            "Moxycart\\Controller\\": "controllers/"
+        }
     },
     "extra": {
         "package_name": "Moxycart",
         "namespace": "moxycart",
-        "version": "0.8.1",
+        "version": "0.9.0",
         "release": "dev",
         "category":"Moxycart",
         "core_path": "",
+        "orm_path": "model/orm/",
         "assets_path" : "assets/",
         "seeds_path": ["model/seeds/base"],
         "packages":[
             {
                 "pkg":"moxycart",
-                "path":"model/",
+                "path":"model/orm/",
                 "table_prefix": "moxy_"
             },
             {
                 "pkg":"foxycart",
-                "path":"model/",
+                "path":"model/orm/",
                 "table_prefix": "foxy_"
             }
         ],

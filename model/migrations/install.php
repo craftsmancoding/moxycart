@@ -2,9 +2,9 @@
 $core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH.'components/moxycart/');
 
 // Add the package to the MODX extension_packages array
-$modx->addExtensionPackage($object['namespace'],"{$core_path}model/", array('tablePrefix'=>'moxy_'));
-$modx->addPackage('moxycart',"{$core_path}model/",'moxy_');
-$modx->addPackage('foxycart',"{$core_path}model/",'foxy_');
+$modx->addExtensionPackage($object['namespace'],"{$core_path}model/orm/", array('tablePrefix'=>'moxy_'));
+$modx->addPackage('moxycart',"{$core_path}model/orm/",'moxy_');
+$modx->addPackage('foxycart',"{$core_path}model/orm/",'foxy_');
 
 $manager = $modx->getManager();
 

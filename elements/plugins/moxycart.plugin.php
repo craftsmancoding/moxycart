@@ -2,10 +2,11 @@
 /**
  * @name Moxycart
  * @description Multi-purpose plugin for Moxycart handling URL routing and manager customizations
- * @PluginEvents OnManagerPageInit,OnPageNotFound,OnBeforeCacheUpdate
+ * @PluginEvents OnManagerPageInit,OnPageNotFound,OnBeforeCacheUpdate,OnInitCulture
  *
  */
-
+$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+include_once $core_path .'vendor/autoload.php';
 $cache_dir = 'moxycart';
 
 switch ($modx->event->name) {
@@ -29,8 +30,7 @@ switch ($modx->event->name) {
     
         $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin] URI requested : '.$uri);
         
-        $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
-        $modx->addPackage('moxycart',$core_path.'components/moxycart/model/','moxy_');
+        $modx->addPackage('moxycart',$core_path.'model/orm/','moxy_');
 
         $refresh = true; // used if you want to turn off caching (good for testing)        
 
@@ -87,5 +87,13 @@ switch ($modx->event->name) {
     //------------------------------------------------------------------------------
     case 'OnBeforeCacheUpdate':
         $modx->cacheManager->clean(array(xPDO::OPT_CACHE_KEY => $cache_dir));
+        break;
+    //------------------------------------------------------------------------------
+    //! OnInitCulture
+    // This is early, but not early enough for everything, so some CMPs etc. must
+    // still include the autoload.php manually
+    //------------------------------------------------------------------------------
+    case 'OnInitCulture':
+        include_once $core_path .'vendor/autoload.php';
         break;
 }

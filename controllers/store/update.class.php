@@ -11,14 +11,14 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
 
         $mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
-        
+        //print_r($this->config); exit;
 		//Add below for customization
 //        $this->addJavascript($assets_url . 'js/productcontainer.js');
         $this->addJavascript($assets_url . 'js/store.js');
         $store_id = (int) (isset($_GET['id'])) ? $_GET['id'] : 0;
     	$moxycart_connector_url = $assets_url.'connector.php?f=';
     	//getControllerUrl()
-    	$moxycart_connector_url = '/manager/index.php?a=89&action=products';
+    	$moxycart_connector_url = '/manager/index.php?a=89&action=product';
     	$this->addHtml('
 			<script type="text/javascript">
                 var connector_url = "'.$moxycart_connector_url.'";
@@ -27,7 +27,7 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
 				Ext.onReady(function(){
 					renderProductContainer(isProductContainerCreate, MODx.config);					
 					Ext.Ajax.request({
-                        url: connector_url+"&action=products&store_id='.$store_id.'",
+                        url: connector_url+"&action=product&store_id='.$store_id.'",
                         params: {},
                         async:false,
                         success: function(response){

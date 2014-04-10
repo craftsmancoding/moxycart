@@ -28,7 +28,6 @@ if (!$modx->getOption('moxycart.enable_reviews')) {
 }
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
 $assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
-require_once $core_path .'model/htmlpurifier/library/HTMLPurifier.auto.php';
 
 $product_id = $modx->getOption('product_id', $scriptProperties); 
 $public = $modx->getOption('public', $scriptProperties,0); 

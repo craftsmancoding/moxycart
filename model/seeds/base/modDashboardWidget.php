@@ -1,5 +1,6 @@
 <?php
 return array( 
+/*
     array(
         'name' => 'Product Quantity Alert',
         'description' => 'List all Product which set to track their inventory.',
@@ -14,6 +15,7 @@ return array(
             'rank' => 5,
         )
      ),
+*/
     array(
         'name' => 'Product Sales',
         'description' => 'Show All Time Sales. This was entended to be used only as Dashboard widget Content.',

@@ -26,10 +26,9 @@
  **/
 
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
-require_once $core_path . 'model/moxycart/moxycart.snippets.class.php';
 
 $scriptProperties['innerTpl'] = $modx->getOption('innerTpl',$scriptProperties, 'TaxonomyTpl');
 
-$moxySnippet = new MoxycartSnippet($modx);
+$moxySnippet = new Moxycart\Snippet($modx);
 $out = $moxySnippet->execute('json_taxonomies',$scriptProperties);
 return $out;

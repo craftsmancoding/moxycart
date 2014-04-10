@@ -39,8 +39,8 @@
  * @package moxycart
  */
 $core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH.'components/moxycart/');
-require_once $core_path.'model/foxycart/rc4crypt.class.php';
-$modx->addPackage('foxycart',$core_path.'model/','foxy_');
+
+$modx->addPackage('foxycart',$core_path.'model/orm/','foxy_');
 
 $product_hooks_tmp = $modx->getOption('product_hooks',$scriptProperties);
 $transaction_hooks_tmp = $modx->getOption('transaction_hooks',$scriptProperties);
@@ -87,8 +87,6 @@ if(empty($api_key)) {
 if($encrypted_data = (isset($_POST['FoxyData']))? $_POST['FoxyData']:null) {
 
     $modx->log(modX::LOG_LEVEL_DEBUG,'FoxyData detected',$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-    
-    $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH);
 
     // Decrypt the posted Data : Todo try/catch?
     $rc4crypt = new rc4crypt();
