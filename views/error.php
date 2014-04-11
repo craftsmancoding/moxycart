@@ -1,0 +1,1 @@
+ERROR: <?php print $data['msg']; ?>

@@ -2,6 +2,11 @@
 /**
  * The abstract Manager Controller.
  * In this class, we define stuff we want on all of our controllers.
+ *
+ * WARNING: due to routing present in the "render" function, any functions whose names
+ * begin with "get" or "post" may be inadvertently called when the &method argument 
+ * passed is prepended with get or post (depending on whether or not post data is present).
+ *
  */
 namespace Moxycart\Controller; 
 abstract class Base extends \modExtraManagerController {
@@ -30,6 +35,8 @@ abstract class Base extends \modExtraManagerController {
     
     public $data = array(); // passed to views.
     
+    public static $x; // for static refs
+    
     private $core_path;
     private $assets_url;
     private $mgr_url;
@@ -57,8 +64,10 @@ abstract class Base extends \modExtraManagerController {
      */
     private $default_perm = 'view_document';
 
-/*
     function __construct(\modX &$modx,$config = array()) {
+        parent::__construct($modx,$config);
+        static::$x =& $modx;
+/*
         $this->modx =& $modx;
         $this->config = !empty($config) && is_array($config) ? $config : array();
 
@@ -66,9 +75,9 @@ abstract class Base extends \modExtraManagerController {
         $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
         $this->setProperty('core_path', $this->core_path);
         $this->setProperty('assets_url', $this->assets_url);
+*/
 
     }
-*/
     
     /**
      * Catch all for bad function requests -- our 404
@@ -87,7 +96,38 @@ abstract class Base extends \modExtraManagerController {
         exit;
     }
 
+    public function sendError($msg='Error') {
+        $this->setPlaceholder('msg',$msg);
+        return $this->fetchTemplate('error.php');        
+    }
   
+    /**
+     * Generate pagination links
+     *
+		require_once('Pagination.php');
+		$p = new Pagination();
+		$offset = $p->page_to_offset($_GET['page'], $_GET['rpp']);
+		$p->set_offset($offset); //
+		$p->set_results_per_page($_GET['rpp']);  // You can optionally expose this to the user.
+		$p->extra = 'target="_self"'; // optional
+		print $p->paginate(100); // 100 is the count of records
+     */
+    public function paginationLinks(array $scriptProperties = array()) {
+//        print print_r($scriptProperties,true); exit;
+        $limit = (int) $this->modx->getOption('limit',$scriptProperties,$this->modx->getOption('moxycart.default_per_page','',$this->modx->getOption('default_per_page')));
+                
+        $offset = (int) $this->modx->getOption('offset',$scriptProperties);        
+        $baseurl = $this->modx->getOption('baseurl',$scriptProperties);
+        $count = (int) $this->modx->getOption('count',$scriptProperties);
+
+        if (!$limit) return;
+        
+        $P = new \Pagination();
+        $P->set_offset($offset);
+        $P->set_base_url($baseurl);
+        $P->set_results_per_page($limit);
+        return $P->paginate($count);
+    }
     /** 
      * For iterative parsing of the Taxonomy/Terms properties
      * 
@@ -128,31 +168,6 @@ abstract class Base extends \modExtraManagerController {
         return $this->_load_view('product_term_list.php',$data);
     }
     
-    /**
-     * Load a view file. We put in some commonly used variables here for convenience
-     *
-     * @param string $file: name of a file inside of the "views" folder
-     * @param array $data: an associative array containing key => value pairs, passed to the view
-     * @return string
-     */
-    private function _load_view($file, $data=array(),$return=false) {
-        $file = basename($file);
-    	if (file_exists($this->core_path.'views/'.$file)) {
-    	    if (!isset($return) || $return == false) {
-    	        ob_start();
-    	        include ($this->core_path.'views/'.$file);
-    	        $output = ob_get_contents();
-    	        ob_end_clean();
-    	    }     
-    	} 
-    	else {
-    		$output = $this->modx->lexicon('view_not_found', array('file'=> 'views/'.$file));
-    	}
-    
-    	return $output;
-    
-    }
-
 
     /**
      * Initializes the main manager controller. You may want to load certain classes,
@@ -180,52 +195,25 @@ abstract class Base extends \modExtraManagerController {
     public function checkPermissions() {
         return true; // TODO
     }
-    
-    /*
-Array
-(
-    [id] => 84
-    [namespace] => moxycart
-    [controller] => index
-    [haslayout] => 1
-    [lang_topics] => moxycart:default
-    [assets] => 
-    [help_url] => 
-    [namespace_name] => moxycart
-    [namespace_path] => /Users/everett2/Sites/revo8/html/assets/repos/moxycart/core/components/moxycart/
-    [namespace_assets_path] => /Users/everett2/Sites/revo8/html/assets/repos/moxycart/assets/components/moxycart/
-)    
 
-     * Get a URL for a given action in the manager
-     *
-     * @param string $action
-     * @param array $args any additional url parameters
-     * @return string
-     */
-    public function getUrl($action, $args=array()) {
-        $url = '';
-        foreach ($args as $k => $v) {
-            if (is_scalar($k) && is_scalar($v)) {
-                $url .= '&'.$k.'='.$v;
-            }
-        }
-        return MODX_MANAGER_URL . '?a='.$this->config['id'].'&action='.$action.$url;
-    }
 
     /**
      * Gotta look up the URL of our CMP and its actions
-     * 
+
+     * @param string $class of one of our controllers
+     * @
      * @param array any optional arguments, e.g. array('action'=>'children','parent'=>123)
-     * @param string $controller inside the moxycart namespace
+
      * @return string
      */
-    public function getControllerUrl($args=array(),$controller='index') {
+    public static function url($class,$method='index',$args=array()) {
         // future: pass as args:
         $namespace='moxycart';
-        
+        $controller='index';
         $url = MODX_MANAGER_URL;
-        if ($Action = $this->modx->getObject('modAction', array('namespace'=>$namespace,'controller'=>$controller))) {
+        if ($Action = static::$x->getObject('modAction', array('namespace'=>$namespace,'controller'=>$controller))) {
             $url .= '?a='.$Action->get('id');
+            $url .= '&class='.$class.'&method='.$method;
             if ($args) {
                 foreach ($args as $k=>$v) {
                     $url.='&'.$k.'='.$v;
@@ -245,14 +233,13 @@ Array
         $path = $this->modx->getOption('moxycart.core_path','', MODX_CORE_PATH.'components/moxycart/').'/views/';
 
         $data =& $this->getPlaceholders();
-
-
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'View: ' .$file.' data: '.print_r($data,true), __FUNCTION__,__LINE__);
 		if (is_file($path.$file)) {
 			ob_start();
 			include $path.$file;
 			return ob_get_clean();
 		}
-		$this->modx->log(modX::LOG_LEVEL_ERROR, 'View file does not exist: ' .$path.$file, __CLASS__,__LINE__);
+		$this->modx->log(\modX::LOG_LEVEL_ERROR, 'View file does not exist: ' .$path.$file, __FUNCTION__,__LINE__);
 		return $this->modx->lexicon('view_not_found', array('file'=> 'views/'.$file));
     }
 

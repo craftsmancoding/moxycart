@@ -20,7 +20,7 @@
         <td><?php print $r->get('name'); ?></td>
         <td><?php print $r->get('sku'); ?></td>
         <td><?php print $r->get('category'); ?></td>
-        <td><a href="" class="btn">Edit</a> <a href="" class="btn">Preview</a></td>
+        <td><a href="<?php print static::url('product','edit',array('product_id'=>$r->get('product_id'))); ?>" class="btn">Edit</a> <a href="<?php print static::url('product','preview',array('product_id'=>$r->get('product_id'))); ?>" class="btn">Preview</a></td>
     </tr>
 <?php endforeach; ?>
     </tbody>
@@ -32,5 +32,5 @@
 
 <?php endif; ?>
 <div>
-Total Records: <?php print $data['count']; ?>
+<?php print $data['pagination_links']; ?>
 </div>

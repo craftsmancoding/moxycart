@@ -36,7 +36,8 @@
     "autoload": {
         "classmap":[
             "model/orm/moxycart/",
-            "model/orm/foxycart/"
+            "model/orm/foxycart/",
+            "model/"
         ],
         "psr-4": {
             "Moxycart\\Model\\": "model/",

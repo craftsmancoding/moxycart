@@ -16,25 +16,41 @@ class Product extends Base {
      * @param array $scriptProperties
      */
     public function getIndex(array $scriptProperties = array()) {
-
-        $this->setPlaceholders($scriptProperties);
-        $P = new \Moxycart\Model\Product($this->modx);
-        $results = $P::all($scriptProperties);
-        $count = $P::count($scriptProperties);
-        // Both array and string input seem to work
-        // TODO: config to let user define which columns to select
-        //$criteria->select(array('product_id','name','description','type','sku'));
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
+        $Obj = new \Moxycart\Model\Product($this->modx);
+        $results = $Obj::all($scriptProperties);
+        $scriptProperties['count'] = $Obj::count($scriptProperties);        
+        $scriptProperties['baseurl'] = self::url('product','index');        
+        
+        // TODO: system setting for this or parent setting
         $this->setPlaceholder('results', $results);
-        $this->setPlaceholder('count', $count);
-        return $this->fetchTemplate('product/list.php');
+        $this->setPlaceholder('pagination_links', $this->paginationLinks($scriptProperties));
+        $this->setPlaceholders($scriptProperties);
+        return $this->fetchTemplate('product/index.php');
     }
+    
     /**
-     * The pagetitle to put in the <title> attribute.
-     * @return null|string
+     *
+     *
      */
-    public function getPageTitle() {
-        return 'Products';
+    public function getEdit(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
+        $this->setPlaceholders($scriptProperties);
+        $Obj = new \Moxycart\Model\Product($this->modx);    
+        $results = $Obj::find();
+        return $this->fetchTemplate('product/edit.php');
     }
+
+    /**
+     *
+     *
+     */
+    public function getPreview(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
+        return 'Preview!!';
+    }
+    
+    
     /**
      * Register needed assets. Using this method, it will automagically
      * combine and compress them if that is enabled in system settings.

@@ -31,7 +31,6 @@ AUTHOR: everett@fireproofsocks (2010, revised 2012)
 
 @package query
 */
-
 class Pagination {
 
 	// Formatting template chunks, set via set_tpl() or set_tpls()
@@ -277,7 +276,7 @@ class Pagination {
 	private function _parse($tpl, $record) {
 
 		foreach ($record as $key => $value) {
-			$tpl = str_replace('[[[+'.$key.']]', $value, $tpl);
+			$tpl = str_replace('[[+'.$key.']]', $value, $tpl);
 		}
 		return $tpl;
 	}
@@ -504,15 +503,14 @@ class Pagination {
 	 * @param string $content
 	 */
 	public function set_tpl($tpl, $content) {
-		if (!is_scalar($content)) {
-			$this->errors[] = "Content for $tpl tpl must be a string.";
-		}
+		if (!is_scalar($content)) throw new Exception('Invalid argument type. Scalar required.');
+
 		if (in_array($tpl, array('firstTpl','lastTpl','prevTpl','nextTpl','currentPageTpl',
 			'pageTpl','outerTpl'))) {
 			$this->$tpl = $content;
 		}
 		else {
-			$this->errors[] = "Unknown tpl " . strip_tags($tpl);
+			return false;
 		}
 	}
 
@@ -525,15 +523,12 @@ class Pagination {
 	 * @param array $tpls, associative array with keys 
 	 */
 	public function set_tpls($tpls) {
-		if (is_array($tpls)) {
-			$tpls = array_merge(array('firstTpl'=>'','lastTpl'=>'','prevTpl'=>'',
-			'nextTpl'=>'','currentPageTpl'=>'','pageTpl'=>'','outerTpl'=>''), $tpls);
-			foreach($tpls as $tpl => $v) {
-				$this->set_tpl($tpl,$v);
-			}
-		}
-		else {			
-			$this->errors[] = "set_tpls() requires array input.";
+		if (!is_array($tpls)) throw new Exception('Invalid argument type. Array required.');
+		
+		$tpls = array_merge(array('firstTpl'=>'','lastTpl'=>'','prevTpl'=>'',
+		'nextTpl'=>'','currentPageTpl'=>'','pageTpl'=>'','outerTpl'=>''), $tpls);
+		foreach($tpls as $tpl => $v) {
+			$this->set_tpl($tpl,$v);
 		}
 	}
 }

@@ -19,10 +19,9 @@ class Base {
     public static $xclass; // xPDO classname
     public static $default_sort_col;
     public static $default_sort_dir = 'ASC';
-    public static $select_cols = array();
-    
+
     // Any array keys that define a control parameter and not a filter parameter
-    public static $control_params = array('limit','offset','sort','dir');
+    public static $control_params = array('limit','offset','sort','dir','select');
     
     /** 
      *
@@ -55,7 +54,8 @@ class Base {
         $offset = (int) self::$modx->getOption('offset',$args,0);
         $sort = self::$modx->getOption('sort',$args,static::$default_sort_col);
         $dir = self::$modx->getOption('dir',$args,static::$default_sort_dir);
-
+        $select_cols = self::$modx->getOption('select',$args);
+        
         // Clear out non-filter criteria
         $args = self::getFilters($args); 
 
@@ -64,18 +64,20 @@ class Base {
         if ($args) {
             $criteria->where($args);
         }
-
-        $criteria->limit($limit, $offset); 
-        $criteria->sortby($sort,$dir);
-
+        
+        if ($limit) {
+            $criteria->limit($limit, $offset); 
+            $criteria->sortby($sort,$dir);
+        }
+    
         if ($debug) {
             $criteria->prepare();
             return $criteria->toSQL();
         }
 
         // Both array and string input seem to work
-        if (!empty(static::$select_cols)) {
-            $criteria->select(static::$select_cols);
+        if (!empty($select_cols)) {
+            $criteria->select($select_cols);
         }
         
         return self::$modx->getIterator(static::$xclass,$criteria);
