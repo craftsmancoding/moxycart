@@ -43,7 +43,8 @@ class IndexManagerController extends \Moxycart\Controller\Base {
             // ?? 404   
         }
         $class = '\\Moxycart\\Controller\\'.$class;
-        
+
+        $modx->log(\modX::LOG_LEVEL_DEBUG,'[moxycart] Instantiating '.$class.' with config '.print_r($config,true),'',__FUNCTION__,__FILE__,__LINE__);
         if (!class_exists($class)) {
             $modx->log(\modX::LOG_LEVEL_ERROR,'[moxycart] Invalid class name '.$class,'',__FUNCTION__,__FILE__,__LINE__);        
             // 404
@@ -61,7 +62,7 @@ class IndexManagerController extends \Moxycart\Controller\Base {
         $config['core_path'] = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
         $config['assets_url'] = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
 
-        $modx->log(\modX::LOG_LEVEL_DEBUG,'[moxycart] Instantiating '.$class.' with config '.print_r($config,true),'',__FUNCTION__,__FILE__,__LINE__);        
+                
         
         // See Base::render() for how requests get handled.        
         return new $class($modx,$config);
