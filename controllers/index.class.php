@@ -16,5 +16,6 @@ class IndexManagerController extends MoxycartManagerController {
     public static function getDefaultController() {
         return 'home';
     }
+
 }
 /*EOF*/

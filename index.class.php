@@ -1,6 +1,6 @@
 <?php
 // Required: or require this on the OnInitCulture event
-//require_once dirname(__FILE__) .'/vendor/autoload.php';
+require_once dirname(__FILE__) .'/vendor/autoload.php';
 /**
  * This is the "base controller".
  *
@@ -45,12 +45,15 @@ class IndexManagerController extends \Moxycart\Controller\Base {
         $class = '\\Moxycart\\Controller\\'.$class;
 
         $modx->log(\modX::LOG_LEVEL_DEBUG,'[moxycart] Instantiating '.$class.' with config '.print_r($config,true),'',__FUNCTION__,__FILE__,__LINE__);
+//print $class .'<br/>'. __FILE__.':'.__LINE__;exit;
+/*
         if (!class_exists($class)) {
             $modx->log(\modX::LOG_LEVEL_ERROR,'[moxycart] Invalid class name '.$class,'',__FUNCTION__,__FILE__,__LINE__);        
             // 404
             print '404!'; 
             exit;
         }
+*/
         
         if (!empty($_POST)) {
             $config['method'] = 'post'.ucfirst($config['method']);
