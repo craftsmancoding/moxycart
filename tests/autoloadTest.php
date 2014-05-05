@@ -72,10 +72,16 @@ class autoloadTest extends PHPUnit_Framework_TestCase {
     public function testLoad() {
         $M = new Moxycart(self::$modx);
         $this->assertTrue(is_object($M), 'Moxycart class not instantiated.');        
+
+            $class = '\\Moxycart\\Controller\\'.$class;
+//print $class .'<br/>'. __FILE__.':'.__LINE__;exit;
+
+//        $this->assertTrue(class_exists($class), 'Moxycart\\Controller\\Product class not found.');
+
         
-        $C = new Moxycart\Controller\Product(self::$modx);
+        $P = new Moxycart\Controller\Product(self::$modx);
 //            $P = new Moxycart\Product();
         
-        $this->assertTrue(is_object($C), 'Moxycart\\Controller\\Product class not instantiated.');
+        $this->assertTrue(is_object($P), 'Moxycart\\Controller\\Product class not instantiated.');
     }
 }

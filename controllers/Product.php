@@ -28,7 +28,7 @@ class Product extends Base {
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('product/index.php');
     }
-    
+
     /**
      *
      *
