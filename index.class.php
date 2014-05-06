@@ -54,7 +54,8 @@ class IndexManagerController extends \Moxycart\Controller\Base {
             exit;
         }
 */
-        
+        // If you don't do this, the $_POST array will seem to be populated even during normal GET requests.
+        unset($_POST['HTTP_MODAUTH']);
         if (!empty($_POST)) {
             $config['method'] = 'post'.ucfirst($config['method']);
         }

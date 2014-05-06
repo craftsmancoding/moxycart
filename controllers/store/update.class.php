@@ -18,7 +18,11 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
         $store_id = (int) (isset($_GET['id'])) ? $_GET['id'] : 0;
     	$moxycart_connector_url = $assets_url.'connector.php?f=';
     	//getControllerUrl()
-    	$moxycart_connector_url = '/manager/index.php?a=102';
+    	$moxycart_connector_url = '/manager/index.php?a=';
+    	if ($Action = $this->modx->getObject('modAction', array('namespace'=>'moxycart','controller'=>'index'))) {
+    	   $moxycart_connector_url .= $Action->get('id');   
+    	}
+    	
     	$this->addHtml('
 			<script type="text/javascript">
                 var connector_url = "'.$moxycart_connector_url.'";

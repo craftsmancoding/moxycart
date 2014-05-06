@@ -1,6 +1,6 @@
 <?php
 /**
- * The abstract Manager Controller.
+ * The almost abstract Manager Controller.
  * In this class, we define stuff we want on all of our controllers.
  *
  * WARNING: due to routing present in the "render" function, any functions whose names
@@ -9,7 +9,7 @@
  *
  */
 namespace Moxycart\Controller; 
-abstract class Base extends \modExtraManagerController {
+class Base extends \modExtraManagerController {
     /** @var bool Set to false to prevent loading of the header HTML. */
     public $loadHeader = true;
     /** @var bool Set to false to prevent loading of the footer HTML. */
@@ -85,7 +85,7 @@ abstract class Base extends \modExtraManagerController {
     public function __call($name,$args) {
 //        print 'NOT FOUND...'; exit;
         $this->modx->log(\modX::LOG_LEVEL_ERROR,'[moxycart] Invalid function name '.__FUNCTION__);
-        print 'Invalid function name: '.$name; exit;
+        print 'Invalid routing function name: '.$name; exit;
         //return $this->help($args);
     }
 
