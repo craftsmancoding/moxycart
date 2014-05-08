@@ -31,6 +31,30 @@
     <p>Sorry, no products were found.</p>
 
 <?php endif; ?>
-<div>
-<?php print $data['pagination_links']; ?>
-</div>
+
+<?php 
+// Pagination : see the get_data function in the controllers/store/upudate.class.php
+$offset = (int) (isset($_GET['offset'])) ? $_GET['offset'] : 0;
+$results_per_page = (int) $this->modx->getOption('moxycart.default_per_page','',$this->modx->getOption('default_per_page'));
+print \Pagination\Pager::links($data['count'], $offset, $results_per_page)
+    ->setBaseUrl($data['baseurl'])
+    ->setTpls(
+        array(
+            'first' => '<span onclick="javascript:get_data([+offset+]);" class="linklike">&laquo; First</span>  ',
+            'last' => ' <span onclick="javascript:get_data([+offset+]);" class="linklike">Last &raquo;</span>',
+            'prev' => '<span onclick="javascript:get_data([+offset+]);" class="linklike">&lsaquo; Prev.</span> ',
+            'next' => ' <span onclick="javascript:get_data([+offset+]);" class="linklike">Next &rsaquo;</span>',
+            'current' => ' <span>[+page_number+]</span> ',
+            'page' => ' <span onclick="javascript:get_data([+offset+]);" class="linklike">[+page_number+]</span> ',
+            'outer' => '
+                <style>
+                    span.linklike { cursor: pointer; }
+                    span.linklike:hover { color:blue; text-decoration:underline; }
+                </style>
+                <div id="pagination">[+content+]<br/>
+    				Page [+current_page+] of [+page_count+]<br/>
+    				Displaying records [+first_record+] thru [+last_record+] of [+record_count+]
+    			</div>',
+    	)
+    );
+?>

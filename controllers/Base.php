@@ -101,33 +101,7 @@ class Base extends \modExtraManagerController {
         return $this->fetchTemplate('error.php');        
     }
   
-    /**
-     * Generate pagination links
-     *
-		require_once('Pagination.php');
-		$p = new Pagination();
-		$offset = $p->page_to_offset($_GET['page'], $_GET['rpp']);
-		$p->set_offset($offset); //
-		$p->set_results_per_page($_GET['rpp']);  // You can optionally expose this to the user.
-		$p->extra = 'target="_self"'; // optional
-		print $p->paginate(100); // 100 is the count of records
-     */
-    public function paginationLinks(array $scriptProperties = array()) {
-//        print print_r($scriptProperties,true); exit;
-        $limit = (int) $this->modx->getOption('limit',$scriptProperties,$this->modx->getOption('moxycart.default_per_page','',$this->modx->getOption('default_per_page')));
-                
-        $offset = (int) $this->modx->getOption('offset',$scriptProperties);        
-        $baseurl = $this->modx->getOption('baseurl',$scriptProperties);
-        $count = (int) $this->modx->getOption('count',$scriptProperties);
 
-        if (!$limit) return;
-        
-        $P = new \Pagination();
-        $P->set_offset($offset);
-        $P->set_base_url($baseurl);
-        $P->set_results_per_page($limit);
-        return $P->paginate($count);
-    }
     /** 
      * For iterative parsing of the Taxonomy/Terms properties
      * 
@@ -168,18 +142,28 @@ class Base extends \modExtraManagerController {
         return $this->_load_view('product_term_list.php',$data);
     }
     
-
+    /**
+     * Add the standard MODX manager layout to a response.
+     * We have to manually re-run this after setting loadBaseJavascript to true.
+     * That's the only way to get the resource tree going if your controller has declared 
+     * loadBaseJavascript = false -- overriding that at runtime takes this sleight of hand.
+     */
+    public function addStandardLayout() {
+        $this->loadHeader = true;
+        $this->loadFooter = true;
+        $this->loadBaseJavascript = true;
+        $this->registerBaseScripts(); // <-- *facepalm*
+    }
+    
     /**
      * Initializes the main manager controller. You may want to load certain classes,
      * assets that are shared across all controllers or configuration. 
-     *
-     * All your other controllers in this namespace should extend this one.
      *
      */
     public function initialize() {
         $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/assets/');
         $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        $this->modx->addPackage('moxycart',$this->core_path.'model/','moxy_');
+        //$this->modx->addPackage('moxycart',$this->core_path.'model/','moxy_');
     }
     /**
      * Defines the lexicon topics to load in our controller.
@@ -224,12 +208,19 @@ class Base extends \modExtraManagerController {
     }
 
     /**
-     * Override Smarty. Don't want it.
+     * Override Smarty. I don't wants it. But BEWARE: the loadHeader and loadFooter bits require 
+     * the functionality of the original fetchTemplate function.  ARRRGH.  You try to escape but you can't.
      *
      * @param string $file (relative to the views directory)
      * @return rendered string (e.g. HTML)
      */
     public function fetchTemplate($file) {
+        // Conditional override! Ack!
+        // If we don't give Smarty a free pass, we end up with errors "View file does not exist" because
+        // MODX relies on this fetchTemplate function to load up the header.tpl and footer.tpl files
+        if (substr($file,-4) == '.tpl') {
+            return parent::fetchTemplate($file);
+        }
         $path = $this->modx->getOption('moxycart.core_path','', MODX_CORE_PATH.'components/moxycart/').'/views/';
 
         $data =& $this->getPlaceholders();
@@ -293,9 +284,7 @@ class Base extends \modExtraManagerController {
 
         // This was too simplistic:
         // $placeholders = $this->process($this->scriptProperties);
-//        print_r($this->scriptProperties); exit;
-//        print_r($this->config); exit;
-        // $method = (isset($_REQUEST['method'])) ? $_REQUEST['method'] : 'index';
+        // so we do this:       
         $method = $this->config['method'];
         $filters = $this->scriptProperties;
         unset($filters['a']);

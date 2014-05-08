@@ -25,19 +25,29 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
     	
     	$this->addHtml('
 			<script type="text/javascript">
-                var connector_url = "'.$moxycart_connector_url.'";
-                var site_url = "'.MODX_SITE_URL.'";
-				isProductContainerCreate = false;
-				Ext.onReady(function(){
-					renderProductContainer(isProductContainerCreate, MODx.config);					
+                /*
+                @param integer offset
+                @param string sort column name
+                @param string dir ASC|DESC 
+                */
+                function get_data(offset,sort,dir) {
+                    sort = typeof sort !== "undefined" ? sort : "name";
+                    dir = typeof dir !== "undefined" ? dir : "ASC";
 					Ext.Ajax.request({
-                        url: connector_url+"&class=product&store_id='.$store_id.'",
+                        url: connector_url+"&class=product&method=index&offset="+offset+"&sort="+sort+"&dir="+dir+"&store_id='.$store_id.'",
                         params: {},
                         async:false,
                         success: function(response){
                             Ext.fly("store_products").update(response.responseText);
                         }
-                    });
+                    });                
+                }
+                var connector_url = "'.$moxycart_connector_url.'";
+                var site_url = "'.MODX_SITE_URL.'";
+				isProductContainerCreate = false;
+				Ext.onReady(function(){
+					renderProductContainer(isProductContainerCreate, MODx.config);
+					get_data(0);
 				});
 			</script>');
 			

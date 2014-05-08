@@ -122,8 +122,9 @@ class Base {
     }
     
     /**
-     *
-     *
+     * Retrieve a single object by its primary key id
+     * @param integer $id
+     * @return mixed
      */    
     public static function find($id) {
         if ($Obj = self::$modx->getObject(static::$xclass, $id)) {

@@ -5,11 +5,13 @@
  * our IndexManagerController.
  */
 namespace Moxycart\Controller;
+//use Moxycart\Model;
+
 require_once MODX_CORE_PATH.'model/modx/modmanagercontroller.class.php'; 
 class Product extends Base {
     public $loadHeader = false;
     public $loadFooter = false;
-    public $loadBaseJavascript = false;
+    public $loadBaseJavascript = false; // GFD... this can't be set at runtime.
     
     /**
      * Any specific processing we want to do here. Return a string of html.
@@ -19,26 +21,32 @@ class Product extends Base {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         $Obj = new \Moxycart\Model\Product($this->modx);
         $results = $Obj::all($scriptProperties);
+        // We need these for pagination
         $scriptProperties['count'] = $Obj::count($scriptProperties);        
-        $scriptProperties['baseurl'] = self::url('product','index');        
-        
-        // TODO: system setting for this or parent setting
+        $scriptProperties['baseurl'] = self::url('product','index');
         $this->setPlaceholder('results', $results);
-        $this->setPlaceholder('pagination_links', $this->paginationLinks($scriptProperties));
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('product/index.php');
     }
 
     /**
-     *
+     * Remember we have to set up the manager container
      *
      */
     public function getEdit(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
-        $this->setPlaceholders($scriptProperties);
+        $this->addStandardLayout();
+        $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
         $Obj = new \Moxycart\Model\Product($this->modx);    
-        $results = $Obj::find();
+        if (!$result = $Obj::find($product_id)) {
+            return $this->sendError('Page not found.');
+        }
+        
+        $this->setPlaceholders($scriptProperties);
+        $this->setPlaceholders($result->toArray());
+        $this->setPlaceholder('result',$result);
         return $this->fetchTemplate('product/edit.php');
+//        return $this->fetchTemplate('product/test.php');
     }
 
     /**

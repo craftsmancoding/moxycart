@@ -31,8 +31,20 @@
     },    
     "require": {
         "php": ">=5.3",
-        "ezyang/htmlpurifier": "dev-master"
+        "ezyang/htmlpurifier": "dev-master",
+        "craftsmancoding/formbuilder": "dev-master",
+        "craftsmancoding/pagination": "dev-master"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@github.com:craftsmancoding/formbuilder.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "git@github.com:craftsmancoding/pagination.git"
+        }
+    ],
     "autoload": {
         "classmap":[
             "model/orm/moxycart/",
