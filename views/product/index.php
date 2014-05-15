@@ -1,8 +1,12 @@
 <div>
     <span class="btn">Add Product</span> 
     <span class="btn">Manage Inventory</span>
-    <input type="text" placeholder="Search..." />
-    <span class="btn">Filter</span>
+    
+    
+    <form action="<?php print $data['baseurl']; ?>">
+        <input type="text" name="name:LIKE" placeholder="Search..." />    
+        <input type="submit" value="Filter"/>
+    </form>
 </div>
 <?php if ($data['results']): ?>
 <table>

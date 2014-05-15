@@ -11,12 +11,15 @@
  * See http://stackoverflow.com/questions/10504129/when-using-self-parent-static-and-how
  */
 namespace Moxycart\Model;
-class Base {
+class BaseModel {
 
     public static $modx;
     
-
-    public static $xclass; // xPDO classname
+    // Used for new/save ops
+    public $modelObj; 
+    public $attributes = array();
+    
+    public static $xclass; // The classname for xPDO when referencing objects of this class
     public static $default_sort_col;
     public static $default_sort_dir = 'ASC';
 
@@ -24,15 +27,94 @@ class Base {
     public static $control_params = array('limit','offset','sort','dir','select');
     
     /** 
+     * We set $this->modelObj here instead of extending the base xpdoObject class because
+     * xpdo abstracts the database at run-time and the exact class instantiated depends on 
+     * the type of database used.
      *
+     * @param object $modx
+     * @param integer primary key (optional) used when retrieving objects only
      *
      */
-    public function __construct(\modX &$modx) {
+    public function __construct(\modX &$modx, $primary_key=null) {
         self::$modx =& $modx;
+        if ($primary_key) {
+            if ($this->modelObj = $modx->getObject(static::$xclass, $primary_key)) {            
+                $this->attributes = $this->modelObj->fromArray();
+            }
+            else {
+                throw new \Exception(static::$xclass.' not found with id '.$primary_key);
+            }
+        }
+        else {
+            $this->modelObj = $modx->newObject(static::$xclass);
+            $this->attributes = $modx->getFields(static::$xclass);
+        }
     }
 
     /**
-     * Remove any control argument and return only filters
+     * 
+     */
+    public function __get($key) {
+        if (array_key_exists($key, $this->attributes)) {
+            return $this->attributes[$key]; 
+        }
+        else {
+            throw new \Exception('Invalid object attribute: '.$key);
+        }
+    }
+    
+    /**
+     *
+     *
+     */
+    public function __set($key, $value) {
+        if (array_key_exists($key, $this->attributes)) {
+            $this->attributes[$key] = $value;
+        }
+        else {
+            throw new \Exception('Invalid object attribute: '.$key);
+        }
+
+    }
+
+    /**
+     * 
+     */
+    public function __isset($key) {
+        return isset($this->attributes[$key]);
+    }
+
+    /**
+     * 
+     */
+    public function __unset($key) {
+        unset($this->attributes[$key]);
+    }
+    
+    /**
+     * @param array $array
+     */
+    public function fromArray(array $array) {
+        $this->modelObj->fromArray($array);
+        foreach ($array as $k => $v) {
+            $this->$k = $v;
+        }
+    }
+
+    public function getPrimaryKey() {
+        return $this->modelObj->getPrimaryKey();
+    }
+    
+    public function remove() {
+        return $this->modelObj->remove();
+    }
+
+    /**
+     * Remove any "control" arguments and return only "filter" arguments
+     * with some convenience bits for searches. Controls are things like limit, offset,
+     * or other things that control HOW the results are returned whereas filters determine
+     * WHAT gets returned.
+     *
      * @param array
      * @return array
      */
@@ -40,13 +122,17 @@ class Base {
         foreach (self::$control_params as $p) {
             unset($array[$p]);
         }
+        foreach ($array as $k => $v) {
+            if (strtoupper(substr($k,-5)) == ':LIKE') $array[$k] = '%'.$v.'%';
+            if (strtoupper(substr($k,-9)) == ':NOT LIKE') $array[$k] = '%'.$v.'%';
+        }
         return $array;
     }
 
 
     /**
      *
-     * @return xPDO collection
+     * @return xPDO iterator (i.e. a collection, but memory efficient)
      */
     public static function all($args,$debug=false) {
 
@@ -100,10 +186,10 @@ class Base {
     }
     
     /**
-     *
+     * Pass all the attributes for the new object
      *
      */
-    public static function create($args) {
+    public static function create($args=array()) {
         if (empty(static::$xclass)) {
             self::$modx->log(\modX::LOG_LEVEL_ERROR, 'Create object failed: missing object classname.','',__CLASS__,__FILE__,__LINE__);
             return false;
@@ -139,6 +225,20 @@ class Base {
             return $Obj->save();
         }
         return false;
+    }
+    
+    /**
+     * Save the update
+     * @return mixed integer false on fail
+     */
+    public function save() {
+        return $this->modelObj->save();
+/*
+        if ($this->modelObj->save()) {
+            return $this->modelObj->getPrimaryKey();
+        }
+        return false;
+*/
     }
     
 }

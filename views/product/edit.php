@@ -1,5 +1,9 @@
 <?php
+    /**
+     * Load up your guns
+     *
 
+     */
     $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
     $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
     $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
@@ -13,10 +17,10 @@
 
 	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
 		var product = '.$data['result']->toJson().';            
-		var connector_url = "'.$this->connector_url.'";
+		var controller_url = "'.$this->config['controller_url'].'";
         var use_editor = "'.$this->modx->getOption('use_editor').'";
         var assets_url = "'.$this->config['assets_url'].'";    		
-        var variation_url = "'.$this->connector_url.'&parent_id='.$product_id.'";
+        var variation_url = "'.$this->config['controller_url'].'&parent_id='.$product_id.'";
 
         jQuery(document).ready(function() {
                 var myDropzone = new Dropzone("div#image_upload", {url: connector_url+"image_save&product_id='.$product_id.'"});
@@ -101,7 +105,7 @@ function remove_relation(product_id) {
             <?php
             endif;
             ?>
-			<a class="btn" href="<?php print $data['manager_url']; ?>">Close</a>
+			<a class="btn" href="<?php print MODX_MANAGER_URL.'?a=30&id='.$data['store_id']; ?>">Close</a>
 		</div>
 	</div>
 	

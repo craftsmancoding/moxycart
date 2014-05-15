@@ -8,9 +8,9 @@
  * an object data in its entirety.
  */
 namespace Moxycart\Model;
-class Product extends BaseModel {
+class Currency extends BaseModel {
 
-    public static $xclass = 'Product';
+    public static $xclass = 'Currency';
     public static $default_sort_col = 'name';
 
 }

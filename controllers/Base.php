@@ -185,22 +185,23 @@ class Base extends \modExtraManagerController {
      * Gotta look up the URL of our CMP and its actions
 
      * @param string $class of one of our controllers
-     * @
+     * @param string $method default: index
      * @param array any optional arguments, e.g. array('action'=>'children','parent'=>123)
-
      * @return string
      */
-    public static function url($class,$method='index',$args=array()) {
+    public static function url($class='',$method='index',$args=array()) {
         // future: pass as args:
         $namespace='moxycart';
         $controller='index';
         $url = MODX_MANAGER_URL;
         if ($Action = static::$x->getObject('modAction', array('namespace'=>$namespace,'controller'=>$controller))) {
             $url .= '?a='.$Action->get('id');
-            $url .= '&class='.$class.'&method='.$method;
-            if ($args) {
-                foreach ($args as $k=>$v) {
-                    $url.='&'.$k.'='.$v;
+            if ($class && $method) {
+                $url .= '&class='.$class.'&method='.$method;
+                if ($args) {
+                    foreach ($args as $k=>$v) {
+                        $url.='&'.$k.'='.$v;
+                    }
                 }
             }
         }
@@ -221,7 +222,7 @@ class Base extends \modExtraManagerController {
         if (substr($file,-4) == '.tpl') {
             return parent::fetchTemplate($file);
         }
-        $path = $this->modx->getOption('moxycart.core_path','', MODX_CORE_PATH.'components/moxycart/').'/views/';
+        $path = $this->modx->getOption('moxycart.core_path','', MODX_CORE_PATH.'components/moxycart/').'views/';
 
         $data =& $this->getPlaceholders();
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'View: ' .$file.' data: '.print_r($data,true), __FUNCTION__,__LINE__);
@@ -337,4 +338,33 @@ class Base extends \modExtraManagerController {
         return $this->content;
     }
 
+    /**
+     * Set a flash message
+     *
+     */
+    public function setMsg($msg,$type='success') {
+
+        $path = $this->modx->getOption('moxycart.core_path','', MODX_CORE_PATH.'components/moxycart/').'views/msgs/';
+        $file = $path.$type.'.php';
+		if (is_file($file)) {
+			ob_start();
+			include $file;
+			$_SESSION['msg'] = ob_get_clean();
+			return true; 
+		}
+		$this->modx->log(\modX::LOG_LEVEL_ERROR, 'View file does not exist: ' .$file, __FUNCTION__,__LINE__);
+		return $this->modx->lexicon('view_not_found', array('file'=> 'views/msgs/'.$type.'.php'));
+
+    }
+    
+    /**
+     * Return a flash message
+     *
+     */
+    public function getMsg() {
+        $msg = (isset($_SESSION['msg'])) ? $_SESSION['msg'] : '';
+        unset($_SESSION['msg']);
+        return $msg;
+    }
+    
 }

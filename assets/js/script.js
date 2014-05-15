@@ -188,8 +188,8 @@ jQuery(function() {
 	$(document).on('submit','#product_update',function(){     
 	        var values = $(this).serialize();
 	        var rand = Math.random()*10000000000000000;
-	    	var url = connector_url + 'product_save';
-		    $.post( url+"&action=update&rand="+rand, values, function(data){
+	        console.log('product_update');
+		    $.post( controller_url + '&class=Product&method=Edit&rand='+rand, values, function(data){
 		    	$('.moxy-msg').show();
 		    	data = $.parseJSON(data);
 		    	if(data.success == true) {
