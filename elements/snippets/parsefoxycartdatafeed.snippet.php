@@ -89,8 +89,8 @@ if($encrypted_data = (isset($_POST['FoxyData']))? $_POST['FoxyData']:null) {
     $modx->log(modX::LOG_LEVEL_DEBUG,'FoxyData detected',$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
 
     // Decrypt the posted Data : Todo try/catch?
-    $rc4crypt = new rc4crypt();
-	$FoxyData_decrypted = $rc4crypt->decrypt($api_key,urldecode($encrypted_data));
+    //$rc4crypt = new rc4crypt();
+	$FoxyData_decrypted = rc4crypt::decrypt($api_key,urldecode($encrypted_data));
 	$xml = new SimpleXMLElement($FoxyData_decrypted);
 	$dom = new DOMDocument('1.0');
 	$dom->preserveWhiteSpace = false;

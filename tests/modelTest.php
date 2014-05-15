@@ -75,12 +75,15 @@ class modelTest extends \PHPUnit_Framework_TestCase {
     }
     
     /**
-     * Let's test working with a simple model
+     * Let's test working with a simple model (Currency)
      *
      */
-    public function testCurrencies() {
+    public function testBasicRetrieval() {
+
         $Currency = new Currency(self::$modx);
         $this->assertTrue($Currency instanceof Currency);
+        
+        // Verify mass-assignment
         $Currency->fromArray(array(
             'code' => 'YYY',
             'name' => 'Yellow Yuan',
@@ -88,22 +91,110 @@ class modelTest extends \PHPUnit_Framework_TestCase {
             'is_active' => 1,
             'seq' => 0
         ));
-
         $this->assertEquals('YYY', $Currency->code);
         
+        // Verify single-assignment
         $Currency->symbol = '3345';
         $this->assertEquals('3345', $Currency->symbol);
+        $Currency->set('symbol','3346');
+        $this->assertEquals('3346', $Currency->get('symbol'));
         
         $result = $Currency->save();
         $this->assertTrue($result);
         
         $id = $Currency->getPrimaryKey();
         
-        
-        $Currency = Currency::find($id);
+        $Currency = $Currency->find($id);
+
         $this->assertEquals('YYY', $Currency->code);
         $Currency->remove();
+        
+        // Retrieving the deleted row should raise an exception
+        try {
+            $Currency = new Currency(self::$modx, $id);
+        }
+        catch (\Exception $expected) {
+            return; // the exception class must be properly namespaced with backslash
+        }
+        $this->fail('An expected exception has not been raised. Currency object was retrieved when it should not exist.');
+    
     }
+    
+    public function testFilters() {
+        $Currency = new Currency(self::$modx);
+        $args = array('limit'=>10,'offset'=>20);
+        $filters = $Currency->getFilters($args);
+        $this->assertTrue(empty($filters));
+        
+        $args = array('limit'=>10,'offset'=>20,'something'=>'else');
+        $filters = $Currency->getFilters($args);
+        $this->assertEquals($filters['something'],'else');
+
+        $args = array('sort'=>'x','dir'=>'ASC','select'=>'yyy','mycolumn:like'=>'myvalue');
+        $filters = $Currency->getFilters($args);        
+        $this->assertEquals($filters['mycolumn:like'],'%myvalue%');
+
+        $args = array('mycolumn:starts with'=>'myvalue');
+        $filters = $Currency->getFilters($args);        
+        $this->assertEquals($filters['mycolumn:LIKE'],'myvalue%');
+        $this->assertEquals(count($filters),1);
+        
+        $args = array('mycolumn:ends with'=>'myvalue');
+        $filters = $Currency->getFilters($args);        
+        $this->assertEquals($filters['mycolumn:LIKE'],'%myvalue');
+
+
+        $args = array('one','two','three');
+        $filters = $Currency->getFilters($args);
+        $this->assertTrue(empty($filters));
+    }
+    
+    public function testCount() {
+        $C = new Currency(self::$modx);
+        $cnt = $C->count(array('code:STARTS WITH'=>'s'));
+        $this->assertEquals($cnt,10);
+
+        $cnt = $C->count(array('name:>'=>'D'));
+        $this->assertEquals($cnt,88);
+    }
+    
+    public function testDebug() {
+        $C = new Currency(self::$modx);
+        $actual = $C->all(array('name:>'=>'D'),true);
+        $expected = "SELECT `Currency`.`currency_id` AS `Currency_currency_id`, `Currency`.`code` AS `Currency_code`, `Currency`.`name` AS `Currency_name`, `Currency`.`symbol` AS `Currency_symbol`, `Currency`.`is_active` AS `Currency_is_active`, `Currency`.`seq` AS `Currency_seq` FROM `moxy_currencies` AS `Currency` WHERE `Currency`.`name` > 'D' ORDER BY name LIMIT 20";
+        $this->assertEquals(normalize_string($actual),normalize_string($expected));
+
+        $actual = $C->all(array('code:LIKE'=>'VC'),true);
+        $expected = "SELECT `Currency`.`currency_id` AS `Currency_currency_id`, `Currency`.`code` AS `Currency_code`, `Currency`.`name` AS `Currency_name`, `Currency`.`symbol` AS `Currency_symbol`, `Currency`.`is_active` AS `Currency_is_active`, `Currency`.`seq` AS `Currency_seq` FROM `moxy_currencies` AS `Currency` WHERE `Currency`.`code` LIKE '%VC%' ORDER BY name LIMIT 20";
+        $this->assertEquals(normalize_string($actual),normalize_string($expected));
+
+        $actual = $C->all(array('code:LIKE'=>'VC','limit'=>30),true);
+        $expected = "SELECT `Currency`.`currency_id` AS `Currency_currency_id`, `Currency`.`code` AS `Currency_code`, `Currency`.`name` AS `Currency_name`, `Currency`.`symbol` AS `Currency_symbol`, `Currency`.`is_active` AS `Currency_is_active`, `Currency`.`seq` AS `Currency_seq` FROM `moxy_currencies` AS `Currency` WHERE `Currency`.`code` LIKE '%VC%' ORDER BY name LIMIT 30";
+        $this->assertEquals(normalize_string($actual),normalize_string($expected));
+    }
+    
+    public function testGetCollection() {
+        $Currency = new Currency(self::$modx);
+        $collection = $Currency->all(array('code'=>'XXXX'));
+        $this->assertTrue(empty($collection));
+        $collection = $Currency->all(array('code:STARTS WITH'=>'TR'));
+        $values = array();
+        foreach ($collection as $c) {
+            $values[] = $c->get('code');
+        }
+        $this->assertEquals($values[0],'TRY');
+        $this->assertEquals($values[1],'TRL');
+    }
+    
+    /**
+     *
+     * @expectedException Currency not found with id
+     */
+/*
+    public function testNotFound() {
+        $Currency = new Currency(self::$modx, 123124);    
+    }
+*/
     
     public function testProducts() {
 /*

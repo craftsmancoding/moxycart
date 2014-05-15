@@ -53,6 +53,7 @@
         ],
         "psr-4": {
             "Moxycart\\Model\\": "model/",
+            "Foxycart\\": "model/",
             "Moxycart\\Controller\\": "controllers/"
         }
     },

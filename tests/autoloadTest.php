@@ -16,11 +16,10 @@
  *
  */
  
-class autoloadTest extends PHPUnit_Framework_TestCase {
+class autoloadTest extends \PHPUnit_Framework_TestCase {
 
     // Must be static because we set it up inside a static function
     public static $modx;
-    public static $moxycart;
     
     /**
      * Load up MODX for our tests.
@@ -70,6 +69,7 @@ class autoloadTest extends PHPUnit_Framework_TestCase {
     
     
     public function testLoad() {
+
         $M = new Moxycart(self::$modx);
         $this->assertTrue(is_object($M), 'Moxycart class not instantiated.');        
 
@@ -83,5 +83,14 @@ class autoloadTest extends PHPUnit_Framework_TestCase {
 //            $P = new Moxycart\Product();
         
         $this->assertTrue(is_object($P), 'Moxycart\\Controller\\Product class not instantiated.');
+    }
+    
+    public function testFoxycart() {
+        $RC4 = new rc4crypt();
+        $this->assertTrue(is_object($RC4), 'rc4crypt class not instantiated.');
+        
+//        $F = new Foxycart\Datafeed();
+//	$xml = new SimpleXMLElement($FoxyData_decrypted);
+//	$dom = new DOMDocument('1.0');
     }
 }

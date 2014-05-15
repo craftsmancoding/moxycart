@@ -10,8 +10,8 @@
 namespace Moxycart\Model;
 class Currency extends BaseModel {
 
-    public static $xclass = 'Currency';
-    public static $default_sort_col = 'name';
+    public $xclass = 'Currency';
+    public $default_sort_col = 'name';
 
 }
 /*EOF*/

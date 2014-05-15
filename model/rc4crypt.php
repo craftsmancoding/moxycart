@@ -36,8 +36,7 @@ class rc4crypt {
 	 * @access public
 	 * @return string
 	 */
-	function encrypt ($pwd, $data, $ispwdHex = 0)
-	{
+	public static function encrypt($pwd, $data, $ispwdHex=0) {
 		if ($ispwdHex)
 			$pwd = @pack('H*', $pwd); // valid input, please!
  
@@ -81,8 +80,7 @@ class rc4crypt {
 	 * @access public
 	 * @return string
 	 */
-	function decrypt ($pwd, $data, $ispwdHex = 0)
-	{
-		return rc4crypt::encrypt($pwd, $data, $ispwdHex);
+	public static function decrypt($pwd, $data, $ispwdHex=0) {
+		return self::encrypt($pwd, $data, $ispwdHex);
 	}
 }
