@@ -163,7 +163,7 @@ class Datafeed {
      * @param xml $xml
      * @return array $transactions
      */
-    public function foxyXml2database($xml) {
+    public function saveFoxyData($xml) {
     
         // Converts string to a hierarchy of SimpleXMLElement Objects
         $xml = simplexml_load_string($xml, null, LIBXML_NOCDATA);
@@ -187,4 +187,12 @@ class Datafeed {
         return $transactions;
     }
 
+
+    /**
+     * TODO
+     *
+     */
+    public function saveFoxySubscriptionData($xml) {
+    
+    }
 }

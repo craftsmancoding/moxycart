@@ -4,7 +4,11 @@ See https://wiki.foxycart.com/v/1.1/transaction_xml_datafeed
 -->
 <model package="foxycart" version="1.0" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM">
     <!-- ! Foxydata -->
-    <!-- Stores raw postback from Foxycart -->
+    <!-- 
+    Stores decryoted postback from Foxycart 
+    We store the api_key here so we can handle multiple stores on a single site
+    For tests, set the api_key to "test" or similar.
+    -->
     <object class="Foxydata" table="foxydata" extends="xPDOObject">
         <field key="foxydata_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
         <!--field key="store_version" dbtype="varchar" precision="32" phptype="string" null="false" /-->

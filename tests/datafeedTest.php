@@ -88,18 +88,46 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
     {
         $Datafeed = new \Foxycart\Datafeed(self::$modx, new rc4crypt());
         $xml = 'invalid';
-        $transactions = $Datafeed->foxyXml2database($xml);
+        $transactions = $Datafeed->saveFoxyData($xml);
     }
     
     public function testParseFoxycartXML() {
+        $api_key = 'test';
         $xml = file_get_contents( dirname(__FILE__).'/foxycart/sample1.xml');
         
         // Delete from database if present
-        
-        $Datafeed = new \Foxycart\Datafeed(self::$modx, new rc4crypt());
-        $transactions = $Datafeed->foxyXml2database($xml);
+        $Foxydata = self::$modx->getObject('Foxydata', array('api_key'=>$api_key));
+        $Foxydata->remove();
 
-        // $Datafeed->foxyXml2database($bogus_xml);
+        $Datafeed = new \Foxycart\Datafeed(self::$modx, new rc4crypt());
+        $transactions = $Datafeed->saveFoxyData($xml);
+
+        $Foxydata = self::$modx->newObject('Foxydata');
+        $Foxydata->set('md5', md5(uniqid()));
+        $Foxydata->set('xml', $xml);
+        $Foxydata->set('type', 'FoxyData'); // or FoxySubscriptionData
+        $Foxydata->set('api_key', $api_key);
+
+        $Foxydata->addMany($transactions);
+        
+        if (!$Foxydata->save()) {
+            return 'Failed to save Foxydata post!';
+        }
+        
+        $Transaction = self::$modx->getObject('Transaction', array('id'=>'1234567890'));
+        $x = ($Transaction) ? true : false;
+        $this->assertTrue($x);
+        $this->assertEquals($Transaction->get('customer_id'),'12345678');
+        
+        $transaction_id = $Transaction->get('transaction_id');
+        
+        $TDs = self::$modx->getCollection('TransactionDetail', array('transaction_id'=>$transaction_id));
+        
+        $names = array('Ham Steak','5 Knives Sausage Sampler','Refrigerated Box');
+        foreach ($TDs as $p) {
+            $this->assertTrue(in_array($p->get('product_name'),$names));
+        }
+        // $Datafeed->saveFoxyData($bogus_xml);
         
     }
     
