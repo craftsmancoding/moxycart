@@ -19,6 +19,21 @@
 class datafeedTest extends \PHPUnit_Framework_TestCase {
 
     public static $modx;
+    public static $cnt = 0;
+    public static $args = array();
+    public static $snippetname;
+    
+    public static function sample_callback($args) {
+        self::$cnt++;
+        self::$args = $args;
+    }
+
+    public static function pretend_snippet($snippetname,$args) {
+        self::$cnt++;
+        self::$args = $args;
+        self::$snippetname = $snippetname;
+    }
+
     
     /**
      * Load up MODX for our tests.
@@ -74,7 +89,7 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
         $encrypted = rc4crypt::encrypt($pwd, $data);
         $payload = urlencode($encrypted);
         
-        $Datafeed = new \Foxycart\Datafeed(self::$modx, new rc4crypt());
+        $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
         $xml_str = $Datafeed->post2xml($payload,$pwd);
 
         $this->assertEquals(normalize_string($data),normalize_string($xml_str));
@@ -86,7 +101,7 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
      */
     public function testInvalidFoxycartXMLBody()
     {
-        $Datafeed = new \Foxycart\Datafeed(self::$modx, new rc4crypt());
+        $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
         $xml = 'invalid';
         $transactions = $Datafeed->saveFoxyData($xml);
     }
@@ -100,7 +115,7 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
             $Foxydata->remove();
         }
 
-        $Datafeed = new \Foxycart\Datafeed(self::$modx, new rc4crypt());
+        $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
         $result = $Datafeed->saveFoxyData($xml);
         $this->assertEquals($result,'foxy'); 
         $Transaction = self::$modx->getObject('Transaction', array('id'=>'1234567890'));
@@ -120,5 +135,58 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
         
     }
     
+    
+    /**
+     * @expectedException Exception 
+     * @expectedExceptionMessage Invalid callback event
+     */
+    public function testInvalidCallbackEvent()
+    {
+        $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
+        $Datafeed->registerCallback('dork',function($args){});
+    }
+
+    /**
+     * @expectedException Exception 
+     * @expectedExceptionMessage Invalid callback event
+     */
+    public function testInvalidCallbackEvent2()
+    {
+        $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
+        $Datafeed->registerCallback(array('dork'),function($args){});
+    }
+
+    /**
+     * @expectedException Exception 
+     * @expectedExceptionMessage Invalid callback
+     */
+    public function testInvalidCallback()
+    {
+        $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
+        $Datafeed->registerCallback('dork','not a callable function');
+    }
+    
+    public function testRegisterCallback() {
+        $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
+        $Datafeed->registerCallback('postback','datafeedTest::sample_callback');
+        $this->assertTrue(!empty($Datafeed->callbacks_raw['postback']));
+    }
+    
+    public function testExecuteCallback() {
+        self::$cnt = 0;
+        $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
+        $Datafeed->registerCallback('postback','datafeedTest::sample_callback');
+        $Datafeed->executeCallbacks('postback',array('x'=>'xray','y'=>'yellow'));
+        $this->assertEquals(self::$cnt,1);
+        $this->assertEquals(self::$args['x'],'xray');
+
+        $Datafeed->registerCallback('product','datafeedTest::pretend_snippet',array('MySnippet'));
+        $Datafeed->executeCallbacks('product',array('a'=>'apple','b'=>'bear','c'=>'cat'));
+
+        $this->assertEquals(self::$cnt,2);
+        $this->assertEquals(self::$args['a'],'apple');
+        $this->assertEquals(self::$snippetname,'MySnippet');        
+        
+    }
 
 }

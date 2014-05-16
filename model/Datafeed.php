@@ -18,8 +18,8 @@ class Datafeed {
     // Required classes:
     public $modx;
 	public $rc4crypt;
-    private $callbacks_raw = array();
-    private $callbacks = array();
+    public $callbacks_raw = array();
+    public $callbacks = array();
     
     /** 
      * Some dependency injection here would be nice, but we can't really inject 
@@ -254,18 +254,31 @@ class Datafeed {
      * @param array any additional args to pass to the callback
      */
     public function registerCallback($event, $callback, $args=array()) {
-        if (strtolower($event) == 'postback') {
-        
+        if (!is_scalar($event)) {
+            throw new \Exception('Invalid callback event');
         }
-        elseif (strtolower($event) == 'transaction') {
-        
+        if (!is_callable($callback)) {
+            throw new \Exception('Invalid callback');
         }
-        elseif (strtolower($event) == 'product') {
-        
+        $event = strtolower($event);
+        if (in_array($event, array('postback','transaction','product'))) {
+            $this->callbacks_raw[$event][] = array('callback'=>$callback,'args'=>$args);
         }
         else {
             throw new \Exception('Invalid callback event');
         }
     }
     
+    /**
+     * 
+     * @param string $event name
+     * @param array $data for relevent event, e.g. Foxydata->toArray()
+     */
+    public function executeCallbacks($event,$data) {
+        if (!isset($this->callbacks_raw[$event])) return;
+        foreach ($this->callbacks_raw[$event] as $cb) {
+            $cb['args'][] = $data; // push data onto the end.
+            call_user_func_array($cb['callback'], $cb['args']);
+        }
+    }
 }
