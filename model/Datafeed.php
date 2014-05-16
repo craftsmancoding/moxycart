@@ -135,6 +135,7 @@ class Datafeed {
             if (isset($t->attributes->attribute)) $Transaction->addMany($this->getAttributes($t->attributes->attribute));
             if (isset($t->shipto_addresses->shipto_address)) $Transaction->addMany($this->getShiptoAddresses($t->shipto_addresses->shipto_address));
             if (isset($t->transaction_details->transaction_detail)) $Transaction->addMany($this->getTransactionDetails($t->transaction_details->transaction_detail));
+            $this->executeCallbacks('transaction',$Transaction->toArray());
             $transactions[] = $Transaction;    
         }
 
@@ -159,6 +160,7 @@ class Datafeed {
                 }
                 $TransactionDetail->addMany($options);
             }
+            $this->executeCallbacks('product',$TransactionDetail->toArray());
             $details[] = $TransactionDetail;
         }
         
@@ -208,7 +210,7 @@ class Datafeed {
         if (!$Foxydata->save()) {
             return 'Failed to save Foxydata post!';
         }
-
+        $this->executeCallbacks('postback',$Foxydata->toArray());
         return 'foxy';
     }
 
