@@ -185,8 +185,25 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals(self::$cnt,2);
         $this->assertEquals(self::$args['a'],'apple');
-        $this->assertEquals(self::$snippetname,'MySnippet');        
+        $this->assertEquals(self::$snippetname,'MySnippet');
         
+        // Test the callbacks in their real environment
+        self::$cnt = 0;
+        $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
+        $Datafeed->registerCallback('product','datafeedTest::pretend_snippet',array('MySnippet'));
+        $Datafeed->registerCallback('product','datafeedTest::pretend_snippet',array('OtherSnippet'));
+
+        $api_key = 'test';
+        $xml = file_get_contents( dirname(__FILE__).'/foxycart/sample1.xml');
+        
+        // Delete from database if present
+        if ($Foxydata = self::$modx->getObject('Foxydata', array('api_key'=>$api_key))) {
+            $Foxydata->remove();
+        }
+        
+        $result = $Datafeed->saveFoxyData($xml);
+        $this->assertEquals(self::$cnt,6); // products x2 (for 2 product callbacks)
+                
     }
 
 }
