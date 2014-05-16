@@ -63,7 +63,7 @@ $log = array(
     )
 );
 
-// For the record
+// For the log
 $msg = "parseFoxycartDatafeed running with the following parameters:\n";
 $msg .= "core_path: {$core_path}\n";
 $msg .= "log_level {$log_level}\n";
