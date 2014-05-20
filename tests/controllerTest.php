@@ -21,8 +21,8 @@
  *
  *
  */
-
-class controllerTest extends PHPUnit_Framework_TestCase {
+namespace Moxycart;
+class controllerTest extends \PHPUnit_Framework_TestCase {
 
     // Must be static because we set it up inside a static function
     public static $modx;
@@ -52,7 +52,7 @@ class controllerTest extends PHPUnit_Framework_TestCase {
         
         include_once MODX_CORE_PATH . 'model/modx/modx.class.php';
          
-        self::$modx = new modX();
+        self::$modx = new \modX();
         self::$modx->initialize('mgr');  
         
         $core_path = self::$modx->getOption('moxycart.core_path', '', MODX_CORE_PATH);
@@ -63,7 +63,7 @@ class controllerTest extends PHPUnit_Framework_TestCase {
         require_once $core_path . 'index.class.php';
 
         // First thing is to pass the modx dependency to the parent controller
-        $tmp = new IndexManagerController(self::$modx);
+        $tmp = new \IndexManagerController(self::$modx);
         
     }
 
@@ -78,11 +78,68 @@ class controllerTest extends PHPUnit_Framework_TestCase {
     }
 
 
-    public function testLoadController() {
+    /** 
+     * Load up on guns, bring your friends - Nirvana
+     */
+    public function testLoadControllers() {
+        unset($_REQUEST['class']);
         $result = IndexManagerController::getInstance(self::$modx);
-        $this->assertTrue(is_a($result, '\\Moxycart\\Controller\\Main'), 'Invalid Main instance.');
+        $this->assertTrue(is_a($result, '\\Moxycart\\MainController'), 'Invalid Main controller instance.');
+
+        $_REQUEST['class'] = 'Product';
+        $result = IndexManagerController::getInstance(self::$modx);
+        $this->assertTrue(is_a($result, '\\Moxycart\\ProductController'), 'Invalid Product controller instance.');
+
+        $_REQUEST['class'] = 'Currency';
+        $result = IndexManagerController::getInstance(self::$modx);
+        $this->assertTrue(is_a($result, '\\Moxycart\\CurrencyController'), 'Invalid Currency controller instance.');
+
+        $_REQUEST['class'] = 'Asset';
+        $result = IndexManagerController::getInstance(self::$modx);
+        $this->assertTrue(is_a($result, '\\Moxycart\\AssetController'), 'Invalid Asset controller instance.');
+
+        $_REQUEST['class'] = 'Field';
+        $result = IndexManagerController::getInstance(self::$modx);
+        $this->assertTrue(is_a($result, '\\Moxycart\\FieldController'), 'Invalid Field controller instance.');
+
+        $_REQUEST['class'] = 'Review';
+        $result = IndexManagerController::getInstance(self::$modx);
+        $this->assertTrue(is_a($result, '\\Moxycart\\ReviewController'), 'Invalid Review controller instance.');
+
+
     }
 
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Invalid data type for class
+     */
+    public function testBogusClassname()
+    {
+        $_REQUEST['class'] = array('InvalidDataType');
+        $result = IndexManagerController::getInstance(self::$modx);
+    }
+
+    /** 
+     *
+     */
+    public function testLoadBogusController() {
+        $_REQUEST['class'] = 'DoesNotExist';
+        $result = IndexManagerController::getInstance(self::$modx);
+        $this->assertTrue(is_a($result, '\\Moxycart\\ErrorController'), 'Invalid Error controller instance.');
+    
+    }
+
+    /**
+     *
+     *
+     */
+    public function testUtilityFunctions() {
+        //$url = BaseController::url($class='',$method='index',$args=array())
+        $tmp = new BaseController(self::$modx);
+        // /manager/?a=94&class=Xyz&method=derp
+        $url = BaseController::url('Xyz','derp');
+//        print $url;        
+    }
 
     
 /*

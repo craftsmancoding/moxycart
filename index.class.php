@@ -40,9 +40,13 @@ class IndexManagerController extends \Moxycart\BaseController {
         $config['method'] = (isset($_REQUEST['method'])) ? $_REQUEST['method'] : 'index';
         $class = (isset($_REQUEST['class'])) ? $_REQUEST['class'] : 'Main';
         
-        $class = '\\Moxycart\\'.$class.'\\Controller';
+        if (!is_scalar($class)) {
+            throw new \Exception('Invalid data type for class');
+        }
 
-        $modx->log(\modX::LOG_LEVEL_DEBUG,'[moxycart] Instantiating '.$class.' with config '.print_r($config,true),'',__FUNCTION__,__FILE__,__LINE__);
+        $config['controller_url'] = self::url();
+        $config['core_path'] = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+        $config['assets_url'] = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
 
         // If you don't do this, the $_POST array will seem to be populated even during normal GET requests.
         unset($_POST['HTTP_MODAUTH']);
@@ -52,11 +56,18 @@ class IndexManagerController extends \Moxycart\BaseController {
         else {
             $config['method'] = 'get'.ucfirst($config['method']);
         }
-        $config['controller_url'] = self::url();
-        $config['core_path'] = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
-        $config['assets_url'] = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
         
-        // See Base::render() for how requests get handled.        
+        $class = '\\Moxycart\\'.$class.'Controller';
+
+        // Override on error
+        if (!class_exists($class)) {
+            $class = '\\Moxycart\\ErrorController';
+            $config['method'] = 'get404';
+        }
+
+        $modx->log(\modX::LOG_LEVEL_DEBUG,'[moxycart] Instantiating '.$class.' with config '.print_r($config,true),'',__FUNCTION__,__FILE__,__LINE__);
+        
+        // See Base::render() for how requests get handled.  
         return new $class($modx,$config);
 
     }
