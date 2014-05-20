@@ -8,8 +8,8 @@
  * passed is prepended with get or post (depending on whether or not post data is present).
  *
  */
-namespace Moxycart\Controller; 
-class Base extends \modExtraManagerController {
+namespace Moxycart; 
+class BaseController extends \modExtraManagerController {
     /** @var bool Set to false to prevent loading of the header HTML. */
     public $loadHeader = true;
     /** @var bool Set to false to prevent loading of the footer HTML. */

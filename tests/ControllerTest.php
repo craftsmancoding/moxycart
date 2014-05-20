@@ -21,7 +21,7 @@
  *
  *
  */
- 
+
 class controllerTest extends PHPUnit_Framework_TestCase {
 
     // Must be static because we set it up inside a static function
@@ -56,9 +56,14 @@ class controllerTest extends PHPUnit_Framework_TestCase {
         self::$modx->initialize('mgr');  
         
         $core_path = self::$modx->getOption('moxycart.core_path', '', MODX_CORE_PATH);
-        include_once $core_path . 'components/moxycart/controllers/moxycartcontroller.class.php';
-        
-        self::$moxycart = new MoxycartController(self::$modx);
+        // We have to do this here because we get conflicts if we try to do a class map autoload of the 
+        // base "" directory.
+        // The modmanagercontroller must be first.
+        require_once MODX_CORE_PATH .'model/modx/modmanagercontroller.class.php';    
+        require_once $core_path . 'index.class.php';
+
+        // First thing is to pass the modx dependency to the parent controller
+        $tmp = new IndexManagerController(self::$modx);
         
     }
 
@@ -72,6 +77,15 @@ class controllerTest extends PHPUnit_Framework_TestCase {
     
     }
 
+
+    public function testLoadController() {
+        $result = IndexManagerController::getInstance(self::$modx);
+        $this->assertTrue(is_a($result, '\\Moxycart\\Controller\\Main'), 'Invalid Main instance.');
+    }
+
+
+    
+/*
     public function testLoadView() {
         $file = 'product_template.php';
         $method = new ReflectionMethod(
@@ -80,6 +94,7 @@ class controllerTest extends PHPUnit_Framework_TestCase {
         $method->setAccessible(TRUE);
         $this->assertTrue($method->invokeArgs(self::$moxycart,array($file)) != 'view_not_found','View Not Found');
     }
+*/
 
     
 }

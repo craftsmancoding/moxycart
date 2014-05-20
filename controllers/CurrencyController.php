@@ -2,13 +2,13 @@
 /**
  * The name of the controller is based on the action (home) and the
  * namespace. This home controller is loaded by default because of
- * our IndexManagerController.
+ * our IndexManagerController (see index.class.php)
  */
-namespace Moxycart\Controller;
+namespace Moxycart;
 //use Moxycart\Model;
 
 require_once MODX_CORE_PATH.'model/modx/modmanagercontroller.class.php'; 
-class Product extends Base {
+class CurrencyController extends BaseController {
     public $loadHeader = false;
     public $loadFooter = false;
     public $loadBaseJavascript = false; // GFD... this can't be set at runtime.
@@ -19,79 +19,93 @@ class Product extends Base {
      */
     public function getIndex(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
-        $Obj = new \Moxycart\Model\Product($this->modx);
+        $this->addStandardLayout();
+        $Obj = new Currency($this->modx);
         $results = $Obj::all($scriptProperties);
         // We need these for pagination
         $scriptProperties['count'] = $Obj::count($scriptProperties);        
-        $scriptProperties['baseurl'] = self::url('product','index');
+        $scriptProperties['baseurl'] = self::url('currency','index');
         $this->setPlaceholder('results', $results);
         $this->setPlaceholders($scriptProperties);
-        return $this->fetchTemplate('product/index.php');
+        return $this->fetchTemplate('currency/index.php');
     }
 
     /**
      * Remember we have to set up the manager container
      *
      */
-    public function getEdit(array $scriptProperties = array()) {
+    public function getEdit(array $scriptProperties = array()) {    
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         $this->addStandardLayout();
-        $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
-        $Obj = new \Moxycart\Model\Product($this->modx);    
-        if (!$result = $Obj::find($product_id)) {
+        $currency_id = (int) $this->modx->getOption('currency_id',$scriptProperties);
+        $Obj = new \Moxycart\Model\Currency($this->modx);    
+        if (!$result = $Obj::find($currency_id)) {
             return $this->sendError('Page not found.');
         }
-        
+        $scriptProperties['baseurl'] = self::url('currency','edit',array('currency_id'=>$currency_id));
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($result->toArray());
         $this->setPlaceholder('result',$result);
-        return $this->fetchTemplate('product/edit.php');
-//        return $this->fetchTemplate('product/test.php');
-    }
-
-/**
-     * Post data here to save it.  Data should be in the following format:
-     *
-     * keys in $_POST should match *exactly* column names in products table, e.g.
-     *  name
-     *  qty_inventory
-     *  sale_end 
-     *  ... etc..
-     *
-     * Related data should be stored in the following arrays:
-     *
-     *  relations   = key/value where key is product_id, value is type
-     *  taxonomies  = array(1,2,3)  a simple array of taxonomy_id's
-     *  terms       = array(4,5,6)  a simple array of term_id's
-     *  specs       = array(            An array of key/value pairs: keys=spec_ids, values=values for that spec
-     *                  array(7 => "Value1"), 
-     *                  array(8 => "Value2")
-     *                )
-     *  images      = array(2,4,8)  a simple array of image_ids
-     *
-     * Finally, an "action" parameter should be passed to indicate whether this function should
-     * create, update, or delete a product record.
-     *
-     */
-    public function postEdit(array $scriptProperties = array()) {
-        return "ASDFASDF";
+        return $this->fetchTemplate('currency/edit.php');
     }
 
     /**
-     * Basically take a product ID (product_id) and forward 
+     * 
+     *
      *
      */
-    public function getPreview(array $scriptProperties = array()) {
+    public function postEdit(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
-        $product_id = (int) $this->modx->getOption('product_id', $scriptProperties);
-        $Obj = new \Moxycart\Model\Product($this->modx);    
-        if (!$result = $Obj::find($product_id)) {
+        $currency_id = (int) $this->modx->getOption('currency_id',$scriptProperties);
+        $Obj = new \Moxycart\Model\Currency($this->modx);    
+        if (!$result = $Obj::find($currency_id)) {
             return $this->sendError('Page not found.');
         }
-        header('Location: '.MODX_SITE_URL . $result->get('uri'));
-        exit;        
+        $result->fromArray($scriptProperties);
+        if (!$result->save()) {
+            return $this->sendError('There was a problem saving.');
+        }
+        $this->setMsg('Currency saved.','success');
+        return $this->getIndex(array());
     }
-    
+
+    /**
+     * 
+     *
+     *
+     */
+    public function getCreate(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
+        $this->addStandardLayout();
+        $Obj = new \Moxycart\Model\Currency($this->modx);    
+        if (!$result = $Obj::create()) {
+            return $this->sendError('Page not found.');
+        }
+        $scriptProperties['baseurl'] = self::url('currency','create');
+        $this->setPlaceholders($scriptProperties);
+        $this->setPlaceholders($result->toArray());
+        $this->setPlaceholder('result',$result);
+        return $this->fetchTemplate('currency/create.php');
+    }
+
+    /**
+     * 
+     *
+     *
+     */
+    public function postCreate(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
+
+        $Obj = new \Moxycart\Model\Currency($this->modx);    
+        $result = $Obj::create($scriptProperties);
+        if (!$result->save()) {
+            return $this->sendError('Error Saving.');        
+        }
+        $this->setMsg('Currency Created.','success');
+        return $this->getIndex(array());
+    }
+
+
     
     /**
      * Register needed assets. Using this method, it will automagically

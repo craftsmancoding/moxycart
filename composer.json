@@ -52,9 +52,8 @@
             "model/"
         ],
         "psr-4": {
-            "Moxycart\\Model\\": "model/",
-            "Foxycart\\": "model/",
-            "Moxycart\\Controller\\": "controllers/"
+            "Moxycart\\": ["model/","controllers/"],
+            "Foxycart\\": "model/"
         }
     },
     "extra": {

@@ -7,7 +7,7 @@
  * This model class should define a unified interface that define the graphs that represent
  * an object data in its entirety.
  */
-namespace Moxycart\Model;
+namespace Moxycart;
 class Product extends BaseModel {
 
     public static $xclass = 'Product';

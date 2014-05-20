@@ -20,7 +20,7 @@
  * Beware late static bindings!
  * See http://stackoverflow.com/questions/10504129/when-using-self-parent-static-and-how
  */
-namespace Moxycart\Model;
+namespace Moxycart;
 class BaseModel {
 
     public $modx;

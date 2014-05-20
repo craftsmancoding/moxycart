@@ -7,8 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Pagination\\' => array($vendorDir . '/craftsmancoding/pagination/src'),
-    'Moxycart\\Model\\' => array($baseDir . '/model'),
-    'Moxycart\\Controller\\' => array($baseDir . '/controllers'),
+    'Moxycart\\' => array($baseDir . '/model', $baseDir . '/controllers'),
     'Foxycart\\' => array($baseDir . '/model'),
     'Formbuilder\\' => array($vendorDir . '/craftsmancoding/formbuilder/src'),
 );
