@@ -310,6 +310,32 @@
 
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Relation" class="Product" local="related_id" foreign="product_id" cardinality="one" owner="foreign" />
+        
+
+		<validation>
+            <rule field="related_id"
+                  name="validContentType"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="product_id"
+                  local="related_id"
+                  alias="Product"
+                  class="Product"
+                  message="The referenced product does not exist."
+             />
+            <rule field="product_id"
+                  name="validProduct"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="product_id"
+                  local="product_id"
+                  alias="Product"
+                  class="Product"
+                  message="The referenced product does not exist."
+             />
+
+        </validation>
+        
 	</object>
 	
 	<!-- ! Product Variation Types -->
@@ -344,6 +370,31 @@
 
         <aggregate alias="Taxonomy" class="Taxonomy" local="taxonomy_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+        
+		<validation>
+            <rule field="taxonomy_id"
+                  name="validContentType"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="id"
+                  local="taxonomy_id"
+                  alias="Term"
+                  class="modResource"
+                  message="The referenced taxonomy does not exist."
+             />
+            <rule field="product_id"
+                  name="validProduct"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="product_id"
+                  local="product_id"
+                  alias="Product"
+                  class="Product"
+                  message="The referenced product does not exist."
+             />
+
+        </validation>
+        
 	</object>
 	    
     <!-- ! ProductTerm -->
@@ -358,6 +409,32 @@
 
         <aggregate alias="Term" class="Term" local="term_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+
+		<validation>
+            <rule field="term_id"
+                  name="validContentType"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="id"
+                  local="term_id"
+                  alias="Term"
+                  class="modResource"
+                  message="The referenced term does not exist."
+             />
+            <rule field="product_id"
+                  name="validProduct"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="product_id"
+                  local="product_id"
+                  alias="Product"
+                  class="Product"
+                  message="The referenced product does not exist."
+             />
+
+        </validation>
+
+        
 	</object>
 	
 	
