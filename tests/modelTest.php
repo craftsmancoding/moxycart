@@ -186,6 +186,11 @@ class modelTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($values[1],'TRL');
     }
     
+    
+    public function testCurrencyValidation() {
+    
+    }
+    
     /**
      *
      * @expectedException Currency not found with id

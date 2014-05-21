@@ -90,4 +90,30 @@ $xpdo_meta_map['Currency']= array (
       'owner' => 'local',
     ),
   ),
+  'validation' => 
+  array (
+    'rules' => 
+    array (
+      'code' => 
+      array (
+        'iso4217' => 
+        array (
+          'type' => 'xPDOValidationRule',
+          'rule' => 'xPDOMinLengthValidationRule',
+          'value' => '3',
+          'message' => 'ISO 4217 Currency Codes are 3 characters.',
+        ),
+      ),
+      'name' => 
+      array (
+        'minlength' => 
+        array (
+          'type' => 'xPDOValidationRule',
+          'rule' => 'xPDOMinLengthValidationRule',
+          'value' => '3',
+          'message' => 'Your currency name must be at least 3 characters.',
+        ),
+      ),
+    ),
+  ),
 );

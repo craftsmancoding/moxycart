@@ -33,7 +33,7 @@ $xpdo_meta_map['Product']= array (
     'sale_start' => NULL,
     'sale_end' => NULL,
     'category' => NULL,
-    'image_id' => NULL,
+    'asset_id' => NULL,
     'is_active' => 1,
     'in_menu' => 1,
     'billing_unit' => NULL,
@@ -42,7 +42,6 @@ $xpdo_meta_map['Product']= array (
     'duration_interval' => 1,
     'user_group_id' => NULL,
     'role_id' => NULL,
-    'payload_id' => NULL,
     'author_id' => NULL,
     'timestamp_created' => 'CURRENT_TIMESTAMP',
     'timestamp_modified' => NULL,
@@ -245,18 +244,18 @@ $xpdo_meta_map['Product']= array (
     'category' => 
     array (
       'dbtype' => 'varchar',
-      'precision' => '32',
+      'precision' => '64',
       'phptype' => 'string',
       'null' => true,
       'comment' => 'Foxycart category (not a taxonomy)',
     ),
-    'image_id' => 
+    'asset_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
       'phptype' => 'integer',
       'null' => true,
-      'comment' => 'Thumbnail image',
+      'comment' => 'Primary thumbnail image',
     ),
     'is_active' => 
     array (
@@ -314,13 +313,6 @@ $xpdo_meta_map['Product']= array (
       'null' => true,
     ),
     'role_id' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '11',
-      'phptype' => 'integer',
-      'null' => true,
-    ),
-    'payload_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -434,14 +426,14 @@ $xpdo_meta_map['Product']= array (
         ),
       ),
     ),
-    'image_id' => 
+    'asset_id' => 
     array (
-      'alias' => 'image_id',
+      'alias' => 'asset_id',
       'primary' => false,
       'unique' => false,
       'columns' => 
       array (
-        'image_id' => 
+        'asset_id' => 
         array (
           'collation' => 'A',
           'null' => true,
@@ -459,9 +451,9 @@ $xpdo_meta_map['Product']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
-    'Images' => 
+    'Assets' => 
     array (
-      'class' => 'Image',
+      'class' => 'Asset',
       'local' => 'product_id',
       'foreign' => 'product_id',
       'cardinality' => 'many',
@@ -483,9 +475,9 @@ $xpdo_meta_map['Product']= array (
       'cardinality' => 'many',
       'owner' => 'local',
     ),
-    'Specs' => 
+    'Fields' => 
     array (
-      'class' => 'ProductSpec',
+      'class' => 'ProductField',
       'local' => 'product_id',
       'foreign' => 'product_id',
       'cardinality' => 'many',
@@ -534,14 +526,6 @@ $xpdo_meta_map['Product']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
-    'Payload' => 
-    array (
-      'class' => 'modResource',
-      'local' => 'payload_id',
-      'foreign' => 'id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
     'Author' => 
     array (
       'class' => 'modUser',
@@ -568,9 +552,9 @@ $xpdo_meta_map['Product']= array (
     ),
     'Thumbnail' => 
     array (
-      'class' => 'Image',
-      'local' => 'image_id',
-      'foreign' => 'image_id',
+      'class' => 'Asset',
+      'local' => 'asset_id',
+      'foreign' => 'asset_id',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
@@ -581,6 +565,31 @@ $xpdo_meta_map['Product']= array (
       'foreign' => 'parent_id',
       'cardinality' => 'many',
       'owner' => 'local',
+    ),
+  ),
+  'validation' => 
+  array (
+    'rules' => 
+    array (
+      'name' => 
+      array (
+        'minlength' => 
+        array (
+          'type' => 'xPDOValidationRule',
+          'rule' => 'xPDOMinLengthValidationRule',
+          'value' => '1',
+          'message' => 'Product name must be at least 1 character.',
+        ),
+      ),
+      'alias' => 
+      array (
+        'validURLchars' => 
+        array (
+          'type' => 'preg_match',
+          'rule' => '/^[a-z0-9\\-_\\/]+$/i',
+          'message' => 'Contains invalid URL characters.',
+        ),
+      ),
     ),
   ),
 );

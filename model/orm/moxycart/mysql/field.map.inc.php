@@ -1,13 +1,13 @@
 <?php
-$xpdo_meta_map['Spec']= array (
+$xpdo_meta_map['Field']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'specs',
+  'table' => 'fields',
   'extends' => 'xPDOObject',
   'fields' => 
   array (
-    'spec_id' => NULL,
-    'identifier' => NULL,
+    'field_id' => NULL,
+    'slug' => NULL,
     'name' => NULL,
     'description' => NULL,
     'seq' => NULL,
@@ -16,7 +16,7 @@ $xpdo_meta_map['Spec']= array (
   ),
   'fieldMeta' => 
   array (
-    'spec_id' => 
+    'field_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -25,13 +25,13 @@ $xpdo_meta_map['Spec']= array (
       'index' => 'pk',
       'generated' => 'native',
     ),
-    'identifier' => 
+    'slug' => 
     array (
       'dbtype' => 'varchar',
-      'precision' => '32',
+      'precision' => '64',
       'phptype' => 'string',
       'null' => false,
-      'comment' => 'Lowercase slug',
+      'comment' => 'unique lowercase slug',
     ),
     'name' => 
     array (
@@ -69,6 +69,7 @@ $xpdo_meta_map['Spec']= array (
       'phptype' => 'string',
       'null' => false,
       'default' => 'text',
+      'comment' => 'Formbuilder argument',
     ),
   ),
   'indexes' => 
@@ -80,7 +81,7 @@ $xpdo_meta_map['Spec']= array (
       'unique' => true,
       'columns' => 
       array (
-        'spec_id' => 
+        'field_id' => 
         array (
           'collation' => 'A',
           'null' => false,
@@ -107,11 +108,52 @@ $xpdo_meta_map['Spec']= array (
   array (
     'Products' => 
     array (
-      'class' => 'ProductSpec',
-      'local' => 'spec_id',
-      'foreign' => 'spec_id',
+      'class' => 'ProductField',
+      'local' => 'field_id',
+      'foreign' => 'field_id',
       'cardinality' => 'many',
       'owner' => 'local',
+    ),
+  ),
+  'validation' => 
+  array (
+    'rules' => 
+    array (
+      'slug' => 
+      array (
+        'minlength' => 
+        array (
+          'type' => 'xPDOValidationRule',
+          'rule' => 'xPDOMinLengthValidationRule',
+          'value' => '1',
+          'message' => 'Field slug must be at least 1 character.',
+        ),
+        'validchars' => 
+        array (
+          'type' => 'preg_match',
+          'rule' => '/^[a-z0-9\\-_]+$/i',
+          'message' => 'Contains invalid characters.',
+        ),
+      ),
+      'name' => 
+      array (
+        'minlength' => 
+        array (
+          'type' => 'xPDOValidationRule',
+          'rule' => 'xPDOMinLengthValidationRule',
+          'value' => '1',
+          'message' => 'Field name must be at least 1 character.',
+        ),
+      ),
+      'type' => 
+      array (
+        'validchars' => 
+        array (
+          'type' => 'preg_match',
+          'rule' => '/^[a-z_][a-z0-9_]+$/i',
+          'message' => 'Contains invalid characters.',
+        ),
+      ),
     ),
   ),
 );

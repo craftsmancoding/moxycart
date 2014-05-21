@@ -46,6 +46,11 @@
 		</index>
 		
 		<composite alias="Products" class="Product" local="currency_id" foreign="currency_id" cardinality="many" owner="local" />
+		
+		<validation>
+            <rule field="code" name="iso4217" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="3" message="ISO 4217 Currency Codes are 3 characters."/>
+            <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="3" message="Your currency name must be at least 3 characters."/>
+        </validation>
 	</object>
 
     <!-- ! Product -->
@@ -63,6 +68,7 @@
         <field key="sku" dbtype="varchar" precision="255" phptype="string" null="false" />
         <field key="sku_vendor" dbtype="varchar" precision="255" phptype="string" null="false" comment="SKU from your provider"/>
         <field key="variant_matrix" dbtype="varchar" precision="255" phptype="string" null="false" comment="JSON hash to identify specific type:term combo(s)"/>
+        <!-- alias is the slug only, uri includes the slug from the parent store -->
         <field key="alias" dbtype="varchar" precision="255" phptype="string" null="false" />
         <field key="uri" dbtype="varchar" precision="255" phptype="string" null="false" />
 
@@ -141,6 +147,11 @@
         <composite alias="Fields" class="ProductField" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Relations" class="ProductRelation" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Reviews" class="Review" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+		
+        <validation>
+            <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Product name must be at least 1 character."/>
+            <rule field="alias" name="validURLchars" type="preg_match" rule="/^[a-z0-9\-_\/]+$/i" message="Contains invalid URL characters." />
+        </validation>
     </object>
 
 
@@ -162,6 +173,13 @@
 		</index>
 
         <composite alias="Products" class="ProductField" local="field_id" foreign="field_id" cardinality="many" owner="local" />
+		
+		<validation>
+            <rule field="slug" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field slug must be at least 1 character."/>
+            <rule field="slug" name="validchars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
+            <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field name must be at least 1 character."/>
+            <rule field="type" name="validchars" type="preg_match" rule="/^[a-z_][a-z0-9_]+$/i" message="Contains invalid characters." />
+        </validation>
 		
 	</object>
 

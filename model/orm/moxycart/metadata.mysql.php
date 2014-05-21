@@ -1,6 +1,5 @@
 <?php
-// This works, but this is a bad place to put it.
-//include_once dirname(dirname(dirname(dirname(__FILE__)))) .'/vendor/autoload.php';
+
 $xpdo_meta_map = array (
   'modResource' => 
   array (
@@ -12,15 +11,14 @@ $xpdo_meta_map = array (
   array (
     0 => 'Currency',
     1 => 'Product',
-    2 => 'Spec',
+    2 => 'Field',
     3 => 'VariationType',
     4 => 'VariationTerm',
-    5 => 'Cart',
-    6 => 'Image',
+    5 => 'Asset',
   ),
   'xPDOSimpleObject' => 
   array (
-    0 => 'ProductSpec',
+    0 => 'ProductField',
     1 => 'Review',
     2 => 'ProductRelation',
     3 => 'ProductVariationTypes',

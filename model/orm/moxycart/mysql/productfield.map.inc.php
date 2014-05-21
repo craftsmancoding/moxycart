@@ -1,13 +1,13 @@
 <?php
-$xpdo_meta_map['ProductSpec']= array (
+$xpdo_meta_map['ProductField']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'product_specs',
+  'table' => 'product_fields',
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
     'product_id' => NULL,
-    'spec_id' => NULL,
+    'field_id' => NULL,
     'value' => NULL,
   ),
   'fieldMeta' => 
@@ -19,7 +19,7 @@ $xpdo_meta_map['ProductSpec']= array (
       'phptype' => 'integer',
       'null' => false,
     ),
-    'spec_id' => 
+    'field_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -61,11 +61,11 @@ $xpdo_meta_map['ProductSpec']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
-    'Spec' => 
+    'Field' => 
     array (
-      'class' => 'Spec',
-      'local' => 'spec_id',
-      'foreign' => 'spec_id',
+      'class' => 'Field',
+      'local' => 'field_id',
+      'foreign' => 'field_id',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),

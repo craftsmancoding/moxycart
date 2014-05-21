@@ -1,13 +1,14 @@
 <?php
-$xpdo_meta_map['Image']= array (
+$xpdo_meta_map['Asset']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'images',
+  'table' => 'assets',
   'extends' => 'xPDOObject',
   'fields' => 
   array (
-    'image_id' => NULL,
+    'asset_id' => NULL,
     'product_id' => NULL,
+    'content_type_id' => NULL,
     'title' => NULL,
     'alt' => NULL,
     'url' => NULL,
@@ -16,12 +17,13 @@ $xpdo_meta_map['Image']= array (
     'width' => NULL,
     'height' => NULL,
     'size' => NULL,
+    'length' => NULL,
     'seq' => NULL,
     'is_active' => 1,
   ),
   'fieldMeta' => 
   array (
-    'image_id' => 
+    'asset_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -36,6 +38,13 @@ $xpdo_meta_map['Image']= array (
       'precision' => '11',
       'phptype' => 'integer',
       'null' => true,
+    ),
+    'content_type_id' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => false,
     ),
     'title' => 
     array (
@@ -92,6 +101,15 @@ $xpdo_meta_map['Image']= array (
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
+      'comment' => 'In Bytes',
+    ),
+    'length' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => false,
+      'comment' => 'Round to seconds',
     ),
     'seq' => 
     array (
@@ -119,7 +137,7 @@ $xpdo_meta_map['Image']= array (
       'unique' => true,
       'columns' => 
       array (
-        'image_id' => 
+        'asset_id' => 
         array (
           'collation' => 'A',
           'null' => false,
@@ -134,6 +152,14 @@ $xpdo_meta_map['Image']= array (
       'class' => 'Product',
       'local' => 'product_id',
       'foreign' => 'product_id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
+    'ContentType' => 
+    array (
+      'class' => 'modContentType',
+      'local' => 'content_type_id',
+      'foreign' => 'id',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
