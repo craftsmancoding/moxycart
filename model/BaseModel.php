@@ -158,6 +158,8 @@ class BaseModel {
 
 
     /**
+     * Retrive "all" records matching the filter $args.
+     *
      * We use getIterator, but we have to work around the "feature" (bug?) that 
      * it will not return an empty array if it has no results. See
      * https://github.com/modxcms/revolution/issues/11373
@@ -200,6 +202,7 @@ class BaseModel {
         // Workaround for issue https://github.com/modxcms/revolution/issues/11373
         $collection = $this->modx->getIterator($this->xclass,$criteria);
         foreach ($collection as $c) {
+            $collection->rewind();
             return $collection;
         }
         return array();
@@ -237,13 +240,14 @@ class BaseModel {
     
     /**
      * Retrieve a single object by its primary key id -- we pass this back to the constructor
-     * so we can return an instance of this class.
+     * so we can return an instance of this class. (The "get" function is reserved for the single
+     * object, so we can't use it to operate on a collection).
      *
      * @param integer $id
      * @return mixed
      */    
     public function find($id) {
-        $classname = '\\Moxycart\\Model\\'.$this->xclass;        
+        $classname = '\\Moxycart\\'.$this->xclass;        
         return new $classname($this->modx,$id);
     }
     

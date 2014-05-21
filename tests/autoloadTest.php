@@ -26,35 +26,8 @@ class autoloadTest extends \PHPUnit_Framework_TestCase {
      *
      */
     public static function setUpBeforeClass() {        
-        $docroot = dirname(dirname(dirname(dirname(__FILE__))));
-        while (!file_exists($docroot.'/config.core.php')) {
-            if ($docroot == '/') {
-                die('Failed to locate config.core.php');
-            }
-            $docroot = dirname($docroot);
-        }
-        if (!file_exists($docroot.'/config.core.php')) {
-            die('Failed to locate config.core.php');
-        }
-        
-        include_once $docroot . '/config.core.php';
-        
-        if (!defined('MODX_API_MODE')) {
-            define('MODX_API_MODE', false);
-        }
-        
-        include_once MODX_CORE_PATH . 'model/modx/modx.class.php';
-         
         self::$modx = new modX();
         self::$modx->initialize('mgr');  
-        
-/*
-        $core_path = self::$modx->getOption('moxycart.core_path', '', MODX_CORE_PATH);
-        include_once $core_path . 'components/moxycart/model/moxycart/moxycart.class.php';
-        
-        self::$moxycart = new Moxycart(self::$modx);
-*/
-        include_once dirname(dirname(__FILE__)).'/vendor/autoload.php';
     }
 
 
@@ -79,10 +52,10 @@ class autoloadTest extends \PHPUnit_Framework_TestCase {
 //        $this->assertTrue(class_exists($class), 'Moxycart\\Controller\\Product class not found.');
 
         
-        $P = new Moxycart\Controller\Product(self::$modx);
+        $P = new Moxycart\ProductController(self::$modx);
 //            $P = new Moxycart\Product();
         
-        $this->assertTrue(is_object($P), 'Moxycart\\Controller\\Product class not instantiated.');
+        $this->assertTrue(is_object($P), 'Moxycart\\ProductController class not instantiated.');
     }
     
     public function testFoxycart() {

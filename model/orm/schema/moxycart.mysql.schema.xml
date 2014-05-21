@@ -79,23 +79,21 @@
         <field key="sale_start" dbtype="datetime" phptype="datetime" />
         <field key="sale_end" dbtype="datetime" phptype="datetime" />
         
-        <field key="category" dbtype="varchar" precision="32" phptype="string" null="true" comment="Foxycart category (not a taxonomy)"/>
-        <field key="image_id" dbtype="int" precision="11" phptype="integer" null="true" comment="Thumbnail image"/>
+        <field key="category" dbtype="varchar" precision="64" phptype="string" null="true" comment="Foxycart category (not a taxonomy)"/>
+        <field key="asset_id" dbtype="int" precision="11" phptype="integer" null="true" comment="Primary thumbnail image"/>
         <field key="is_active" dbtype="tinyint" precision="1" phptype="integer" null="false" default="1" comment="Used to disable/enable products"/>
         <field key="in_menu" dbtype="tinyint" precision="1" phptype="integer" null="false" default="1" comment="For hiding products from menu"/>        
         
-        <!-- subscription/membership products Only -->
+        <!-- subscription products Only -->
         <field key="billing_unit" dbtype="enum" precision="'hours','days','weeks','months','years'" phptype="string" null="true" />
         <field key="billing_interval" dbtype="int" precision="3" phptype="integer" null="false" default="1"/>
 
         <field key="duration_unit" dbtype="enum" precision="'hours','days','weeks','months','years'" phptype="string" null="false" />
         <field key="duration_interval" dbtype="int" precision="3" phptype="integer" null="false" default="1"/>
-
+        
+        <!-- membership products Only (where a role is for sale)-->
         <field key="user_group_id" dbtype="int" precision="11" phptype="integer" null="true" />
         <field key="role_id" dbtype="int" precision="11" phptype="integer" null="true" />
-
-        <!-- downloadable products (link to a MODX static resource)-->
-        <field key="payload_id" dbtype="int" precision="11" phptype="integer" null="true"/>
         
         <field key="author_id" dbtype="int" precision="11" phptype="integer" null="true" />
 		<field key="timestamp_created" dbtype="timestamp" phptype="timestamp" null="true" default="CURRENT_TIMESTAMP" />
@@ -122,65 +120,63 @@
 			<column key="uri" collation="A" null="false" />
 		</index>
 
-        <index alias="image_id" name="image_id" primary="false" unique="false">
-			<column key="image_id" collation="A" null="true" />
+        <index alias="asset_id" name="asset_id" primary="false" unique="false">
+			<column key="asset_id" collation="A" null="true" />
 		</index>
 				
 		<aggregate alias="Store" class="Store" local="store_id" foreign="id" cardinality="one" owner="foreign" />
 		<aggregate alias="Template" class="modTemplate" local="template_id" foreign="id" cardinality="one" owner="foreign" />
 		<aggregate alias="Currency" class="Currency" local="currency_id" foreign="currency_id" cardinality="one" owner="foreign" />
-		<aggregate alias="Payload" class="modResource" local="payload_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Author" class="modUser" local="author_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="UserGroup" class="modUserGroup" local="user_group_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Role" class="modUserGroupRole" local="role_id" foreign="id" cardinality="one" owner="foreign" />
-        <aggregate alias="Thumbnail" class="Image" local="image_id" foreign="image_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Thumbnail" class="Asset" local="asset_id" foreign="asset_id" cardinality="one" owner="foreign" />
         
         <!-- parent is the main product: children represent variants in all permutations -->
         <composite alias="Parent" class="Product" local="parent_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Variant" class="Product" local="product_id" foreign="parent_id" cardinality="many" owner="local" />		
-		<composite alias="Images" class="Image" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+		<composite alias="Assets" class="Asset" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Terms" class="ProductTerm" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Taxonomies" class="ProductTaxonomy" local="product_id" foreign="product_id" cardinality="many" owner="local" />
-        <composite alias="Specs" class="ProductSpec" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+        <composite alias="Fields" class="ProductField" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Relations" class="ProductRelation" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Reviews" class="Review" local="product_id" foreign="product_id" cardinality="many" owner="local" />
     </object>
 
 
-	<!-- ! Specs -->
+	<!-- ! Field -->
 	<!-- a la custom fields-->
-	<object class="Spec" table="specs" extends="xPDOObject">
-		<field key="spec_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-		<field key="identifier" dbtype="varchar" precision="32" phptype="string" null="false" comment="Lowercase slug"/>
+	<object class="Field" table="fields" extends="xPDOObject">
+		<field key="field_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" comment="unique lowercase slug"/>
 		<field key="name" dbtype="varchar" precision="64" phptype="string" null="false" comment="Human readable, translated."/>
 		<field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
 		<field key="group" dbtype="varchar" precision="32" phptype="string" null="true" />
-		<!-- future use? -->
-		<field key="type" dbtype="varchar" precision="32" phptype="string" null="false" default="text"/>
+		<field key="type" dbtype="varchar" precision="32" phptype="string" null="false" default="text" comment="Formbuilder argument"/>
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="spec_id" collation="A" null="false" />
+			<column key="field_id" collation="A" null="false" />
 		</index>
         <index alias="identifier" name="identifier" primary="false" unique="true"  type="BTREE">
 			<column key="identifier" collation="A" null="false" />
 		</index>
 
-        <composite alias="Products" class="ProductSpec" local="spec_id" foreign="spec_id" cardinality="many" owner="local" />
+        <composite alias="Products" class="ProductField" local="field_id" foreign="field_id" cardinality="many" owner="local" />
 		
 	</object>
 
-    <!-- ! ProductSpec -->
-    <!-- custom fields for specifying height, weight etc. -->
-	<object class="ProductSpec" table="product_specs" extends="xPDOSimpleObject">
+    <!-- ! ProductField -->
+    <!-- values for product custom fields for etc. -->
+	<object class="ProductField" table="product_fields" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-        <field key="spec_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="field_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="value" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" collation="A" null="false" />
 		</index>
 
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
-        <aggregate alias="Spec" class="Spec" local="spec_id" foreign="spec_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Field" class="Field" local="field_id" foreign="field_id" cardinality="one" owner="foreign" />
 	</object>
 
 	<!-- ! ProductReview -->
@@ -305,15 +301,15 @@
 	</object>
 	
 	
-	<!-- ! Coupons -->
+	<!-- Coupons -->
 	
 	    
-    <!-- ! Carts -->
+    <!-- Carts -->
     <!-- 
     what if you have multiple currencies in the cart? 
     how to handle variations?
     -->
-	<object class="Cart" table="carts" extends="xPDOObject">
+	<!--object class="Cart" table="carts" extends="xPDOObject">
     	<field key="cart_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 
@@ -335,13 +331,14 @@
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Author" class="modUser" local="author_id" foreign="id" cardinality="one" owner="foreign" />
         
-	</object>
+	</object-->
     
-	<!-- ! Image -->
-	<!-- Each Product can have multiple images -->
-	<object class="Image" table="images" extends="xPDOObject">
-    	<field key="image_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+	<!-- ! Asset -->
+	<!-- Each Product can have multiple assets -->
+	<object class="Asset" table="assets" extends="xPDOObject">
+    	<field key="asset_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
     	<field key="product_id" dbtype="int" precision="11" phptype="integer" null="true"/>
+    	<field key="content_type_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="title" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="alt" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="url" dbtype="varchar" precision="255" phptype="string" null="false" />
@@ -349,14 +346,16 @@
 		<field key="path" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="width" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="height" dbtype="int" precision="4" phptype="integer" null="false" />
-		<field key="size" dbtype="int" precision="11" phptype="integer" null="false" />
+		<field key="size" dbtype="int" precision="11" phptype="integer" null="false" comment="In Bytes"/>
+		<field key="length" dbtype="int" precision="11" phptype="integer" null="false" comment="Round to seconds"/>
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="is_active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="image_id" collation="A" null="false" />
+			<column key="asset_id" collation="A" null="false" />
 		</index>
 
 		<aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+        <aggregate alias="ContentType" class="modContentType" local="content_type_id" foreign="id" cardinality="one" owner="foreign" />
 	</object>
 
 </model>

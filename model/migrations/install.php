@@ -11,16 +11,16 @@ $manager = $modx->getManager();
 // Moxycart Stuff
 $manager->createObjectContainer('Currency');
 $manager->createObjectContainer('Product');
-$manager->createObjectContainer('Spec');
+$manager->createObjectContainer('Field');
 $manager->createObjectContainer('Unit');
 $manager->createObjectContainer('VariationType'); 
 $manager->createObjectContainer('VariationTerm');
 $manager->createObjectContainer('ProductVariationTypes');
 $manager->createObjectContainer('ProductTerm');
 $manager->createObjectContainer('ProductTaxonomy');
-$manager->createObjectContainer('ProductSpec');
+$manager->createObjectContainer('ProductField');
 $manager->createObjectContainer('ProductRelation');
-$manager->createObjectContainer('Cart');
+// $manager->createObjectContainer('Cart'); // future
 $manager->createObjectContainer('Image');
 $manager->createObjectContainer('Review');
 

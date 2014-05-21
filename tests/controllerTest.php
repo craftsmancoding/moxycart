@@ -33,24 +33,6 @@ class controllerTest extends \PHPUnit_Framework_TestCase {
      *
      */
     public static function setUpBeforeClass() {        
-        $docroot = dirname(dirname(dirname(dirname(__FILE__))));
-        while (!file_exists($docroot.'/config.core.php')) {
-            if ($docroot == '/') {
-                die('Failed to locate config.core.php');
-            }
-            $docroot = dirname($docroot);
-        }
-        if (!file_exists($docroot.'/config.core.php')) {
-            die('Failed to locate config.core.php');
-        }
-        
-        include_once $docroot . '/config.core.php';
-        
-        if (!defined('MODX_API_MODE')) {
-            define('MODX_API_MODE', false);
-        }
-        
-        include_once MODX_CORE_PATH . 'model/modx/modx.class.php';
          
         self::$modx = new \modX();
         self::$modx->initialize('mgr');  
@@ -58,7 +40,7 @@ class controllerTest extends \PHPUnit_Framework_TestCase {
         $core_path = self::$modx->getOption('moxycart.core_path', '', MODX_CORE_PATH);
         // We have to do this here because we get conflicts if we try to do a class map autoload of the 
         // base "" directory.
-        // The modmanagercontroller must be first.
+        // The modmanagercontroller must be included first!
         require_once MODX_CORE_PATH .'model/modx/modmanagercontroller.class.php';    
         require_once $core_path . 'index.class.php';
 
@@ -83,27 +65,27 @@ class controllerTest extends \PHPUnit_Framework_TestCase {
      */
     public function testLoadControllers() {
         unset($_REQUEST['class']);
-        $result = IndexManagerController::getInstance(self::$modx);
+        $result = \IndexManagerController::getInstance(self::$modx);
         $this->assertTrue(is_a($result, '\\Moxycart\\MainController'), 'Invalid Main controller instance.');
 
         $_REQUEST['class'] = 'Product';
-        $result = IndexManagerController::getInstance(self::$modx);
+        $result = \IndexManagerController::getInstance(self::$modx);
         $this->assertTrue(is_a($result, '\\Moxycart\\ProductController'), 'Invalid Product controller instance.');
 
         $_REQUEST['class'] = 'Currency';
-        $result = IndexManagerController::getInstance(self::$modx);
+        $result = \IndexManagerController::getInstance(self::$modx);
         $this->assertTrue(is_a($result, '\\Moxycart\\CurrencyController'), 'Invalid Currency controller instance.');
 
         $_REQUEST['class'] = 'Asset';
-        $result = IndexManagerController::getInstance(self::$modx);
+        $result = \IndexManagerController::getInstance(self::$modx);
         $this->assertTrue(is_a($result, '\\Moxycart\\AssetController'), 'Invalid Asset controller instance.');
 
         $_REQUEST['class'] = 'Field';
-        $result = IndexManagerController::getInstance(self::$modx);
+        $result = \IndexManagerController::getInstance(self::$modx);
         $this->assertTrue(is_a($result, '\\Moxycart\\FieldController'), 'Invalid Field controller instance.');
 
         $_REQUEST['class'] = 'Review';
-        $result = IndexManagerController::getInstance(self::$modx);
+        $result = \IndexManagerController::getInstance(self::$modx);
         $this->assertTrue(is_a($result, '\\Moxycart\\ReviewController'), 'Invalid Review controller instance.');
 
 
@@ -116,7 +98,7 @@ class controllerTest extends \PHPUnit_Framework_TestCase {
     public function testBogusClassname()
     {
         $_REQUEST['class'] = array('InvalidDataType');
-        $result = IndexManagerController::getInstance(self::$modx);
+        $result = \IndexManagerController::getInstance(self::$modx);
     }
 
     /** 
@@ -124,7 +106,7 @@ class controllerTest extends \PHPUnit_Framework_TestCase {
      */
     public function testLoadBogusController() {
         $_REQUEST['class'] = 'DoesNotExist';
-        $result = IndexManagerController::getInstance(self::$modx);
+        $result = \IndexManagerController::getInstance(self::$modx);
         $this->assertTrue(is_a($result, '\\Moxycart\\ErrorController'), 'Invalid Error controller instance.');
     
     }

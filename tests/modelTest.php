@@ -21,7 +21,7 @@
  *
  *
  */
-namespace Moxycart\Model;
+namespace Moxycart;
 class modelTest extends \PHPUnit_Framework_TestCase {
 
     // Must be static because we set it up inside a static function
