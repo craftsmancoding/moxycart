@@ -40,24 +40,6 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
      *
      */
     public static function setUpBeforeClass() {        
-        $docroot = dirname(dirname(dirname(dirname(__FILE__))));
-        while (!file_exists($docroot.'/config.core.php')) {
-            if ($docroot == '/') {
-                die('Failed to locate config.core.php');
-            }
-            $docroot = dirname($docroot);
-        }
-        if (!file_exists($docroot.'/config.core.php')) {
-            die('Failed to locate config.core.php');
-        }
-        
-        include_once $docroot . '/config.core.php';
-        
-        if (!defined('MODX_API_MODE')) {
-            define('MODX_API_MODE', false);
-        }
-        
-        include_once MODX_CORE_PATH . 'model/modx/modx.class.php';
          
         self::$modx = new modX();
         self::$modx->initialize('mgr');  
@@ -65,7 +47,6 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
         $core_path = self::$modx->getOption('moxycart.core_path','',MODX_CORE_PATH.'components/moxycart/');
         self::$modx->addPackage('foxycart',$core_path.'model/orm/','foxy_');
 
-        include_once dirname(dirname(__FILE__)).'/vendor/autoload.php';
     }
 
 

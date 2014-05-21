@@ -30,6 +30,7 @@ $xpdo_meta_map['Product']= array (
     'price' => NULL,
     'price_strike_thru' => NULL,
     'price_sale' => NULL,
+    'weight' => NULL,
     'sale_start' => NULL,
     'sale_end' => NULL,
     'category' => NULL,
@@ -230,6 +231,14 @@ $xpdo_meta_map['Product']= array (
       'phptype' => 'float',
       'null' => true,
       'comment' => 'Used when on sale',
+    ),
+    'weight' => 
+    array (
+      'dbtype' => 'decimal',
+      'precision' => '8,2',
+      'phptype' => 'float',
+      'null' => true,
+      'comment' => 'Units (kgs/lbs) are defined in Foxycart category',
     ),
     'sale_start' => 
     array (

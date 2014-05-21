@@ -10,7 +10,7 @@ return array(
         'class_key' => 'Store',
         'isfolder' => 1,
         'published' => 1,
-         'properties' => '{"moxycart":{"product_type":"regular","product_template":"2","sort_order":"SKU","qty_alert":"5","track_inventory":0,"specs":{"1":true,"3":true},"variations":[],"taxonomies":[]}}',
+         'properties' => '{"moxycart":{"product_type":"regular","product_template":"2","sort_order":"SKU","qty_alert":"5","track_inventory":0,"fields":{"1":true,"3":true},"variations":[],"taxonomies":[]}}',
         'Template' => array('templatename' => 'Sample Store'),
         'Products' => array(
             array(

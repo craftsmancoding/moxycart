@@ -82,6 +82,7 @@
         <field key="price" dbtype="decimal" precision="8,2" phptype="float" null="true" />
         <field key="price_strike_thru" dbtype="decimal" precision="8,2" phptype="float" null="true" comment="Eye candy only"/>
         <field key="price_sale" dbtype="decimal" precision="8,2" phptype="float" null="true" comment="Used when on sale"/>
+        <field key="weight" dbtype="decimal" precision="8,2" phptype="float" null="true" comment="Units (kgs/lbs) are defined in Foxycart category"/>
         <field key="sale_start" dbtype="datetime" phptype="datetime" />
         <field key="sale_end" dbtype="datetime" phptype="datetime" />
         
@@ -197,7 +198,7 @@
         <aggregate alias="Field" class="Field" local="field_id" foreign="field_id" cardinality="one" owner="foreign" />
 	</object>
 
-	<!-- ! ProductReview -->
+	<!-- ! Review -->
 	<!-- Some fields may be redundant because conf allows for anonymous users to post reviews -->
 	<object class="Review" table="reviews" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
@@ -217,6 +218,19 @@
 			
         <aggregate alias="Author" class="modUser" local="author_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+
+        <validation>
+            <rule field="product_id"
+                  name="preventBlank"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="product_id"
+                  local="product_id"
+                  alias="Product"
+                  class="Product"
+                  message="The product specified does not exist."
+             />
+        </validation>
 	</object>
 
 
@@ -224,6 +238,7 @@
 	<!-- eg. "Color", "Size", "Material" -->
 	<object class="VariationType" table="variation_types" extends="xPDOObject">
 		<field key="vtype_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" comment="unique lowercase slug"/>
 		<field key="name" dbtype="varchar" precision="32" phptype="string" null="false" />
 		<field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="true" />
@@ -231,11 +246,18 @@
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="vtype_id" collation="A" null="false" />
 		</index>
-        <index alias="name" name="name" primary="false" unique="true">
-			<column key="name" collation="A" null="true" />
+        <index alias="slug" name="slug" primary="false" unique="true">
+			<column key="slug" collation="A" null="true" />
 		</index>		
 		
 		<composite alias="Terms" class="VariationTerm" local="vtype_id" foreign="vtype_id" cardinality="many" owner="local" />
+		
+        <validation>
+            <rule field="slug" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field slug must be at least 1 character."/>
+            <rule field="slug" name="validchars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
+            <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Name must be at least 1 character."/>
+        </validation>
+
 	</object>
 
     <!-- ! Variation Terms -->
@@ -243,6 +265,7 @@
 	<object class="VariationTerm" table="variation_terms" extends="xPDOObject">
     	<field key="vterm_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
 		<field key="vtype_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" comment="unique lowercase slug"/>
 		<field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="sku_prefix" dbtype="varchar" precision="16" phptype="string" null="false" />
 		<field key="sku_suffix" dbtype="varchar" precision="16" phptype="string" null="false" />
@@ -253,6 +276,25 @@
 		</index>
 
         <aggregate alias="Type" class="VariationType" local="vtype_id" foreign="vtype_id" cardinality="one" owner="foreign" />
+        
+		<validation>
+            <rule field="slug" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field slug must be at least 1 character."/>
+            <rule field="slug" name="validchars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
+            <rule field="sku_prefix" name="validchars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
+            <rule field="sku_suffix" name="validchars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
+            <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Name must be at least 1 character."/>
+            <rule field="vtype_id"
+                  name="preventBlank"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="vtype_id"
+                  local="vtype_id"
+                  alias="Type"
+                  class="VariationType"
+                  message="The variation type does not exist."
+             />
+        </validation>
+        
 	</object>
 
     <!-- ! ProductRelation -->
@@ -374,6 +416,33 @@
 
 		<aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="ContentType" class="modContentType" local="content_type_id" foreign="id" cardinality="one" owner="foreign" />
+        
+		<validation>
+            <rule field="url" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="3" message="URL must be at least 3 characters."/>
+            <rule field="path" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="3" message="Path must be at least 3 characters."/>
+            <rule field="content_type_id"
+                  name="validContentType"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="id"
+                  local="content_type_id"
+                  alias="ContentType"
+                  class="modContentType"
+                  message="The referenced content type does not exist."
+             />
+            <rule field="product_id"
+                  name="validProduct"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="product_id"
+                  local="product_id"
+                  alias="Product"
+                  class="Product"
+                  message="The referenced product does not exist."
+             />
+
+        </validation>
+        
 	</object>
 
 </model>

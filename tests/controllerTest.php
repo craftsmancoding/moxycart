@@ -36,8 +36,11 @@ class controllerTest extends \PHPUnit_Framework_TestCase {
          
         self::$modx = new \modX();
         self::$modx->initialize('mgr');  
-        
-        $core_path = self::$modx->getOption('moxycart.core_path', '', MODX_CORE_PATH);
+        $core_path = self::$modx->getOption('moxycart.core_path','',MODX_CORE_PATH.'components/moxycart/');
+        self::$modx->addExtensionPackage($object['namespace'],"{$core_path}model/orm/", array('tablePrefix'=>'moxy_'));
+        self::$modx->addPackage('moxycart',"{$core_path}model/orm/",'moxy_');
+        self::$modx->addPackage('foxycart',"{$core_path}model/orm/",'foxy_');
+                
         // We have to do this here because we get conflicts if we try to do a class map autoload of the 
         // base "" directory.
         // The modmanagercontroller must be included first!

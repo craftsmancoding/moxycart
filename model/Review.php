@@ -1,11 +1,11 @@
 <?php
 /**
- * Currency
+ * Product Review
  */
 namespace Moxycart;
-class Currency extends BaseModel {
+class Review extends BaseModel {
 
-    public $xclass = 'Currency';
+    public $xclass = 'Review';
     public $default_sort_col = 'name';
 
 }

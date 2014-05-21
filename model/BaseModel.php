@@ -35,6 +35,9 @@ class BaseModel {
     // Any array keys that define a control parameter and not a filter parameter
     public $control_params = array('limit','offset','sort','dir','select');
     
+    // Store any validation errors here
+    public $errors = array();
+    
     /** 
      * We set $this->modelObj here instead of extending the base xpdoObject class because
      * xpdo abstracts the database at run-time and the exact class instantiated depends on 
@@ -56,6 +59,13 @@ class BaseModel {
         }
     }
 
+    /**
+     * Hot potato
+     */
+    public function __call($name, $args) { 
+        return call_user_func_array(array($this->modelObj,$name), $args);
+    }
+    
     /**
      * 
      */
@@ -109,10 +119,11 @@ class BaseModel {
     }
     
     /**
+     * Pass thru to object method
      * @param array $array
      */
-    public function fromArray(array $array) {
-        return $this->modelObj->fromArray($array);
+    public function fromArray(array $array, $keyPrefix= '', $setPrimaryKeys= false, $rawValues= false, $adhocValues= false) {
+        return $this->modelObj->fromArray($array,$keyPrefix, $setPrimaryKeys,$rawValues, $adhocValues);
     }
 
     public function getPrimaryKey() {
@@ -123,6 +134,13 @@ class BaseModel {
         return $this->modelObj->remove();
     }
 
+    /**
+     * Return any validation errors
+     */
+    public function getErrors() {
+        return $this->errors;
+    }
+    
     /**
      * Remove any "control" arguments and return only "filter" arguments
      * with some convenience bits for searches. Controls are things like limit, offset,
@@ -253,11 +271,21 @@ class BaseModel {
     
 
     /**
-     * Save the update
+     * Save the update. This will store any validation errors in $this->errors
      * @return mixed integer false on fail
      */
     public function save() {
-        return $this->modelObj->save();
+        $result = $this->modelObj->save();
+        if (!$result) {
+            $validator = $this->modelObj->getValidator();
+            if ($validator->validate() == false) {
+                $messages = $validator->getMessages();
+                foreach ($messages as $m) {
+                    $this->errors[$m['field']] = $m['message'];
+                }
+            }
+        }
+        return $result; 
     }
     
 }
