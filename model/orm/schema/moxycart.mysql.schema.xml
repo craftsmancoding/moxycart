@@ -60,6 +60,7 @@
         <field key="parent_id" dbtype="int" precision="11" phptype="integer" null="true" comment="variations are stored as children"/>
         <field key="template_id" dbtype="int" precision="11" phptype="integer" null="true" />
         <field key="currency_id" dbtype="int" precision="4" phptype="integer" null="true" />
+        <field key="asset_id" dbtype="int" precision="11" phptype="integer" null="true" comment="Primary thumbnail image"/>
         <field key="name" dbtype="varchar" precision="60" phptype="string" null="false" />
         <field key="title" dbtype="varchar" precision="60" phptype="string" null="false" comment="For the webpage"/>
         <field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
@@ -87,7 +88,7 @@
         <field key="sale_end" dbtype="datetime" phptype="datetime" />
         
         <field key="category" dbtype="varchar" precision="64" phptype="string" null="true" comment="Foxycart category (not a taxonomy)"/>
-        <field key="asset_id" dbtype="int" precision="11" phptype="integer" null="true" comment="Primary thumbnail image"/>
+        
         <field key="is_active" dbtype="tinyint" precision="1" phptype="integer" null="false" default="1" comment="Used to disable/enable products"/>
         <field key="in_menu" dbtype="tinyint" precision="1" phptype="integer" null="false" default="1" comment="For hiding products from menu"/>        
         
@@ -152,6 +153,56 @@
         <validation>
             <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Product name must be at least 1 character."/>
             <rule field="alias" name="validURLchars" type="preg_match" rule="/^[a-z0-9\-_\/]+$/i" message="Contains invalid URL characters." />
+            <rule field="parent_id"
+                  name="validParent"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="product_id"
+                  local="parent_id"
+                  alias="Product"
+                  class="Product"
+                  message="The parent product specified does not exist."
+             />
+            <rule field="store_id"
+                  name="validStore"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="id"
+                  local="store_id"
+                  alias="Store"
+                  class="Store"
+                  message="The parent store specified does not exist."
+             />
+            <rule field="template_id"
+                  name="validTemplate"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="id"
+                  local="template_id"
+                  alias="Template"
+                  class="modTemplate"
+                  message="The template specified does not exist."
+             />
+            <rule field="currency_id"
+                  name="validCurrency"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="currency_id"
+                  local="currency_id"
+                  alias="Currency"
+                  class="Currency"
+                  message="The currency specified does not exist."
+             />
+            <rule field="asset_id"
+                  name="validThumbnail"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="asset_id"
+                  local="asset_id"
+                  alias="Asset"
+                  class="Asset"
+                  message="The thumbnail specified does not exist."
+             />             
         </validation>
     </object>
 
@@ -196,13 +247,36 @@
 
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Field" class="Field" local="field_id" foreign="field_id" cardinality="one" owner="foreign" />
+        <validation>
+            <rule field="product_id"
+                  name="validProduct"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="product_id"
+                  local="product_id"
+                  alias="Product"
+                  class="Product"
+                  message="The product specified does not exist."
+             />
+            <rule field="field_id"
+                  name="validField"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="field_id"
+                  local="field_id"
+                  alias="Field"
+                  class="Field"
+                  message="The field specified does not exist."
+             />
+        </validation>
+        
 	</object>
 
 	<!-- ! Review -->
 	<!-- Some fields may be redundant because conf allows for anonymous users to post reviews -->
 	<object class="Review" table="reviews" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-        <field key="author_id" dbtype="int" precision="11" phptype="integer" null="true" comment="user may not be logged in"/>
+        <field key="author_id" dbtype="int" precision="11" phptype="integer" null="true" comment="null ok: user may not be logged in"/>
         <field key="name" dbtype="varchar" precision="100" phptype="string" null="false" />
         <field key="email" dbtype="varchar" precision="64" phptype="string" null="false" />
         <field key="rating" dbtype="int" precision="3" phptype="integer" null="false"/>
@@ -221,7 +295,7 @@
 
         <validation>
             <rule field="product_id"
-                  name="preventBlank"
+                  name="validProduct"
                   type="xPDOValidationRule"
                   rule="xPDOForeignKeyConstraint"
                   foreign="product_id"
@@ -229,6 +303,16 @@
                   alias="Product"
                   class="Product"
                   message="The product specified does not exist."
+             />
+            <rule field="author_id"
+                  name="validAuthor"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="id"
+                  local="author_id"
+                  alias="Author"
+                  class="modUser"
+                  message="The author specified does not exist."
              />
         </validation>
 	</object>
@@ -247,8 +331,8 @@
 			<column key="vtype_id" collation="A" null="false" />
 		</index>
         <index alias="slug" name="slug" primary="false" unique="true">
-			<column key="slug" collation="A" null="true" />
-		</index>		
+			<column key="slug" collation="A" null="false" />
+		</index>	
 		
 		<composite alias="Terms" class="VariationTerm" local="vtype_id" foreign="vtype_id" cardinality="many" owner="local" />
 		
@@ -274,7 +358,12 @@
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="vterm_id" collation="A" null="false" />
 		</index>
-
+		<!-- the term must be unique within the given variation type -->
+        <index alias="vtypeslug" name="vtypeslug" primary="false" unique="true">
+			<column key="vtype_id" collation="A" null="false" />
+			<column key="slug" collation="A" null="false" />
+		</index>
+		
         <aggregate alias="Type" class="VariationType" local="vtype_id" foreign="vtype_id" cardinality="one" owner="foreign" />
         
 		<validation>
@@ -311,7 +400,6 @@
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Relation" class="Product" local="related_id" foreign="product_id" cardinality="one" owner="foreign" />
         
-
 		<validation>
             <rule field="related_id"
                   name="validContentType"
@@ -333,16 +421,16 @@
                   class="Product"
                   message="The referenced product does not exist."
              />
-
-        </validation>
-        
+        </validation>        
 	</object>
 	
 	<!-- ! Product Variation Types -->
 	<!-- 
-	e.g. says "this parent product varies by Color, Size, and Material 
+	This declares that "this parent product varies by Color, Size, or Material etc.
+	
 	is_variant: if 1, this means that price, qty, etc. will change for the product 
-	is_variant: if 0, then the options here are just aesthetic options
+	is_variant: if 0, then the options here are just aesthetic "options", i.e. we use this to show 
+	           the appropriate dropdowns.
 	-->
 	<object class="ProductVariationTypes" table="product_variation_types" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
@@ -353,9 +441,37 @@
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" collation="A" null="false" />
 		</index>
+
+        <index alias="productvaritiontype" name="productvaritiontype" primary="false" unique="true">
+			<column key="product_id" collation="A" null="false" />        
+			<column key="vtype_id" collation="A" null="false" />
+		</index>
 		
         <aggregate alias="Type" class="VariationType" local="vtype_id" foreign="vtype_id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+        
+		<validation>
+            <rule field="vtype_id"
+                  name="validVariationType"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="vtype_id"
+                  local="vtype_id"
+                  alias="Type"
+                  class="VariationType"
+                  message="The referenced variation type does not exist."
+             />
+            <rule field="product_id"
+                  name="validProduct"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="product_id"
+                  local="product_id"
+                  alias="Product"
+                  class="Product"
+                  message="The referenced product does not exist."
+             />
+        </validation>
 	</object>
 	
     <!-- ! ProductTaxonomy -->
@@ -367,13 +483,17 @@
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" collation="A" null="false" />
 		</index>
-
+		<!-- no sense in adding the same relation twice... -->
+        <index alias="producttaxonomy" name="producttaxonomy" primary="false" unique="true">
+			<column key="product_id" collation="A" null="false" />        
+			<column key="taxonomy_id" collation="A" null="false" />
+		</index>
         <aggregate alias="Taxonomy" class="Taxonomy" local="taxonomy_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         
 		<validation>
             <rule field="taxonomy_id"
-                  name="validContentType"
+                  name="validTaxonomy"
                   type="xPDOValidationRule"
                   rule="xPDOForeignKeyConstraint"
                   foreign="id"
@@ -392,7 +512,6 @@
                   class="Product"
                   message="The referenced product does not exist."
              />
-
         </validation>
         
 	</object>
@@ -406,7 +525,11 @@
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" collation="A" null="false" />
 		</index>
-
+		<!-- no sense in adding the same relation twice... -->
+        <index alias="productterm" name="productterm" primary="false" unique="true">
+			<column key="product_id" collation="A" null="false" />        
+			<column key="term_id" collation="A" null="false" />
+		</index>
         <aggregate alias="Term" class="Term" local="term_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 
@@ -431,44 +554,8 @@
                   class="Product"
                   message="The referenced product does not exist."
              />
-
         </validation>
-
-        
 	</object>
-	
-	
-	<!-- Coupons -->
-	
-	    
-    <!-- Carts -->
-    <!-- 
-    what if you have multiple currencies in the cart? 
-    how to handle variations?
-    -->
-	<!--object class="Cart" table="carts" extends="xPDOObject">
-    	<field key="cart_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-
-        <field key="price" dbtype="decimal" precision="8,2" phptype="float" null="true" />
-        <field key="currency_id" dbtype="int" precision="4" phptype="integer" null="true" />
-		<field key="qty" dbtype="int" precision="11" phptype="integer" null="false" default="0"/>
-
-        <field key="info" dbtype="text" phptype="string" null="true" comment="JSON data including varations/options"/>
-
-        <field key="author_id" dbtype="int" precision="11" phptype="integer" null="true" comment="user may not be logged in"/>
-		<field key="timestamp_created" dbtype="timestamp" phptype="timestamp" null="true" default="CURRENT_TIMESTAMP" />
-		<field key="timestamp_modified" dbtype="timestamp" phptype="timestamp" null="true" />
-
-		
-		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="cart_id" collation="A" null="false" />
-		</index>
-
-        <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
-        <aggregate alias="Author" class="modUser" local="author_id" foreign="id" cardinality="one" owner="foreign" />
-        
-	</object-->
     
 	<!-- ! Asset -->
 	<!-- Each Product can have multiple assets -->
@@ -479,12 +566,13 @@
 		<field key="title" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="alt" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="url" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<!-- For images, this will be a smaller version of the image, otherwise it'll be an icon for the content type -->
 		<field key="thumbnail_url" dbtype="varchar" precision="255" phptype="string" null="false"/>
 		<field key="path" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="width" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="height" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="size" dbtype="int" precision="11" phptype="integer" null="false" comment="In Bytes"/>
-		<field key="length" dbtype="int" precision="11" phptype="integer" null="false" comment="Round to seconds"/>
+		<field key="length" dbtype="int" precision="11" phptype="integer" null="false" comment="for videos and sound files: round to seconds"/>
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="is_active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
@@ -519,7 +607,6 @@
              />
 
         </validation>
-        
 	</object>
 
 </model>
