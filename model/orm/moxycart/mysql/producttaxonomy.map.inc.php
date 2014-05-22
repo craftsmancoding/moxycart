@@ -50,6 +50,25 @@ $xpdo_meta_map['ProductTaxonomy']= array (
         ),
       ),
     ),
+    'producttaxonomy' => 
+    array (
+      'alias' => 'producttaxonomy',
+      'primary' => false,
+      'unique' => true,
+      'columns' => 
+      array (
+        'product_id' => 
+        array (
+          'collation' => 'A',
+          'null' => false,
+        ),
+        'taxonomy_id' => 
+        array (
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
+    ),
   ),
   'aggregates' => 
   array (
@@ -69,5 +88,8 @@ $xpdo_meta_map['ProductTaxonomy']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
+  ),
+  'validation' => 
+  array (
   ),
 );

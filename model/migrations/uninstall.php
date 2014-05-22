@@ -16,18 +16,16 @@ $manager = $modx->getManager();
 // Moxycart
 $manager->removeObjectContainer('Currency');
 $manager->removeObjectContainer('Product');
-$manager->removeObjectContainer('Spec'); // Legacy name
 $manager->removeObjectContainer('Field');
 $manager->removeObjectContainer('VariationType'); 
 $manager->removeObjectContainer('VariationTerm');
 $manager->removeObjectContainer('ProductVariationTypes');
 $manager->removeObjectContainer('ProductTaxonomy');
 $manager->removeObjectContainer('ProductTerm');
-$manager->removeObjectContainer('ProductSpec'); // Legacy name
 $manager->removeObjectContainer('ProductField'); 
 $manager->removeObjectContainer('ProductRelation');
 $manager->removeObjectContainer('Cart');
-$manager->removeObjectContainer('Image');
+$manager->removeObjectContainer('Asset'); 
 $manager->removeObjectContainer('Review');
 
 // Foxycart

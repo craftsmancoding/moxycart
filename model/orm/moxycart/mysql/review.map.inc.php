@@ -31,7 +31,7 @@ $xpdo_meta_map['Review']= array (
       'precision' => '11',
       'phptype' => 'integer',
       'null' => true,
-      'comment' => 'user may not be logged in',
+      'comment' => 'null ok: user may not be logged in',
     ),
     'name' => 
     array (
@@ -119,5 +119,8 @@ $xpdo_meta_map['Review']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
+  ),
+  'validation' => 
+  array (
   ),
 );

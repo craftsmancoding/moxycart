@@ -22,7 +22,7 @@
  *
  */
 namespace Moxycart;
-class modelTest extends \PHPUnit_Framework_TestCase {
+class assetTest extends \PHPUnit_Framework_TestCase {
 
     // Must be static because we set it up inside a static function
     public static $modx;
@@ -38,7 +38,6 @@ class modelTest extends \PHPUnit_Framework_TestCase {
         self::$modx->addExtensionPackage($object['namespace'],"{$core_path}model/orm/", array('tablePrefix'=>'moxy_'));
         self::$modx->addPackage('moxycart',"{$core_path}model/orm/",'moxy_');
         self::$modx->addPackage('foxycart',"{$core_path}model/orm/",'foxy_');
-        
     }
 
     /**
@@ -52,16 +51,16 @@ class modelTest extends \PHPUnit_Framework_TestCase {
     }
     
     /**
-     * Let's test working with a simple model (Currency)
+     * 
      *
      */
-    public function testBasicRetrieval() {
+    public function testAssetCreation() {
 
-        $Currency = new Currency(self::$modx);
-        $this->assertTrue($Currency instanceof Currency);
+        $A = new Asset(self::$modx);
+        $this->assertTrue($A instanceof Asset);
         
         // Verify mass-assignment
-        $Currency->fromArray(array(
+        $A->fromArray(array(
             'code' => 'YYY',
             'name' => 'Yellow Yuan',
             'symbol' => '1123',

@@ -4,7 +4,10 @@
 <!-- http://www.cannonlewis.com/product.php?productid=177 -->
 <!-- http://www.anthropologie.com/anthro/product/shopsale-freshcuts/28810513.jsp?cm_sp=Fluid-_-28810513-_-Regular_1 -->
 <!-- http://www.urbanoutfitters.com/urban/catalog/productdetail.jsp?id=28741783x&parentid=SALE_M_CLOTHING_JACKETS -->
-
+<!--
+Using addOne or addMany triggers validation rules prematurely... so we can't use them.
+See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematurely#dis-post-498398
+-->
 <model package="moxycart" version="1.0" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM">
 
     <!-- ! Store: a container for products -->
@@ -153,13 +156,13 @@
         <validation>
             <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Product name must be at least 1 character."/>
             <rule field="alias" name="validURLchars" type="preg_match" rule="/^[a-z0-9\-_\/]+$/i" message="Contains invalid URL characters." />
-            <rule field="parent_id"
+            <!--rule field="parent_id"
                   name="validParent"
                   type="xPDOValidationRule"
                   rule="xPDOForeignKeyConstraint"
                   foreign="product_id"
                   local="parent_id"
-                  alias="Product"
+                  alias="Parent"
                   class="Product"
                   message="The parent product specified does not exist."
              />
@@ -170,7 +173,7 @@
                   foreign="id"
                   local="store_id"
                   alias="Store"
-                  class="Store"
+                  class="modResource"
                   message="The parent store specified does not exist."
              />
             <rule field="template_id"
@@ -202,7 +205,7 @@
                   alias="Asset"
                   class="Asset"
                   message="The thumbnail specified does not exist."
-             />             
+             /-->             
         </validation>
     </object>
 
@@ -248,7 +251,7 @@
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Field" class="Field" local="field_id" foreign="field_id" cardinality="one" owner="foreign" />
         <validation>
-            <rule field="product_id"
+            <!--rule field="product_id"
                   name="validProduct"
                   type="xPDOValidationRule"
                   rule="xPDOForeignKeyConstraint"
@@ -267,7 +270,7 @@
                   alias="Field"
                   class="Field"
                   message="The field specified does not exist."
-             />
+             /-->
         </validation>
         
 	</object>
@@ -294,7 +297,7 @@
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 
         <validation>
-            <rule field="product_id"
+            <!--rule field="product_id"
                   name="validProduct"
                   type="xPDOValidationRule"
                   rule="xPDOForeignKeyConstraint"
@@ -313,7 +316,7 @@
                   alias="Author"
                   class="modUser"
                   message="The author specified does not exist."
-             />
+             /-->
         </validation>
 	</object>
 
@@ -368,12 +371,12 @@
         
 		<validation>
             <rule field="slug" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field slug must be at least 1 character."/>
-            <rule field="slug" name="validchars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
-            <rule field="sku_prefix" name="validchars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
-            <rule field="sku_suffix" name="validchars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
+            <rule field="slug" name="slugchars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
+            <rule field="sku_prefix" name="sku_prefix_chars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
+            <rule field="sku_suffix" name="sku_suffix_chars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
             <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Name must be at least 1 character."/>
-            <rule field="vtype_id"
-                  name="preventBlank"
+            <!--rule field="vtype_id"
+                  name="validVariationTerm"
                   type="xPDOValidationRule"
                   rule="xPDOForeignKeyConstraint"
                   foreign="vtype_id"
@@ -381,7 +384,7 @@
                   alias="Type"
                   class="VariationType"
                   message="The variation type does not exist."
-             />
+             /-->
         </validation>
         
 	</object>
@@ -401,7 +404,7 @@
         <aggregate alias="Relation" class="Product" local="related_id" foreign="product_id" cardinality="one" owner="foreign" />
         
 		<validation>
-            <rule field="related_id"
+            <!--rule field="related_id"
                   name="validContentType"
                   type="xPDOValidationRule"
                   rule="xPDOForeignKeyConstraint"
@@ -420,7 +423,7 @@
                   alias="Product"
                   class="Product"
                   message="The referenced product does not exist."
-             />
+             /-->
         </validation>        
 	</object>
 	
@@ -451,7 +454,7 @@
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         
 		<validation>
-            <rule field="vtype_id"
+            <!--rule field="vtype_id"
                   name="validVariationType"
                   type="xPDOValidationRule"
                   rule="xPDOForeignKeyConstraint"
@@ -470,7 +473,7 @@
                   alias="Product"
                   class="Product"
                   message="The referenced product does not exist."
-             />
+             /-->
         </validation>
 	</object>
 	
@@ -492,7 +495,7 @@
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         
 		<validation>
-            <rule field="taxonomy_id"
+            <!--rule field="taxonomy_id"
                   name="validTaxonomy"
                   type="xPDOValidationRule"
                   rule="xPDOForeignKeyConstraint"
@@ -511,7 +514,7 @@
                   alias="Product"
                   class="Product"
                   message="The referenced product does not exist."
-             />
+             /-->
         </validation>
         
 	</object>
@@ -534,7 +537,7 @@
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 
 		<validation>
-            <rule field="term_id"
+            <!--rule field="term_id"
                   name="validContentType"
                   type="xPDOValidationRule"
                   rule="xPDOForeignKeyConstraint"
@@ -553,7 +556,7 @@
                   alias="Product"
                   class="Product"
                   message="The referenced product does not exist."
-             />
+             /-->
         </validation>
 	</object>
     
@@ -578,6 +581,12 @@
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="asset_id" collation="A" null="false" />
 		</index>
+        <index alias="url" name="url" primary="false" unique="true">
+			<column key="url" collation="A" null="true" />
+		</index>
+        <index alias="path" name="path" primary="false" unique="true">
+			<column key="path" collation="A" null="true" />
+		</index>
 
 		<aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="ContentType" class="modContentType" local="content_type_id" foreign="id" cardinality="one" owner="foreign" />
@@ -585,7 +594,7 @@
 		<validation>
             <rule field="url" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="3" message="URL must be at least 3 characters."/>
             <rule field="path" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="3" message="Path must be at least 3 characters."/>
-            <rule field="content_type_id"
+            <!--rule field="content_type_id"
                   name="validContentType"
                   type="xPDOValidationRule"
                   rule="xPDOForeignKeyConstraint"
@@ -604,7 +613,7 @@
                   alias="Product"
                   class="Product"
                   message="The referenced product does not exist."
-             />
+             /-->
 
         </validation>
 	</object>

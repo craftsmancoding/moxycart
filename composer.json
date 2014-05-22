@@ -143,6 +143,11 @@
                                 "preserve_keys": false,
                                 "update_object": true,
                                 "unique_key": "templatename"
+                            },
+                            "Reviews" : {
+                                "preserve_keys": false,
+                                "update_object": true,
+                                "unique_key": ["product_id","email"]                          
                             }
                         }
                     }

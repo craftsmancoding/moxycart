@@ -11,6 +11,7 @@ $xpdo_meta_map['Product']= array (
     'parent_id' => NULL,
     'template_id' => NULL,
     'currency_id' => NULL,
+    'asset_id' => NULL,
     'name' => NULL,
     'title' => NULL,
     'description' => NULL,
@@ -34,7 +35,6 @@ $xpdo_meta_map['Product']= array (
     'sale_start' => NULL,
     'sale_end' => NULL,
     'category' => NULL,
-    'asset_id' => NULL,
     'is_active' => 1,
     'in_menu' => 1,
     'billing_unit' => NULL,
@@ -87,6 +87,14 @@ $xpdo_meta_map['Product']= array (
       'precision' => '4',
       'phptype' => 'integer',
       'null' => true,
+    ),
+    'asset_id' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => true,
+      'comment' => 'Primary thumbnail image',
     ),
     'name' => 
     array (
@@ -257,14 +265,6 @@ $xpdo_meta_map['Product']= array (
       'phptype' => 'string',
       'null' => true,
       'comment' => 'Foxycart category (not a taxonomy)',
-    ),
-    'asset_id' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '11',
-      'phptype' => 'integer',
-      'null' => true,
-      'comment' => 'Primary thumbnail image',
     ),
     'is_active' => 
     array (

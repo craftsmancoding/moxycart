@@ -8,6 +8,7 @@ $xpdo_meta_map['VariationTerm']= array (
   array (
     'vterm_id' => NULL,
     'vtype_id' => NULL,
+    'slug' => NULL,
     'name' => NULL,
     'sku_prefix' => NULL,
     'sku_suffix' => NULL,
@@ -30,6 +31,14 @@ $xpdo_meta_map['VariationTerm']= array (
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
+    ),
+    'slug' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '64',
+      'phptype' => 'string',
+      'null' => false,
+      'comment' => 'unique lowercase slug',
     ),
     'name' => 
     array (
@@ -76,6 +85,25 @@ $xpdo_meta_map['VariationTerm']= array (
         ),
       ),
     ),
+    'vtypeslug' => 
+    array (
+      'alias' => 'vtypeslug',
+      'primary' => false,
+      'unique' => true,
+      'columns' => 
+      array (
+        'vtype_id' => 
+        array (
+          'collation' => 'A',
+          'null' => false,
+        ),
+        'slug' => 
+        array (
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
+    ),
   ),
   'aggregates' => 
   array (
@@ -86,6 +114,56 @@ $xpdo_meta_map['VariationTerm']= array (
       'foreign' => 'vtype_id',
       'cardinality' => 'one',
       'owner' => 'foreign',
+    ),
+  ),
+  'validation' => 
+  array (
+    'rules' => 
+    array (
+      'slug' => 
+      array (
+        'minlength' => 
+        array (
+          'type' => 'xPDOValidationRule',
+          'rule' => 'xPDOMinLengthValidationRule',
+          'value' => '1',
+          'message' => 'Field slug must be at least 1 character.',
+        ),
+        'slugchars' => 
+        array (
+          'type' => 'preg_match',
+          'rule' => '/^[a-z0-9\\-_]+$/i',
+          'message' => 'Contains invalid characters.',
+        ),
+      ),
+      'sku_prefix' => 
+      array (
+        'sku_prefix_chars' => 
+        array (
+          'type' => 'preg_match',
+          'rule' => '/^[a-z0-9\\-_]+$/i',
+          'message' => 'Contains invalid characters.',
+        ),
+      ),
+      'sku_suffix' => 
+      array (
+        'sku_suffix_chars' => 
+        array (
+          'type' => 'preg_match',
+          'rule' => '/^[a-z0-9\\-_]+$/i',
+          'message' => 'Contains invalid characters.',
+        ),
+      ),
+      'name' => 
+      array (
+        'minlength' => 
+        array (
+          'type' => 'xPDOValidationRule',
+          'rule' => 'xPDOMinLengthValidationRule',
+          'value' => '1',
+          'message' => 'Name must be at least 1 character.',
+        ),
+      ),
     ),
   ),
 );

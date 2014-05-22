@@ -22,7 +22,7 @@ $manager->createObjectContainer('ProductTaxonomy');
 $manager->createObjectContainer('ProductField');
 $manager->createObjectContainer('ProductRelation');
 // $manager->createObjectContainer('Cart'); // future
-$manager->createObjectContainer('Image');
+$manager->createObjectContainer('Asset');
 $manager->createObjectContainer('Review');
 
 // Foxycart Stuff

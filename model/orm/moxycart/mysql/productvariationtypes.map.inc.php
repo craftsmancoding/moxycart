@@ -67,6 +67,25 @@ $xpdo_meta_map['ProductVariationTypes']= array (
         ),
       ),
     ),
+    'productvaritiontype' => 
+    array (
+      'alias' => 'productvaritiontype',
+      'primary' => false,
+      'unique' => true,
+      'columns' => 
+      array (
+        'product_id' => 
+        array (
+          'collation' => 'A',
+          'null' => false,
+        ),
+        'vtype_id' => 
+        array (
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
+    ),
   ),
   'aggregates' => 
   array (
@@ -86,5 +105,8 @@ $xpdo_meta_map['ProductVariationTypes']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
+  ),
+  'validation' => 
+  array (
   ),
 );

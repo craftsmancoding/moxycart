@@ -109,7 +109,7 @@ $xpdo_meta_map['Asset']= array (
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
-      'comment' => 'Round to seconds',
+      'comment' => 'for videos and sound files: round to seconds',
     ),
     'seq' => 
     array (
@@ -144,6 +144,34 @@ $xpdo_meta_map['Asset']= array (
         ),
       ),
     ),
+    'url' => 
+    array (
+      'alias' => 'url',
+      'primary' => false,
+      'unique' => false,
+      'columns' => 
+      array (
+        'url' => 
+        array (
+          'collation' => 'A',
+          'null' => true,
+        ),
+      ),
+    ),
+    'path' => 
+    array (
+      'alias' => 'path',
+      'primary' => false,
+      'unique' => false,
+      'columns' => 
+      array (
+        'path' => 
+        array (
+          'collation' => 'A',
+          'null' => true,
+        ),
+      ),
+    ),
   ),
   'aggregates' => 
   array (
@@ -162,6 +190,32 @@ $xpdo_meta_map['Asset']= array (
       'foreign' => 'id',
       'cardinality' => 'one',
       'owner' => 'foreign',
+    ),
+  ),
+  'validation' => 
+  array (
+    'rules' => 
+    array (
+      'url' => 
+      array (
+        'minlength' => 
+        array (
+          'type' => 'xPDOValidationRule',
+          'rule' => 'xPDOMinLengthValidationRule',
+          'value' => '3',
+          'message' => 'URL must be at least 3 characters.',
+        ),
+      ),
+      'path' => 
+      array (
+        'minlength' => 
+        array (
+          'type' => 'xPDOValidationRule',
+          'rule' => 'xPDOMinLengthValidationRule',
+          'value' => '3',
+          'message' => 'Path must be at least 3 characters.',
+        ),
+      ),
     ),
   ),
 );

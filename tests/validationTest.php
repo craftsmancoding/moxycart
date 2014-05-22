@@ -19,7 +19,7 @@
  *
  *  php phpunit.phar path/to/moxycart/core/components/moxycart/tests
  *
- *
+ * php repoman schema:parse . --model=moxycart --table_prefix=moxy_ --overwrite --restore=store,taxonomy,term,review,product.class
  */
 namespace Moxycart;
 class validationTest extends \PHPUnit_Framework_TestCase {
@@ -168,18 +168,12 @@ class validationTest extends \PHPUnit_Framework_TestCase {
         $result = $V->save();
         $this->assertFalse($result);
 
-        $errors = $F->getErrors();
-        print_r($errors);
-/*
+        $errors = $V->getErrors();
         $this->assertEquals($errors['slug'], 'Contains invalid characters.');
-        $this->assertEquals($errors['name'], 'Field name must be at least 1 character.'); 
-        $this->assertEquals($errors['type'], 'Contains invalid characters.');
-*/
-
     }
 
     public function testVariationTerm() {    
-        $V = new VariationType(self::$modx);
+        $V = new VariationTerm(self::$modx);
         $V->fromArray(array(
             'slug' => '@!#%!invalid characters',
             'name' => 'does not exist',
@@ -191,15 +185,31 @@ class validationTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue(is_object($V));        
         $result = $V->save();
         $this->assertFalse($result);
-
-        $errors = $F->getErrors();
-        print_r($errors);
-/*
+        $errors = $V->getErrors();
+        
         $this->assertEquals($errors['slug'], 'Contains invalid characters.');
-        $this->assertEquals($errors['name'], 'Field name must be at least 1 character.'); 
-        $this->assertEquals($errors['type'], 'Contains invalid characters.');
+        $this->assertEquals($errors['sku_prefix'], 'Contains invalid characters.');
+        $this->assertEquals($errors['sku_suffix'], 'Contains invalid characters.');        
+        //$this->assertEquals($errors['vtype_id'], 'The variation type does not exist.');
+        
+        // This should be valid
+/*
+        $V = new VariationTerm(self::$modx);
+        $V->fromArray(array(
+            'slug' => 'somenewslug',
+            'name' => 'does not exist',
+            'description' => 'Sample',
+            'sku_prefix' => '!@% ',
+            'sku_suffix' => '^!#$^!',
+            'seq' => '',
+        ));
+        $this->assertTrue(is_object($V));        
+        $result = $V->save();
+        $this->assertFalse($result);
+        $errors = $V->getErrors();
+        print_r($errors);
 */
-
+//        $this->assertEquals($errors['slug'], 'Contains invalid characters.');
     }
 
 

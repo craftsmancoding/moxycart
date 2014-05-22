@@ -70,4 +70,7 @@ $xpdo_meta_map['ProductField']= array (
       'owner' => 'foreign',
     ),
   ),
+  'validation' => 
+  array (
+  ),
 );

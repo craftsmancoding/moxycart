@@ -50,6 +50,25 @@ $xpdo_meta_map['ProductTerm']= array (
         ),
       ),
     ),
+    'productterm' => 
+    array (
+      'alias' => 'productterm',
+      'primary' => false,
+      'unique' => true,
+      'columns' => 
+      array (
+        'product_id' => 
+        array (
+          'collation' => 'A',
+          'null' => false,
+        ),
+        'term_id' => 
+        array (
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
+    ),
   ),
   'aggregates' => 
   array (
@@ -69,5 +88,8 @@ $xpdo_meta_map['ProductTerm']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
+  ),
+  'validation' => 
+  array (
   ),
 );

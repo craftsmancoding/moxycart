@@ -12,6 +12,8 @@ return array(
 		'namespace' => 'moxycart',
 		'area' => 'moxycart:default'
     ),
+    // Relative to MODX_ASSETS_PATH
+    // This is where all downloadable product assets will be stored.
     array(
         'key'  =>     'moxycart.upload_dir',
 		'value'=>     'products/',

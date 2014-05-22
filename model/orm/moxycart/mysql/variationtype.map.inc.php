@@ -7,6 +7,7 @@ $xpdo_meta_map['VariationType']= array (
   'fields' => 
   array (
     'vtype_id' => NULL,
+    'slug' => NULL,
     'name' => NULL,
     'description' => NULL,
     'seq' => NULL,
@@ -21,6 +22,14 @@ $xpdo_meta_map['VariationType']= array (
       'null' => false,
       'index' => 'pk',
       'generated' => 'native',
+    ),
+    'slug' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '64',
+      'phptype' => 'string',
+      'null' => false,
+      'comment' => 'unique lowercase slug',
     ),
     'name' => 
     array (
@@ -60,17 +69,17 @@ $xpdo_meta_map['VariationType']= array (
         ),
       ),
     ),
-    'name' => 
+    'slug' => 
     array (
-      'alias' => 'name',
+      'alias' => 'slug',
       'primary' => false,
       'unique' => true,
       'columns' => 
       array (
-        'name' => 
+        'slug' => 
         array (
           'collation' => 'A',
-          'null' => true,
+          'null' => false,
         ),
       ),
     ),
@@ -84,6 +93,38 @@ $xpdo_meta_map['VariationType']= array (
       'foreign' => 'vtype_id',
       'cardinality' => 'many',
       'owner' => 'local',
+    ),
+  ),
+  'validation' => 
+  array (
+    'rules' => 
+    array (
+      'slug' => 
+      array (
+        'minlength' => 
+        array (
+          'type' => 'xPDOValidationRule',
+          'rule' => 'xPDOMinLengthValidationRule',
+          'value' => '1',
+          'message' => 'Field slug must be at least 1 character.',
+        ),
+        'validchars' => 
+        array (
+          'type' => 'preg_match',
+          'rule' => '/^[a-z0-9\\-_]+$/i',
+          'message' => 'Contains invalid characters.',
+        ),
+      ),
+      'name' => 
+      array (
+        'minlength' => 
+        array (
+          'type' => 'xPDOValidationRule',
+          'rule' => 'xPDOMinLengthValidationRule',
+          'value' => '1',
+          'message' => 'Name must be at least 1 character.',
+        ),
+      ),
     ),
   ),
 );
