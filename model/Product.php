@@ -361,17 +361,81 @@ class Product extends BaseModel {
     //------------------------------------------------------------------------------
     //! Fields
     //------------------------------------------------------------------------------
+    /** 
+     * Add fields to a product
+     * @param array $array of taxonomy page ids
+     */
     public function addFields(array $array) {
+        $this_product_id = $this->_verifyExisting();
+
+        foreach ($array as $id) {
+            $props = array(
+                'product_id'=> $this_product_id, 
+                'field_id'=> $id
+            );
+            if (!$PF = $this->modx->getObject('ProductField', $props)) {
+                if (!$F = $this->modx->getObject('Field', $id)) {
+                    throw new \Exception('Invalid field ID '.$id);    
+                }
+                $PF = $this->modx->newObject('ProductField', $props);
+                $PF->save();
+            }
+        }
+
+        return true;    
+    }
+
+    /** 
+     * Remove fields from a product. We don't care here if the referenced taxonomy ids are valid or not.
+     * @param array $array of taxonomy page ids
+     */
+    public function removeFields(array $array) {
+        $this_product_id = $this->_verifyExisting();
+        
+        foreach ($array as $id) {
+            $props = array(
+                'product_id'=> $this_product_id, 
+                'field_id'=> $id
+            );
+            if ($PT = $this->modx->getObject('ProductField', $props)) {
+                $PT->remove();
+            }
+        }
+        return true;
     
     }
 
-    public function removeFields(array $array) {
+    /**
+     * Dictate fields for the current product.
+     * This will remove all fields not in the given $array, add any new relations from the $array,
+     * it will order the relations based on the incoming $array order (seq will be set).
+     * Exeptions are thrown if the product ids do not exist.
+     *
+     * @param array $dictate'd related_id's
+     */
+    public function dictateFields(array $dictate) {
+        $this_product_id = $this->_verifyExisting();
+        
+        $props = array(
+            'product_id'=> $this_product_id,
+        );
+        
+        // Array of related_id's that are already defined
+        $existing = array();
+        if($ExistingColl = $this->modx->getObject('ProductField', $props)) {
+            $existing[] = $ExistingColl->get('field_id');   
+        }
+        
+        $to_remove = array_diff($existing,$dictate);
+        $to_add = array_diff($dictate,$existing);
+
+        $this->removeFields($to_remove,$type);
+        $this->addFields($to_add,$type);
+        $this->orderFields($dictate);
+        
+        return true;
     
     }
-    
-    public function dictateFields(array $array) {
-    
-    }    
     
     
 }

@@ -8,11 +8,14 @@ $xpdo_meta_map['Field']= array (
   array (
     'field_id' => NULL,
     'slug' => NULL,
-    'name' => NULL,
+    'label' => NULL,
     'description' => NULL,
+    'config' => '',
     'seq' => NULL,
     'group' => NULL,
     'type' => 'text',
+    'timestamp_created' => 'CURRENT_TIMESTAMP',
+    'timestamp_modified' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -34,7 +37,7 @@ $xpdo_meta_map['Field']= array (
       'index' => 'index',
       'comment' => 'unique lowercase slug',
     ),
-    'name' => 
+    'label' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '64',
@@ -48,6 +51,13 @@ $xpdo_meta_map['Field']= array (
       'precision' => '255',
       'phptype' => 'string',
       'null' => true,
+    ),
+    'config' => 
+    array (
+      'dbtype' => 'mediumtext',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
     ),
     'seq' => 
     array (
@@ -71,6 +81,19 @@ $xpdo_meta_map['Field']= array (
       'null' => false,
       'default' => 'text',
       'comment' => 'Formbuilder argument',
+    ),
+    'timestamp_created' => 
+    array (
+      'dbtype' => 'timestamp',
+      'phptype' => 'timestamp',
+      'null' => true,
+      'default' => 'CURRENT_TIMESTAMP',
+    ),
+    'timestamp_modified' => 
+    array (
+      'dbtype' => 'timestamp',
+      'phptype' => 'timestamp',
+      'null' => true,
     ),
   ),
   'indexes' => 
@@ -136,16 +159,6 @@ $xpdo_meta_map['Field']= array (
           'type' => 'preg_match',
           'rule' => '/^[a-z0-9\\-_]+$/i',
           'message' => 'Contains invalid characters.',
-        ),
-      ),
-      'name' => 
-      array (
-        'minlength' => 
-        array (
-          'type' => 'xPDOValidationRule',
-          'rule' => 'xPDOMinLengthValidationRule',
-          'value' => '1',
-          'message' => 'Field name must be at least 1 character.',
         ),
       ),
       'type' => 

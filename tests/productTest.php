@@ -29,6 +29,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
     public static $Store;
     public static $Tax; // Taxonomies
     public static $Term;
+    public static $Field;
     
     /**
      * Load up MODX for our tests.
@@ -152,6 +153,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         ));
         $Product->save();
 
+        //! Taxonomies
         // Create a few Taxonomies, we stick 'em into slots A, B, and C for simplicity
         if (!self::$Tax['A'] = self::$modx->getObject('Taxonomy', array('alias'=>'test-taxonomy-a'))) {
             self::$Tax['A'] = self::$modx->newObject('Taxonomy');
@@ -192,7 +194,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
             ));
             self::$Tax['C']->save();        
         }
-
+        //! Terms
         // Create a few Terms, we stick 'em into slots 1, 2, and 3 for simplicity
         if (!self::$Term['1'] = self::$modx->getObject('Term', array('alias'=>'test-term-1'))) {
             self::$Term['1'] = self::$modx->newObject('Term');
@@ -236,7 +238,46 @@ class productTest extends \PHPUnit_Framework_TestCase {
             ));
             self::$Term['3']->save();        
         }
-        
+
+        // !Fields
+        if (!self::$Field['one'] = self::$modx->getObject('Field', array('slug'=>'one'))) {
+            self::$Field['one'] = self::$modx->newObject('Field');
+            self::$Field['one']->fromArray(array(
+                'slug' => 'one',
+                'label' => 'Test One',
+                'description' => 'Testing Field',
+                'seq' => 0,
+                'group' => 'GroupA',
+                'type' => 'text'
+            ));
+            if(!self::$Field['one']->save()) {
+                print 'Could not save field!'; 
+            }
+        }
+        if (!self::$Field['two'] = self::$modx->getObject('Field', array('slug'=>'two'))) {
+            self::$Field['two'] = self::$modx->newObject('Field');
+            self::$Field['two']->fromArray(array(
+                'slug' => 'two',
+                'label' => 'Test Two',
+                'description' => 'Testing Field',
+                'seq' => 0,
+                'group' => 'GroupA',
+                'type' => 'textarea'
+            ));
+            self::$Field['two']->save();
+        }
+        if (!self::$Field['three'] = self::$modx->getObject('Field', array('slug'=>'three'))) {
+            self::$Field['three'] = self::$modx->newObject('Field');
+            self::$Field['three']->fromArray(array(
+                'slug' => 'three',
+                'label' => 'Test Three',
+                'description' => 'Testing Field',
+                'seq' => 0,
+                'group' => 'GroupA',
+                'type' => 'dropdown'
+            ));
+            self::$Field['three']->save();
+        }
     }
     
     /**
@@ -244,13 +285,18 @@ class productTest extends \PHPUnit_Framework_TestCase {
      */
     public static function tearDownAfterClass() {
 
+/*
         self::$Store->remove();
         self::$Tax['A']->remove();
         self::$Tax['B']->remove();
         self::$Tax['C']->remove();        
         self::$Term['1']->remove();
         self::$Term['2']->remove();
-        self::$Term['3']->remove();        
+        self::$Term['3']->remove();
+        self::$Field['one']->remove();
+        self::$Field['two']->remove();
+        self::$Field['three']->remove();
+*/
 
     }
     
@@ -500,6 +546,60 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $One->dictateTerms($terms);
         $cnt4 = self::$modx->getCount('ProductTerm', array('product_id'=>$One->get('product_id')));
         $this->assertEquals($cnt4, count($terms)); 
+    }    
+
+    /**
+     * 
+     *
+     */
+    public function testFields() {
+        $P = new Product(self::$modx);
+        
+        $One = $P->one(array(
+            'store_id' => self::$Store->get('id'),
+            'sku' => 'SOUTHPARK-TSHIRT'));
+            
+        // Prep: Remove all Field Associations for this product
+        if($Collection = self::$modx->getCollection('ProductField', array('product_id'=>$One->get('product_id')))) {
+            foreach ($Collection as $C) {
+                $C->remove();
+            }
+        }
+        $product_id = $One->get('product_id');
+        $this->assertFalse(empty($product_id));
+        
+        $fields = array();
+        $fields[] = self::$Field['one']->get('field_id');
+        $fields[] = self::$Field['two']->get('field_id');
+        $fields[] = self::$Field['three']->get('field_id');
+        
+        $One->addFields($fields);
+        
+        // Verify they all exist:
+        $Collection = self::$modx->getCollection('ProductField', array('product_id'=>$product_id));
+        $this->assertFalse(empty($Collection),'Product Fields were not added!');
+        $cnt = self::$modx->getCount('ProductField', array('product_id'=>$product_id));
+        $this->assertEquals(count($fields), $cnt);
+        foreach ($fields as $id) {
+            $PT = self::$modx->getObject('ProductField', array('product_id'=>$product_id,'field_id'=>$id));
+            $this->assertFalse(empty($PT));
+        }
+        
+        // Add duplicates, verify that nothing new was created.
+        $One->addFields($fields);
+        $cnt2 = self::$modx->getCount('ProductField', array('product_id'=>$product_id));
+        $this->assertEquals($cnt, $cnt2);
+        
+        // Remove all but one
+        $odd_man_out = array_pop($fields);
+        $One->removeFields($fields);
+        $cnt3 = self::$modx->getCount('ProductField', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt3, 1); // should be only one left
+        
+        // Now, dictate the fields: this should add and remove
+        $One->dictateFields($fields);
+        $cnt4 = self::$modx->getCount('ProductField', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt4, count($fields)); 
     }    
 
 

@@ -213,11 +213,15 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 	<object class="Field" table="fields" extends="xPDOObject">
 		<field key="field_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
 		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" index="index" comment="unique lowercase slug"/>
-		<field key="name" dbtype="varchar" precision="64" phptype="string" null="false" comment="Human readable, translated."/>
+		<field key="label" dbtype="varchar" precision="64" phptype="string" null="false" comment="Human readable, translated."/>
 		<field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
+		<!-- JSON data -->
+		<field key="config" dbtype="mediumtext" phptype="string" null="false" default="" />
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
 		<field key="group" dbtype="varchar" precision="32" phptype="string" null="true" />
 		<field key="type" dbtype="varchar" precision="32" phptype="string" null="false" default="text" comment="Formbuilder argument"/>
+		<field key="timestamp_created" dbtype="timestamp" phptype="timestamp" null="true" default="CURRENT_TIMESTAMP" />
+		<field key="timestamp_modified" dbtype="timestamp" phptype="timestamp" null="true" />		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="field_id" length="" collation="A" null="false" />
 		</index>
@@ -230,7 +234,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<validation>
             <rule field="slug" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field slug must be at least 1 character."/>
             <rule field="slug" name="validchars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
-            <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field name must be at least 1 character."/>
+            <!--rule field="label" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field label must be at least 1 character."/-->
             <rule field="type" name="validchars" type="preg_match" rule="/^[a-z_][a-z0-9_]+$/i" message="Contains invalid characters." />
         </validation>
 		
