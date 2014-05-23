@@ -50,9 +50,9 @@ class Asset extends BaseModel {
 //            print $thumbnail_path ."\n"; exit;
             $thumb_w = $this->modx->getOption('moxycart.thumbnail_width');
             $result = Image::thumbnail($fullpath,$thumbnail_path,$thumb_w);
-            print 'Result: '.$result."\n";
-            print 'Prefix: '.$prefix."\n";
-            print 'Thumb path: '.$thumbnail_path ."\n"; exit;
+//            print 'Result: '.$result."\n";
+//            print 'Prefix: '.$prefix."\n";
+//            print 'Thumb path: '.$thumbnail_path ."\n"; exit;
             $props['thumbnail_url'] = $this->getRelPath($result, $prefix);
         }
         $props['width'] = ($info) ? $info['width'] : 0;

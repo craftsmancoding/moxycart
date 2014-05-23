@@ -256,8 +256,8 @@ class assetTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($B->get('path'), 'assets/support.jpg');
         $this->assertEquals($B->get('width'), 430);
         $this->assertEquals($B->get('height'), 400);
-        $this->assertEquals('assets/thumbs/support.jpg',$B->get('thumbnail_url'));
+        $this->assertEquals('thumbs/support.jpg',$B->get('thumbnail_url'));
         
-//        $B->remove();
+        $B->remove();
     }
 }
