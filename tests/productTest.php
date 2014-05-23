@@ -27,6 +27,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
     // Must be static because we set it up inside a static function
     public static $modx;
     public static $Store;
+    public static $Tax; // Taxonomies
     
     /**
      * Load up MODX for our tests.
@@ -59,6 +60,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
             self::$Store->save();        
         }
         
+        // Rustle up some products
         $Product = self::$modx->newObject('Product');
         $Product->fromArray(array(
             'store_id' => self::$Store->get('id'),
@@ -149,14 +151,57 @@ class productTest extends \PHPUnit_Framework_TestCase {
         ));
         $Product->save();
 
-
+        // Create a few Taxonomies, we stick 'em into slots A, B, and C for simplicity
+        if (!self::$Tax['A'] = self::$modx->getObject('Taxonomy', array('alias'=>'test-taxonomy-a'))) {
+            self::$Tax['A'] = self::$modx->newObject('Taxonomy');
+            self::$Tax['A']->fromArray(array(
+                'pagetitle' => 'Taxonomy A',
+                'alias' => 'test-taxonomy-a',
+                'uri' => 'test-category-a/',
+                'class_key' => 'Taxonomy',
+                'isfolder' => 1,
+                'published' => 1,
+                 'properties' => '',
+            ));
+            self::$Tax['A']->save();        
+        }
+        if (!self::$Tax['B'] = self::$modx->getObject('Taxonomy', array('alias'=>'test-taxonomy-b'))) {
+            self::$Tax['B'] = self::$modx->newObject('Taxonomy');
+            self::$Tax['B']->fromArray(array(
+                'pagetitle' => 'Taxonomy B',
+                'alias' => 'test-taxonomy-b',
+                'uri' => 'test-taxonomy-b/',
+                'class_key' => 'Taxonomy',
+                'isfolder' => 1,
+                'published' => 1,
+                 'properties' => '',
+            ));
+            self::$Tax['B']->save();        
+        }
+        if (!self::$Tax['C'] = self::$modx->getObject('Taxonomy', array('alias'=>'test-taxonomy-c'))) {
+            self::$Tax['C'] = self::$modx->newObject('Taxonomy');
+            self::$Tax['C']->fromArray(array(
+                'pagetitle' => 'Taxonomy C',
+                'alias' => 'test-taxonomy-c',
+                'uri' => 'test-taxonomy-c/',
+                'class_key' => 'Taxonomy',
+                'isfolder' => 1,
+                'published' => 1,
+                 'properties' => '',
+            ));
+            self::$Tax['C']->save();        
+        }
+        
     }
     
     /**
      *
      */
     public static function tearDownAfterClass() {
-        self::$Store->remove();
+//        self::$Store->remove();
+//        self::$Tax['A']->remove();
+//        self::$Tax['B']->remove();
+//        self::$Tax['C']->remove();        
     }
     
     
@@ -286,4 +331,72 @@ class productTest extends \PHPUnit_Framework_TestCase {
             $i++;
         }
     }    
+
+    /**
+     * 
+     *
+     */
+    public function testTaxonomies() {
+        $P = new Product(self::$modx);
+        
+        $One = $P->one(array(
+            'store_id' => self::$Store->get('id'),
+            'sku' => 'SOUTHPARK-TSHIRT'));
+            
+        // Prep: Remove all Taxonomy Associations for this product
+        if($Collection = self::$modx->getCollection('ProductTaxonomy', array('product_id'=>$One->get('product_id')))) {
+            foreach ($Collection as $C) {
+                $C->remove();
+            }
+        }
+        $product_id = $One->get('product_id');
+        $this->assertFalse(empty($product_id));
+        
+        $taxonomies = array();
+        $taxonomies[] = self::$Tax['A']->get('id');
+        $taxonomies[] = self::$Tax['B']->get('id');
+        $taxonomies[] = self::$Tax['C']->get('id');
+        
+        $One->addTaxonomies($taxonomies);
+        
+        // Verify they all exist:
+        $Collection = self::$modx->getCollection('ProductTaxonomy', array('product_id'=>$product_id));
+        $this->assertFalse(empty($Collection),'Product Taxonomies were not added!');
+        $cnt = self::$modx->getCount('ProductTaxonomy', array('product_id'=>$product_id));
+        $this->assertEquals(count($taxonomies), $cnt);
+        foreach ($taxonomies as $id) {
+            $PT = self::$modx->getObject('ProductTaxonomy', array('product_id'=>$product_id,'taxonomy_id'=>$id));
+            $this->assertFalse(empty($PT));
+        }
+        
+        // Add duplicates, verify that nothing new was created.
+        $One->addTaxonomies($taxonomies);
+        $cnt2 = self::$modx->getCount('ProductTaxonomy', array('product_id'=>$product_id));
+        $this->assertEquals($cnt, $cnt2);
+        
+        // Remove all but one
+        $odd_man_out = array_pop($taxonomies);
+        $One->removeTaxonomies($taxonomies);
+        $cnt3 = self::$modx->getCount('ProductTaxonomy', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt3, 1); // should be only one left
+        
+        // Now, dictate the taxonomies: this should add and remove
+        $One->dictateTaxonomies($taxonomies);
+        $cnt4 = self::$modx->getCount('ProductTaxonomy', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt4, count($taxonomies)); 
+        
+        // Verify the order
+        $c = self::$modx->newQuery('ProductTaxonomy');
+        $c->where(array('product_id'=>$product_id));
+        $c->sortby('seq','ASC');
+        $PT = self::$modx->getCollection('ProductTaxonomy',$c);
+        $i = 0;
+        foreach ($PT as $p) {
+            $this->assertEquals($i, $p->get('seq'));
+            $this->assertEquals($taxonomies[$i], $p->get('taxonomy_id'));
+            $i++;
+        }
+    }    
+
+
 }

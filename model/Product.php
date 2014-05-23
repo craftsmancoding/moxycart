@@ -16,7 +16,8 @@ class Product extends BaseModel {
     private $product_id;
     
     /**
-     * Verify that the existing product is in fact valid, persisted.
+     * Verify that the existing product is in fact an existing, valid, persisted product
+     * and not a new, unsaved product.
      * @return integer product_id
      */
     private function _verifyExisting() {
@@ -36,10 +37,18 @@ class Product extends BaseModel {
         return $this->product_id; 
     }
 
+    //------------------------------------------------------------------------------
+    public function addReview() {
+        // addOne not good enough?
+    }
+
+
     public function addAssetFromFile($path) {
     
     }
 
+    //------------------------------------------------------------------------------
+    //! Assets
     //------------------------------------------------------------------------------
     public function addAssets(array $array) {
     
@@ -53,11 +62,9 @@ class Product extends BaseModel {
     
     }
 
-    //------------------------------------------------------------------------------
-    public function addReview() {
-        // addOne not good enough?
-    }
 
+    //------------------------------------------------------------------------------
+    //! Relations
     //------------------------------------------------------------------------------
     /**
      * Add relations to the current product.
@@ -169,18 +176,111 @@ class Product extends BaseModel {
     }
 
     //------------------------------------------------------------------------------
+    //! Taxonomies
+    //------------------------------------------------------------------------------
+    /** 
+     * Add taxonomies to a product
+     * @param array $array of taxonomy page ids
+     */
     public function addTaxonomies(array $array) {
-    
+        $this_product_id = $this->_verifyExisting();
+
+        foreach ($array as $id) {
+            $props = array(
+                'product_id'=> $this_product_id, 
+                'taxonomy_id'=> $id
+            );
+            if (!$PT = $this->modx->getObject('ProductTaxonomy', $props)) {
+                if (!$T = $this->modx->getObject('Taxonomy', $id)) {
+                    throw new \Exception('Invalid taxonomy ID '.$id);    
+                }
+                $PT = $this->modx->newObject('ProductTaxonomy', $props);
+                $PT->save();
+            }
+        }
+
+        return true;    
     }
 
+    /** 
+     * Remove taxonomies from a product. We don't care here if the referenced taxonomy ids are valid or not.
+     * @param array $array of taxonomy page ids
+     */
     public function removeTaxonomies(array $array) {
-    
-    }
-    
-    public function dictateTaxonomies(array $array) {
+        $this_product_id = $this->_verifyExisting();
+        
+        foreach ($array as $id) {
+            $props = array(
+                'product_id'=> $this_product_id, 
+                'taxonomy_id'=> $id
+            );
+            if ($PT = $this->modx->getObject('ProductTaxonomy', $props)) {
+                $PT->remove();
+            }
+        }
+        return true;
     
     }
 
+    /**
+     * Dictate taxonomies to the current product.
+     * This will remove all taxonomies not in the given $array, add any new relations from the $array,
+     * it will order the relations based on the incoming $array order (seq will be set).
+     * Exeptions are thrown if the product ids do not exist.
+     *
+     * @param array $dictate'd related_id's
+     */
+    public function dictateTaxonomies(array $dictate) {
+        $this_product_id = $this->_verifyExisting();
+        
+        $props = array(
+            'product_id'=> $this_product_id,
+        );
+        
+        // Array of related_id's that are already defined
+        $existing = array();
+        if($ExistingColl = $this->modx->getObject('ProductTaxonomy', $props)) {
+            $existing[] = $ExistingColl->get('taxonomy_id');   
+        }
+        
+        $to_remove = array_diff($existing,$dictate);
+        $to_add = array_diff($dictate,$existing);
+
+        $this->removeTaxonomies($to_remove,$type);
+        $this->addTaxonomies($to_add,$type);
+        $this->orderTaxonomies($dictate);
+        
+        return true;
+    
+    }
+
+    /**
+     * Adjust the seq into ascending order for the given taxonomy ids
+     *
+     * @param array $dictate'd taxonomy id's
+     */    
+    public function orderTaxonomies(array $array) {
+        $this_product_id = $this->_verifyExisting();
+        
+        $seq = 0;
+        foreach ($array as $id) {
+            $props = array(
+                'product_id'=> $this_product_id, 
+                'taxonomy_id'=> $id
+            );
+            if ($PT = $this->modx->getObject('ProductTaxonomy', $props)) {
+                $PT->set('seq',$seq);
+                $PT->save();
+                $seq++;
+            }
+        }
+        
+        return true;
+    }
+
+    
+    //------------------------------------------------------------------------------
+    //! Terms
     //------------------------------------------------------------------------------
     public function addTerms(array $array) {
     
@@ -194,6 +294,20 @@ class Product extends BaseModel {
     
     }    
     
+    //------------------------------------------------------------------------------
+    //! Fields
+    //------------------------------------------------------------------------------
+    public function addFields(array $array) {
+    
+    }
+
+    public function removeFields(array $array) {
+    
+    }
+    
+    public function dictateFields(array $array) {
+    
+    }    
     
     
 }
