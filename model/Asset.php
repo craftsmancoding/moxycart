@@ -352,6 +352,14 @@ class Asset extends BaseModel {
         
     }
     
+    /** 
+     * Override so we can clean out the asset files
+     *
+     */
+    public function remove() {
+        return parent::remove();
+//        return $this->modelObj->remove();
+    }    
     /**
      * Override here to make the url and path relative to the defined moxycart.upload_dir
      */
