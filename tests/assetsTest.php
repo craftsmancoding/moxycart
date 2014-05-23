@@ -154,6 +154,25 @@ class assetTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * 
+     */
+    public function testImageSize() {
+        $filename = dirname(__FILE__).'/assets/support.jpg'; 
+    
+        $dir = MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
+        $A = new Asset(self::$modx);
+        
+        $info = $A->getImageSize($filename);
+        $this->assertEquals($info['width'],430);
+        $this->assertEquals($info['height'],400);
+        $this->assertEquals($info['type'],2);
+        $this->assertEquals($info['mime'],'image/jpeg');
+
+        $info = $A->getImageSize('/some/file/that:does/not/exist.jpg');
+        $this->assertFalse($info);
+    }
+
+    /**
      * Tests the fromFile method, verifying that it returns an existing
      * object record
      */
@@ -199,27 +218,9 @@ class assetTest extends \PHPUnit_Framework_TestCase {
         $filename = dirname(__FILE__).'/assets/macbook_pro.jpg'; 
         $A = $A->fromFile($filename,array(),dirname(__FILE__));
         
-        $this->assertEquals($asset_id, $A->get('asset_id'));           
-    }
-
-
-    /**
-     * 
-     */
-    public function testImageSize() {
-        $filename = dirname(__FILE__).'/assets/support.jpg'; 
-    
-        $dir = MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
-        $A = new Asset(self::$modx);
+        $this->assertEquals($asset_id, $A->get('asset_id'));
         
-        $info = $A->getImageSize($filename);
-        $this->assertEquals($info['width'],430);
-        $this->assertEquals($info['height'],400);
-        $this->assertEquals($info['type'],2);
-        $this->assertEquals($info['mime'],'image/jpeg');
-
-        $info = $A->getImageSize('/some/file/that:does/not/exist.jpg');
-        $this->assertFalse($info);
+        $A->remove();
     }
 
     /**
@@ -239,29 +240,24 @@ class assetTest extends \PHPUnit_Framework_TestCase {
             $Existing->remove();
         }
         
-        // Verify that fromFile creates a Asset object
-        $props = array(
-            'title' => 'Support',
-            'alt' => 'This is a test of the fromFile method',
-            'url' => 'assets/macbook_pro.jpg',
-            'thumbnail_url' => 'assets/.thumb.macbook_pro.jpg',
-            'path' => 'assets/macbook_pro.jpg',
-            'width' => 1280,
-            'height' => 956,
-            'size' => 560,
-            'duration' => 0,
-            'is_active' => true,
-            'is_protected' => false,
-            'seq' => 0
-        );
+        // Verify that fromFile creates a Asset object        
+        $A->fromFile($filename,array(
+                'title' => 'Support',
+                'alt' => 'This is a test of the fromFile method'
+                ),dirname(__FILE__));
+        
+        $result = $A->save();
+        $this->assertTrue($result);
+        
+        $asset_id = $A->getPrimaryKey();
+        
+        $B = $A->find($asset_id);
 
+        $this->assertEquals($B->get('path'), 'assets/support.jpg');
+        $this->assertEquals($B->get('width'), 430);
+        $this->assertEquals($B->get('height'), 400);
+        $this->assertEquals('assets/thumbs/support.jpg',$B->get('thumbnail_url'));
         
-        $A = $A->fromFile($filename,array(),dirname(__FILE__));
-        
-        $this->assertEquals($asset_id, $A->get('asset_id'));
-        
-        
+//        $B->remove();
     }
-
-    
 }

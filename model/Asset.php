@@ -11,6 +11,7 @@ class Asset extends BaseModel {
 
     /**
      * Create a new asset or find an existing one from a given file 
+     * TODO: dynamically read duration via ffmpeg
      *
      * @param string $fullpath to file
      * @param array $props any additional props to set for the asset. Some props cannot be set here!
@@ -24,7 +25,8 @@ class Asset extends BaseModel {
         }
         if (!$prefix) {
             $prefix = $this->modx->getOption('assets_path').$this->modx->getOption('moxycart.upload_dir');
-        }        
+        }
+        $prefix = rtrim($prefix,'/').'/'; // cleanup        
         // Does the Asset exist already?
         $path = $this->getRelPath($fullpath, $prefix);
         if ($Asset = $this->modx->getObject($this->xclass, array('path'=>$path))) {
@@ -34,19 +36,33 @@ class Asset extends BaseModel {
         }
         
         // Does the file exist?
-        if (!file_exists($filename)) {
+        if (!file_exists($fullpath)) {
             throw new \Exception('File not found '.$filename);
         }        
         
         // No?  Then we create 
         $info = $this->getImageSize($fullpath);        
-        $props['content_type_id'] = (isset($props['content_type_id'])) ? $props['content_type_id'] : $this->getContentType($filename);
-        $props['url'] = '';
-        $props['path'] = '';
+        $props['content_type_id'] = (isset($props['content_type_id'])) ? $props['content_type_id'] : $this->getContentType($fullpath);
+        $props['url'] = $path;
+        $props['path'] = $path;
+        if (!isset($props['thumbnail_url'])) {
+            $thumbnail_path = $prefix.$this->modx->getOption('moxycart.thumbnail_dir').basename($fullpath);
+//            print $thumbnail_path ."\n"; exit;
+            $thumb_w = $this->modx->getOption('moxycart.thumbnail_width');
+            $result = Image::thumbnail($fullpath,$thumbnail_path,$thumb_w);
+            print 'Result: '.$result."\n";
+            print 'Prefix: '.$prefix."\n";
+            print 'Thumb path: '.$thumbnail_path ."\n"; exit;
+            $props['thumbnail_url'] = $this->getRelPath($result, $prefix);
+        }
         $props['width'] = ($info) ? $info['width'] : 0;
         $props['height'] = ($info) ? $info['height'] : 0;
         $props['length'] = '';
         $props['size'] = filesize($fullpath);
+        
+        $this->modelObj = $this->modx->newObject($this->xclass);
+        $this->modelObj->fromArray($props);
+        return $this->modelObj;
     }
     
     /**
@@ -67,6 +83,7 @@ class Asset extends BaseModel {
             return ltrim(substr($fullpath, strlen($prefix)),'/');
         }
         else {
+            // either the path was to some other place, or it has already been made relative??
             throw new \Exception('Prefix not found in path');
         }
     }
@@ -290,6 +307,49 @@ class Asset extends BaseModel {
         $out['img'] = $this->get_image_tag(array('image_id'=>$id));
 
         return json_encode($out);
+    }
+    
+    
+    /**
+     * Generate a thumbnail from an image at a $src_path.
+     * 
+     *
+     * @param string $src_path
+     * @param string $target_path
+     * @param integer $max_h in pixels
+     * @param integer $max_w in pixels
+     */
+    public function thumbnail($src_path,$target_path,$max_h,$max_w) {
+        if (!$info = $this->getImageSize($src_path)) {
+            throw new \Exception('File not found '.$src_path);
+        }
+        $ext = $this->getExt($src_path);
+        
+        $srcImg = '';
+        $image_func = '';
+        $quality = null; // different vals for different funcs
+        switch ($ext) {
+            case 'gif':
+                $srcImg = @imagecreatefromgif($src);
+                $image_func = 'imagegif';
+                break;
+            case 'jpg':
+            case 'jpeg':
+                $srcImg = @imagecreatefromjpeg($src);
+                $image_func = 'imagejpeg';
+                $quality = 100;
+                break;
+            case 'png':
+                $srcImg = @imagecreatefrompng($src);
+                $image_func = 'imagepng';
+                $quality = 0;
+                break;
+        }
+        
+        if (!$srcImg) {
+            throw new \Exception('Could not read image '.$src_path);
+        }
+        
     }
     
     /**

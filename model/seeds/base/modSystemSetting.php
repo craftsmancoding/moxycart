@@ -64,6 +64,13 @@ return array(
 		'area' => 'moxycart:default'
     ),
     array(
+        'key'  =>     'moxycart.thumbnail_dir',
+		'value'=>     'thumbs/',
+		'xtype'=>     'textfield',
+		'namespace' => 'moxycart',
+		'area' => 'moxycart:default'
+    ),
+    array(
         'key'  =>     'moxycart.categories',
 		'value'=>     '["Default"]',
 		'xtype'=>     'textfield',
