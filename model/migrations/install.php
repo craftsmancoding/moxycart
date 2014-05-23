@@ -24,6 +24,7 @@ $manager->createObjectContainer('ProductRelation');
 // $manager->createObjectContainer('Cart'); // future
 $manager->createObjectContainer('Asset');
 $manager->createObjectContainer('Review');
+$manager->createObjectContainer('ProductAsset');
 
 // Foxycart Stuff
 $manager->createObjectContainer('Foxydata');

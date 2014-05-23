@@ -95,6 +95,7 @@ $xpdo_meta_map['Review']= array (
       array (
         'id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),

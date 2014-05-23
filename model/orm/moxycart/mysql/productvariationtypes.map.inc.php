@@ -62,6 +62,7 @@ $xpdo_meta_map['ProductVariationTypes']= array (
       array (
         'id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),
@@ -72,15 +73,18 @@ $xpdo_meta_map['ProductVariationTypes']= array (
       'alias' => 'productvaritiontype',
       'primary' => false,
       'unique' => true,
+      'type' => 'BTREE',
       'columns' => 
       array (
         'product_id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),
         'vtype_id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),

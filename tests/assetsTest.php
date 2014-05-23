@@ -41,196 +41,227 @@ class assetTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     *
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Invalid data type for path
      */
-    public function testMODX() {
-        $this->assertTrue(defined('MODX_CORE_PATH'), 'MODX_CORE_PATH not defined.');
-        $this->assertTrue(defined('MODX_ASSETS_PATH'), 'MODX_ASSETS_PATH not defined.');
-        $this->assertTrue(is_a(self::$modx, 'modX'), 'Invalid modX instance.');
-    
+    public function testPreparePath()
+    {
+        $Asset = new Asset(self::$modx);
+        $Asset->preparePath(array('fail'));
     }
-    
-    /**
-     * 
-     *
-     */
-    public function testAssetCreation() {
 
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Path must be a directory. File found instead.
+     */
+    public function testPreparePath2()
+    {
+        $Asset = new Asset(self::$modx);
+        $filename = '/tmp/'.uniqid().'.moxycart.text';
+        $result = touch($filename);
+        $this->assertTrue($result);
+        $Asset->preparePath($filename);
+        unlink($filename);
+    }
+
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Failed to create directory
+     */
+    public function testPreparePath3()
+    {
+        $Asset = new Asset(self::$modx);
+        $dir = '/deleteme.txt';
+        $Asset->preparePath($dir);
+    }
+
+    /** 
+     * Actually prepare it this time
+     */
+    public function testPreparePath4()
+    {
+        $dir = MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
+        $Asset = new Asset(self::$modx);
+        $result = $Asset->preparePath($dir);
+        $this->assertTrue($result);
+    }
+
+    public function testGetExt() {
         $A = new Asset(self::$modx);
+        $this->assertEquals($A->getExt('/does/not/exist.php'),'php');
+        $this->assertEquals($A->getExt('/does/not/exist.PHP'),'php');
+        $this->assertEquals($A->getExt('/some/file.jpg'),'jpg');
+    }
+
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage File not found
+     */
+    public function testGetContentTypeFail()
+    {
+        $Asset = new Asset(self::$modx);
+        $file = '/does/not/exist';
+        $Asset->getContentType($dir);
+    }
+
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Content type not defined.
+     */
+    public function testGetContentTypeFail2()
+    {
+        $Asset = new Asset(self::$modx);
+        $filename = '/tmp/'.uniqid().'.moxycart.dick';
+        $result = touch($filename);
+        $Asset->getContentType($filename);
+        unlink($result);
+    }
+
+
+    public function testGetContentType() {
+        $A = new Asset(self::$modx);
+        $filename = dirname(__FILE__).'/assets/macbook_pro.jpg';
+        $C = self::$modx->getObject('modContentType', array('name'=>'JPG'));
+        $this->assertFalse(empty($C));
+        $id = $A->getContentType($filename);    
+        $this->assertEquals($id,$C->get('id'));
+    }
+
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Invalid data type for path
+     */
+    public function testRelPath() {
+        $A = new Asset(self::$modx);
+        $A->getRelPath(array('bogus'));
+    }
+
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Prefix not found in path
+     */
+    public function testRelPath2() {
+        $A = new Asset(self::$modx);
+        $filename = dirname(__FILE__).'/assets/macbook_pro.jpg';
+        $A->getRelPath($filename);
+    }
+
+    public function testRelPath3() {
+        $A = new Asset(self::$modx);
+        $filename = dirname(__FILE__).'/assets/macbook_pro.jpg'; 
+        $relpath = $A->getRelPath($filename, dirname(__FILE__));
+        $this->assertEquals($relpath, 'assets/macbook_pro.jpg');
+    }
+
+    /**
+     * Tests the fromFile method, verifying that it returns an existing
+     * object record
+     */
+    public function testFromFileExisting() {
+
+        $dir = MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
+        $A = new Asset(self::$modx);
+        $result = $A->preparePath($dir);
+        $this->assertTrue($result);
         $this->assertTrue($A instanceof Asset);
         
-        // Verify mass-assignment
+        $ContentType = self::$modx->getObject('modContentType',array('name'=>'JPG'));
+        
+        $this->assertFalse(empty($ContentType));
+        $this->assertTrue($ContentType instanceof \modContentType);
+
+        if ($Existing = self::$modx->getObject('Asset', array('path'=>'assets/macbook_pro.jpg'))) {
+            $Existing->remove();
+        }
+        
+        // Verify that fromFile returns an existing Asset object
         $A->fromArray(array(
-            'code' => 'YYY',
-            'name' => 'Yellow Yuan',
-            'symbol' => '1123',
-            'is_active' => 1,
+            'content_type_id' => $ContentType->get('id'),
+            'title' => 'Sample Image',
+            'alt' => 'This is only a sample image',
+            'url' => 'assets/macbook_pro.jpg',
+            'thumbnail_url' => 'assets/.thumb.macbook_pro.jpg',
+            'path' => 'assets/macbook_pro.jpg',
+            'width' => 1280,
+            'height' => 956,
+            'size' => 560,
+            'duration' => 0,
+            'is_active' => true,
+            'is_protected' => false,
             'seq' => 0
         ));
-        $this->assertEquals('YYY', $Currency->code);
-        
-        // Verify single-assignment
-        $Currency->symbol = '3345';
-        $this->assertEquals('3345', $Currency->symbol);
-        $Currency->set('symbol','3346');
-        $this->assertEquals('3346', $Currency->get('symbol'));
-        
-        $result = $Currency->save();
+        $result = $A->save();
         $this->assertTrue($result);
+        $asset_id = $A->getPrimaryKey();
+        $this->assertFalse(empty($asset_id));
+
+        $A = new Asset(self::$modx);
+        $filename = dirname(__FILE__).'/assets/macbook_pro.jpg'; 
+        $A = $A->fromFile($filename,array(),dirname(__FILE__));
         
-        $id = $Currency->getPrimaryKey();
-        
-        $Currency = $Currency->find($id);
-
-        $this->assertEquals('YYY', $Currency->code);
-        $Currency->remove();
-        
-        // Retrieving the deleted row should raise an exception
-        try {
-            $Currency = new Currency(self::$modx, $id);
-        }
-        catch (\Exception $expected) {
-            return; // the exception class must be properly namespaced with backslash
-        }
-        $this->fail('An expected exception has not been raised. Currency object was retrieved when it should not exist.');
-    
-    }
-    
-    public function testFilters() {
-        $Currency = new Currency(self::$modx);
-        $args = array('limit'=>10,'offset'=>20);
-        $filters = $Currency->getFilters($args);
-        $this->assertTrue(empty($filters));
-        
-        $args = array('limit'=>10,'offset'=>20,'something'=>'else');
-        $filters = $Currency->getFilters($args);
-        $this->assertEquals($filters['something'],'else');
-
-        $args = array('sort'=>'x','dir'=>'ASC','select'=>'yyy','mycolumn:like'=>'myvalue');
-        $filters = $Currency->getFilters($args);        
-        $this->assertEquals($filters['mycolumn:like'],'%myvalue%');
-
-        $args = array('mycolumn:starts with'=>'myvalue');
-        $filters = $Currency->getFilters($args);        
-        $this->assertEquals($filters['mycolumn:LIKE'],'myvalue%');
-        $this->assertEquals(count($filters),1);
-        
-        $args = array('mycolumn:ends with'=>'myvalue');
-        $filters = $Currency->getFilters($args);        
-        $this->assertEquals($filters['mycolumn:LIKE'],'%myvalue');
-
-
-        $args = array('one','two','three');
-        $filters = $Currency->getFilters($args);
-        $this->assertTrue(empty($filters));
-    }
-    
-    public function testCount() {
-        $C = new Currency(self::$modx);
-        $cnt = $C->count(array('code:STARTS WITH'=>'s'));
-        $this->assertEquals($cnt,10);
-
-        $cnt = $C->count(array('name:>'=>'D'));
-        $this->assertEquals($cnt,88);
-    }
-    
-    public function testDebug() {
-        $C = new Currency(self::$modx);
-        $actual = $C->all(array('name:>'=>'D'),true);
-        $expected = "SELECT `Currency`.`currency_id` AS `Currency_currency_id`, `Currency`.`code` AS `Currency_code`, `Currency`.`name` AS `Currency_name`, `Currency`.`symbol` AS `Currency_symbol`, `Currency`.`is_active` AS `Currency_is_active`, `Currency`.`seq` AS `Currency_seq` FROM `moxy_currencies` AS `Currency` WHERE `Currency`.`name` > 'D' ORDER BY name LIMIT 20";
-        $this->assertEquals(normalize_string($actual),normalize_string($expected));
-
-        $actual = $C->all(array('code:LIKE'=>'VC'),true);
-        $expected = "SELECT `Currency`.`currency_id` AS `Currency_currency_id`, `Currency`.`code` AS `Currency_code`, `Currency`.`name` AS `Currency_name`, `Currency`.`symbol` AS `Currency_symbol`, `Currency`.`is_active` AS `Currency_is_active`, `Currency`.`seq` AS `Currency_seq` FROM `moxy_currencies` AS `Currency` WHERE `Currency`.`code` LIKE '%VC%' ORDER BY name LIMIT 20";
-        $this->assertEquals(normalize_string($actual),normalize_string($expected));
-
-        $actual = $C->all(array('code:LIKE'=>'VC','limit'=>30),true);
-        $expected = "SELECT `Currency`.`currency_id` AS `Currency_currency_id`, `Currency`.`code` AS `Currency_code`, `Currency`.`name` AS `Currency_name`, `Currency`.`symbol` AS `Currency_symbol`, `Currency`.`is_active` AS `Currency_is_active`, `Currency`.`seq` AS `Currency_seq` FROM `moxy_currencies` AS `Currency` WHERE `Currency`.`code` LIKE '%VC%' ORDER BY name LIMIT 30";
-        $this->assertEquals(normalize_string($actual),normalize_string($expected));
-    }
-    
-    public function testGetCollection() {
-        $Currency = new Currency(self::$modx);
-        $collection = $Currency->all(array('code'=>'XXXX'));
-        $this->assertTrue(empty($collection));
-        $collection = $Currency->all(array('code:STARTS WITH'=>'TR'));
-        $values = array();
-        foreach ($collection as $c) {
-            $values[] = $c->get('code');
-        }
-        $this->assertEquals($values[0],'TRY');
-        $this->assertEquals($values[1],'TRL');
-    }
-
-    
-    /**
-     *
-     * @expectedException Currency not found with id
-     */
-/*
-    public function testNotFound() {
-        $Currency = new Currency(self::$modx, 123124);    
-    }
-*/
-    
-    public function testProducts() {
-/*
-        // The basic test:   
-        $Products = self::$moxycart->json_products(array(), true);
-        $this->assertTrue(!empty($Products), 'Unable to retrieve collection "Product"');
-
-        // Product ID exist test:   
-        $product_id = 1;
-        $Product = self::$moxycart->json_products(array('product_id'=>$product_id), true);
-        $this->assertTrue($Product['total'] == 1, 'No Product Found with an id of ' . $product_id);
-
-        // Get the first product
-        $P = array_shift($Products['results']); 
-        $this->assertTrue($P['sku'] == 'MOUSTACHE-HOODIE', 'Product sku is '.$P['sku']);        
-        
-        
-        // Test sorting:
-        $Products = self::$moxycart->json_products(array('sort'=>'name', 'dir'=>'ASC'),true);
-        $P = array_shift($Products['results']); 
-        $this->assertTrue($P['sku'] == 'ANOTHER-SWEATER', 'Product sku is '.$P['sku']);    
-
-        // Test filters -- 
-        $Products = self::$moxycart->json_products(array('in_menu'=>0),true);        
-        $this->assertTrue($Products['total'] == 1, 'Only 1 product is flagged with in_menu 0');
-*/     
+        $this->assertEquals($asset_id, $A->get('asset_id'));           
     }
 
 
     /**
-     * We have some logic that determines default product attributes based on values set in the 
-     * the parent Store.  This ensures the defaults are set correctly.
+     * 
      */
-/*
-    public function testProductDefaults() {
-        $P = self::$modx->newObject('Product');
-        // First, we test it with no store_id passed
-        $defaults = $P->get_defaults();
-        $this->assertTrue($defaults['template_id'] == self::$modx->getOption('default_template'), 'Default template not correct.');
-        // defaults should be inherited from the parent store
-        if ($Store = self::$modx->getObject('Store', array('alias'=> 'sample-store'))) {
-            $store_id = $Store->get('id');
-            $defaults = $P->get_defaults($store_id);
-            $this->assertTrue($defaults['template_id'] == 2, 'Default template not inherited from store.');    
-            $this->assertTrue($defaults['product_type'] == 'regular', 'Product type not inherited from store.');    
-            $this->assertTrue($defaults['sort_order'] == 'SKU', 'Sort order not inherited from store.');    
-            $this->assertTrue($defaults['qty_alert'] == 5, 'qty_alert not inherited from store.');
-            $this->assertTrue(isset($defaults['specs'][1]), 'Product specs not inherited from store.');    
-            $this->assertTrue(isset($defaults['specs'][3]), 'Product specs not inherited from store.');
-        }
-    }
-*/
+    public function testImageSize() {
+        $filename = dirname(__FILE__).'/assets/support.jpg'; 
+    
+        $dir = MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
+        $A = new Asset(self::$modx);
+        
+        $info = $A->getImageSize($filename);
+        $this->assertEquals($info['width'],430);
+        $this->assertEquals($info['height'],400);
+        $this->assertEquals($info['type'],2);
+        $this->assertEquals($info['mime'],'image/jpeg');
 
-/*
-    public function testSpecs() {
-        // The basic test:   
-        $Specs = self::$moxycart->json_specs(array(), true);
-        $this->assertTrue(!empty($Specs), 'Unable to retrieve collection "Spec"');
+        $info = $A->getImageSize('/some/file/that:does/not/exist.jpg');
+        $this->assertFalse($info);
     }
-*/
+
+    /**
+     * Tests the fromFile method, verifying that it creates a new object record
+     */
+    public function testFromFileNew() {
+        $filename = dirname(__FILE__).'/assets/support.jpg'; 
+    
+        $dir = MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
+        $A = new Asset(self::$modx);
+                
+        $result = $A->preparePath($dir);
+        $this->assertTrue($result);
+        $this->assertTrue($A instanceof Asset);
+        
+        if ($Existing = self::$modx->getObject('Asset', array('path'=>'assets/support.jpg'))) {
+            $Existing->remove();
+        }
+        
+        // Verify that fromFile creates a Asset object
+        $props = array(
+            'title' => 'Support',
+            'alt' => 'This is a test of the fromFile method',
+            'url' => 'assets/macbook_pro.jpg',
+            'thumbnail_url' => 'assets/.thumb.macbook_pro.jpg',
+            'path' => 'assets/macbook_pro.jpg',
+            'width' => 1280,
+            'height' => 956,
+            'size' => 560,
+            'duration' => 0,
+            'is_active' => true,
+            'is_protected' => false,
+            'seq' => 0
+        );
+
+        
+        $A = $A->fromFile($filename,array(),dirname(__FILE__));
+        
+        $this->assertEquals($asset_id, $A->get('asset_id'));
+        
+        
+    }
+
     
 }

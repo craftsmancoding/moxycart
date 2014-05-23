@@ -38,6 +38,7 @@ $xpdo_meta_map['VariationTerm']= array (
       'precision' => '64',
       'phptype' => 'string',
       'null' => false,
+      'index' => 'index',
       'comment' => 'unique lowercase slug',
     ),
     'name' => 
@@ -80,6 +81,7 @@ $xpdo_meta_map['VariationTerm']= array (
       array (
         'vterm_id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),
@@ -90,15 +92,18 @@ $xpdo_meta_map['VariationTerm']= array (
       'alias' => 'vtypeslug',
       'primary' => false,
       'unique' => true,
+      'type' => 'BTREE',
       'columns' => 
       array (
         'vtype_id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),
         'slug' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),

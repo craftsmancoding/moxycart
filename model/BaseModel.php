@@ -16,6 +16,7 @@
  * WARNING: confusion can arrise where it's not clear whether you've got a Moxycart\Model\Product
  * or an xPDO \Product class on your hands because they look and act very similarly.  
  *
+ * php ../repoman/repoman schema:parse . --model=moxycart --table_prefix=moxy_ --overwrite --restore=store,taxonomy,term,review,product.class
  *
  * Beware late static bindings!
  * See http://stackoverflow.com/questions/10504129/when-using-self-parent-static-and-how
@@ -275,6 +276,7 @@ class BaseModel {
      * @return mixed integer false on fail
      */
     public function save() {
+        $this->modelObj->set('timestamp_modified', date('Y-m-d H:i:s'));
         $result = $this->modelObj->save();
         if (!$result) {
             $validator = $this->modelObj->getValidator();

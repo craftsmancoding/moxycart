@@ -27,6 +27,7 @@ $manager->removeObjectContainer('ProductRelation');
 $manager->removeObjectContainer('Cart');
 $manager->removeObjectContainer('Asset'); 
 $manager->removeObjectContainer('Review');
+$manager->removeObjectContainer('ProductAsset');
 
 // Foxycart
 $manager->removeObjectContainer('Foxydata');
@@ -39,7 +40,7 @@ $manager->removeObjectContainer('TransactionDetail');
 $manager->removeObjectContainer('TransactionDetailOption');
 $manager->removeObjectContainer('ShiptoAddress');
 
-// Cleanup of Legacy table names:
+// Cleanup of Legacy table names for which classes are no longer defined:
 $legacy = array('moxy_carts','moxy_images','moxy_product_specs','moxy_specs');
 foreach ($legacy as $l) {
     $removed = $modx->exec('DROP TABLE IF EXISTS '.$l);
@@ -48,8 +49,7 @@ foreach ($legacy as $l) {
         $modx->log(modX::LOG_LEVEL_ERROR, $msg);
     } 
     else {
-        $msg = 'Legacy table dropped: '.$l;
-        $modx->log(modX::LOG_LEVEL_INFO, $msg);
+        $modx->log(modX::LOG_LEVEL_INFO, 'Legacy table dropped: '.$l);
     }
 }
 

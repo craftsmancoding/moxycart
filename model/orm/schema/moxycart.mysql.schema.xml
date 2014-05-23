@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- http://wiki.foxycart.com/v/0.7.1/products -->
-<!-- http://wiki.foxycart.com/v/1.1/coupons_and_discounts#discount_types -->
-<!-- http://www.cannonlewis.com/product.php?productid=177 -->
-<!-- http://www.anthropologie.com/anthro/product/shopsale-freshcuts/28810513.jsp?cm_sp=Fluid-_-28810513-_-Regular_1 -->
-<!-- http://www.urbanoutfitters.com/urban/catalog/productdetail.jsp?id=28741783x&parentid=SALE_M_CLOTHING_JACKETS -->
-<!--
-Using addOne or addMany triggers validation rules prematurely... so we can't use them.
+<!-- 
+http://wiki.foxycart.com/v/0.7.1/products 
+http://wiki.foxycart.com/v/1.1/coupons_and_discounts#discount_types
+http://www.cannonlewis.com/product.php?productid=177
+http://www.anthropologie.com/anthro/product/shopsale-freshcuts/28810513.jsp?cm_sp=Fluid-_-28810513-_-Regular_1
+http://www.urbanoutfitters.com/urban/catalog/productdetail.jsp?id=28741783x&parentid=SALE_M_CLOTHING_JACKETS
+
+Using addOne or addMany triggers validation rules prematurely... so we can't use foreign key validation rules
+except in rare circumstances.
 See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematurely#dis-post-498398
 -->
 <model package="moxycart" version="1.0" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM">
@@ -45,7 +47,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<field key="seq" dbtype="int" precision="3" phptype="integer" null="true" />
 
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="currency_id" collation="A" null="false" />
+			<column key="currency_id" length="" collation="A" null="false" />
 		</index>
 		
 		<composite alias="Products" class="Product" local="currency_id" foreign="currency_id" cardinality="many" owner="local" />
@@ -69,12 +71,12 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
         <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />
         <field key="type" dbtype="enum" precision="'regular','subscription','download'" phptype="string" null="true" />
-        <field key="sku" dbtype="varchar" precision="255" phptype="string" null="false" />
-        <field key="sku_vendor" dbtype="varchar" precision="255" phptype="string" null="false" comment="SKU from your provider"/>
-        <field key="variant_matrix" dbtype="varchar" precision="255" phptype="string" null="false" comment="JSON hash to identify specific type:term combo(s)"/>
+        <field key="sku" dbtype="varchar" precision="255" phptype="string" null="false" index="index"/>
+        <field key="sku_vendor" dbtype="varchar" precision="255" phptype="string" null="false" index="index" comment="SKU from your provider"/>
+        <field key="variant_matrix" dbtype="mediumtext" phptype="string" null="false" comment="JSON hash to identify specific type:term combo(s)"/>
         <!-- alias is the slug only, uri includes the slug from the parent store -->
-        <field key="alias" dbtype="varchar" precision="255" phptype="string" null="false" />
-        <field key="uri" dbtype="varchar" precision="255" phptype="string" null="false" />
+        <field key="alias" dbtype="varchar" precision="255" phptype="string" null="false" index="index"/>
+        <field key="uri" dbtype="varchar" precision="255" phptype="string" null="false" index="index"/>
 
         <field key="track_inventory" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0" comment="Sum of child variants"/>
         <!-- in stock -->
@@ -113,26 +115,22 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="seq" dbtype="int" precision="3" phptype="integer" null="true" />
         
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="product_id" collation="A" null="false" />
+			<column key="product_id" length="" collation="A" null="false" />
 		</index>
 		<!-- sku may not be unique if variations are used -->
-        <index alias="sku" name="sku" primary="false" unique="false">
-			<column key="sku" collation="A" null="true" />
+        <index alias="sku" name="sku" primary="false" unique="false" type="BTREE">
+			<column key="sku" length="" collation="A" null="true" />
 		</index>
-        <index alias="factory_sku" name="factory_sku" primary="false" unique="false">
-			<column key="factory_sku" collation="A" null="true" />
+        <index alias="sku_vendor" name="sku_vendor" primary="false" unique="false" type="BTREE">
+			<column key="sku_vendor" length="" collation="A" null="true" />
 		</index>
         <index alias="alias" name="alias" primary="false" unique="true"  type="BTREE">
-			<column key="store_id" collation="A" null="true" />
-			<column key="alias" collation="A" null="true" />
+			<column key="store_id" length="" collation="A" null="true" />
+			<column key="alias" length="" collation="A" null="true" />
 		</index>
 
         <index alias="uri" name="uri" primary="false" unique="true"  type="BTREE">
-			<column key="uri" collation="A" null="false" />
-		</index>
-
-        <index alias="asset_id" name="asset_id" primary="false" unique="false">
-			<column key="asset_id" collation="A" null="true" />
+			<column key="uri" length="" collation="A" null="false" />
 		</index>
 				
 		<aggregate alias="Store" class="Store" local="store_id" foreign="id" cardinality="one" owner="foreign" />
@@ -146,7 +144,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <!-- parent is the main product: children represent variants in all permutations -->
         <composite alias="Parent" class="Product" local="parent_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Variant" class="Product" local="product_id" foreign="parent_id" cardinality="many" owner="local" />		
-		<composite alias="Assets" class="Asset" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+		<composite alias="Assets" class="ProductAssets" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Terms" class="ProductTerm" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Taxonomies" class="ProductTaxonomy" local="product_id" foreign="product_id" cardinality="many" owner="local" />
         <composite alias="Fields" class="ProductField" local="product_id" foreign="product_id" cardinality="many" owner="local" />
@@ -214,17 +212,17 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 	<!-- a la custom fields-->
 	<object class="Field" table="fields" extends="xPDOObject">
 		<field key="field_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" comment="unique lowercase slug"/>
+		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" index="index" comment="unique lowercase slug"/>
 		<field key="name" dbtype="varchar" precision="64" phptype="string" null="false" comment="Human readable, translated."/>
 		<field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
 		<field key="group" dbtype="varchar" precision="32" phptype="string" null="true" />
 		<field key="type" dbtype="varchar" precision="32" phptype="string" null="false" default="text" comment="Formbuilder argument"/>
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="field_id" collation="A" null="false" />
+			<column key="field_id" length="" collation="A" null="false" />
 		</index>
-        <index alias="identifier" name="identifier" primary="false" unique="true"  type="BTREE">
-			<column key="identifier" collation="A" null="false" />
+        <index alias="slug" name="slug" primary="false" unique="true" type="BTREE">
+			<column key="slug" length="" collation="A" null="false" />
 		</index>
 
         <composite alias="Products" class="ProductField" local="field_id" foreign="field_id" cardinality="many" owner="local" />
@@ -245,7 +243,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="field_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="value" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="id" collation="A" null="false" />
+			<column key="id" length="" collation="A" null="false" />
 		</index>
 
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
@@ -290,7 +288,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<field key="timestamp_modified" dbtype="timestamp" phptype="timestamp" null="true" />
         
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="id" collation="A" null="false" />
+			<column key="id" length="" collation="A" null="false" />
 		</index>
 			
         <aggregate alias="Author" class="modUser" local="author_id" foreign="id" cardinality="one" owner="foreign" />
@@ -325,16 +323,16 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 	<!-- eg. "Color", "Size", "Material" -->
 	<object class="VariationType" table="variation_types" extends="xPDOObject">
 		<field key="vtype_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" comment="unique lowercase slug"/>
+		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" index="index" comment="unique lowercase slug"/>
 		<field key="name" dbtype="varchar" precision="32" phptype="string" null="false" />
 		<field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="true" />
 
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="vtype_id" collation="A" null="false" />
+			<column key="vtype_id" length="" collation="A" null="false" />
 		</index>
-        <index alias="slug" name="slug" primary="false" unique="true">
-			<column key="slug" collation="A" null="false" />
+        <index alias="slug" name="slug" primary="false" unique="true" type="BTREE">
+			<column key="slug" length="" collation="A" null="false" />
 		</index>	
 		
 		<composite alias="Terms" class="VariationTerm" local="vtype_id" foreign="vtype_id" cardinality="many" owner="local" />
@@ -352,19 +350,19 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 	<object class="VariationTerm" table="variation_terms" extends="xPDOObject">
     	<field key="vterm_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
 		<field key="vtype_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" comment="unique lowercase slug"/>
+		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" index="index" comment="unique lowercase slug"/>
 		<field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="sku_prefix" dbtype="varchar" precision="16" phptype="string" null="false" />
 		<field key="sku_suffix" dbtype="varchar" precision="16" phptype="string" null="false" />
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
 		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="vterm_id" collation="A" null="false" />
+			<column key="vterm_id" length="" collation="A" null="false" />
 		</index>
 		<!-- the term must be unique within the given variation type -->
-        <index alias="vtypeslug" name="vtypeslug" primary="false" unique="true">
-			<column key="vtype_id" collation="A" null="false" />
-			<column key="slug" collation="A" null="false" />
+        <index alias="vtypeslug" name="vtypeslug" primary="false" unique="true" type="BTREE">
+			<column key="vtype_id" length="" collation="A" null="false" />
+			<column key="slug" length="" collation="A" null="false" />
 		</index>
 		
         <aggregate alias="Type" class="VariationType" local="vtype_id" foreign="vtype_id" cardinality="one" owner="foreign" />
@@ -397,7 +395,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="type" dbtype="varchar" precision="32" phptype="string" null="false" default="related"/>
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="id" collation="A" null="false" />
+			<column key="id" length="" collation="A" null="false" />
 		</index>
 
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
@@ -442,12 +440,12 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
 		<field key="is_variant" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0" />
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="id" collation="A" null="false" />
+			<column key="id" length="" collation="A" null="false" />
 		</index>
 
-        <index alias="productvaritiontype" name="productvaritiontype" primary="false" unique="true">
-			<column key="product_id" collation="A" null="false" />        
-			<column key="vtype_id" collation="A" null="false" />
+        <index alias="productvaritiontype" name="productvaritiontype" primary="false" unique="true" type="BTREE">
+			<column key="product_id" length="" collation="A" null="false" />        
+			<column key="vtype_id" length="" collation="A" null="false" />
 		</index>
 		
         <aggregate alias="Type" class="VariationType" local="vtype_id" foreign="vtype_id" cardinality="one" owner="foreign" />
@@ -484,12 +482,12 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="taxonomy_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="id" collation="A" null="false" />
+			<column key="id" length="" collation="A" null="false" />
 		</index>
 		<!-- no sense in adding the same relation twice... -->
-        <index alias="producttaxonomy" name="producttaxonomy" primary="false" unique="true">
-			<column key="product_id" collation="A" null="false" />        
-			<column key="taxonomy_id" collation="A" null="false" />
+        <index alias="producttaxonomy" name="producttaxonomy" primary="false" unique="true" type="BTREE">
+			<column key="product_id" length="" collation="A" null="false" />        
+			<column key="taxonomy_id" length="" collation="A" null="false" />
 		</index>
         <aggregate alias="Taxonomy" class="Taxonomy" local="taxonomy_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
@@ -526,12 +524,12 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="term_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="id" collation="A" null="false" />
+			<column key="id" length="" collation="A" null="false" />
 		</index>
 		<!-- no sense in adding the same relation twice... -->
-        <index alias="productterm" name="productterm" primary="false" unique="true">
-			<column key="product_id" collation="A" null="false" />        
-			<column key="term_id" collation="A" null="false" />
+        <index alias="productterm" name="productterm" primary="false" unique="true" type="BTREE">
+			<column key="product_id" length="" collation="A" null="false" />        
+			<column key="term_id" length="" collation="A" null="false" />
 		</index>
         <aggregate alias="Term" class="Term" local="term_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
@@ -561,34 +559,42 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 	</object>
     
 	<!-- ! Asset -->
-	<!-- Each Product can have multiple assets -->
+	<!-- Assets live independently from products -->
 	<object class="Asset" table="assets" extends="xPDOObject">
     	<field key="asset_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-    	<field key="product_id" dbtype="int" precision="11" phptype="integer" null="true"/>
     	<field key="content_type_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="title" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="alt" dbtype="varchar" precision="255" phptype="string" null="false" />
-		<field key="url" dbtype="varchar" precision="255" phptype="string" null="false" />
+		<!-- URL relative to MODX_ASSET_URL . moxycart.upload_dir -->
+		<field key="url" dbtype="varchar" precision="255" phptype="string" null="false" index="index"/>
 		<!-- For images, this will be a smaller version of the image, otherwise it'll be an icon for the content type -->
-		<field key="thumbnail_url" dbtype="varchar" precision="255" phptype="string" null="false"/>
-		<field key="path" dbtype="varchar" precision="255" phptype="string" null="true" />
+		<field key="thumbnail_url" dbtype="varchar" precision="255" phptype="string" null="false" index="index"/>
+		<!-- URL relative to MODX_ASSET_PATH . moxycart.upload_dir 
+		This might be null if a foriegn image is referenced
+		-->
+		<field key="path" dbtype="varchar" precision="255" phptype="string" null="true" index="index"/>
 		<field key="width" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="height" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="size" dbtype="int" precision="11" phptype="integer" null="false" comment="In Bytes"/>
-		<field key="length" dbtype="int" precision="11" phptype="integer" null="false" comment="for videos and sound files: round to seconds"/>
+		<field key="duration" dbtype="int" precision="11" phptype="integer" null="false" comment="for videos and sound files: round to seconds"/>
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="is_active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
+		<field key="is_protected" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" />
+
+		<field key="timestamp_created" dbtype="timestamp" phptype="timestamp" null="true" default="CURRENT_TIMESTAMP" />
+		<field key="timestamp_modified" dbtype="timestamp" phptype="timestamp" null="true" />
+		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="asset_id" collation="A" null="false" />
+			<column key="asset_id" length="" collation="A" null="false" />
 		</index>
-        <index alias="url" name="url" primary="false" unique="true">
-			<column key="url" collation="A" null="true" />
+        <index alias="url" name="url" primary="false" unique="true" type="BTREE">
+			<column key="url" length="" collation="A" null="false" />
 		</index>
-        <index alias="path" name="path" primary="false" unique="true">
-			<column key="path" collation="A" null="true" />
+        <index alias="path" name="path" primary="false" unique="true" type="BTREE">
+			<column key="path" length="" collation="A" null="true" />
 		</index>
 
-		<aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+        <composite alias="Products" class="ProductField" local="asset_id" foreign="asset_id" cardinality="many" owner="local" />
         <aggregate alias="ContentType" class="modContentType" local="content_type_id" foreign="id" cardinality="one" owner="foreign" />
         
 		<validation>
@@ -617,5 +623,46 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 
         </validation>
 	</object>
+
+
+    <!-- ! ProductAsset 
+    for linking product and assets. Sort into groups and then by seq.
+    -->
+	<object class="ProductAsset" table="product_assets" extends="xPDOSimpleObject">
+		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="asset_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="group" dbtype="varchar" precision="32" phptype="string" null="true" />
+		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />		
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="id" length="" collation="A" null="false" />
+		</index>
+
+        <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Asset" class="Asset" local="asset_id" foreign="asset_id" cardinality="one" owner="foreign" />
+        
+		<validation>
+            <!--rule field="related_id"
+                  name="validContentType"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="product_id"
+                  local="related_id"
+                  alias="Product"
+                  class="Product"
+                  message="The referenced product does not exist."
+             />
+            <rule field="product_id"
+                  name="validProduct"
+                  type="xPDOValidationRule"
+                  rule="xPDOForeignKeyConstraint"
+                  foreign="product_id"
+                  local="product_id"
+                  alias="Product"
+                  class="Product"
+                  message="The referenced product does not exist."
+             /-->
+        </validation>        
+	</object>
+
 
 </model>

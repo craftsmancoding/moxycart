@@ -45,6 +45,7 @@ $xpdo_meta_map['ProductTerm']= array (
       array (
         'id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),
@@ -55,15 +56,18 @@ $xpdo_meta_map['ProductTerm']= array (
       'alias' => 'productterm',
       'primary' => false,
       'unique' => true,
+      'type' => 'BTREE',
       'columns' => 
       array (
         'product_id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),
         'term_id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),

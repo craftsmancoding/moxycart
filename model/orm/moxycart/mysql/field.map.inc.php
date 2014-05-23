@@ -31,6 +31,7 @@ $xpdo_meta_map['Field']= array (
       'precision' => '64',
       'phptype' => 'string',
       'null' => false,
+      'index' => 'index',
       'comment' => 'unique lowercase slug',
     ),
     'name' => 
@@ -83,21 +84,23 @@ $xpdo_meta_map['Field']= array (
       array (
         'field_id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),
       ),
     ),
-    'identifier' => 
+    'slug' => 
     array (
-      'alias' => 'identifier',
+      'alias' => 'slug',
       'primary' => false,
       'unique' => true,
       'type' => 'BTREE',
       'columns' => 
       array (
-        'identifier' => 
+        'slug' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),

@@ -7,7 +7,6 @@ $xpdo_meta_map['Asset']= array (
   'fields' => 
   array (
     'asset_id' => NULL,
-    'product_id' => NULL,
     'content_type_id' => NULL,
     'title' => NULL,
     'alt' => NULL,
@@ -17,9 +16,12 @@ $xpdo_meta_map['Asset']= array (
     'width' => NULL,
     'height' => NULL,
     'size' => NULL,
-    'length' => NULL,
+    'duration' => NULL,
     'seq' => NULL,
     'is_active' => 1,
+    'is_protected' => 0,
+    'timestamp_created' => 'CURRENT_TIMESTAMP',
+    'timestamp_modified' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -31,13 +33,6 @@ $xpdo_meta_map['Asset']= array (
       'null' => false,
       'index' => 'pk',
       'generated' => 'native',
-    ),
-    'product_id' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '11',
-      'phptype' => 'integer',
-      'null' => true,
     ),
     'content_type_id' => 
     array (
@@ -66,6 +61,7 @@ $xpdo_meta_map['Asset']= array (
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
+      'index' => 'index',
     ),
     'thumbnail_url' => 
     array (
@@ -73,6 +69,7 @@ $xpdo_meta_map['Asset']= array (
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
+      'index' => 'index',
     ),
     'path' => 
     array (
@@ -80,6 +77,7 @@ $xpdo_meta_map['Asset']= array (
       'precision' => '255',
       'phptype' => 'string',
       'null' => true,
+      'index' => 'index',
     ),
     'width' => 
     array (
@@ -103,7 +101,7 @@ $xpdo_meta_map['Asset']= array (
       'null' => false,
       'comment' => 'In Bytes',
     ),
-    'length' => 
+    'duration' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -127,6 +125,28 @@ $xpdo_meta_map['Asset']= array (
       'null' => false,
       'default' => 1,
     ),
+    'is_protected' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'attributes' => 'unsigned',
+      'phptype' => 'boolean',
+      'null' => false,
+      'default' => 0,
+    ),
+    'timestamp_created' => 
+    array (
+      'dbtype' => 'timestamp',
+      'phptype' => 'timestamp',
+      'null' => true,
+      'default' => 'CURRENT_TIMESTAMP',
+    ),
+    'timestamp_modified' => 
+    array (
+      'dbtype' => 'timestamp',
+      'phptype' => 'timestamp',
+      'null' => true,
+    ),
   ),
   'indexes' => 
   array (
@@ -139,6 +159,7 @@ $xpdo_meta_map['Asset']= array (
       array (
         'asset_id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),
@@ -148,13 +169,15 @@ $xpdo_meta_map['Asset']= array (
     array (
       'alias' => 'url',
       'primary' => false,
-      'unique' => false,
+      'unique' => true,
+      'type' => 'BTREE',
       'columns' => 
       array (
         'url' => 
         array (
+          'length' => '',
           'collation' => 'A',
-          'null' => true,
+          'null' => false,
         ),
       ),
     ),
@@ -162,27 +185,32 @@ $xpdo_meta_map['Asset']= array (
     array (
       'alias' => 'path',
       'primary' => false,
-      'unique' => false,
+      'unique' => true,
+      'type' => 'BTREE',
       'columns' => 
       array (
         'path' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => true,
         ),
       ),
     ),
   ),
+  'composites' => 
+  array (
+    'Products' => 
+    array (
+      'class' => 'ProductField',
+      'local' => 'asset_id',
+      'foreign' => 'asset_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
+    ),
+  ),
   'aggregates' => 
   array (
-    'Product' => 
-    array (
-      'class' => 'Product',
-      'local' => 'product_id',
-      'foreign' => 'product_id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
     'ContentType' => 
     array (
       'class' => 'modContentType',

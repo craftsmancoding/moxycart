@@ -54,6 +54,7 @@ $xpdo_meta_map['ProductRelation']= array (
       array (
         'id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),

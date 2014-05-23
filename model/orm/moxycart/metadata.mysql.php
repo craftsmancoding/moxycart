@@ -24,5 +24,6 @@ $xpdo_meta_map = array (
     3 => 'ProductVariationTypes',
     4 => 'ProductTaxonomy',
     5 => 'ProductTerm',
+    6 => 'ProductAsset',
   ),
 );

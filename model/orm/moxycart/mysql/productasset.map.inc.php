@@ -1,13 +1,14 @@
 <?php
-$xpdo_meta_map['ProductTaxonomy']= array (
+$xpdo_meta_map['ProductAsset']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'product_taxonomies',
+  'table' => 'product_assets',
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
     'product_id' => NULL,
-    'taxonomy_id' => NULL,
+    'asset_id' => NULL,
+    'group' => NULL,
     'seq' => NULL,
   ),
   'fieldMeta' => 
@@ -19,12 +20,19 @@ $xpdo_meta_map['ProductTaxonomy']= array (
       'phptype' => 'integer',
       'null' => false,
     ),
-    'taxonomy_id' => 
+    'asset_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
+    ),
+    'group' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '32',
+      'phptype' => 'string',
+      'null' => true,
     ),
     'seq' => 
     array (
@@ -51,44 +59,22 @@ $xpdo_meta_map['ProductTaxonomy']= array (
         ),
       ),
     ),
-    'producttaxonomy' => 
-    array (
-      'alias' => 'producttaxonomy',
-      'primary' => false,
-      'unique' => true,
-      'type' => 'BTREE',
-      'columns' => 
-      array (
-        'product_id' => 
-        array (
-          'length' => '',
-          'collation' => 'A',
-          'null' => false,
-        ),
-        'taxonomy_id' => 
-        array (
-          'length' => '',
-          'collation' => 'A',
-          'null' => false,
-        ),
-      ),
-    ),
   ),
   'aggregates' => 
   array (
-    'Taxonomy' => 
-    array (
-      'class' => 'Taxonomy',
-      'local' => 'taxonomy_id',
-      'foreign' => 'id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
     'Product' => 
     array (
       'class' => 'Product',
       'local' => 'product_id',
       'foreign' => 'product_id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
+    'Asset' => 
+    array (
+      'class' => 'Asset',
+      'local' => 'asset_id',
+      'foreign' => 'asset_id',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),

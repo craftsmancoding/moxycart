@@ -73,6 +73,7 @@ $xpdo_meta_map['Currency']= array (
       array (
         'currency_id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),

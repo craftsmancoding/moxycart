@@ -138,6 +138,7 @@ $xpdo_meta_map['Product']= array (
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
+      'index' => 'index',
     ),
     'sku_vendor' => 
     array (
@@ -145,12 +146,12 @@ $xpdo_meta_map['Product']= array (
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
+      'index' => 'index',
       'comment' => 'SKU from your provider',
     ),
     'variant_matrix' => 
     array (
-      'dbtype' => 'varchar',
-      'precision' => '255',
+      'dbtype' => 'mediumtext',
       'phptype' => 'string',
       'null' => false,
       'comment' => 'JSON hash to identify specific type:term combo(s)',
@@ -161,6 +162,7 @@ $xpdo_meta_map['Product']= array (
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
+      'index' => 'index',
     ),
     'uri' => 
     array (
@@ -168,6 +170,7 @@ $xpdo_meta_map['Product']= array (
       'precision' => '255',
       'phptype' => 'string',
       'null' => false,
+      'index' => 'index',
     ),
     'track_inventory' => 
     array (
@@ -367,6 +370,7 @@ $xpdo_meta_map['Product']= array (
       array (
         'product_id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),
@@ -377,24 +381,28 @@ $xpdo_meta_map['Product']= array (
       'alias' => 'sku',
       'primary' => false,
       'unique' => false,
+      'type' => 'BTREE',
       'columns' => 
       array (
         'sku' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => true,
         ),
       ),
     ),
-    'factory_sku' => 
+    'sku_vendor' => 
     array (
-      'alias' => 'factory_sku',
+      'alias' => 'sku_vendor',
       'primary' => false,
       'unique' => false,
+      'type' => 'BTREE',
       'columns' => 
       array (
-        'factory_sku' => 
+        'sku_vendor' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => true,
         ),
@@ -410,11 +418,13 @@ $xpdo_meta_map['Product']= array (
       array (
         'store_id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => true,
         ),
         'alias' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => true,
         ),
@@ -430,22 +440,9 @@ $xpdo_meta_map['Product']= array (
       array (
         'uri' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
-        ),
-      ),
-    ),
-    'asset_id' => 
-    array (
-      'alias' => 'asset_id',
-      'primary' => false,
-      'unique' => false,
-      'columns' => 
-      array (
-        'asset_id' => 
-        array (
-          'collation' => 'A',
-          'null' => true,
         ),
       ),
     ),
@@ -462,7 +459,7 @@ $xpdo_meta_map['Product']= array (
     ),
     'Assets' => 
     array (
-      'class' => 'Asset',
+      'class' => 'ProductAssets',
       'local' => 'product_id',
       'foreign' => 'product_id',
       'cardinality' => 'many',

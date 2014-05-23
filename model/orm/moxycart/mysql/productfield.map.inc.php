@@ -45,6 +45,7 @@ $xpdo_meta_map['ProductField']= array (
       array (
         'id' => 
         array (
+          'length' => '',
           'collation' => 'A',
           'null' => false,
         ),
