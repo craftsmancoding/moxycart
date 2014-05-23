@@ -28,6 +28,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
     public static $modx;
     public static $Store;
     public static $Tax; // Taxonomies
+    public static $Term;
     
     /**
      * Load up MODX for our tests.
@@ -157,7 +158,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
             self::$Tax['A']->fromArray(array(
                 'pagetitle' => 'Taxonomy A',
                 'alias' => 'test-taxonomy-a',
-                'uri' => 'test-category-a/',
+                'uri' => 'test-taxonomy-a/',
                 'class_key' => 'Taxonomy',
                 'isfolder' => 1,
                 'published' => 1,
@@ -191,6 +192,50 @@ class productTest extends \PHPUnit_Framework_TestCase {
             ));
             self::$Tax['C']->save();        
         }
+
+        // Create a few Terms, we stick 'em into slots 1, 2, and 3 for simplicity
+        if (!self::$Term['1'] = self::$modx->getObject('Term', array('alias'=>'test-term-1'))) {
+            self::$Term['1'] = self::$modx->newObject('Term');
+            self::$Term['1']->fromArray(array(
+                'parent' => self::$Tax['A']->get('id'),
+                'pagetitle' => 'Term 1',
+                'alias' => 'test-term-1',
+                'uri' => 'test-term-1/',
+                'class_key' => 'Term',
+                'isfolder' => 1,
+                'published' => 1,
+                 'properties' => '',
+            ));
+            self::$Term['1']->save();        
+        }
+        if (!self::$Term['2'] = self::$modx->getObject('Term', array('alias'=>'test-term-2'))) {
+            self::$Term['2'] = self::$modx->newObject('Term');
+            self::$Term['2']->fromArray(array(
+                'parent' => self::$Tax['A']->get('id'),
+                'pagetitle' => 'Term 2',
+                'alias' => 'test-term-2',
+                'uri' => 'test-term-2/',
+                'class_key' => 'Term',
+                'isfolder' => 1,
+                'published' => 1,
+                 'properties' => '',
+            ));
+            self::$Term['2']->save();        
+        }
+        if (!self::$Term['3'] = self::$modx->getObject('Term', array('alias'=>'test-term-3'))) {
+            self::$Term['3'] = self::$modx->newObject('Term');
+            self::$Term['3']->fromArray(array(
+                'parent' => self::$Tax['A']->get('id'),            
+                'pagetitle' => 'Term 3',
+                'alias' => 'test-term-3',
+                'uri' => 'test-term-3/',
+                'class_key' => 'Term',
+                'isfolder' => 1,
+                'published' => 1,
+                 'properties' => '',
+            ));
+            self::$Term['3']->save();        
+        }
         
     }
     
@@ -198,10 +243,15 @@ class productTest extends \PHPUnit_Framework_TestCase {
      *
      */
     public static function tearDownAfterClass() {
-//        self::$Store->remove();
-//        self::$Tax['A']->remove();
-//        self::$Tax['B']->remove();
-//        self::$Tax['C']->remove();        
+
+        self::$Store->remove();
+        self::$Tax['A']->remove();
+        self::$Tax['B']->remove();
+        self::$Tax['C']->remove();        
+        self::$Term['1']->remove();
+        self::$Term['2']->remove();
+        self::$Term['3']->remove();        
+
     }
     
     
@@ -396,6 +446,60 @@ class productTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals($taxonomies[$i], $p->get('taxonomy_id'));
             $i++;
         }
+    }    
+
+    /**
+     * 
+     *
+     */
+    public function testTerms() {
+        $P = new Product(self::$modx);
+        
+        $One = $P->one(array(
+            'store_id' => self::$Store->get('id'),
+            'sku' => 'SOUTHPARK-TSHIRT'));
+            
+        // Prep: Remove all Term Associations for this product
+        if($Collection = self::$modx->getCollection('ProductTerm', array('product_id'=>$One->get('product_id')))) {
+            foreach ($Collection as $C) {
+                $C->remove();
+            }
+        }
+        $product_id = $One->get('product_id');
+        $this->assertFalse(empty($product_id));
+        
+        $terms = array();
+        $terms[] = self::$Term['1']->get('id');
+        $terms[] = self::$Term['2']->get('id');
+        $terms[] = self::$Term['3']->get('id');
+        
+        $One->addTerms($terms);
+        
+        // Verify they all exist:
+        $Collection = self::$modx->getCollection('ProductTerm', array('product_id'=>$product_id));
+        $this->assertFalse(empty($Collection),'Product Terms were not added!');
+        $cnt = self::$modx->getCount('ProductTerm', array('product_id'=>$product_id));
+        $this->assertEquals(count($terms), $cnt);
+        foreach ($terms as $id) {
+            $PT = self::$modx->getObject('ProductTerm', array('product_id'=>$product_id,'term_id'=>$id));
+            $this->assertFalse(empty($PT));
+        }
+        
+        // Add duplicates, verify that nothing new was created.
+        $One->addTerms($terms);
+        $cnt2 = self::$modx->getCount('ProductTerm', array('product_id'=>$product_id));
+        $this->assertEquals($cnt, $cnt2);
+        
+        // Remove all but one
+        $odd_man_out = array_pop($terms);
+        $One->removeTerms($terms);
+        $cnt3 = self::$modx->getCount('ProductTerm', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt3, 1); // should be only one left
+        
+        // Now, dictate the terms: this should add and remove
+        $One->dictateTerms($terms);
+        $cnt4 = self::$modx->getCount('ProductTerm', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt4, count($terms)); 
     }    
 
 

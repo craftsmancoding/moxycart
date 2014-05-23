@@ -282,18 +282,82 @@ class Product extends BaseModel {
     //------------------------------------------------------------------------------
     //! Terms
     //------------------------------------------------------------------------------
+    /** 
+     * Add terms to a product
+     * @param array $array of taxonomy page ids
+     */
     public function addTerms(array $array) {
+        $this_product_id = $this->_verifyExisting();
+
+        foreach ($array as $id) {
+            $props = array(
+                'product_id'=> $this_product_id, 
+                'term_id'=> $id
+            );
+            if (!$PT = $this->modx->getObject('ProductTerm', $props)) {
+                if (!$T = $this->modx->getObject('Term', $id)) {
+                    throw new \Exception('Invalid term ID '.$id);    
+                }
+                $PT = $this->modx->newObject('ProductTerm', $props);
+                $PT->save();
+            }
+        }
+
+        return true;    
+    }
+
+    /** 
+     * Remove terms from a product. We don't care here if the referenced taxonomy ids are valid or not.
+     * @param array $array of taxonomy page ids
+     */
+    public function removeTerms(array $array) {
+        $this_product_id = $this->_verifyExisting();
+        
+        foreach ($array as $id) {
+            $props = array(
+                'product_id'=> $this_product_id, 
+                'term_id'=> $id
+            );
+            if ($PT = $this->modx->getObject('ProductTerm', $props)) {
+                $PT->remove();
+            }
+        }
+        return true;
     
     }
 
-    public function removeTerms(array $array) {
+    /**
+     * Dictate terms for the current product.
+     * This will remove all terms not in the given $array, add any new relations from the $array,
+     * it will order the relations based on the incoming $array order (seq will be set).
+     * Exeptions are thrown if the product ids do not exist.
+     *
+     * @param array $dictate'd related_id's
+     */
+    public function dictateTerms(array $dictate) {
+        $this_product_id = $this->_verifyExisting();
+        
+        $props = array(
+            'product_id'=> $this_product_id,
+        );
+        
+        // Array of related_id's that are already defined
+        $existing = array();
+        if($ExistingColl = $this->modx->getObject('ProductTerm', $props)) {
+            $existing[] = $ExistingColl->get('term_id');   
+        }
+        
+        $to_remove = array_diff($existing,$dictate);
+        $to_add = array_diff($dictate,$existing);
+
+        $this->removeTerms($to_remove,$type);
+        $this->addTerms($to_add,$type);
+        $this->orderTerms($dictate);
+        
+        return true;
     
     }
-    
-    public function dictateTerms(array $array) {
-    
-    }    
-    
+        
     //------------------------------------------------------------------------------
     //! Fields
     //------------------------------------------------------------------------------
