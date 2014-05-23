@@ -1,6 +1,8 @@
 <?php
 /**
- * BaseModel - simplifiying the interaction a bit (I hope) with the underlying xPDO objects
+ * BaseModel : our little abstraction for a simpler UI
+ * 
+ * I'm simplifiying the interface a bit (I hope) with the underlying xPDO objects
  * As much as I like the cleaner interface offered by static functions, it just doesn't work 
  * well here because we need to inject the containing MODX object as a dependency.  So the
  * children of BaseModel let us:
@@ -13,7 +15,7 @@
  * hybrid class that implements many of the same functions xpdo (e.g. toArray) and passes them
  * through to the ORM object underneath. 
  *
- * WARNING: confusion can arrise where it's not clear whether you've got a Moxycart\Model\Product
+ * WARNING: confusion can arrise where it's not clear whether you've got a Moxycart\Product
  * or an xPDO \Product class on your hands because they look and act very similarly.  
  *
  * php ../repoman/repoman schema:parse . --model=moxycart --table_prefix=moxy_ --overwrite --restore=store,taxonomy,term,review,product.class
@@ -188,7 +190,9 @@ class BaseModel {
      * @return mixed xPDO iterator (i.e. a collection, but memory efficient) or SQL query string
      */
     public function all($args,$debug=false) {
-
+        // If you get this error: "Call to a member function getOption() on a non-object", it could mean:
+        // 1) you tried to call this method statically, e.g. Product::all()
+        // 2) you forgot to initialize the class and pass a modx instance to the contructor (dependency injection!)
         $limit = (int) $this->modx->getOption('limit',$args,$this->modx->getOption('moxycart.default_per_page','',$this->modx->getOption('default_per_page')));
         $offset = (int) $this->modx->getOption('offset',$args,0);
         $sort = $this->modx->getOption('sort',$args,$this->default_sort_col);
@@ -225,6 +229,57 @@ class BaseModel {
             return $collection;
         }
         return array();
+    }
+    
+    /**
+     * Like "all", but this limits the result to a single record: the first record matching
+     * the given filter $args.  This does set the modelObj.
+     *
+     * @param array $arguments (including filters)
+     * @param boolean $debug
+     * @return mixed object instance of this class or false
+     */
+    public function one($args,$debug=false) {
+        // If you get this error: "Call to a member function getOption() on a non-object", it could mean:
+        // 1) you tried to call this method statically, e.g. Product::all()
+        // 2) you forgot to initialize the class and pass a modx instance to the contructor (dependency injection!)
+        
+        // Might as well leave these in... 
+        $offset = (int) $this->modx->getOption('offset',$args,0);
+        $sort = $this->modx->getOption('sort',$args,$this->default_sort_col);
+        $dir = $this->modx->getOption('dir',$args,$this->default_sort_dir);
+        $select_cols = $this->modx->getOption('select',$args);
+        
+        // Clear out non-filter criteria
+        $args = self::getFilters($args); 
+
+        $criteria = $this->modx->newQuery($this->xclass);
+
+        if ($args) {
+            $criteria->where($args);
+        }
+        
+        if ($limit) {
+            $criteria->limit($limit, $offset); 
+            $criteria->sortby($sort,$dir);
+        }
+    
+        if ($debug) {
+            $criteria->prepare();
+            return $criteria->toSQL();
+        }
+
+        // Both array and string input seem to work
+        if (!empty($select_cols)) {
+            $criteria->select($select_cols);
+        }
+
+        if ($this->modelObj = $this->modx->getObject($this->xclass,$criteria)) {
+            $classname = '\\Moxycart\\'.$this->xclass;        
+            return new $classname($this->modx,$this->modelObj->getPrimaryKey()); 
+        }
+        
+        return false;
     }
     
     /**
@@ -273,6 +328,9 @@ class BaseModel {
 
     /**
      * Save the update. This will store any validation errors in $this->errors
+     * And here's where we timestamp our updates: some classes will persist this
+     * timestamp, others will simply ignore it.
+     *
      * @return mixed integer false on fail
      */
     public function save() {

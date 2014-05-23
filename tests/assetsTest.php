@@ -162,13 +162,13 @@ class assetTest extends \PHPUnit_Framework_TestCase {
         $dir = MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
         $A = new Asset(self::$modx);
         
-        $info = $A->getImageSize($filename);
+        $info = $A->getImageInfo($filename);
         $this->assertEquals($info['width'],430);
         $this->assertEquals($info['height'],400);
         $this->assertEquals($info['type'],2);
         $this->assertEquals($info['mime'],'image/jpeg');
 
-        $info = $A->getImageSize('/some/file/that:does/not/exist.jpg');
+        $info = $A->getImageInfo('/some/file/that:does/not/exist.jpg');
         $this->assertFalse($info);
     }
 
@@ -259,5 +259,13 @@ class assetTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('thumbs/support.jpg',$B->get('thumbnail_url'));
         
         $B->remove();
+    }
+    
+    /**
+     * Test removing of saved file.
+     *
+     */
+    public function testRemove() {
+        print date('Y/m/d/');
     }
 }
