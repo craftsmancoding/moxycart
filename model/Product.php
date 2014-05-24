@@ -246,8 +246,8 @@ class Product extends BaseModel {
         $to_remove = array_diff($existing,$dictate);
         $to_add = array_diff($dictate,$existing);
 
-        $this->removeTaxonomies($to_remove,$type);
-        $this->addTaxonomies($to_add,$type);
+        $this->removeTaxonomies($to_remove);
+        $this->addTaxonomies($to_add);
         $this->orderTaxonomies($dictate);
         
         return true;
@@ -322,8 +322,8 @@ class Product extends BaseModel {
                 $PT->remove();
             }
         }
+        
         return true;
-    
     }
 
     /**
@@ -350,9 +350,8 @@ class Product extends BaseModel {
         $to_remove = array_diff($existing,$dictate);
         $to_add = array_diff($dictate,$existing);
 
-        $this->removeTerms($to_remove,$type);
-        $this->addTerms($to_add,$type);
-        $this->orderTerms($dictate);
+        $this->removeTerms($to_remove);
+        $this->addTerms($to_add);
         
         return true;
     
@@ -429,14 +428,101 @@ class Product extends BaseModel {
         $to_remove = array_diff($existing,$dictate);
         $to_add = array_diff($dictate,$existing);
 
-        $this->removeFields($to_remove,$type);
-        $this->addFields($to_add,$type);
-        $this->orderFields($dictate);
+        $this->removeFields($to_remove);
+        $this->addFields($to_add);
+        
+        return true;
+    
+    }
+
+    //------------------------------------------------------------------------------
+    //! VariationTypes
+    //------------------------------------------------------------------------------
+    /** 
+     * Add variation-types to a product. This will update the "is_variant" attribute
+     * on all matched rows.
+     *
+     * @param array $array of vtype_ids
+     * @param boolean $is_variant triggers super special functionality (default: false)
+     */
+    public function addVariationTypes(array $array, $is_variant=false) {
+        $this_product_id = $this->_verifyExisting();
+
+        foreach ($array as $id) {
+            $props = array(
+                'product_id'=> $this_product_id, 
+                'vtype_id'=> $id
+            );
+            if (!$PVT = $this->modx->getObject('ProductVariationType', $props)) {
+                if (!$VT = $this->modx->getObject('VariationType', $id)) {
+                    throw new \Exception('Invalid Variation Type ID '.$id);    
+                }
+                $PVT = $this->modx->newObject('ProductVariationType', $props);
+            }
+            $PVT->set('is_variant', $is_variant);
+            $PVT->save();
+        }
+
+        return true;    
+    }
+
+    /** 
+     * Remove variation-types from a product. We don't care here if the referenced ids are valid or not.
+     * @param array $array of vtype_ids
+     */
+    public function removeVariationTypes(array $array) {
+        $this_product_id = $this->_verifyExisting();
+        
+        foreach ($array as $id) {
+            $props = array(
+                'product_id'=> $this_product_id, 
+                'vtype_id'=> $id
+            );
+            if ($PVT = $this->modx->getObject('ProductVariationType', $props)) {
+                $PVT->remove();
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Dictate variation-type ids for the current product.
+     * This will remove all fields not in the given $array, add any new vtype_id's from the $array.
+
+     * Exeptions are thrown if the product ids do not exist.
+     *
+     * @param array $dictate'd vtype_id's
+     * @param boolean $is_variant triggers super special functionality (default: false)     
+     */
+    public function dictateVariationTypes(array $dictate, $is_variant=false) {
+        $this_product_id = $this->_verifyExisting();
+        
+        $props = array(
+            'product_id'=> $this_product_id,
+        );
+        
+        // Array of related_id's that are already defined
+        $existing = array();
+        if($ExistingColl = $this->modx->getObject('ProductVariationType', $props)) {
+            $existing[] = $ExistingColl->get('vtype_id');   
+        }
+        
+        $to_remove = array_diff($existing,$dictate);
+        $to_add = array_diff($dictate,$existing);
+
+        $this->removeVariationTypes($to_remove,$type);
+        $this->addVariationTypes($to_add,$type);
         
         return true;
     
     }
     
+    /**
+     * Override here for special stuff re variations
+     */
+    public function save() {
+        return parent::save();
+    }
     
 }
 /*EOF*/

@@ -143,7 +143,8 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         
         <!-- parent is the main product: children represent variants in all permutations -->
         <composite alias="Parent" class="Product" local="parent_id" foreign="product_id" cardinality="one" owner="foreign" />
-        <aggregate alias="Variant" class="Product" local="product_id" foreign="parent_id" cardinality="many" owner="local" />		
+        <aggregate alias="Variant" class="Product" local="product_id" foreign="parent_id" cardinality="many" owner="local" />
+		<composite alias="VariationType" class="ProductVariationType" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Assets" class="ProductAssets" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Terms" class="ProductTerm" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Taxonomies" class="ProductTaxonomy" local="product_id" foreign="product_id" cardinality="many" owner="local" />
@@ -429,15 +430,15 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         </validation>        
 	</object>
 	
-	<!-- ! Product Variation Types -->
-	<!-- 
+	<!-- !Product Variation Types 
+	
 	This declares that "this parent product varies by Color, Size, or Material etc.
 	
 	is_variant: if 1, this means that price, qty, etc. will change for the product 
 	is_variant: if 0, then the options here are just aesthetic "options", i.e. we use this to show 
 	           the appropriate dropdowns.
 	-->
-	<object class="ProductVariationTypes" table="product_variation_types" extends="xPDOSimpleObject">
+	<object class="ProductVariationType" table="product_variation_types" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="vtype_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
@@ -581,6 +582,8 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<field key="height" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="size" dbtype="int" precision="11" phptype="integer" null="false" comment="In Bytes"/>
 		<field key="duration" dbtype="int" precision="11" phptype="integer" null="false" comment="for videos and sound files: round to seconds"/>
+		<!-- md5_file signature calculation of the file or url -->
+		<field key="sig" dbtype="varchar" precision="40" phptype="string" null="false" index="index"/>
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="false" />
 		<field key="is_active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
 		<field key="is_protected" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" />
@@ -596,6 +599,9 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		</index>
         <index alias="path" name="path" primary="false" unique="true" type="BTREE">
 			<column key="path" length="" collation="A" null="true" />
+		</index>
+        <index alias="sig" name="sig" primary="false" unique="true" type="BTREE">
+			<column key="sig" length="" collation="A" null="false" />
 		</index>
 
         <composite alias="Products" class="ProductField" local="asset_id" foreign="asset_id" cardinality="many" owner="local" />

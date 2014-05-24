@@ -19,7 +19,7 @@ $manager->removeObjectContainer('Product');
 $manager->removeObjectContainer('Field');
 $manager->removeObjectContainer('VariationType'); 
 $manager->removeObjectContainer('VariationTerm');
-$manager->removeObjectContainer('ProductVariationTypes');
+$manager->removeObjectContainer('ProductVariationType');
 $manager->removeObjectContainer('ProductTaxonomy');
 $manager->removeObjectContainer('ProductTerm');
 $manager->removeObjectContainer('ProductField'); 

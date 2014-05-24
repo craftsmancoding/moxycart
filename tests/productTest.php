@@ -30,7 +30,9 @@ class productTest extends \PHPUnit_Framework_TestCase {
     public static $Tax; // Taxonomies
     public static $Term;
     public static $Field;
-    
+    public static $VType;
+    public static $VTerm;
+        
     /**
      * Load up MODX for our tests.
      *
@@ -278,6 +280,201 @@ class productTest extends \PHPUnit_Framework_TestCase {
             ));
             self::$Field['three']->save();
         }
+        
+        //! VariationTypes
+        if (!self::$VType['color'] = self::$modx->getObject('VariationType', array('slug'=>'color'))) {
+            self::$VType['color'] = self::$modx->newObject('VariationType');
+            self::$VType['color']->fromArray(array(
+                'slug' => 'color',
+                'name' => 'Color',
+                'description' => 'Testing Variation Type',
+                'seq' => 0,
+            ));
+            self::$VType['size']->save();
+        }
+        if (!self::$VType['size'] = self::$modx->getObject('VariationType', array('slug'=>'size'))) {
+            self::$VType['size'] = self::$modx->newObject('VariationType');
+            self::$VType['size']->fromArray(array(
+                'slug' => 'size',
+                'name' => 'Size',
+                'description' => 'Testing Variation Type',
+                'seq' => 0,
+            ));
+            self::$VType['size']->save();
+        }        
+        if (!self::$VType['material'] = self::$modx->getObject('VariationType', array('slug'=>'material'))) {
+            self::$VType['material'] = self::$modx->newObject('VariationType');
+            self::$VType['material']->fromArray(array(
+                'slug' => 'material',
+                'name' => 'Material',
+                'description' => 'Testing Variation Type',
+                'seq' => 0,
+            ));
+            self::$VType['material']->save();
+        }
+        if (!self::$VType['printing'] = self::$modx->getObject('VariationType', array('slug'=>'printing'))) {
+            self::$VType['printing'] = self::$modx->newObject('VariationType');
+            self::$VType['printing']->fromArray(array(
+                'slug' => 'printing',
+                'name' => 'Printing',
+                'description' => 'Testing Variation Type',
+                'seq' => 0,
+            ));
+            self::$VType['printing']->save();
+        }        
+        //!VariationTerm : Colors
+        if (!self::$VTerm['white'] = self::$modx->getObject('VariationTerm', array('slug'=>'white'))) {
+            self::$VTerm['white'] = self::$modx->newObject('VariationTerm');
+            self::$VTerm['white']->fromArray(array(
+                'vtype_id' => self::$VType['color']->get('vtype_id'),
+                'slug' => 'white',
+                'name' => 'White',
+                'sku_prefix' => '',
+                'sku_suffix' => '-WHI',
+                'seq' => 0,
+            ));
+            self::$VTerm['white']->save();
+        }
+        if (!self::$VTerm['black'] = self::$modx->getObject('VariationTerm', array('slug'=>'black'))) {
+            self::$VTerm['black'] = self::$modx->newObject('VariationTerm');
+            self::$VTerm['black']->fromArray(array(
+                'vtype_id' => self::$VType['color']->get('vtype_id'),
+                'slug' => 'black',
+                'name' => 'Black',
+                'sku_prefix' => '',
+                'sku_suffix' => '-BLA',
+                'seq' => 0,
+            ));
+            self::$VTerm['black']->save();
+        }
+        if (!self::$VTerm['red'] = self::$modx->getObject('VariationTerm', array('slug'=>'large'))) {
+            self::$VTerm['red'] = self::$modx->newObject('VariationTerm');
+            self::$VTerm['red']->fromArray(array(
+                'vtype_id' => self::$VType['color']->get('vtype_id'),
+                'slug' => 'red',
+                'name' => 'Red',
+                'sku_prefix' => '',
+                'sku_suffix' => '-RED',
+                'seq' => 0,
+            ));
+            self::$VTerm['red']->save();
+        }
+        
+        //!VariationTerm : Sizes
+        if (!self::$VTerm['small'] = self::$modx->getObject('VariationTerm', array('slug'=>'small'))) {
+            self::$VTerm['small'] = self::$modx->newObject('VariationTerm');
+            self::$VTerm['small']->fromArray(array(
+                'vtype_id' => self::$VType['size']->get('vtype_id'),
+                'slug' => 'small',
+                'name' => 'Small',
+                'sku_prefix' => '',
+                'sku_suffix' => '-S',
+                'seq' => 0,
+            ));
+            self::$VTerm['small']->save();
+        }
+        if (!self::$VTerm['med'] = self::$modx->getObject('VariationTerm', array('slug'=>'med'))) {
+            self::$VTerm['med'] = self::$modx->newObject('VariationTerm');
+            self::$VTerm['med']->fromArray(array(
+                'vtype_id' => self::$VType['size']->get('vtype_id'),
+                'slug' => 'med',
+                'name' => 'Medium',
+                'sku_prefix' => '',
+                'sku_suffix' => '-M',
+                'seq' => 0,
+            ));
+            self::$VTerm['med']->save();
+        }
+        if (!self::$VTerm['large'] = self::$modx->getObject('VariationTerm', array('slug'=>'large'))) {
+            self::$VTerm['large'] = self::$modx->newObject('VariationTerm');
+            self::$VTerm['large']->fromArray(array(
+                'vtype_id' => self::$VType['size']->get('vtype_id'),
+                'slug' => 'large',
+                'name' => 'Large',
+                'sku_prefix' => '',
+                'sku_suffix' => '-L',
+                'seq' => 0,
+            ));
+            self::$VTerm['large']->save();
+        }    
+
+        //!VariationTerm : Materials
+        if (!self::$VTerm['cotton'] = self::$modx->getObject('VariationTerm', array('slug'=>'cotton'))) {
+            self::$VTerm['cotton'] = self::$modx->newObject('VariationTerm');
+            self::$VTerm['cotton']->fromArray(array(
+                'vtype_id' => self::$VType['material']->get('vtype_id'),
+                'slug' => 'cotton',
+                'name' => 'Cotton',
+                'sku_prefix' => '',
+                'sku_suffix' => '-CTN',
+                'seq' => 0,
+            ));
+            self::$VTerm['cotton']->save();
+        }
+        if (!self::$VTerm['silk'] = self::$modx->getObject('VariationTerm', array('slug'=>'silk'))) {
+            self::$VTerm['silk'] = self::$modx->newObject('VariationTerm');
+            self::$VTerm['silk']->fromArray(array(
+                'vtype_id' => self::$VType['material']->get('vtype_id'),
+                'slug' => 'silk',
+                'name' => 'Silk',
+                'sku_prefix' => '',
+                'sku_suffix' => '-SLK',
+                'seq' => 0,
+            ));
+            self::$VTerm['silk']->save();
+        }
+        if (!self::$VTerm['wool'] = self::$modx->getObject('VariationTerm', array('slug'=>'wool'))) {
+            self::$VTerm['wool'] = self::$modx->newObject('VariationTerm');
+            self::$VTerm['wool']->fromArray(array(
+                'vtype_id' => self::$VType['material']->get('vtype_id'),
+                'slug' => 'wool',
+                'name' => 'Wool',
+                'sku_prefix' => '',
+                'sku_suffix' => '-WOOL',
+                'seq' => 0,
+            ));
+            self::$VTerm['wool']->save();
+        }
+        
+        //!VariationTerm : Printing
+        if (!self::$VTerm['silkscreen'] = self::$modx->getObject('VariationTerm', array('slug'=>'silkscreen'))) {
+            self::$VTerm['silkscreen'] = self::$modx->newObject('VariationTerm');
+            self::$VTerm['silkscreen']->fromArray(array(
+                'vtype_id' => self::$VType['printing']->get('vtype_id'),
+                'slug' => 'silkscreen',
+                'name' => 'Silk Screen',
+                'sku_prefix' => '',
+                'sku_suffix' => '-SCR',
+                'seq' => 0,
+            ));
+            self::$VTerm['silkscreen']->save();
+        }
+        if (!self::$VTerm['embossed'] = self::$modx->getObject('VariationTerm', array('slug'=>'embossed'))) {
+            self::$VTerm['embossed'] = self::$modx->newObject('VariationTerm');
+            self::$VTerm['embossed']->fromArray(array(
+                'vtype_id' => self::$VType['printing']->get('vtype_id'),
+                'slug' => 'embossed',
+                'name' => 'Embossed',
+                'sku_prefix' => '',
+                'sku_suffix' => '-EMB',
+                'seq' => 0,
+            ));
+            self::$VTerm['embossed']->save();
+        }
+        if (!self::$VTerm['gold'] = self::$modx->getObject('VariationTerm', array('slug'=>'gold'))) {
+            self::$VTerm['gold'] = self::$modx->newObject('VariationTerm');
+            self::$VTerm['gold']->fromArray(array(
+                'vtype_id' => self::$VType['printing']->get('vtype_id'),
+                'slug' => 'gold',
+                'name' => 'gold',
+                'sku_prefix' => '',
+                'sku_suffix' => '-GLD',
+                'seq' => 0,
+            ));
+            self::$VTerm['gold']->save();
+        }
+
+        
     }
     
     /**
@@ -296,6 +493,26 @@ class productTest extends \PHPUnit_Framework_TestCase {
         self::$Field['one']->remove();
         self::$Field['two']->remove();
         self::$Field['three']->remove();
+        
+        self::$VType['color']->remove();
+        self::$VType['size']->remove();
+        self::$VType['material']->remove();
+        self::$VType['printing']->remove();
+
+        self::$VTerm['white']->remove();
+        self::$VTerm['black']->remove();
+        self::$VTerm['red']->remove();
+        
+        self::$VTerm['small']->remove();
+        self::$VTerm['medium']->remove();
+        self::$VTerm['large']->remove();
+        self::$VTerm['cotton']->remove();
+        self::$VTerm['silk']->remove();
+        self::$VTerm['wool']->remove();
+        self::$VTerm['embossed']->remove();
+        self::$VTerm['silkscreen']->remove();
+        self::$VTerm['gold']->remove();
+        
 */
 
     }

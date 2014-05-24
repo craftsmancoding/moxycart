@@ -29,7 +29,7 @@ we implement some basic routing features here: the naked $method (e.g. index) ge
 post data is detected so that the actual function that will handle the request will be either "getIndex" or "postIndex".
 This provides cleaner routing.
 
-3. The next part of the routing is handled by the controllers/Base.php file when we override the render() function.
+3. The next part of the routing is handled by the controllers/BaseController.php file when we override the render() function.
 It was too restrictive to simply peg this to a hard-coded method ("process"), so we copy most of the function we 
 are overriding but we instead call the method defined in the getInstance() function (e.g. "getIndex" or "postIndex").
 
@@ -44,6 +44,6 @@ The result is you can map requests more easily to a class and method, e.g.
 
 Generating URLs to other manager controllers:
 
-Moxycart\Controller\Base::url($class,$method='index',$args=array())
+Moxycart\BaseController::url($class,$method='index',$args=array())
 
 

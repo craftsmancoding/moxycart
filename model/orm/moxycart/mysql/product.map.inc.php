@@ -457,6 +457,14 @@ $xpdo_meta_map['Product']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
+    'VariationType' => 
+    array (
+      'class' => 'ProductVariationType',
+      'local' => 'product_id',
+      'foreign' => 'product_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
+    ),
     'Assets' => 
     array (
       'class' => 'ProductAssets',

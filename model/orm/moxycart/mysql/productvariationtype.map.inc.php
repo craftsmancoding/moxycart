@@ -1,5 +1,5 @@
 <?php
-$xpdo_meta_map['ProductVariationTypes']= array (
+$xpdo_meta_map['ProductVariationType']= array (
   'package' => 'moxycart',
   'version' => '1.0',
   'table' => 'product_variation_types',

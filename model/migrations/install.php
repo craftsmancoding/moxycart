@@ -16,7 +16,7 @@ $manager->createObjectContainer('Field');
 $manager->createObjectContainer('Unit');
 $manager->createObjectContainer('VariationType'); 
 $manager->createObjectContainer('VariationTerm');
-$manager->createObjectContainer('ProductVariationTypes');
+$manager->createObjectContainer('ProductVariationType');
 $manager->createObjectContainer('ProductTerm');
 $manager->createObjectContainer('ProductTaxonomy');
 $manager->createObjectContainer('ProductField');
