@@ -10,7 +10,6 @@ $xpdo_meta_map['Product']= array (
     'store_id' => NULL,
     'parent_id' => NULL,
     'template_id' => NULL,
-    'currency_id' => NULL,
     'asset_id' => NULL,
     'name' => NULL,
     'title' => NULL,
@@ -78,13 +77,6 @@ $xpdo_meta_map['Product']= array (
     array (
       'dbtype' => 'int',
       'precision' => '11',
-      'phptype' => 'integer',
-      'null' => true,
-    ),
-    'currency_id' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '4',
       'phptype' => 'integer',
       'null' => true,
     ),
@@ -529,14 +521,6 @@ $xpdo_meta_map['Product']= array (
       'class' => 'modTemplate',
       'local' => 'template_id',
       'foreign' => 'id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
-    'Currency' => 
-    array (
-      'class' => 'Currency',
-      'local' => 'currency_id',
-      'foreign' => 'currency_id',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),

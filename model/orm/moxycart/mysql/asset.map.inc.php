@@ -17,6 +17,7 @@ $xpdo_meta_map['Asset']= array (
     'height' => NULL,
     'size' => NULL,
     'duration' => NULL,
+    'sig' => NULL,
     'seq' => NULL,
     'is_active' => 1,
     'is_protected' => 0,
@@ -109,6 +110,14 @@ $xpdo_meta_map['Asset']= array (
       'null' => false,
       'comment' => 'for videos and sound files: round to seconds',
     ),
+    'sig' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '40',
+      'phptype' => 'string',
+      'null' => false,
+      'index' => 'index',
+    ),
     'seq' => 
     array (
       'dbtype' => 'int',
@@ -194,6 +203,22 @@ $xpdo_meta_map['Asset']= array (
           'length' => '',
           'collation' => 'A',
           'null' => true,
+        ),
+      ),
+    ),
+    'sig' => 
+    array (
+      'alias' => 'sig',
+      'primary' => false,
+      'unique' => true,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'sig' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
         ),
       ),
     ),

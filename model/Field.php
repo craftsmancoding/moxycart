@@ -7,7 +7,7 @@ namespace Moxycart;
 class Field extends BaseModel {
 
     public $xclass = 'Field';
-    public $default_sort_col = 'name';
+    public $default_sort_col = 'slug';
 
 }
 /*EOF*/

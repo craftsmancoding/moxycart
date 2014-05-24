@@ -47,15 +47,16 @@ class BaseModel {
      * the type of database used.
      *
      * @param object $modx
-     * @param integer primary key (optional) used when retrieving objects only
+     * @param object $xpdo (optional: pass this class an existing xpdo object to endow it with special methods) 
      *
      */
-    public function __construct(\modX &$modx, $primary_key=null) {
+    public function __construct(\modX &$modx, &$obj=null) {
         $this->modx =& $modx;
-        if ($primary_key) {
-            if (!$this->modelObj = $this->modx->getObject($this->xclass, $primary_key)) {
-                throw new \Exception($this->xclass.' not found with id '.$primary_key);
+        if ($obj) {
+            if (!is_a($obj, $this->xclass)) {
+                throw new \Exception('Invalid object type.');
             }
+            $this->modelObj =& $obj;
         }
         else {
             $this->modelObj = $modx->newObject($this->xclass);
@@ -274,9 +275,9 @@ class BaseModel {
             $criteria->select($select_cols);
         }
 
-        if ($this->modelObj = $this->modx->getObject($this->xclass,$criteria)) {
+        if ($obj = $this->modx->getObject($this->xclass,$criteria)) {
             $classname = '\\Moxycart\\'.$this->xclass;        
-            return new $classname($this->modx,$this->modelObj->getPrimaryKey()); 
+            return new $classname($this->modx, $obj); 
         }
         
         return false;
@@ -321,8 +322,11 @@ class BaseModel {
      * @return mixed
      */    
     public function find($id) {
-        $classname = '\\Moxycart\\'.$this->xclass;        
-        return new $classname($this->modx,$id);
+        if ($obj = $this->modx->getObject($this->xclass, $id)) {
+            $classname = '\\Moxycart\\'.$this->xclass;        
+            return new $classname($this->modx,$obj);
+        }
+        return false;
     }
     
 

@@ -37,34 +37,12 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         </validation>
     </object>
     
-    <!-- ! Currencies -->    
-	<object class="Currency" table="currencies" extends="xPDOObject">
-		<field key="currency_id" dbtype="int" precision="4" phptype="integer" null="false" index="pk"  generated="native" />
-		<field key="code" dbtype="varchar" precision="10" phptype="string" null="false" />
-		<field key="name" dbtype="varchar" precision="256" phptype="string" null="false" />
-		<field key="symbol" dbtype="varchar" precision="4" phptype="string" null="true" />
-        <field key="is_active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
-		<field key="seq" dbtype="int" precision="3" phptype="integer" null="true" />
-
-		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="currency_id" length="" collation="A" null="false" />
-		</index>
-		
-		<composite alias="Products" class="Product" local="currency_id" foreign="currency_id" cardinality="many" owner="local" />
-		
-		<validation>
-            <rule field="code" name="iso4217" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="3" message="ISO 4217 Currency Codes are 3 characters."/>
-            <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="3" message="Your currency name must be at least 3 characters."/>
-        </validation>
-	</object>
-
     <!-- ! Product -->
     <object class="Product" table="products" extends="xPDOObject">
         <field key="product_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
         <field key="store_id" dbtype="int" precision="11" phptype="integer" null="true" />
         <field key="parent_id" dbtype="int" precision="11" phptype="integer" null="true" comment="variations are stored as children"/>
         <field key="template_id" dbtype="int" precision="11" phptype="integer" null="true" />
-        <field key="currency_id" dbtype="int" precision="4" phptype="integer" null="true" />
         <field key="asset_id" dbtype="int" precision="11" phptype="integer" null="true" comment="Primary thumbnail image"/>
         <field key="name" dbtype="varchar" precision="60" phptype="string" null="false" />
         <field key="title" dbtype="varchar" precision="60" phptype="string" null="false" comment="For the webpage"/>
@@ -135,7 +113,6 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 				
 		<aggregate alias="Store" class="Store" local="store_id" foreign="id" cardinality="one" owner="foreign" />
 		<aggregate alias="Template" class="modTemplate" local="template_id" foreign="id" cardinality="one" owner="foreign" />
-		<aggregate alias="Currency" class="Currency" local="currency_id" foreign="currency_id" cardinality="one" owner="foreign" />
         <aggregate alias="Author" class="modUser" local="author_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="UserGroup" class="modUserGroup" local="user_group_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Role" class="modUserGroupRole" local="role_id" foreign="id" cardinality="one" owner="foreign" />
@@ -184,16 +161,6 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
                   alias="Template"
                   class="modTemplate"
                   message="The template specified does not exist."
-             />
-            <rule field="currency_id"
-                  name="validCurrency"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="currency_id"
-                  local="currency_id"
-                  alias="Currency"
-                  class="Currency"
-                  message="The currency specified does not exist."
              />
             <rule field="asset_id"
                   name="validThumbnail"

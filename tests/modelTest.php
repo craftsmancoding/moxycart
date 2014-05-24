@@ -26,6 +26,7 @@ class modelTest extends \PHPUnit_Framework_TestCase {
 
     // Must be static because we set it up inside a static function
     public static $modx;
+    public static $Field;
     
     /**
      * Load up MODX for our tests.
@@ -38,6 +39,47 @@ class modelTest extends \PHPUnit_Framework_TestCase {
         self::$modx->addExtensionPackage($object['namespace'],"{$core_path}model/orm/", array('tablePrefix'=>'moxy_'));
         self::$modx->addPackage('moxycart',"{$core_path}model/orm/",'moxy_');
         self::$modx->addPackage('foxycart',"{$core_path}model/orm/",'foxy_');
+
+        // !Fields
+        if (!self::$Field['one'] = self::$modx->getObject('Field', array('slug'=>'one'))) {
+            self::$Field['one'] = self::$modx->newObject('Field');
+            self::$Field['one']->fromArray(array(
+                'slug' => 'one',
+                'label' => 'Test One',
+                'description' => 'Testing Field',
+                'seq' => 0,
+                'group' => 'GroupA',
+                'type' => 'text'
+            ));
+            if(!self::$Field['one']->save()) {
+                print 'Could not save field!'; 
+            }
+        }
+        if (!self::$Field['two'] = self::$modx->getObject('Field', array('slug'=>'two'))) {
+            self::$Field['two'] = self::$modx->newObject('Field');
+            self::$Field['two']->fromArray(array(
+                'slug' => 'two',
+                'label' => 'Test Two',
+                'description' => 'Testing Field',
+                'seq' => 0,
+                'group' => 'GroupA',
+                'type' => 'textarea'
+            ));
+            self::$Field['two']->save();
+        }
+        if (!self::$Field['three'] = self::$modx->getObject('Field', array('slug'=>'three'))) {
+            self::$Field['three'] = self::$modx->newObject('Field');
+            self::$Field['three']->fromArray(array(
+                'slug' => 'three',
+                'label' => 'Test Three',
+                'description' => 'Testing Field',
+                'seq' => 0,
+                'group' => 'GroupA',
+                'type' => 'dropdown'
+            ));
+            self::$Field['three']->save();
+        }
+
         
     }
 
@@ -57,181 +99,137 @@ class modelTest extends \PHPUnit_Framework_TestCase {
      */
     public function testBasicRetrieval() {
 
-        $Currency = new Currency(self::$modx);
-        $this->assertTrue($Currency instanceof Currency);
+        $F = new Field(self::$modx);
+        $this->assertTrue($F instanceof Field);
         
         // Verify mass-assignment
-        $Currency->fromArray(array(
-            'code' => 'YYY',
-            'name' => 'Yellow Yuan',
-            'symbol' => '1123',
-            'is_active' => 1,
-            'seq' => 0
+        $F->fromArray(array(
+            'slug' => 'four',
+            'label' => 'For Testing',
+            'type' => 'textarea'
         ));
-        $this->assertEquals('YYY', $Currency->code);
+        $this->assertEquals('textarea', $F->type);
         
         // Verify single-assignment
-        $Currency->symbol = '3345';
-        $this->assertEquals('3345', $Currency->symbol);
-        $Currency->set('symbol','3346');
-        $this->assertEquals('3346', $Currency->get('symbol'));
+        $F->label = 'Not for Testing';
+        $this->assertEquals('Not for Testing', $F->label);
+        $F->set('label','Something Else');
+        $this->assertEquals('Something Else', $F->get('label'));
         
-        $result = $Currency->save();
+        $result = $F->save();
         $this->assertTrue($result);
         
-        $id = $Currency->getPrimaryKey();
+        $id = $F->getPrimaryKey();
         
-        $Currency = $Currency->find($id);
-
-        $this->assertEquals('YYY', $Currency->code);
-        $Currency->remove();
-        
-        // Retrieving the deleted row should raise an exception
-        try {
-            $Currency = new Currency(self::$modx, $id);
-        }
-        catch (\Exception $expected) {
-            return; // the exception class must be properly namespaced with backslash
-        }
-        $this->fail('An expected exception has not been raised. Currency object was retrieved when it should not exist.');
-    
+        $F = $F->find($id);
+        $this->assertFalse(empty($F));
+        $this->assertEquals('Something Else', $F->get('label'));
+        $F->remove();
+            
     }
     
     public function testFilters() {
-        $Currency = new Currency(self::$modx);
+        $F = new Field(self::$modx);
         $args = array('limit'=>10,'offset'=>20);
-        $filters = $Currency->getFilters($args);
+        $filters = $F->getFilters($args);
         $this->assertTrue(empty($filters));
         
         $args = array('limit'=>10,'offset'=>20,'something'=>'else');
-        $filters = $Currency->getFilters($args);
+        $filters = $F->getFilters($args);
         $this->assertEquals($filters['something'],'else');
 
         $args = array('sort'=>'x','dir'=>'ASC','select'=>'yyy','mycolumn:like'=>'myvalue');
-        $filters = $Currency->getFilters($args);        
+        $filters = $F->getFilters($args);        
         $this->assertEquals($filters['mycolumn:like'],'%myvalue%');
 
         $args = array('mycolumn:starts with'=>'myvalue');
-        $filters = $Currency->getFilters($args);        
+        $filters = $F->getFilters($args);        
         $this->assertEquals($filters['mycolumn:LIKE'],'myvalue%');
         $this->assertEquals(count($filters),1);
         
         $args = array('mycolumn:ends with'=>'myvalue');
-        $filters = $Currency->getFilters($args);        
+        $filters = $F->getFilters($args);        
         $this->assertEquals($filters['mycolumn:LIKE'],'%myvalue');
 
 
         $args = array('one','two','three');
-        $filters = $Currency->getFilters($args);
+        $filters = $F->getFilters($args);
         $this->assertTrue(empty($filters));
     }
     
     public function testCount() {
-        $C = new Currency(self::$modx);
-        $cnt = $C->count(array('code:STARTS WITH'=>'s'));
-        $this->assertEquals($cnt,10);
+        $F = new Field(self::$modx);
+        $cnt = $F->count(array('slug:STARTS WITH'=>'t'));
+        $this->assertEquals(2,$cnt);
 
-        $cnt = $C->count(array('name:>'=>'D'));
-        $this->assertEquals($cnt,88);
+        $cnt = $F->count(array('type:>='=>'text'));
+        $this->assertEquals(2,$cnt);
     }
     
     public function testDebug() {
-        $C = new Currency(self::$modx);
-        $actual = $C->all(array('name:>'=>'D'),true);
-        $expected = "SELECT `Currency`.`currency_id` AS `Currency_currency_id`, `Currency`.`code` AS `Currency_code`, `Currency`.`name` AS `Currency_name`, `Currency`.`symbol` AS `Currency_symbol`, `Currency`.`is_active` AS `Currency_is_active`, `Currency`.`seq` AS `Currency_seq` FROM `moxy_currencies` AS `Currency` WHERE `Currency`.`name` > 'D' ORDER BY name LIMIT 20";
+        $F = new Field(self::$modx);
+        $actual = $F->all(array('label:>'=>'D'),true);
+        $expected = "SELECT `Field`.`field_id` AS `Field_field_id`, `Field`.`slug` AS `Field_slug`, `Field`.`label` AS `Field_label`, `Field`.`description` AS `Field_description`, `Field`.`config` AS `Field_config`, `Field`.`seq` AS `Field_seq`, `Field`.`group` AS `Field_group`, `Field`.`type` AS `Field_type`, `Field`.`timestamp_created` AS `Field_timestamp_created`, `Field`.`timestamp_modified` AS `Field_timestamp_modified` FROM `moxy_fields` AS `Field` WHERE `Field`.`label` > 'D' ORDER BY slug LIMIT 20";
         $this->assertEquals(normalize_string($actual),normalize_string($expected));
 
-        $actual = $C->all(array('code:LIKE'=>'VC'),true);
-        $expected = "SELECT `Currency`.`currency_id` AS `Currency_currency_id`, `Currency`.`code` AS `Currency_code`, `Currency`.`name` AS `Currency_name`, `Currency`.`symbol` AS `Currency_symbol`, `Currency`.`is_active` AS `Currency_is_active`, `Currency`.`seq` AS `Currency_seq` FROM `moxy_currencies` AS `Currency` WHERE `Currency`.`code` LIKE '%VC%' ORDER BY name LIMIT 20";
+        $actual = $F->all(array('slug:LIKE'=>'VC'),true);
+        $expected = "SELECT `Field`.`field_id` AS `Field_field_id`, `Field`.`slug` AS `Field_slug`, `Field`.`label` AS `Field_label`, `Field`.`description` AS `Field_description`, `Field`.`config` AS `Field_config`, `Field`.`seq` AS `Field_seq`, `Field`.`group` AS `Field_group`, `Field`.`type` AS `Field_type`, `Field`.`timestamp_created` AS `Field_timestamp_created`, `Field`.`timestamp_modified` AS `Field_timestamp_modified` FROM `moxy_fields` AS `Field` WHERE `Field`.`slug` LIKE '%VC%' ORDER BY slug LIMIT 20";
         $this->assertEquals(normalize_string($actual),normalize_string($expected));
 
-        $actual = $C->all(array('code:LIKE'=>'VC','limit'=>30),true);
-        $expected = "SELECT `Currency`.`currency_id` AS `Currency_currency_id`, `Currency`.`code` AS `Currency_code`, `Currency`.`name` AS `Currency_name`, `Currency`.`symbol` AS `Currency_symbol`, `Currency`.`is_active` AS `Currency_is_active`, `Currency`.`seq` AS `Currency_seq` FROM `moxy_currencies` AS `Currency` WHERE `Currency`.`code` LIKE '%VC%' ORDER BY name LIMIT 30";
+        $actual = $F->all(array('slug:LIKE'=>'VC','limit'=>30),true);
+        $expected = "SELECT `Field`.`field_id` AS `Field_field_id`, `Field`.`slug` AS `Field_slug`, `Field`.`label` AS `Field_label`, `Field`.`description` AS `Field_description`, `Field`.`config` AS `Field_config`, `Field`.`seq` AS `Field_seq`, `Field`.`group` AS `Field_group`, `Field`.`type` AS `Field_type`, `Field`.`timestamp_created` AS `Field_timestamp_created`, `Field`.`timestamp_modified` AS `Field_timestamp_modified` FROM `moxy_fields` AS `Field` WHERE `Field`.`slug` LIKE '%VC%' ORDER BY slug LIMIT 30";
+        $this->assertEquals(normalize_string($actual),normalize_string($expected));
+                
+        $actual = $F->all(array('slug:STARTS WITH'=>'VC','limit'=>30),true);
+        $expected = "SELECT `Field`.`field_id` AS `Field_field_id`, `Field`.`slug` AS `Field_slug`, `Field`.`label` AS `Field_label`, `Field`.`description` AS `Field_description`, `Field`.`config` AS `Field_config`, `Field`.`seq` AS `Field_seq`, `Field`.`group` AS `Field_group`, `Field`.`type` AS `Field_type`, `Field`.`timestamp_created` AS `Field_timestamp_created`, `Field`.`timestamp_modified` AS `Field_timestamp_modified` FROM `moxy_fields` AS `Field` WHERE `Field`.`slug` LIKE 'VC%' ORDER BY slug LIMIT 30";
         $this->assertEquals(normalize_string($actual),normalize_string($expected));
     }
     
     public function testGetCollection() {
-        $Currency = new Currency(self::$modx);
-        $collection = $Currency->all(array('code'=>'XXXX'));
+        $F = new Field(self::$modx);
+        $collection = $F->all(array('group'=>'GroupZ'));
         $this->assertTrue(empty($collection));
-        $collection = $Currency->all(array('code:STARTS WITH'=>'TR'));
+        $collection = $F->all(array('group:STARTS WITH'=>'Group'));
+
         $values = array();
         foreach ($collection as $c) {
-            $values[] = $c->get('code');
+            $values[] = $c->get('slug');
         }
-        $this->assertEquals($values[0],'TRY');
-        $this->assertEquals($values[1],'TRL');
+
+        $this->assertEquals($values[0],'one');
+        $this->assertEquals($values[1],'three');
+        $this->assertEquals($values[2],'two');
+    }
+
+    public function testOne() {
+        $F = new Field(self::$modx);
+
+        $F2 = $F->one(array('slug'=>'does not exist'));
+        $this->assertFalse($F2);        
+        
+        $F = $F->one(array('slug'=>'two'));
+        $this->assertFalse(empty($F));
+        
+        $this->assertTrue(is_a($F, '\\Moxycart\\Field'));
     }
 
     
     /**
-     *
-     * @expectedException Currency not found with id
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Invalid object type.
      */
-/*
-    public function testNotFound() {
-        $Currency = new Currency(self::$modx, 123124);    
+    public function testInvalidObjectType() {
+        $Chunk = self::$modx->newObject('modChunk');
+        $F = new Field(self::$modx, $Chunk);    
     }
-*/
-    
-    public function testProducts() {
-/*
-        // The basic test:   
-        $Products = self::$moxycart->json_products(array(), true);
-        $this->assertTrue(!empty($Products), 'Unable to retrieve collection "Product"');
-
-        // Product ID exist test:   
-        $product_id = 1;
-        $Product = self::$moxycart->json_products(array('product_id'=>$product_id), true);
-        $this->assertTrue($Product['total'] == 1, 'No Product Found with an id of ' . $product_id);
-
-        // Get the first product
-        $P = array_shift($Products['results']); 
-        $this->assertTrue($P['sku'] == 'MOUSTACHE-HOODIE', 'Product sku is '.$P['sku']);        
-        
-        
-        // Test sorting:
-        $Products = self::$moxycart->json_products(array('sort'=>'name', 'dir'=>'ASC'),true);
-        $P = array_shift($Products['results']); 
-        $this->assertTrue($P['sku'] == 'ANOTHER-SWEATER', 'Product sku is '.$P['sku']);    
-
-        // Test filters -- 
-        $Products = self::$moxycart->json_products(array('in_menu'=>0),true);        
-        $this->assertTrue($Products['total'] == 1, 'Only 1 product is flagged with in_menu 0');
-*/     
-    }
-
 
     /**
-     * We have some logic that determines default product attributes based on values set in the 
-     * the parent Store.  This ensures the defaults are set correctly.
      */
-/*
-    public function testProductDefaults() {
-        $P = self::$modx->newObject('Product');
-        // First, we test it with no store_id passed
-        $defaults = $P->get_defaults();
-        $this->assertTrue($defaults['template_id'] == self::$modx->getOption('default_template'), 'Default template not correct.');
-        // defaults should be inherited from the parent store
-        if ($Store = self::$modx->getObject('Store', array('alias'=> 'sample-store'))) {
-            $store_id = $Store->get('id');
-            $defaults = $P->get_defaults($store_id);
-            $this->assertTrue($defaults['template_id'] == 2, 'Default template not inherited from store.');    
-            $this->assertTrue($defaults['product_type'] == 'regular', 'Product type not inherited from store.');    
-            $this->assertTrue($defaults['sort_order'] == 'SKU', 'Sort order not inherited from store.');    
-            $this->assertTrue($defaults['qty_alert'] == 5, 'qty_alert not inherited from store.');
-            $this->assertTrue(isset($defaults['specs'][1]), 'Product specs not inherited from store.');    
-            $this->assertTrue(isset($defaults['specs'][3]), 'Product specs not inherited from store.');
-        }
+    public function testValidObjectType() {
+        $F = self::$modx->newObject('Field');
+        $F2 = new Field(self::$modx, $F);
     }
-*/
 
-/*
-    public function testSpecs() {
-        // The basic test:   
-        $Specs = self::$moxycart->json_specs(array(), true);
-        $this->assertTrue(!empty($Specs), 'Unable to retrieve collection "Spec"');
-    }
-*/
+    
     
 }

@@ -9,12 +9,11 @@ $xpdo_meta_map = array (
   ),
   'xPDOObject' => 
   array (
-    0 => 'Currency',
-    1 => 'Product',
-    2 => 'Field',
-    3 => 'VariationType',
-    4 => 'VariationTerm',
-    5 => 'Asset',
+    0 => 'Product',
+    1 => 'Field',
+    2 => 'VariationType',
+    3 => 'VariationTerm',
+    4 => 'Asset',
   ),
   'xPDOSimpleObject' => 
   array (

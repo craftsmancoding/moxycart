@@ -10,7 +10,6 @@ $modx->addPackage('foxycart',"{$core_path}model/orm/",'foxy_');
 $manager = $modx->getManager();
 
 // Moxycart Stuff
-$manager->createObjectContainer('Currency');
 $manager->createObjectContainer('Product');
 $manager->createObjectContainer('Field');
 $manager->createObjectContainer('Unit');
