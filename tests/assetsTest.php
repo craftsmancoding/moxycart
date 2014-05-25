@@ -83,9 +83,10 @@ class assetTest extends \PHPUnit_Framework_TestCase {
         $dir = MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
         $Asset = new Asset(self::$modx);
         $result = $Asset->preparePath($dir);
-        $this->assertTrue($result);
+        $this->assertTrue(file_exists($result));
     }
 
+    // Get file extension
     public function testGetExt() {
         $A = new Asset(self::$modx);
         $this->assertEquals($A->getExt('/does/not/exist.php'),'php');
@@ -173,99 +174,98 @@ class assetTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Tests the fromFile method, verifying that it returns an existing
-     * object record
-     */
-    public function testFromFileExisting() {
-
-        $dir = MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
-        $A = new Asset(self::$modx);
-        $result = $A->preparePath($dir);
-        $this->assertTrue($result);
-        $this->assertTrue($A instanceof Asset);
-        
-        $ContentType = self::$modx->getObject('modContentType',array('name'=>'JPG'));
-        
-        $this->assertFalse(empty($ContentType));
-        $this->assertTrue($ContentType instanceof \modContentType);
-
-        if ($Existing = self::$modx->getObject('Asset', array('path'=>'assets/macbook_pro.jpg'))) {
-            $Existing->remove();
-        }
-        
-        // Verify that fromFile returns an existing Asset object
-        $A->fromArray(array(
-            'content_type_id' => $ContentType->get('id'),
-            'title' => 'Sample Image',
-            'alt' => 'This is only a sample image',
-            'url' => 'assets/macbook_pro.jpg',
-            'thumbnail_url' => 'assets/.thumb.macbook_pro.jpg',
-            'path' => 'assets/macbook_pro.jpg',
-            'width' => 1280,
-            'height' => 956,
-            'size' => 560,
-            'duration' => 0,
-            'is_active' => true,
-            'is_protected' => false,
-            'seq' => 0
-        ));
-        $result = $A->save();
-        $this->assertTrue($result);
-        $asset_id = $A->getPrimaryKey();
-        $this->assertFalse(empty($asset_id));
-
-        $A = new Asset(self::$modx);
-        $filename = dirname(__FILE__).'/assets/macbook_pro.jpg'; 
-        $A = $A->fromFile($filename,array(),dirname(__FILE__));
-        
-        $this->assertEquals($asset_id, $A->get('asset_id'));
-        
-        $A->remove();
-    }
-
-    /**
      * Tests the fromFile method, verifying that it creates a new object record
      */
-    public function testFromFileNew() {
+    public function testFromFile() {
         $filename = dirname(__FILE__).'/assets/support.jpg'; 
-    
+        copy($filename, dirname(__FILE__).'/assets/support2.jpg');
+        $filename = dirname(__FILE__).'/assets/support2.jpg'; 
+        $tmp_dir = dirname(__FILE__).'/asset_library/tmp';
+        $asset_dir = dirname(__FILE__).'/asset_library';
+
         $dir = MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
         $A = new Asset(self::$modx);
-                
-        $result = $A->preparePath($dir);
-        $this->assertTrue($result);
-        $this->assertTrue($A instanceof Asset);
         
-        if ($Existing = self::$modx->getObject('Asset', array('path'=>'assets/support.jpg'))) {
-            $Existing->remove();
-        }
+        $A2 = $A->fromFile($filename,'support2.jpg',$tmp_dir);
         
-        // Verify that fromFile creates a Asset object        
-        $A->fromFile($filename,array(
-                'title' => 'Support',
-                'alt' => 'This is a test of the fromFile method'
-                ),dirname(__FILE__));
-        
-        $result = $A->save();
-        $this->assertTrue($result);
-        
-        $asset_id = $A->getPrimaryKey();
-        
-        $B = $A->find($asset_id);
+        $this->assertFalse(empty($A2));
+        $this->assertEquals(md5_file($filename), $A2->get('sig'));
 
-        $this->assertEquals($B->get('path'), 'assets/support.jpg');
-        $this->assertEquals($B->get('width'), 430);
-        $this->assertEquals($B->get('height'), 400);
-        $this->assertEquals('thumbs/support.jpg',$B->get('thumbnail_url'));
-        
-        $B->remove();
+        // Try actually SAVING the file
+        $result = $A2->saveTo($asset_dir);        
+        $this->assertTrue($result);
+        $this->assertTrue(file_exists($asset_dir.'/'.date('Y/m/d/')));
+        $this->assertTrue(file_exists($asset_dir.'/'.date('Y/m/d/').'support2.jpg'));
+
+        $A2->remove();
+        unlink($tmp_dir.'/support2.jpg');
+        // Can't delete directories unless they're empty
+        Asset::rrmdir($asset_dir.'/'.date('Y/'));
     }
+    
+    /**
+     *
+     */
+    public function testgetUniqueFilename() {
+        $A = new Asset(self::$modx);
+        $file = '/tmp/'.uniqid().'.txt';
+        $this->assertFalse(file_exists($file));
+        $file2 = $A->getUniqueFilename($file);
+        $this->assertEquals($file, $file2);    
+        $file = dirname(__FILE__).'/asset_library/readme.txt';
+        $file2 = $A->getUniqueFilename($file);
+        $this->assertEquals(dirname(__FILE__).'/asset_library/readme 3.txt',$file2);
+    }
+    
+    /**
+     *
+     *
+     */
+    public function testExisting() {
+        $A = new Asset(self::$modx);
+        $file = dirname(__FILE__).'/assets/support.jpg';
+        $Asset = self::$modx->newObject('Asset');
+        $Asset->fromArray(array(
+            'content_type_id' => $A->getContentType($file),
+            'title' => 'Delete me',
+            'alt' => 'Delete me',
+            'url' => 'tmp/path/only/'.basename($file),
+            'path' => 'tmp/path/only/'.basename($file),
+            'sig' => md5_file($file)
+        ));
+        $result = $Asset->save();
+        $this->assertFalse(empty($result));
+        $asset_id = $Asset->getPrimaryKey();
+        
+        $A2 = $A->getExisting($file);
+        $this->assertEquals($A2->get('asset_id'), $asset_id);
+        $this->assertEquals($A2->get('title'), 'Delete me');
+        $this->assertEquals($A2->get('sig'), $Asset->get('sig'));
+        $A2->remove();
+        $Asset->remove();
+    }
+ 
+     /**
+      * This should fail because it's not a REAL uploaded file, and PHP KNOWS!!!
+      * @expectedException        \Exception
+      * @expectedExceptionMessage Unable to move uploaded file
+      */
+    public function testUploadTmp()
+    {
+        $Asset = new Asset(self::$modx);
+        $filename = '/tmp/'.uniqid().'.moxycart.dick';
+        touch($filename);
+        $Asset->uploadTmp($filename, 'moxycart.dick','/tmp/does/not/matter');
+    }
+
     
     /**
      * Test removing of saved file.
      *
      */
+/*
     public function testRemove() {
         print date('Y/m/d/');
     }
+*/
 }

@@ -144,6 +144,9 @@ class Image {
                 $src_img = @imagecreatefrompng($src);
                 break;
         }
+        if (!$src_img) {
+            throw new \Exception('Failed to create image');
+        }
         
         // src (i.e. old) dimensions
         $ox = imagesx($src_img);

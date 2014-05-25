@@ -78,9 +78,16 @@ class modelTest extends \PHPUnit_Framework_TestCase {
                 'type' => 'dropdown'
             ));
             self::$Field['three']->save();
-        }
+        }        
+    }
 
-        
+    /**
+     *
+     */
+    public static function tearDownAfterClass() {
+        self::$Field['one']->remove();
+        self::$Field['two']->remove();
+        self::$Field['three']->remove();
     }
 
     /**
