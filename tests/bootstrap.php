@@ -17,7 +17,7 @@ if (!file_exists($docroot.'/config.core.php')) {
 include_once $docroot . '/config.core.php';
 
 if (!defined('MODX_API_MODE')) {
-    define('MODX_API_MODE', false);
+    define('MODX_API_MODE', true);
 }
 
 include_once MODX_CORE_PATH . 'model/modx/modx.class.php';
