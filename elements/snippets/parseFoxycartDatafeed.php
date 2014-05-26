@@ -38,7 +38,10 @@
  *
  * @package moxycart
  */
-$core_path = $modx->getOption('moxycart.core_path','',MODX_CORE_PATH.'components/moxycart/');
+$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+require_once $core_path .'vendor/autoload.php';
+$Snippet = new \Moxycart\Snippet($modx);
+$Snippet->log('parseFoxycartDatafeed',$scriptProperties);
 
 $modx->addPackage('foxycart',$core_path.'model/orm/','foxy_');
 

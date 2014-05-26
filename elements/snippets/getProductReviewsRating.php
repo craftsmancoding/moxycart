@@ -22,7 +22,12 @@
  **/
 
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+require_once $core_path .'vendor/autoload.php';
+$Snippet = new \Moxycart\Snippet($modx);
+$Snippet->log('getProducts',$scriptProperties);
 
+/*
 $moxySnippet = new Moxycart\Snippet($modx);
 $out = $moxySnippet->get_rate_average('json_reviews',$scriptProperties);
 return $out;
+*/

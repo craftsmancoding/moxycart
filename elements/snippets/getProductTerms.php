@@ -28,9 +28,14 @@
  **/
 
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+require_once $core_path .'vendor/autoload.php';
+$Snippet = new \Moxycart\Snippet($modx);
+$Snippet->log('getProductTerms',$scriptProperties);
 
+/*
 $scriptProperties['innerTpl'] = $modx->getOption('innerTpl',$scriptProperties, 'ProductTerm');
 
 $moxySnippet = new Moxycart\Snippet($modx);
 $out = $moxySnippet->execute('json_product_terms',$scriptProperties);
 return $out;
+*/

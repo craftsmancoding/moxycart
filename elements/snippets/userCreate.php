@@ -1,6 +1,6 @@
 <?php
 /**
- * @name UserCreate
+ * @name userCreate
  * @description Called as a hook from the parseFoxycartDatafeed Snippet, this hook will create a local MODX user keyed off the user's email.
  * 
  * If the email address already exists in the system, then no action is taken.
@@ -24,7 +24,13 @@
  * @params everything from a <transaction> node in the Foxycart XML
  * @return string message indicating completion or false on fail.
  */
+
+$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+require_once $core_path .'vendor/autoload.php';
+$Snippet = new \Moxycart\Snippet($modx);
+$Snippet->log('userCreate',$scriptProperties);
  
+/*
 $log = array(
     'target'=>'FILE',
     'options' => array(
@@ -35,6 +41,7 @@ $log = array(
 $modx->log(xPDO::LOG_LEVEL_DEBUG,'UserCreate',$log,'UserCreate Snippet',__FILE__,__LINE__);
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
 $modx->addPackage('moxycart',$core_path.'model/','moxy_');
+*/
 
 /*
 SAMPLE CUSTOMER XML SECTION
@@ -74,6 +81,7 @@ SAMPLE CUSTOMER XML SECTION
       
 */
 
+/*
 $email = $modx->getOption('customer_email', $scriptProperties);
 
 $query = $modx->newQuery('modUser');
@@ -148,6 +156,7 @@ $extended['shipping_phone'] = $modx->getOption('shipping_phone',$scriptPropertie
 
 $Profile->set('extended',$extended);
 
+*/
 
 /*
 $data = array();

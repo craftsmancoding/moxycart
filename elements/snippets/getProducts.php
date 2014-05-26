@@ -32,15 +32,9 @@
  **/
 // Call your snippet like this: [[mySnippet? &log_level=`4`]]
 // Override global log_level value
-/*
-$log_level = $modx->getOption('log_level',$scriptProperties, $modx->getOption('log_level'));
-$old_log_level = $modx->setLogLevel($log_level);
-*/
 
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
-
 require_once $core_path .'vendor/autoload.php';
-
 $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('getProducts',$scriptProperties);
 

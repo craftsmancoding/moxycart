@@ -12,7 +12,11 @@
  * @param integer qty, default is the current placeholder set for qty
  */
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+require_once $core_path .'vendor/autoload.php';
+$Snippet = new \Moxycart\Snippet($modx);
+$Snippet->log('getBundledProducts',$scriptProperties);
 
+/*
 $product_id = (int) $modx->getOption('product_id', $scriptProperties, $modx->getPlaceholder('product_id'));
 $qty = (int) $modx->getOption('product_id', $scriptProperties, $modx->getPlaceholder('qty'));
 $specs = $modx->getOption('specs', $scriptProperties);
@@ -66,5 +70,6 @@ foreach ($data['results'] as $r) {
 }
 
 return $out;
+*/
 
 /*EOF*/

@@ -1,7 +1,7 @@
 <?php
 /**
- * @name getProductSpecs
- * @description Returns a list of product_specs
+ * @name getProductFields
+ * @description Returns a list of product_fields
  * 
  * Available Placeholders
  * ---------------------------------------
@@ -28,10 +28,15 @@
  **/
 
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+require_once $core_path .'vendor/autoload.php';
+$Snippet = new \Moxycart\Snippet($modx);
+$Snippet->log('getProductFields',$scriptProperties);
 
 
+/*
 $scriptProperties['innerTpl'] = $modx->getOption('innerTpl',$scriptProperties, 'ProductSpec');
 
 $moxySnippet = new Moxycart\Snippet($modx);
 $out = $moxySnippet->execute('json_product_specs',$scriptProperties);
 return $out;
+*/

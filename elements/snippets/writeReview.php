@@ -22,6 +22,12 @@
     *
     * @package moxycart
 */
+$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+require_once $core_path .'vendor/autoload.php';
+$Snippet = new \Moxycart\Snippet($modx);
+$Snippet->log('writeReview',$scriptProperties);
+
+/*
 if (!$modx->getOption('moxycart.enable_reviews')) {
     $modx->log(modX::LOG_LEVEL_INFO, '[writeReview] moxycart.enable_reviews is set to 0; reviews are not enabled.');
     return;
@@ -88,3 +94,4 @@ $chunk->setCacheable(false);
 $output = $chunk->process($props, $tpl);
 
 return $output;
+*/
