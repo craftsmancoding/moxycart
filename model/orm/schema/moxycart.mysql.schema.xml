@@ -121,8 +121,8 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <!-- parent is the main product: children represent variants in all permutations -->
         <composite alias="Parent" class="Product" local="parent_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Variant" class="Product" local="product_id" foreign="parent_id" cardinality="many" owner="local" />
-		<composite alias="VariationType" class="ProductVariationType" local="product_id" foreign="product_id" cardinality="many" owner="local" />
-		<composite alias="Assets" class="ProductAssets" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+		<composite alias="OptionType" class="ProductOptionType" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+		<composite alias="Assets" class="ProductAsset" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Terms" class="ProductTerm" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Taxonomies" class="ProductTaxonomy" local="product_id" foreign="product_id" cardinality="many" owner="local" />
         <composite alias="Fields" class="ProductField" local="product_id" foreign="product_id" cardinality="many" owner="local" />
@@ -291,23 +291,23 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 	</object>
 
 
-	<!-- ! Variation Types -->
+	<!-- ! Option Types -->
 	<!-- eg. "Color", "Size", "Material" -->
-	<object class="VariationType" table="variation_types" extends="xPDOObject">
-		<field key="vtype_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+	<object class="OptionType" table="option_types" extends="xPDOObject">
+		<field key="otype_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
 		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" index="index" comment="unique lowercase slug"/>
 		<field key="name" dbtype="varchar" precision="32" phptype="string" null="false" />
 		<field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="true" />
 
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="vtype_id" length="" collation="A" null="false" />
+			<column key="otype_id" length="" collation="A" null="false" />
 		</index>
         <index alias="slug" name="slug" primary="false" unique="true" type="BTREE">
 			<column key="slug" length="" collation="A" null="false" />
 		</index>	
 		
-		<composite alias="Terms" class="VariationTerm" local="vtype_id" foreign="vtype_id" cardinality="many" owner="local" />
+		<composite alias="Terms" class="OptionTerm" local="otype_id" foreign="otype_id" cardinality="many" owner="local" />
 		
         <validation>
             <rule field="slug" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field slug must be at least 1 character."/>
@@ -317,11 +317,11 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 
 	</object>
 
-    <!-- ! Variation Terms -->
+    <!-- ! Option Terms -->
     <!-- e.g. "Small", "Medium", "Large" -->
-	<object class="VariationTerm" table="variation_terms" extends="xPDOObject">
-    	<field key="vterm_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-		<field key="vtype_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+	<object class="OptionTerm" table="option_terms" extends="xPDOObject">
+    	<field key="oterm_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+		<field key="otype_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" index="index" comment="unique lowercase slug"/>
 		<field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="sku_prefix" dbtype="varchar" precision="16" phptype="string" null="false" />
@@ -329,15 +329,15 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
 		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="vterm_id" length="" collation="A" null="false" />
+			<column key="oterm_id" length="" collation="A" null="false" />
 		</index>
-		<!-- the term must be unique within the given variation type -->
-        <index alias="vtypeslug" name="vtypeslug" primary="false" unique="true" type="BTREE">
-			<column key="vtype_id" length="" collation="A" null="false" />
+		<!-- the term must be unique within the given option type -->
+        <index alias="otypeslug" name="otypeslug" primary="false" unique="true" type="BTREE">
+			<column key="otype_id" length="" collation="A" null="false" />
 			<column key="slug" length="" collation="A" null="false" />
 		</index>
 		
-        <aggregate alias="Type" class="VariationType" local="vtype_id" foreign="vtype_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Type" class="OptionType" local="otype_id" foreign="otype_id" cardinality="one" owner="foreign" />
         
 		<validation>
             <rule field="slug" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field slug must be at least 1 character."/>
@@ -345,15 +345,15 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
             <rule field="sku_prefix" name="sku_prefix_chars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
             <rule field="sku_suffix" name="sku_suffix_chars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
             <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Name must be at least 1 character."/>
-            <!--rule field="vtype_id"
-                  name="validVariationTerm"
+            <!--rule field="otype_id"
+                  name="validOptionTerm"
                   type="xPDOValidationRule"
                   rule="xPDOForeignKeyConstraint"
-                  foreign="vtype_id"
-                  local="vtype_id"
+                  foreign="otype_id"
+                  local="otype_id"
                   alias="Type"
-                  class="VariationType"
-                  message="The variation type does not exist."
+                  class="OptionType"
+                  message="The option type does not exist."
              /-->
         </validation>
         
@@ -397,41 +397,35 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         </validation>        
 	</object>
 	
-	<!-- !Product Variation Types 
-	
+	<!-- !Product Option Types 
 	This declares that "this parent product varies by Color, Size, or Material etc.
-	
-	is_variant: if 1, this means that price, qty, etc. will change for the product 
-	is_variant: if 0, then the options here are just aesthetic "options", i.e. we use this to show 
-	           the appropriate dropdowns.
 	-->
-	<object class="ProductVariationType" table="product_variation_types" extends="xPDOSimpleObject">
+	<object class="ProductOptionType" table="product_option_types" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-		<field key="vtype_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		<field key="otype_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
         <field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
-		<field key="is_variant" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0" />
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" length="" collation="A" null="false" />
 		</index>
 
-        <index alias="productvaritiontype" name="productvaritiontype" primary="false" unique="true" type="BTREE">
+        <index alias="productoptiontype" name="productoptiontype" primary="false" unique="true" type="BTREE">
 			<column key="product_id" length="" collation="A" null="false" />        
-			<column key="vtype_id" length="" collation="A" null="false" />
+			<column key="otype_id" length="" collation="A" null="false" />
 		</index>
 		
-        <aggregate alias="Type" class="VariationType" local="vtype_id" foreign="vtype_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Type" class="OptionType" local="otype_id" foreign="otype_id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         
 		<validation>
-            <!--rule field="vtype_id"
-                  name="validVariationType"
+            <!--rule field="otype_id"
+                  name="validOptionType"
                   type="xPDOValidationRule"
                   rule="xPDOForeignKeyConstraint"
-                  foreign="vtype_id"
-                  local="vtype_id"
+                  foreign="otype_id"
+                  local="otype_id"
                   alias="Type"
-                  class="VariationType"
+                  class="OptionType"
                   message="The referenced variation type does not exist."
              />
             <rule field="product_id"

@@ -50,16 +50,105 @@ class Product extends BaseModel {
     //------------------------------------------------------------------------------
     //! Assets
     //------------------------------------------------------------------------------
+    /**
+     * Add assets to the current product.
+     * Exeptions are thrown if the product ids do not exist.
+     *
+     * @param array of asset_id's
+     */
     public function addAssets(array $array) {
-    
+        $this_product_id = $this->_verifyExisting();
+        foreach ($array as $id) {
+            $props = array(
+                'product_id'=> $this_product_id, 
+                'asset_id'=> $id
+            );
+            if (!$PA = $this->modx->getObject('ProductAsset', $props)) {
+                if (!$A = $this->modx->getObject('Asset', $id)) {
+                    throw new \Exception('Invalid asset ID '.$id);    
+                }
+                $PA = $this->modx->newObject('ProductAsset', $props);
+                $PA->save();
+            }
+        }
+        return true;
     }
 
+    /**
+     * Remove assets to the current product.
+     * Exeptions are thrown if the product ids do not exist.
+     *
+     * @param array of asset_id's
+     */
     public function removeAssets(array $array) {
-    
+        $this_product_id = $this->_verifyExisting();
+        
+        foreach ($array as $asset_id) {
+            $props = array(
+                'product_id'=> $this_product_id, 
+                'asset_id'=> $asset_id,
+            );
+            if ($PR = $this->modx->getObject('ProductAsset', $props)) {
+                $PR->remove();
+            }
+        }
+        return true;
     }
     
-    public function dictateAssets(array $array) {
-    
+    /**
+     * Dictate assets to the current product.
+     * This will remove all assets not in the given $array, add any new assets from the $array,
+     * it will order the assets based on the incoming $array order (seq will be set).
+     * Exeptions are thrown if the product ids do not exist.
+     *
+     * @param array $dictate'd asset_id's
+     */
+    public function dictateAssets(array $dictate) {
+        $this_product_id = $this->_verifyExisting();
+        
+        $props = array(
+            'product_id'=> $this_product_id, 
+            'type' => $type
+        );
+        
+        // Array of asset_id's that are already defined
+        $existing = array();
+        if($ExistingColl = $this->modx->getObject('ProductAsset', $props)) {
+            $existing[] = $ExistingColl->get('asset_id');   
+        }
+        
+        $to_remove = array_diff($existing,$dictate);
+        $to_add = array_diff($dictate,$existing);
+
+        $this->removeAssets($to_remove,$type);
+        $this->addAssets($to_add,$type);
+        $this->orderAssets($dictate);
+        
+        return true;
+    }
+    /**
+     * Adjust the seq into ascending order for the given asset_ids
+     *
+     * @param array $dictate'd asset_id's
+     * @param string $type name of the type of relation, used for grouping.          
+     */    
+    public function orderAssets(array $array) {
+        $this_product_id = $this->_verifyExisting();
+        
+        $seq = 0;
+        foreach ($array as $asset_id) {
+            $props = array(
+                'product_id'=> $this_product_id, 
+                'asset_id'=> $asset_id,
+            );
+            if ($PR = $this->modx->getObject('ProductAsset', $props)) {
+                $PR->set('seq',$seq);
+                $PR->save();
+                $seq++;
+            }
+        }
+        
+        return true;
     }
 
 
@@ -69,29 +158,29 @@ class Product extends BaseModel {
     /**
      * Add relations to the current product.
      * Exeptions are thrown if the product ids do not exist.
-     *
+     * Had trouble getting this to work with addMany.
      * @param array of related_id's
      * @param string $type name of the type of relation, used for grouping.
      */
     public function addRelations(array $array, $type='related') {
         $this_product_id = $this->_verifyExisting();
 
-        foreach ($array as $related_id) {
+        foreach ($array as $id) {
             $props = array(
                 'product_id'=> $this_product_id, 
-                'related_id'=> $related_id,
+                'related_id'=> $id,
                 'type' => $type
             );
             if (!$PR = $this->modx->getObject('ProductRelation', $props)) {
-                if (!$R = $this->modx->getObject('Product', $related_id)) {
-                    throw new \Exception('Invalid product ID '.$related_id);    
+                if (!$P = $this->modx->getObject('Product', $id)) {
+                    throw new \Exception('Invalid relation ID '.$id);    
                 }
                 $PR = $this->modx->newObject('ProductRelation', $props);
                 $PR->save();
             }
         }
-
-        return true;
+        
+        return true;    
     }
 
     /**
@@ -102,8 +191,9 @@ class Product extends BaseModel {
      * @param string $type name of the type of relation, used for grouping.     
      */
     public function removeRelations(array $array, $type='related') {
+
         $this_product_id = $this->_verifyExisting();
-        
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Removing relations: '.implode(',',$array). ' from product_id '.$this_product_id,'',__CLASS__,__FILE__,__LINE__);        
         foreach ($array as $related_id) {
             $props = array(
                 'product_id'=> $this_product_id, 
@@ -111,7 +201,12 @@ class Product extends BaseModel {
                 'type' => $type
             );
             if ($PR = $this->modx->getObject('ProductRelation', $props)) {
-                $PR->remove();
+                if (!$PR->remove()) {
+                    $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Error removing ProductRelation '.$PR->get('id'),'',__CLASS__,__FILE__,__LINE__);
+                }
+            }
+            else {
+                $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Could not find ProductRelation '.print_r($props,true),'',__CLASS__,__FILE__,__LINE__);
             }
         }
         return true;
@@ -127,6 +222,7 @@ class Product extends BaseModel {
      * @param string $type name of the type of relation, used for grouping.          
      */
     public function dictateRelations(array $dictate, $type='related') {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating relations: '.implode(',',$dictate),'',__CLASS__,__FILE__,__LINE__);
         $this_product_id = $this->_verifyExisting();
         
         $props = array(
@@ -139,12 +235,14 @@ class Product extends BaseModel {
         if($ExistingColl = $this->modx->getObject('ProductRelation', $props)) {
             $existing[] = $ExistingColl->get('related_id');   
         }
-        
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Existing relations for product_id '.$this_product_id.': '.implode(',',$existing),'',__CLASS__,__FILE__,__LINE__);        
         $to_remove = array_diff($existing,$dictate);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Product relations to be removed from product_id '.$this_product_id.': '.implode(',',$to_remove),'',__CLASS__,__FILE__,__LINE__);
         $to_add = array_diff($dictate,$existing);
-
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Product relations to be added to product_id '.$this_product_id.': '.implode(',',$to_add),'',__CLASS__,__FILE__,__LINE__);
         $this->removeRelations($to_remove,$type);
         $this->addRelations($to_add,$type);
+        $this->save();
         $this->orderRelations($dictate);
         
         return true;
@@ -436,28 +534,28 @@ class Product extends BaseModel {
     }
 
     //------------------------------------------------------------------------------
-    //! VariationTypes
+    //! OptionTypes
     //------------------------------------------------------------------------------
     /** 
      * Add variation-types to a product. This will update the "is_variant" attribute
      * on all matched rows.
      *
-     * @param array $array of vtype_ids
+     * @param array $array of otype_ids
      * @param boolean $is_variant triggers super special functionality (default: false)
      */
-    public function addVariationTypes(array $array, $is_variant=false) {
+    public function addOptionTypes(array $array, $is_variant=false) {
         $this_product_id = $this->_verifyExisting();
 
         foreach ($array as $id) {
             $props = array(
                 'product_id'=> $this_product_id, 
-                'vtype_id'=> $id
+                'otype_id'=> $id
             );
-            if (!$PVT = $this->modx->getObject('ProductVariationType', $props)) {
-                if (!$VT = $this->modx->getObject('VariationType', $id)) {
-                    throw new \Exception('Invalid Variation Type ID '.$id);    
+            if (!$PVT = $this->modx->getObject('ProductOptionType', $props)) {
+                if (!$VT = $this->modx->getObject('OptionType', $id)) {
+                    throw new \Exception('Invalid Option Type ID '.$id);    
                 }
-                $PVT = $this->modx->newObject('ProductVariationType', $props);
+                $PVT = $this->modx->newObject('ProductOptionType', $props);
             }
             $PVT->set('is_variant', $is_variant);
             $PVT->save();
@@ -468,17 +566,17 @@ class Product extends BaseModel {
 
     /** 
      * Remove variation-types from a product. We don't care here if the referenced ids are valid or not.
-     * @param array $array of vtype_ids
+     * @param array $array of otype_ids
      */
-    public function removeVariationTypes(array $array) {
+    public function removeOptionTypes(array $array) {
         $this_product_id = $this->_verifyExisting();
         
         foreach ($array as $id) {
             $props = array(
                 'product_id'=> $this_product_id, 
-                'vtype_id'=> $id
+                'otype_id'=> $id
             );
-            if ($PVT = $this->modx->getObject('ProductVariationType', $props)) {
+            if ($PVT = $this->modx->getObject('ProductOptionType', $props)) {
                 $PVT->remove();
             }
         }
@@ -487,14 +585,14 @@ class Product extends BaseModel {
 
     /**
      * Dictate variation-type ids for the current product.
-     * This will remove all fields not in the given $array, add any new vtype_id's from the $array.
+     * This will remove all fields not in the given $array, add any new otype_id's from the $array.
 
      * Exeptions are thrown if the product ids do not exist.
      *
-     * @param array $dictate'd vtype_id's
+     * @param array $dictate'd otype_id's
      * @param boolean $is_variant triggers super special functionality (default: false)     
      */
-    public function dictateVariationTypes(array $dictate, $is_variant=false) {
+    public function dictateOptionTypes(array $dictate, $is_variant=false) {
         $this_product_id = $this->_verifyExisting();
         
         $props = array(
@@ -503,15 +601,15 @@ class Product extends BaseModel {
         
         // Array of related_id's that are already defined
         $existing = array();
-        if($ExistingColl = $this->modx->getObject('ProductVariationType', $props)) {
-            $existing[] = $ExistingColl->get('vtype_id');   
+        if($ExistingColl = $this->modx->getObject('ProductOptionType', $props)) {
+            $existing[] = $ExistingColl->get('otype_id');   
         }
         
         $to_remove = array_diff($existing,$dictate);
         $to_add = array_diff($dictate,$existing);
 
-        $this->removeVariationTypes($to_remove,$type);
-        $this->addVariationTypes($to_add,$type);
+        $this->removeOptionTypes($to_remove,$type);
+        $this->addOptionTypes($to_add,$type);
         
         return true;
     

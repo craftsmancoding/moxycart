@@ -30,7 +30,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
     public static $Tax; // Taxonomies
     public static $Term;
     public static $Field;
-    public static $VType;
+    public static $OType;
     public static $VTerm;
         
     /**
@@ -286,52 +286,52 @@ class productTest extends \PHPUnit_Framework_TestCase {
             self::$Field['three']->save();
         }
         
-        //! VariationTypes
-        if (!self::$VType['color'] = self::$modx->getObject('VariationType', array('slug'=>'color'))) {
-            self::$VType['color'] = self::$modx->newObject('VariationType');
-            self::$VType['color']->fromArray(array(
+        //! OptionTypes
+        if (!self::$OType['color'] = self::$modx->getObject('OptionType', array('slug'=>'color'))) {
+            self::$OType['color'] = self::$modx->newObject('OptionType');
+            self::$OType['color']->fromArray(array(
                 'slug' => 'color',
                 'name' => 'Color',
                 'description' => 'Testing Variation Type',
                 'seq' => 0,
             ));
-            self::$VType['color']->save();
+            self::$OType['color']->save();
         }
-        if (!self::$VType['size'] = self::$modx->getObject('VariationType', array('slug'=>'size'))) {
-            self::$VType['size'] = self::$modx->newObject('VariationType');
-            self::$VType['size']->fromArray(array(
+        if (!self::$OType['size'] = self::$modx->getObject('OptionType', array('slug'=>'size'))) {
+            self::$OType['size'] = self::$modx->newObject('OptionType');
+            self::$OType['size']->fromArray(array(
                 'slug' => 'size',
                 'name' => 'Size',
                 'description' => 'Testing Variation Type',
                 'seq' => 0,
             ));
-            self::$VType['size']->save();
+            self::$OType['size']->save();
         }        
-        if (!self::$VType['material'] = self::$modx->getObject('VariationType', array('slug'=>'material'))) {
-            self::$VType['material'] = self::$modx->newObject('VariationType');
-            self::$VType['material']->fromArray(array(
+        if (!self::$OType['material'] = self::$modx->getObject('OptionType', array('slug'=>'material'))) {
+            self::$OType['material'] = self::$modx->newObject('OptionType');
+            self::$OType['material']->fromArray(array(
                 'slug' => 'material',
                 'name' => 'Material',
                 'description' => 'Testing Variation Type',
                 'seq' => 0,
             ));
-            self::$VType['material']->save();
+            self::$OType['material']->save();
         }
-        if (!self::$VType['printing'] = self::$modx->getObject('VariationType', array('slug'=>'printing'))) {
-            self::$VType['printing'] = self::$modx->newObject('VariationType');
-            self::$VType['printing']->fromArray(array(
+        if (!self::$OType['printing'] = self::$modx->getObject('OptionType', array('slug'=>'printing'))) {
+            self::$OType['printing'] = self::$modx->newObject('OptionType');
+            self::$OType['printing']->fromArray(array(
                 'slug' => 'printing',
                 'name' => 'Printing',
                 'description' => 'Testing Variation Type',
                 'seq' => 0,
             ));
-            self::$VType['printing']->save();
+            self::$OType['printing']->save();
         }        
-        //!VariationTerm : Colors
-        if (!self::$VTerm['white'] = self::$modx->getObject('VariationTerm', array('slug'=>'white'))) {
-            self::$VTerm['white'] = self::$modx->newObject('VariationTerm');
+        //!OptionTerm : Colors
+        if (!self::$VTerm['white'] = self::$modx->getObject('OptionTerm', array('slug'=>'white'))) {
+            self::$VTerm['white'] = self::$modx->newObject('OptionTerm');
             self::$VTerm['white']->fromArray(array(
-                'vtype_id' => self::$VType['color']->get('vtype_id'),
+                'otype_id' => self::$OType['color']->get('otype_id'),
                 'slug' => 'white',
                 'name' => 'White',
                 'sku_prefix' => '',
@@ -340,10 +340,10 @@ class productTest extends \PHPUnit_Framework_TestCase {
             ));
             self::$VTerm['white']->save();
         }
-        if (!self::$VTerm['black'] = self::$modx->getObject('VariationTerm', array('slug'=>'black'))) {
-            self::$VTerm['black'] = self::$modx->newObject('VariationTerm');
+        if (!self::$VTerm['black'] = self::$modx->getObject('OptionTerm', array('slug'=>'black'))) {
+            self::$VTerm['black'] = self::$modx->newObject('OptionTerm');
             self::$VTerm['black']->fromArray(array(
-                'vtype_id' => self::$VType['color']->get('vtype_id'),
+                'otype_id' => self::$OType['color']->get('otype_id'),
                 'slug' => 'black',
                 'name' => 'Black',
                 'sku_prefix' => '',
@@ -352,10 +352,10 @@ class productTest extends \PHPUnit_Framework_TestCase {
             ));
             self::$VTerm['black']->save();
         }
-        if (!self::$VTerm['red'] = self::$modx->getObject('VariationTerm', array('slug'=>'large'))) {
-            self::$VTerm['red'] = self::$modx->newObject('VariationTerm');
+        if (!self::$VTerm['red'] = self::$modx->getObject('OptionTerm', array('slug'=>'large'))) {
+            self::$VTerm['red'] = self::$modx->newObject('OptionTerm');
             self::$VTerm['red']->fromArray(array(
-                'vtype_id' => self::$VType['color']->get('vtype_id'),
+                'otype_id' => self::$OType['color']->get('otype_id'),
                 'slug' => 'red',
                 'name' => 'Red',
                 'sku_prefix' => '',
@@ -365,11 +365,11 @@ class productTest extends \PHPUnit_Framework_TestCase {
             self::$VTerm['red']->save();
         }
         
-        //!VariationTerm : Sizes
-        if (!self::$VTerm['small'] = self::$modx->getObject('VariationTerm', array('slug'=>'small'))) {
-            self::$VTerm['small'] = self::$modx->newObject('VariationTerm');
+        //!OptionTerm : Sizes
+        if (!self::$VTerm['small'] = self::$modx->getObject('OptionTerm', array('slug'=>'small'))) {
+            self::$VTerm['small'] = self::$modx->newObject('OptionTerm');
             self::$VTerm['small']->fromArray(array(
-                'vtype_id' => self::$VType['size']->get('vtype_id'),
+                'otype_id' => self::$OType['size']->get('otype_id'),
                 'slug' => 'small',
                 'name' => 'Small',
                 'sku_prefix' => '',
@@ -378,10 +378,10 @@ class productTest extends \PHPUnit_Framework_TestCase {
             ));
             self::$VTerm['small']->save();
         }
-        if (!self::$VTerm['med'] = self::$modx->getObject('VariationTerm', array('slug'=>'med'))) {
-            self::$VTerm['med'] = self::$modx->newObject('VariationTerm');
+        if (!self::$VTerm['med'] = self::$modx->getObject('OptionTerm', array('slug'=>'med'))) {
+            self::$VTerm['med'] = self::$modx->newObject('OptionTerm');
             self::$VTerm['med']->fromArray(array(
-                'vtype_id' => self::$VType['size']->get('vtype_id'),
+                'otype_id' => self::$OType['size']->get('otype_id'),
                 'slug' => 'med',
                 'name' => 'Medium',
                 'sku_prefix' => '',
@@ -390,10 +390,10 @@ class productTest extends \PHPUnit_Framework_TestCase {
             ));
             self::$VTerm['med']->save();
         }
-        if (!self::$VTerm['large'] = self::$modx->getObject('VariationTerm', array('slug'=>'large'))) {
-            self::$VTerm['large'] = self::$modx->newObject('VariationTerm');
+        if (!self::$VTerm['large'] = self::$modx->getObject('OptionTerm', array('slug'=>'large'))) {
+            self::$VTerm['large'] = self::$modx->newObject('OptionTerm');
             self::$VTerm['large']->fromArray(array(
-                'vtype_id' => self::$VType['size']->get('vtype_id'),
+                'otype_id' => self::$OType['size']->get('otype_id'),
                 'slug' => 'large',
                 'name' => 'Large',
                 'sku_prefix' => '',
@@ -403,11 +403,11 @@ class productTest extends \PHPUnit_Framework_TestCase {
             self::$VTerm['large']->save();
         }    
 
-        //!VariationTerm : Materials
-        if (!self::$VTerm['cotton'] = self::$modx->getObject('VariationTerm', array('slug'=>'cotton'))) {
-            self::$VTerm['cotton'] = self::$modx->newObject('VariationTerm');
+        //!OptionTerm : Materials
+        if (!self::$VTerm['cotton'] = self::$modx->getObject('OptionTerm', array('slug'=>'cotton'))) {
+            self::$VTerm['cotton'] = self::$modx->newObject('OptionTerm');
             self::$VTerm['cotton']->fromArray(array(
-                'vtype_id' => self::$VType['material']->get('vtype_id'),
+                'otype_id' => self::$OType['material']->get('otype_id'),
                 'slug' => 'cotton',
                 'name' => 'Cotton',
                 'sku_prefix' => '',
@@ -416,10 +416,10 @@ class productTest extends \PHPUnit_Framework_TestCase {
             ));
             self::$VTerm['cotton']->save();
         }
-        if (!self::$VTerm['silk'] = self::$modx->getObject('VariationTerm', array('slug'=>'silk'))) {
-            self::$VTerm['silk'] = self::$modx->newObject('VariationTerm');
+        if (!self::$VTerm['silk'] = self::$modx->getObject('OptionTerm', array('slug'=>'silk'))) {
+            self::$VTerm['silk'] = self::$modx->newObject('OptionTerm');
             self::$VTerm['silk']->fromArray(array(
-                'vtype_id' => self::$VType['material']->get('vtype_id'),
+                'otype_id' => self::$OType['material']->get('otype_id'),
                 'slug' => 'silk',
                 'name' => 'Silk',
                 'sku_prefix' => '',
@@ -428,10 +428,10 @@ class productTest extends \PHPUnit_Framework_TestCase {
             ));
             self::$VTerm['silk']->save();
         }
-        if (!self::$VTerm['wool'] = self::$modx->getObject('VariationTerm', array('slug'=>'wool'))) {
-            self::$VTerm['wool'] = self::$modx->newObject('VariationTerm');
+        if (!self::$VTerm['wool'] = self::$modx->getObject('OptionTerm', array('slug'=>'wool'))) {
+            self::$VTerm['wool'] = self::$modx->newObject('OptionTerm');
             self::$VTerm['wool']->fromArray(array(
-                'vtype_id' => self::$VType['material']->get('vtype_id'),
+                'otype_id' => self::$OType['material']->get('otype_id'),
                 'slug' => 'wool',
                 'name' => 'Wool',
                 'sku_prefix' => '',
@@ -441,11 +441,11 @@ class productTest extends \PHPUnit_Framework_TestCase {
             self::$VTerm['wool']->save();
         }
         
-        //!VariationTerm : Printing
-        if (!self::$VTerm['silkscreen'] = self::$modx->getObject('VariationTerm', array('slug'=>'silkscreen'))) {
-            self::$VTerm['silkscreen'] = self::$modx->newObject('VariationTerm');
+        //!OptionTerm : Printing
+        if (!self::$VTerm['silkscreen'] = self::$modx->getObject('OptionTerm', array('slug'=>'silkscreen'))) {
+            self::$VTerm['silkscreen'] = self::$modx->newObject('OptionTerm');
             self::$VTerm['silkscreen']->fromArray(array(
-                'vtype_id' => self::$VType['printing']->get('vtype_id'),
+                'otype_id' => self::$OType['printing']->get('otype_id'),
                 'slug' => 'silkscreen',
                 'name' => 'Silk Screen',
                 'sku_prefix' => '',
@@ -454,10 +454,10 @@ class productTest extends \PHPUnit_Framework_TestCase {
             ));
             self::$VTerm['silkscreen']->save();
         }
-        if (!self::$VTerm['embossed'] = self::$modx->getObject('VariationTerm', array('slug'=>'embossed'))) {
-            self::$VTerm['embossed'] = self::$modx->newObject('VariationTerm');
+        if (!self::$VTerm['embossed'] = self::$modx->getObject('OptionTerm', array('slug'=>'embossed'))) {
+            self::$VTerm['embossed'] = self::$modx->newObject('OptionTerm');
             self::$VTerm['embossed']->fromArray(array(
-                'vtype_id' => self::$VType['printing']->get('vtype_id'),
+                'otype_id' => self::$OType['printing']->get('otype_id'),
                 'slug' => 'embossed',
                 'name' => 'Embossed',
                 'sku_prefix' => '',
@@ -466,10 +466,10 @@ class productTest extends \PHPUnit_Framework_TestCase {
             ));
             self::$VTerm['embossed']->save();
         }
-        if (!self::$VTerm['gold'] = self::$modx->getObject('VariationTerm', array('slug'=>'gold'))) {
-            self::$VTerm['gold'] = self::$modx->newObject('VariationTerm');
+        if (!self::$VTerm['gold'] = self::$modx->getObject('OptionTerm', array('slug'=>'gold'))) {
+            self::$VTerm['gold'] = self::$modx->newObject('OptionTerm');
             self::$VTerm['gold']->fromArray(array(
-                'vtype_id' => self::$VType['printing']->get('vtype_id'),
+                'otype_id' => self::$OType['printing']->get('otype_id'),
                 'slug' => 'gold',
                 'name' => 'gold',
                 'sku_prefix' => '',
@@ -487,6 +487,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
      */
     public static function tearDownAfterClass() {
 
+/*
         self::$Store->remove();
         self::$Tax['A']->remove();
         self::$Tax['B']->remove();
@@ -498,10 +499,10 @@ class productTest extends \PHPUnit_Framework_TestCase {
         self::$Field['two']->remove();
         self::$Field['three']->remove();
         
-        self::$VType['color']->remove();
-        self::$VType['size']->remove();
-        self::$VType['material']->remove();
-        self::$VType['printing']->remove();
+        self::$OType['color']->remove();
+        self::$OType['size']->remove();
+        self::$OType['material']->remove();
+        self::$OType['printing']->remove();
 
         self::$VTerm['white']->remove();
         self::$VTerm['black']->remove();
@@ -516,6 +517,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         self::$VTerm['embossed']->remove();
         self::$VTerm['silkscreen']->remove();
         self::$VTerm['gold']->remove();
+*/
         
 
     }
@@ -576,25 +578,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $Product = self::$modx->newObject('Product');
     }
 
-    /**
-     * @expectedException        \Exception
-     * @expectedExceptionMessage Product ID not defined
-     */
-    public function testRelationExceptions() {
-        $P = new Product(self::$modx);
-        $P->addRelations(array(1,2,3));
-    }
-
-    /**
-     * When THIS product does not exist
-     * @expectedException        \Exception
-     * @expectedExceptionMessage Product does not exist
-     */
-    public function testRelationExceptions2() {
-        $P = new Product(self::$modx);
-        $P->set('product_id', -123); // invalid product_id
-        $P->addRelations(array(1,2,3));
-    }
 
     /**
      * When the RELATED products don't exist.
@@ -614,6 +597,8 @@ class productTest extends \PHPUnit_Framework_TestCase {
      *
      */
     public function testRelations() {
+        self::$modx->setLogTarget('ECHO');
+        self::$modx->setLogLevel(4);    
         $P = new Product(self::$modx);
         
         $One = $P->one(array(
@@ -635,15 +620,19 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse(empty($product_id));
         
         $related = array();
+        $related_copy = array();
         foreach ($Others as $o) {
             $related[] = $o->get('product_id');
+            $related_copy[] = $o->get('product_id');;
         }
-        
+
         $One->addRelations($related);
-        
+        $result = $One->save();
+        $this->assertTrue($result);
+
         // Verify they all exist:
         $Collection = self::$modx->getCollection('ProductRelation', array('product_id'=>$product_id));
-        $this->assertFalse(empty($Collection),'Product Relations were not added!');
+        $this->assertFalse(empty($Collection),'Product Relations were not added to product '.$product_id.'!');
         $cnt = self::$modx->getCount('ProductRelation', array('product_id'=>$product_id));
         $this->assertEquals(count($related), $cnt);
         foreach ($related as $related_id) {
@@ -654,14 +643,19 @@ class productTest extends \PHPUnit_Framework_TestCase {
         // Add duplicates, verify that nothing new was created.
         $One->addRelations($related);
         $cnt2 = self::$modx->getCount('ProductRelation', array('product_id'=>$product_id));
-        $this->assertEquals($cnt, $cnt2);
+        $this->assertEquals(count($related), $cnt2);
         
         // Remove all but one
         $odd_man_out = array_pop($related);
         $One->removeRelations($related);
         $cnt3 = self::$modx->getCount('ProductRelation', array('product_id'=>$One->get('product_id')));
         $this->assertEquals($cnt3, 1); // should be only one left
-        
+
+        // Remove all
+        $One->removeRelations($related_copy);
+        $cnt3 = self::$modx->getCount('ProductRelation', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt3, 0); // Remove all
+
         // Now, dictate the relations: this should add and remove
         $One->dictateRelations($related);
         $cnt4 = self::$modx->getCount('ProductRelation', array('product_id'=>$One->get('product_id'),'type'=>'related'));
@@ -859,15 +853,15 @@ class productTest extends \PHPUnit_Framework_TestCase {
      * 
      *
      */
-    public function testVariationTypes() {
+    public function testOptionTypes() {
         $P = new Product(self::$modx);
         
         $One = $P->one(array(
             'store_id' => self::$Store->get('id'),
             'sku' => 'SOUTHPARK-TSHIRT'));
             
-        // Prep: Remove all VariationType Associations for this product
-        if($Collection = self::$modx->getCollection('ProductVariationType', array('product_id'=>$One->get('product_id')))) {
+        // Prep: Remove all OptionType Associations for this product
+        if($Collection = self::$modx->getCollection('ProductOptionType', array('product_id'=>$One->get('product_id')))) {
             foreach ($Collection as $C) {
                 $C->remove();
             }
@@ -875,39 +869,39 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $product_id = $One->get('product_id');
         $this->assertFalse(empty($product_id));
         
-        $vtypes = array();
-        $vtypes[] = self::$VType['color']->get('vtype_id');
-        $vtypes[] = self::$VType['size']->get('vtype_id');
-        $vtypes[] = self::$VType['material']->get('vtype_id');
-        $vtypes[] = self::$VType['printing']->get('vtype_id');
+        $otypes = array();
+        $otypes[] = self::$OType['color']->get('otype_id');
+        $otypes[] = self::$OType['size']->get('otype_id');
+        $otypes[] = self::$OType['material']->get('otype_id');
+        $otypes[] = self::$OType['printing']->get('otype_id');
         
-        $One->addVariationTypes($vtypes);
+        $One->addOptionTypes($otypes);
         
         // Verify they all exist:
-        $Collection = self::$modx->getCollection('ProductVariationType', array('product_id'=>$product_id));
-        $this->assertFalse(empty($Collection),'Product VariationTypes were not added!');
-        $cnt = self::$modx->getCount('ProductVariationType', array('product_id'=>$product_id));
-        $this->assertEquals(count($vtypes), $cnt);
-        foreach ($vtypes as $id) {
-            $PT = self::$modx->getObject('ProductVariationType', array('product_id'=>$product_id,'vtype_id'=>$id));
+        $Collection = self::$modx->getCollection('ProductOptionType', array('product_id'=>$product_id));
+        $this->assertFalse(empty($Collection),'Product OptionTypes were not added!');
+        $cnt = self::$modx->getCount('ProductOptionType', array('product_id'=>$product_id));
+        $this->assertEquals(count($otypes), $cnt);
+        foreach ($otypes as $id) {
+            $PT = self::$modx->getObject('ProductOptionType', array('product_id'=>$product_id,'otype_id'=>$id));
             $this->assertFalse(empty($PT));
         }
         
         // Add duplicates, verify that nothing new was created.
-        $One->addVariationTypes($vtypes);
-        $cnt2 = self::$modx->getCount('ProductVariationType', array('product_id'=>$product_id));
+        $One->addOptionTypes($otypes);
+        $cnt2 = self::$modx->getCount('ProductOptionType', array('product_id'=>$product_id));
         $this->assertEquals($cnt, $cnt2);
         
         // Remove all but one
-        $odd_man_out = array_pop($vtypes);
-        $One->removeVariationTypes($vtypes);
-        $cnt3 = self::$modx->getCount('ProductVariationType', array('product_id'=>$One->get('product_id')));
+        $odd_man_out = array_pop($otypes);
+        $One->removeOptionTypes($otypes);
+        $cnt3 = self::$modx->getCount('ProductOptionType', array('product_id'=>$One->get('product_id')));
         $this->assertEquals($cnt3, 1); // should be only one left
         
         // Now, dictate the fields: this should add and remove
-        $One->dictateVariationTypes($vtypes);
-        $cnt4 = self::$modx->getCount('ProductVariationType', array('product_id'=>$One->get('product_id')));
-        $this->assertEquals($cnt4, count($vtypes)); 
+        $One->dictateOptionTypes($otypes);
+        $cnt4 = self::$modx->getCount('ProductOptionType', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt4, count($otypes)); 
     } 
 
 

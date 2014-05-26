@@ -1,13 +1,13 @@
 <?php
 /**
- * VariationType
+ * OptionType
  *
  * E.g. Color, Size, Material -- any container for VariationTerms
  */
 namespace Moxycart;
-class VariationType extends BaseModel {
+class OptionType extends BaseModel {
 
-    public $xclass = 'VariationType';
+    public $xclass = 'OptionType';
     public $default_sort_col = 'name';
 
 }

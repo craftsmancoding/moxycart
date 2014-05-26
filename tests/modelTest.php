@@ -238,5 +238,85 @@ class modelTest extends \PHPUnit_Framework_TestCase {
     }
 
     
+    public function testProductRelations() {
+        self::$modx->setLogTarget('ECHO');
+        self::$modx->setLogLevel(2);
+
+        $P = self::$modx->newObject('Product', array('name'=>'Dick','alias'=>'dick'));
+        $PR = self::$modx->newObject('ProductRelation', array('product_id'=>'', 'related_id'=>2,'type'=>'related'));
+
+        $result = $P->addMany($PR);
+        
+        if (!$result) {
+            print 'problem adding many.'."\n";
+            $validator = $P->getValidator();
+            if ($validator->hasMessages()) {
+                foreach ($validator->getMessages() as $message) {
+                    print $message['field'].': '. $message['message']."\n";
+                }
+            }
+
+        }
+        $this->assertTrue($result);
+        $result = $P->save();
+        if (!$result) {
+            print "Problem saving prod.\n";
+            $validator = $P->getValidator();
+            if ($validator->hasMessages()) {
+                foreach ($validator->getMessages() as $message) {
+                    print $message['field'].': '. $message['message']."\n";
+                }
+            }
+
+        }
+        $this->assertTrue($result);
+        $product_id = $P->get('product_id');
+        $this->assertFalse(empty($product_id));
+        $Collection = self::$modx->getCollection('ProductRelation', array('product_id'=>$product_id));
+        $this->assertFalse(empty($Collection),'Product Relations were not added to product '.$product_id.'!');
+        
+        $P->remove();
+    }
+
+    public function testProductFields() {
+        self::$modx->setLogTarget('ECHO');
+        self::$modx->setLogLevel(2);
+
+        $PF = array();
+        $P = self::$modx->newObject('Product', array('name'=>'Dick','alias'=>'dick'));
+        $PF = self::$modx->newObject('ProductField', array('field_id'=>self::$Field['one']->get('field_id')));
+        $result = $P->addMany($PF);
+        
+        if (!$result) {
+            print 'problem adding many.'."\n";
+            $validator = $P->getValidator();
+            if ($validator->hasMessages()) {
+                foreach ($validator->getMessages() as $message) {
+                    print $message['field'].': '. $message['message']."\n";
+                }
+            }
+
+        }
+        $this->assertTrue($result);
+
+        $result = $P->save();
+        if (!$result) {
+            print "Problem saving prod.\n";
+            $validator = $P->getValidator();
+            if ($validator->hasMessages()) {
+                foreach ($validator->getMessages() as $message) {
+                    print $message['field'].': '. $message['message']."\n";
+                }
+            }
+
+        }
+        
+        $this->assertTrue($result);
+        
+        $result = $P->remove();
+    
+    }
+
+    
     
 }

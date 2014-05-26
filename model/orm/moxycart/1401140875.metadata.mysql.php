@@ -11,8 +11,8 @@ $xpdo_meta_map = array (
   array (
     0 => 'Product',
     1 => 'Field',
-    2 => 'OptionType',
-    3 => 'OptionTerm',
+    2 => 'VariationType',
+    3 => 'VariationTerm',
     4 => 'Asset',
   ),
   'xPDOSimpleObject' => 
@@ -20,7 +20,7 @@ $xpdo_meta_map = array (
     0 => 'ProductField',
     1 => 'Review',
     2 => 'ProductRelation',
-    3 => 'ProductOptionType',
+    3 => 'ProductVariationType',
     4 => 'ProductTaxonomy',
     5 => 'ProductTerm',
     6 => 'ProductAsset',

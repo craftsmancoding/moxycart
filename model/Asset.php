@@ -69,7 +69,7 @@ class Asset extends BaseModel {
     }
     
     /**
-     * Given a filename, this checks whether the asset already exists by its 
+     * Given a filename, this checks whether the asset already exists by
      * examining its md5 signature. 
      *
      * @string $src filename
@@ -259,6 +259,20 @@ class Asset extends BaseModel {
     }
     
     /**
+     * Determine whether or not the asset is hosted remotely by examining its url
+     * @param string $url
+     * @return boolean
+     */
+    public function isRemote($url) {
+        if(!filter_var($url, FILTER_VALIDATE_URL)) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    
+    /**
      * upload a file to a target directory
      *
      * @param string $tmp_name (from $_FILES['xyz']['tmp_name'])
@@ -278,7 +292,7 @@ class Asset extends BaseModel {
     }
     
     /** 
-     * Override so we can clean out the asset files
+     * Override parent so we can clean out the asset files
      *
      */
     public function remove($prefix=null) {
@@ -303,6 +317,29 @@ class Asset extends BaseModel {
         
         return parent::remove();
     }  
+
+    /** 
+     * Recursively remove a non-empty directory
+     *
+     */
+    public static function rrmdir($dir) { 
+        if (is_dir($dir)) { 
+            $dir = rtrim($dir,'/');
+            $objects = scandir($dir); 
+            foreach ($objects as $object) { 
+                if ($object != '.' && $object != '..') { 
+                    if (filetype($dir.'/'.$object) == 'dir') {
+                        self::rrmdir($dir.'/'.$object); 
+                    }
+                    else {
+                        unlink($dir.'/'.$object); 
+                    }
+                } 
+            } 
+            reset($objects); 
+            rmdir($dir); 
+        } 
+    }
     
     /**
      * Save the asset to the defined storage directory. This means that various sub-directories
@@ -333,29 +370,6 @@ class Asset extends BaseModel {
         return $this->save();
     }
       
-      
-    /** 
-     * Recursively remove a non-empty directory
-     *
-     */
-    public static function rrmdir($dir) { 
-        if (is_dir($dir)) { 
-            $dir = rtrim($dir,'/');
-            $objects = scandir($dir); 
-            foreach ($objects as $object) { 
-                if ($object != '.' && $object != '..') { 
-                    if (filetype($dir.'/'.$object) == 'dir') {
-                        self::rrmdir($dir.'/'.$object); 
-                    }
-                    else {
-                        unlink($dir.'/'.$object); 
-                    }
-                } 
-            } 
-            reset($objects); 
-            rmdir($dir); 
-        } 
-    }
     
     /**
      * Override here to make the url and path relative to the defined moxycart.upload_dir

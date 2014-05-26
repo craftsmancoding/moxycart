@@ -271,8 +271,7 @@ class BaseModel {
             $criteria->where($args);
         }
         
-        if ($limit) {
-            $criteria->limit($limit, $offset); 
+        if ($sort) {
             $criteria->sortby($sort,$dir);
         }
     
