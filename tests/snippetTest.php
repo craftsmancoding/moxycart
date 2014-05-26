@@ -247,5 +247,22 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(normalize_string($expected), normalize_string($actual));
         
     }
+
+    /**
+     * Seems that you have to force the Snippet to be cached before this will work.
+     */
+    public function testSecure() {
+        global $modx;
+        $modx = self::$modx;
+        
+        $props = array();
+        $props['options'] = 'sample-api-key';
+        $props['name'] = 'price';
+        $props['input'] = '29.99';
+        $actual = $modx->runSnippet('secure', $props);
+        $expected = '||9490fad91f94bf559168219c2efdeee5ddda247edd8fb3bc483fb9a36542efb6';
+        $this->assertEquals(normalize_string($expected), normalize_string($actual));
+        
+    }
     
 }

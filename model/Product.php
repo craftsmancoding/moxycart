@@ -22,7 +22,7 @@ class Product extends BaseModel {
      */
     private function _verifyExisting() {
     
-        if (!empty($this->product_id)) {
+        if (!$this->modelObj->isNew() && !empty($this->product_id)) {
             return $this->product_id;
         }
 
