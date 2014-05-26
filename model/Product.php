@@ -517,6 +517,48 @@ class Product extends BaseModel {
     
     }
     
+    //------------------------------------------------------------------------------
+    /**
+     * Determine whether 2 associative arrays contain the same elements, regardless of
+     * order.
+     *
+     * @param array $h1
+     * @param array $h2
+     * @return array of differences
+     */
+    public function hashDelta($h1,$h2) {
+        $x = array_diff_assoc($h1,$h2);
+        $y = array_diff_assoc($h2,$h1);
+        return array_merge($x,$y);
+        
+    }
+    
+    /**
+     * Inherit values from the parent store and set them onto the $this->modelObj object
+     * @param integer $store_id
+     */
+    public function inheritFromStore($store_id) {
+
+        // Set defaults from the parent Store
+        if ($Store = $this->modx->getObject('Store', $store_id)) {
+            if ($properties = $Store->get('properties')) {
+                $this->template_id = (isset($properties['moxycart']['product_template'])) ? $properties['moxycart']['product_template'] : $this->modx->getOption('default_template');
+                $this->type = (isset($properties['moxycart']['product_type'])) ? $properties['moxycart']['product_type'] : 'regular';
+                // This is not persisted...wtf
+                $this->sort_order = (isset($properties['moxycart']['sort_order'])) ? $properties['moxycart']['sort_order'] : 'name';
+                $this->qty_alert = (isset($properties['moxycart']['qty_alert'])) ? $properties['moxycart']['qty_alert'] : 0;
+                $this->track_inventory = (isset($properties['moxycart']['track_inventory'])) ? $properties['moxycart']['track_inventory'] : 0;
+                // addOne
+                //$this->fields = (isset($properties['moxycart']['specs'])) ? $properties['moxycart']['specs'] : array();
+                //$this->taxonomies = (isset($properties['moxycart']['taxonomies'])) ? $properties['moxycart']['taxonomies'] : array();
+            }
+        }
+        else {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'store_id does not exist',__CLASS__);
+        } 
+        
+    }
+    
     /**
      * Override here for special stuff re variations
      */

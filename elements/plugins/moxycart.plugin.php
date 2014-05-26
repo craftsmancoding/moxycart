@@ -2,7 +2,7 @@
 /**
  * @name Moxycart
  * @description Multi-purpose plugin for Moxycart handling URL routing and manager customizations
- * @PluginEvents OnManagerPageInit,OnPageNotFound,OnBeforeCacheUpdate,OnInitCulture
+ * @PluginEvents OnManagerPageInit,OnPageNotFound,OnBeforeCacheUpdate
  *
  */
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
@@ -43,7 +43,8 @@ switch ($modx->event->name) {
         if ($refresh || empty($product_attributes)) {
             $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin] Refresh requested or no cached data detected.');
             
-            $Product = $modx->getObjectGraph('Product','{"Specs":{"Spec":{}}}',array('uri'=>$uri));
+            // Specs are no more!  We now use Fields
+            //$Product = $modx->getObjectGraph('Product','{"Specs":{"Spec":{}}}',array('uri'=>$uri));
 
             if (!$Product) {
                 $modx->log(modX::LOG_LEVEL_INFO,'[moxycart plugin] No Product found for uri '.$uri);
@@ -52,9 +53,9 @@ switch ($modx->event->name) {
 
             $product_attributes = $Product->toArray();
 
-            foreach ($Product->Specs as $S) {
-                $product_attributes[$S->Spec->get('identifier')] = $S->get('value');
-            }
+            //foreach ($Product->Specs as $S) {
+            //    $product_attributes[$S->Spec->get('identifier')] = $S->get('value');
+            //}
           
             
             if (!$Template = $modx->getObject('modTemplate', $Product->get('template_id'))) {
@@ -68,7 +69,7 @@ switch ($modx->event->name) {
             
         }
         // We spin up a resource with the minimal attributes
-        $modx->setPlaceholders($product_attributes,$modx->getOption('moxycart.placeholder_prefix'));
+        $modx->setPlaceholders($product_attributes);
         $modx->resource = $modx->newObject('modResource');
         $modx->resource->set('contentType', 'text/html');
         $modx->resource->set('template' , $product_attributes['template_id']);
@@ -87,13 +88,5 @@ switch ($modx->event->name) {
     //------------------------------------------------------------------------------
     case 'OnBeforeCacheUpdate':
         $modx->cacheManager->clean(array(xPDO::OPT_CACHE_KEY => $cache_dir));
-        break;
-    //------------------------------------------------------------------------------
-    //! OnInitCulture
-    // This is early, but not early enough for everything, so some CMPs etc. must
-    // still include the autoload.php manually
-    //------------------------------------------------------------------------------
-    case 'OnInitCulture':
-        include_once $core_path .'vendor/autoload.php';
         break;
 }

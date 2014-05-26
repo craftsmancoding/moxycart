@@ -65,95 +65,100 @@ class productTest extends \PHPUnit_Framework_TestCase {
         }
         
         // Rustle up some products
-        $Product = self::$modx->newObject('Product');
-        $Product->fromArray(array(
-            'store_id' => self::$Store->get('id'),
-            'name' => 'Southpark Tshirt',
-            'title' => 'Southpark Tshirt',
-            'description' => '',
-            'content' => '<p>Just imagine this awesome product.</p>',
-            'type' => 'regular',
-            'sku' => 'SOUTHPARK-TSHIRT',
-            'sku_vendor' => '',
-            'alias' => 'south-park-tshirt',
-            'uri' => self::$Store->get('uri').'south-park-tshirt',
-            'track_inventory' => 0,
-            'qty_inventory' => 10,
-            'qty_alert' => 3,
-            'qty_min' => 1,
-            'qty_max' => 0,
-            'qty_backorder_max' => 5,
-            'price' => '19.00',
-            'price_strike_thru' => '25.00',
-            'price_sale' => '',
-            'sale_start' => '',
-            'sale_end' => '',
-            'category' => 'Default',
-            'is_active' => 1,
-            'in_menu' => 1,
-            'currency_id' => 109,
-        ));
-        $Product->save();
+        if (!$Product = self::$modx->getObject('Product', array('alias'=> 'south-park-tshirt', 'store_id'=> self::$Store->get('id')))) {
+            $Product = self::$modx->newObject('Product');
+            $Product->fromArray(array(
+                'store_id' => self::$Store->get('id'),
+                'name' => 'Southpark Tshirt',
+                'title' => 'Southpark Tshirt',
+                'description' => '',
+                'content' => '<p>Just imagine this awesome product.</p>',
+                'type' => 'regular',
+                'sku' => 'SOUTHPARK-TSHIRT',
+                'sku_vendor' => '',
+                'alias' => 'south-park-tshirt',
+                'uri' => self::$Store->get('uri').'south-park-tshirt',
+                'track_inventory' => 0,
+                'qty_inventory' => 10,
+                'qty_alert' => 3,
+                'qty_min' => 1,
+                'qty_max' => 0,
+                'qty_backorder_max' => 5,
+                'price' => '19.00',
+                'price_strike_thru' => '25.00',
+                'price_sale' => '',
+                'sale_start' => '',
+                'sale_end' => '',
+                'category' => 'Default',
+                'is_active' => 1,
+                'in_menu' => 1,
+            ));
+            $Product->save();
+        }
 
-        $Product = self::$modx->newObject('Product');
-        $Product->fromArray(array(
-            'store_id' => self::$Store->get('id'),
-            'name' => 'Family Guy Tshirt',
-            'title' => 'Family Guy Tshirt',
-            'description' => '',
-            'content' => '<p>Just imagine this awesome product.</p>',
-            'type' => 'regular',
-            'sku' => 'FAMILYGUY-TSHIRT',
-            'sku_vendor' => '',
-            'alias' => 'family-guy-tshirt',
-            'uri' => self::$Store->get('uri').'family-guy-tshirt',
-            'track_inventory' => 0,
-            'qty_inventory' => 10,
-            'qty_alert' => 3,
-            'qty_min' => 1,
-            'qty_max' => 0,
-            'qty_backorder_max' => 5,
-            'price' => '19.00',
-            'price_strike_thru' => '25.00',
-            'price_sale' => '',
-            'sale_start' => '',
-            'sale_end' => '',
-            'category' => 'Default',
-            'is_active' => 1,
-            'in_menu' => 1,
-            'currency_id' => 109,
-        ));
-        $Product->save();
+        if (!$Product = self::$modx->getObject('Product', array('alias'=> 'family-guy-tshirt', 'store_id'=> self::$Store->get('id')))) {        
+            $Product = self::$modx->newObject('Product');
+            $Product->fromArray(array(
+                'store_id' => self::$Store->get('id'),
+                'name' => 'Family Guy Tshirt',
+                'title' => 'Family Guy Tshirt',
+                'description' => '',
+                'content' => '<p>Just imagine this awesome product.</p>',
+                'type' => 'regular',
+                'sku' => 'FAMILYGUY-TSHIRT',
+                'sku_vendor' => '',
+                'alias' => 'family-guy-tshirt',
+                'uri' => self::$Store->get('uri').'family-guy-tshirt',
+                'track_inventory' => 0,
+                'qty_inventory' => 10,
+                'qty_alert' => 3,
+                'qty_min' => 1,
+                'qty_max' => 0,
+                'qty_backorder_max' => 5,
+                'price' => '20.00',
+                'price_strike_thru' => '25.00',
+                'price_sale' => '',
+                'sale_start' => '',
+                'sale_end' => '',
+                'category' => 'Default',
+                'is_active' => 1,
+                'in_menu' => 1,
+            ));
+            $Product->save();
+        }
+        
+        if (!$Product = self::$modx->getObject('Product', array('alias'=> 'simpsons-tshirt', 'store_id'=> self::$Store->get('id')))) {        
+            $Product = self::$modx->newObject('Product');
+            $Product->fromArray(array(
+                'store_id' => self::$Store->get('id'),
+                'name' => 'Simpsons Tshirt',
+                'title' => 'Simpsons Tshirt',
+                'description' => '',
+                'content' => '<p>Just imagine this awesome product.</p>',
+                'type' => 'regular',
+                'sku' => 'SIMPSONS-TSHIRT',
+                'sku_vendor' => '',
+                'alias' => 'simpsons-tshirt',
+                'uri' => self::$Store->get('uri').'simpsons-tshirt',
+                'track_inventory' => 0,
+                'qty_inventory' => 10,
+                'qty_alert' => 3,
+                'qty_min' => 1,
+                'qty_max' => 0,
+                'qty_backorder_max' => 5,
+                'price' => '21.00',
+                'price_strike_thru' => '25.00',
+                'price_sale' => '',
+                'sale_start' => '',
+                'sale_end' => '',
+                'category' => 'Default',
+                'is_active' => 1,
+                'in_menu' => 1,
+                
+            ));
+            $Product->save();
+        }
 
-        $Product = self::$modx->newObject('Product');
-        $Product->fromArray(array(
-            'store_id' => self::$Store->get('id'),
-            'name' => 'Simpsons Tshirt',
-            'title' => 'Simpsons Tshirt',
-            'description' => '',
-            'content' => '<p>Just imagine this awesome product.</p>',
-            'type' => 'regular',
-            'sku' => 'SIMPSONS-TSHIRT',
-            'sku_vendor' => '',
-            'alias' => 'simpsons-tshirt',
-            'uri' => self::$Store->get('uri').'simpsons-tshirt',
-            'track_inventory' => 0,
-            'qty_inventory' => 10,
-            'qty_alert' => 3,
-            'qty_min' => 1,
-            'qty_max' => 0,
-            'qty_backorder_max' => 5,
-            'price' => '19.00',
-            'price_strike_thru' => '25.00',
-            'price_sale' => '',
-            'sale_start' => '',
-            'sale_end' => '',
-            'category' => 'Default',
-            'is_active' => 1,
-            'in_menu' => 1,
-            'currency_id' => 109,
-        ));
-        $Product->save();
 
         //! Taxonomies
         // Create a few Taxonomies, we stick 'em into slots A, B, and C for simplicity
@@ -290,7 +295,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'description' => 'Testing Variation Type',
                 'seq' => 0,
             ));
-            self::$VType['size']->save();
+            self::$VType['color']->save();
         }
         if (!self::$VType['size'] = self::$modx->getObject('VariationType', array('slug'=>'size'))) {
             self::$VType['size'] = self::$modx->newObject('VariationType');
@@ -482,7 +487,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
      */
     public static function tearDownAfterClass() {
 
-/*
         self::$Store->remove();
         self::$Tax['A']->remove();
         self::$Tax['B']->remove();
@@ -504,7 +508,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         self::$VTerm['red']->remove();
         
         self::$VTerm['small']->remove();
-        self::$VTerm['medium']->remove();
+        self::$VTerm['med']->remove();
         self::$VTerm['large']->remove();
         self::$VTerm['cotton']->remove();
         self::$VTerm['silk']->remove();
@@ -513,7 +517,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
         self::$VTerm['silkscreen']->remove();
         self::$VTerm['gold']->remove();
         
-*/
 
     }
     
@@ -522,6 +525,24 @@ class productTest extends \PHPUnit_Framework_TestCase {
      * The calculated URI of a new Product should read the parent's URI.
      */
     public function testAutoUriGeneration() {
+            $Product = self::$modx->newObject('Product');
+            $Product->fromArray(array(
+                'store_id' => self::$Store->get('id'),
+                'name' => 'Horkheimer',
+                'content' => '<p>Hello fellow stargazers!</p>',
+                'sku' => 'HORKHEIMER-TSHRT',
+                'alias' => 'horkheimer-tshirt',
+//                'uri' => self::$Store->get('uri').'', // Omitted Intentionally for the test
+            ));
+            
+            $Product->save();
+            
+            $expected = self::$Store->get('uri').$Product->get('alias');
+            $actual = $Product->get('uri');
+            $this->assertEquals($expected,$actual);
+            
+            // Cleanup
+            $Product->remove();
     
     }
     
@@ -530,7 +551,21 @@ class productTest extends \PHPUnit_Framework_TestCase {
      * URI's of all the children products?
      */
     public function testParentUriChange() {
-    
+        $slug = substr(md5(uniqid()), 0, 8);
+        $old = self::$Store->get('alias');
+        self::$Store->set('alias', $slug);
+        self::$Store->save();
+
+        // Verify that the products updated.
+        $Products = self::$modx->getCollection('Product', array('store_id'=>self::$Store->get('id')));
+        $this->assertFalse(empty($Products));
+        foreach ($Products as $P) {
+            $this->assertTrue(startsWith($P->get('uri'),$slug));
+        }
+
+        // Return to normal
+        self::$Store->set('alias', $old);
+        self::$Store->save();
     }
     
     /**
@@ -538,7 +573,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
      *
      */
     public function testDefaultValues() {
-    
+        $Product = self::$modx->newObject('Product');
     }
 
     /**
@@ -564,7 +599,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
     /**
      * When the RELATED products don't exist.
      * @expectedException        \Exception
-     * @expectedExceptionMessage Invalid product ID
+     * @expectedExceptionMessage Product ID not defined
      */
     public function testRelationExceptions3() {
         $P = new Product(self::$modx);
@@ -820,4 +855,70 @@ class productTest extends \PHPUnit_Framework_TestCase {
     }    
 
 
+    /**
+     * 
+     *
+     */
+    public function testVariationTypes() {
+        $P = new Product(self::$modx);
+        
+        $One = $P->one(array(
+            'store_id' => self::$Store->get('id'),
+            'sku' => 'SOUTHPARK-TSHIRT'));
+            
+        // Prep: Remove all VariationType Associations for this product
+        if($Collection = self::$modx->getCollection('ProductVariationType', array('product_id'=>$One->get('product_id')))) {
+            foreach ($Collection as $C) {
+                $C->remove();
+            }
+        }
+        $product_id = $One->get('product_id');
+        $this->assertFalse(empty($product_id));
+        
+        $vtypes = array();
+        $vtypes[] = self::$VType['color']->get('vtype_id');
+        $vtypes[] = self::$VType['size']->get('vtype_id');
+        $vtypes[] = self::$VType['material']->get('vtype_id');
+        $vtypes[] = self::$VType['printing']->get('vtype_id');
+        
+        $One->addVariationTypes($vtypes);
+        
+        // Verify they all exist:
+        $Collection = self::$modx->getCollection('ProductVariationType', array('product_id'=>$product_id));
+        $this->assertFalse(empty($Collection),'Product VariationTypes were not added!');
+        $cnt = self::$modx->getCount('ProductVariationType', array('product_id'=>$product_id));
+        $this->assertEquals(count($vtypes), $cnt);
+        foreach ($vtypes as $id) {
+            $PT = self::$modx->getObject('ProductVariationType', array('product_id'=>$product_id,'vtype_id'=>$id));
+            $this->assertFalse(empty($PT));
+        }
+        
+        // Add duplicates, verify that nothing new was created.
+        $One->addVariationTypes($vtypes);
+        $cnt2 = self::$modx->getCount('ProductVariationType', array('product_id'=>$product_id));
+        $this->assertEquals($cnt, $cnt2);
+        
+        // Remove all but one
+        $odd_man_out = array_pop($vtypes);
+        $One->removeVariationTypes($vtypes);
+        $cnt3 = self::$modx->getCount('ProductVariationType', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt3, 1); // should be only one left
+        
+        // Now, dictate the fields: this should add and remove
+        $One->dictateVariationTypes($vtypes);
+        $cnt4 = self::$modx->getCount('ProductVariationType', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt4, count($vtypes)); 
+    } 
+
+
+    /** 
+     * Compare 2 hashes
+     */
+    public function testHashDeltas() {
+        $P = new Product(self::$modx);
+        $h1 = array('x' => 'xray', 'y'=>'yellow');
+        $h2 = array('y'=>'yellow','x' =>'xray','z'=>'zebra');
+        $x = $P->hashDelta($h1,$h2);
+        $this->assertEquals(array('z'=>'zebra'), $x); 
+    }
 }

@@ -46,9 +46,9 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="asset_id" dbtype="int" precision="11" phptype="integer" null="true" comment="Primary thumbnail image"/>
         <field key="name" dbtype="varchar" precision="60" phptype="string" null="false" />
         <field key="title" dbtype="varchar" precision="60" phptype="string" null="false" comment="For the webpage"/>
-        <field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
+        <field key="description" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />
-        <field key="type" dbtype="enum" precision="'regular','subscription','download'" phptype="string" null="true" />
+        <field key="type" dbtype="enum" precision="'regular','subscription','download'" phptype="string" null="false" default="regular"/>
         <field key="sku" dbtype="varchar" precision="255" phptype="string" null="false" index="index"/>
         <field key="sku_vendor" dbtype="varchar" precision="255" phptype="string" null="false" index="index" comment="SKU from your provider"/>
         <field key="variant_matrix" dbtype="mediumtext" phptype="string" null="false" comment="JSON hash to identify specific type:term combo(s)"/>
@@ -63,14 +63,14 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="qty_min" dbtype="int" precision="11" phptype="integer" null="false" comment="Minimum quantity that should be allowed per product, per cart."/>
         <field key="qty_max" dbtype="int" precision="11" phptype="integer" null="false" comment="Maximum quantity that should be allowed per product, per cart."/>
         <field key="qty_backorder_max" dbtype="int" precision="11" phptype="integer" null="false" comment="Number of units you can oversell."/>
-        <field key="price" dbtype="decimal" precision="8,2" phptype="float" null="true" />
-        <field key="price_strike_thru" dbtype="decimal" precision="8,2" phptype="float" null="true" comment="Eye candy only"/>
-        <field key="price_sale" dbtype="decimal" precision="8,2" phptype="float" null="true" comment="Used when on sale"/>
-        <field key="weight" dbtype="decimal" precision="8,2" phptype="float" null="true" comment="Units (kgs/lbs) are defined in Foxycart category"/>
+        <field key="price" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>
+        <field key="price_strike_thru" dbtype="decimal" precision="8,2" phptype="float" null="false" comment="Eye candy only" default="0"/>
+        <field key="price_sale" dbtype="decimal" precision="8,2" phptype="float" null="false" comment="Used when on sale" default="0"/>
+        <field key="weight" dbtype="decimal" precision="8,2" phptype="float" null="false" comment="FYI: Units (kgs/lbs) are defined by Foxycart category"/>
         <field key="sale_start" dbtype="datetime" phptype="datetime" />
         <field key="sale_end" dbtype="datetime" phptype="datetime" />
         
-        <field key="category" dbtype="varchar" precision="64" phptype="string" null="true" comment="Foxycart category (not a taxonomy)"/>
+        <field key="category" dbtype="varchar" precision="64" phptype="string" null="false" comment="Foxycart category (not a taxonomy)" default=""/>
         
         <field key="is_active" dbtype="tinyint" precision="1" phptype="integer" null="false" default="1" comment="Used to disable/enable products"/>
         <field key="in_menu" dbtype="tinyint" precision="1" phptype="integer" null="false" default="1" comment="For hiding products from menu"/>        
@@ -552,6 +552,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<!-- md5_file signature calculation of the file or url -->
 		<field key="sig" dbtype="varchar" precision="40" phptype="string" null="false" index="index"/>
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="false" />
+		<field key="is_image" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
 		<field key="is_active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
 		<field key="is_protected" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" />
 

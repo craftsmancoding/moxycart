@@ -13,9 +13,9 @@ $xpdo_meta_map['Product']= array (
     'asset_id' => NULL,
     'name' => NULL,
     'title' => NULL,
-    'description' => NULL,
+    'description' => '',
     'content' => '',
-    'type' => NULL,
+    'type' => 'regular',
     'sku' => NULL,
     'sku_vendor' => NULL,
     'variant_matrix' => NULL,
@@ -27,13 +27,13 @@ $xpdo_meta_map['Product']= array (
     'qty_min' => NULL,
     'qty_max' => NULL,
     'qty_backorder_max' => NULL,
-    'price' => NULL,
-    'price_strike_thru' => NULL,
-    'price_sale' => NULL,
+    'price' => 0,
+    'price_strike_thru' => 0,
+    'price_sale' => 0,
     'weight' => NULL,
     'sale_start' => NULL,
     'sale_end' => NULL,
-    'category' => NULL,
+    'category' => '',
     'is_active' => 1,
     'in_menu' => 1,
     'billing_unit' => NULL,
@@ -108,7 +108,8 @@ $xpdo_meta_map['Product']= array (
       'dbtype' => 'varchar',
       'precision' => '255',
       'phptype' => 'string',
-      'null' => true,
+      'null' => false,
+      'default' => '',
     ),
     'content' => 
     array (
@@ -122,7 +123,8 @@ $xpdo_meta_map['Product']= array (
       'dbtype' => 'enum',
       'precision' => '\'regular\',\'subscription\',\'download\'',
       'phptype' => 'string',
-      'null' => true,
+      'null' => false,
+      'default' => 'regular',
     ),
     'sku' => 
     array (
@@ -217,31 +219,34 @@ $xpdo_meta_map['Product']= array (
       'dbtype' => 'decimal',
       'precision' => '8,2',
       'phptype' => 'float',
-      'null' => true,
+      'null' => false,
+      'default' => 0,
     ),
     'price_strike_thru' => 
     array (
       'dbtype' => 'decimal',
       'precision' => '8,2',
       'phptype' => 'float',
-      'null' => true,
+      'null' => false,
       'comment' => 'Eye candy only',
+      'default' => 0,
     ),
     'price_sale' => 
     array (
       'dbtype' => 'decimal',
       'precision' => '8,2',
       'phptype' => 'float',
-      'null' => true,
+      'null' => false,
       'comment' => 'Used when on sale',
+      'default' => 0,
     ),
     'weight' => 
     array (
       'dbtype' => 'decimal',
       'precision' => '8,2',
       'phptype' => 'float',
-      'null' => true,
-      'comment' => 'Units (kgs/lbs) are defined in Foxycart category',
+      'null' => false,
+      'comment' => 'FYI: Units (kgs/lbs) are defined by Foxycart category',
     ),
     'sale_start' => 
     array (
@@ -258,8 +263,9 @@ $xpdo_meta_map['Product']= array (
       'dbtype' => 'varchar',
       'precision' => '64',
       'phptype' => 'string',
-      'null' => true,
+      'null' => false,
       'comment' => 'Foxycart category (not a taxonomy)',
+      'default' => '',
     ),
     'is_active' => 
     array (

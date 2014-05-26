@@ -215,6 +215,25 @@ class Store extends modResource {
         $node['hasChildren'] = false;
         return $node;
     }
+    
+    /**
+     * If the parent updates the URI, we need to push this down to all the children.
+     * By saving each child product, we are triggering their own lookup of the parent's URI.
+     * TODO: ONLY trigger the trickle down if the URI changed.
+     *      and cache the URI so the children products don't have to look it up n times.
+     *      see product.class.php :: save() 
+     */
+    public function save($cacheFlag= null) {
+        $result = parent::save($cacheFlag);
+        if (!$this->isNew()) {    
+            if($Products = $this->xpdo->getCollection('Product', array('store_id'=>$this->get('id')))) {
+                foreach ($Products as $P) {
+                    $P->save();
+                }
+            }
+        }
+        return $result;
+    }
 }
 
 //------------------------------------------------------------------------------

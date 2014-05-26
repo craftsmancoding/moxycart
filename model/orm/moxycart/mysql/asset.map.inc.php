@@ -19,6 +19,7 @@ $xpdo_meta_map['Asset']= array (
     'duration' => NULL,
     'sig' => NULL,
     'seq' => NULL,
+    'is_image' => 1,
     'is_active' => 1,
     'is_protected' => 0,
     'timestamp_created' => 'CURRENT_TIMESTAMP',
@@ -124,6 +125,15 @@ $xpdo_meta_map['Asset']= array (
       'precision' => '4',
       'phptype' => 'integer',
       'null' => false,
+    ),
+    'is_image' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'attributes' => 'unsigned',
+      'phptype' => 'boolean',
+      'null' => false,
+      'default' => 1,
     ),
     'is_active' => 
     array (

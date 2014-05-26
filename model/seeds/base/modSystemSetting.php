@@ -86,6 +86,7 @@ return array(
 		'namespace' => 'moxycart',
 		'area' => 'moxycart:default'
     ),
+    // For quick edit
     array(
         'key'  =>     'moxycart.product_columns',
 		'value'=>     '',

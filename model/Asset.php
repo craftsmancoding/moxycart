@@ -118,9 +118,13 @@ class Asset extends BaseModel {
         $obj->set('size', filesize($src));
            
         if ($info = $this->getImageInfo($src)) {
+            $obj->set('is_image', 1);
             $obj->set('width', $info['width']);
             $obj->set('height', $info['height']);
             $obj->set('duration', $info['duration']);
+        }
+        else {
+            $obj->set('is_image', 0);
         }
 
         $obj->set('content_type_id', $this->getContentType($src));

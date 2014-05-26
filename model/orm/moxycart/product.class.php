@@ -33,7 +33,7 @@ class Product extends xPDOObject {
     }
 
     /**
-     * Get the default values for a new product
+     * Get the default values for a new product by inheriting from the parent store
      *
      * @param integer $store_id
      * @return array
@@ -82,4 +82,18 @@ class Product extends xPDOObject {
                         
             return 0;
     }
+    
+    /** 
+     * We intercept this so we can ensure that the product always grab's the URI from the parent store
+     * TODO: cache the lookup
+     */
+    public function save($cacheFlag= null) {
+        // No store id?
+        // $this->xpdo->error->failure($this->xpdo->lexicon('permission_denied'));
+        if ($Store = $this->xpdo->getObject('Store', $this->get('store_id'))) {
+            $this->set('uri', $Store->get('uri').$this->get('alias'));
+        }
+        return parent::save($cacheFlag);
+    }
+
 }

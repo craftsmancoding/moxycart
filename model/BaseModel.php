@@ -28,6 +28,12 @@ class BaseModel {
 
     public $modx;
     
+    // true if the object is new and un-persisted.
+    // false if the object has been saved
+    //private $is_new; // use $this->modelObj->isNew()
+    
+    private $previous_vals = array();
+    
     // Used for new/save ops
     public $modelObj; 
     
@@ -57,9 +63,14 @@ class BaseModel {
                 throw new \Exception('Invalid object type.');
             }
             $this->modelObj =& $obj;
+
         }
         else {
             $this->modelObj = $modx->newObject($this->xclass);
+        }
+        
+        if (!$this->modelObj->isNew()) {
+            $this->previous_vals = $this->modelObj->toArray();
         }
     }
 
