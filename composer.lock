@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "0ddb517ca6540e8b1616642426f22042",
+    "hash": "aa06a6dd34748b47edc9be5749aee83c",
     "packages": [
         {
             "name": "craftsmancoding/formbuilder",
@@ -11,12 +11,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/craftsmancoding/formbuilder.git",
-                "reference": "c87e37e5f6a204fdba18006d324e519416fd6b69"
+                "reference": "921ed15f0bbdf038c46bf1162efbe895753e90dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craftsmancoding/formbuilder/zipball/c87e37e5f6a204fdba18006d324e519416fd6b69",
-                "reference": "c87e37e5f6a204fdba18006d324e519416fd6b69",
+                "url": "https://api.github.com/repos/craftsmancoding/formbuilder/zipball/921ed15f0bbdf038c46bf1162efbe895753e90dc",
+                "reference": "921ed15f0bbdf038c46bf1162efbe895753e90dc",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 "source": "https://github.com/craftsmancoding/formbuilder/tree/master",
                 "issues": "https://github.com/craftsmancoding/formbuilder/issues"
             },
-            "time": "2014-05-14 22:07:45"
+            "time": "2014-05-20 19:04:38"
         },
         {
             "name": "craftsmancoding/pagination",
