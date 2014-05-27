@@ -533,6 +533,19 @@ class Product extends BaseModel {
     
     }
 
+    /** 
+     * get all Fields and Values for this product
+     * @param array $array of taxonomy page ids
+     */
+/*
+    public function getFields() {
+        $this_product_id = $this->_verifyExisting();
+
+        $pages = $this->modx->getCollectionGraph('ProductField','{"Field":{}}',$criteria);
+        return true;    
+    }
+*/
+
     //------------------------------------------------------------------------------
     //! OptionTypes
     //------------------------------------------------------------------------------
@@ -676,12 +689,14 @@ class Product extends BaseModel {
         
         $matrix = array( $otype_id => $oterm_id [, $otype_id2 => $oterm_id2 ... ] )
      */
+/*
     public function addVariant($matrix) {
         $this_product_id = $this->_verifyExisting();
         $V = new Variant($this->modx);
         //$V->alias = $V->
         
     }
+*/
     
     
     /** 

@@ -5,15 +5,14 @@
  * 
  * Available Placeholders
  * ---------------------------------------
- * product, spec, value
- * use as [[+spec]] on Template Parameters
+ * product, field, value
+ * use as [[+field]] on Template Parameters
  * 
  * Parameters
  * -----------------------------
  * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
  * @param int $product_id get records for this specific product
- * @param int $limit Limit the result
  *
  * Variables
  * ---------
@@ -22,7 +21,7 @@
  *
   * Usage
  * ------------------------------------------------------------
- * [[!getProductSpecs? &product_id=`[[+product_id]]` &outerTpl=`sometpl` &innerTpl=`othertpl` &limit=`0`]]
+ * [[!getProductFields? &product_id=`[[+product_id]]` &outerTpl=`sometpl` &innerTpl=`othertpl`]]
  * 
  * @package moxycart
  **/
@@ -46,8 +45,12 @@ unset($scriptProperties['log_target']);
 unset($scriptProperties['innerTpl']);
 unset($scriptProperties['outerTpl']);
 
+$criteria = $modx->newQuery('ProductField');
+        
+if ($product_id) {
+    $criteria->where(array('product_id'=>$product_id));
+}
 
-$F = new \Moxycart\Field($modx);
+$results = $modx->getCollectionGraph('ProductField','{"Field":{},"Product":{}}',$criteria);
 
-$results = $F->all($scriptProperties);
 return $Snippet->format($results, $innerTpl,$outerTpl);

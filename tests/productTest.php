@@ -955,6 +955,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
     /**
      * 
      */
+/*
     public function testVariantAdd() {
         $P = new Product(self::$modx);
         
@@ -963,4 +964,5 @@ class productTest extends \PHPUnit_Framework_TestCase {
     public function testVariantMatrixJSON() {
     
     }
+*/
 }
