@@ -87,15 +87,19 @@ class Product extends xPDOObject {
      * We intercept this so we can ensure that the product always grab's the URI from the parent store
      * TODO: cache the lookup
      */
-/*
     public function save($cacheFlag= null) {
         // No store id?
         // $this->xpdo->error->failure($this->xpdo->lexicon('permission_denied'));
         if ($Store = $this->xpdo->getObject('Store', $this->get('store_id'))) {
             $this->set('uri', $Store->get('uri').$this->get('alias'));
         }
+        else {
+            // TODO: fire off an xpdo validator error
+            $this->xpdo->log(modX::LOG_LEVEL_ERROR, 'Invalid Store ID',__CLASS__);
+            return false;
+            //$this->xpdo->error->failure('Invalid Store ID');
+        }
         return parent::save($cacheFlag);
     }
-*/
 
 }

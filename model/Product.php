@@ -696,9 +696,10 @@ class Product extends BaseModel {
 
         $result = true; 
         if (!preg_match('/^[a-z0-9\-_\/]+$/i', $this->get('alias'))) {
-            $this->errors['store_id'] = 'Invalid Store ID';
+            $this->errors['alias'] = 'Invalid alias characters';
             $result = false;        
         }
+/*
         if (!$Store = $this->modx->getObject('Store', $this->get('store_id'))) {
             $this->errors['store_id'] = 'Invalid Store ID';
             $result = false;
@@ -706,6 +707,7 @@ class Product extends BaseModel {
         else {
             $this->set('uri', $Store->get('uri').$this->get('alias'));
         }
+*/
         if (!$result) {
             return false;
         }

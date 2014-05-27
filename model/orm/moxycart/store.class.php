@@ -228,6 +228,7 @@ class Store extends modResource {
         if (!$this->isNew()) {    
             if($Products = $this->xpdo->getCollection('Product', array('store_id'=>$this->get('id')))) {
                 foreach ($Products as $P) {
+                    // $P = new \Moxycart\Product($this->xpdo, $P); // causes PHP Fatal error: Allowed memory size
                     $P->save();
                 }
             }
