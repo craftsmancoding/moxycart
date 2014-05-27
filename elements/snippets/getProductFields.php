@@ -32,15 +32,22 @@ require_once $core_path .'vendor/autoload.php';
 $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('getProductFields',$scriptProperties);
 
-$scriptProperties['product_id'] = $modx->getOption('product_id',$scriptProperties);
 
-echo '<pre>';
-print_r($scriptProperties);
-die();
+// Formatting Arguments:
+$innerTpl = $modx->getOption('innerTpl',$scriptProperties, 'ProductInnerTpl');
+$outerTpl = $modx->getOption('outerTpl',$scriptProperties, 'ProductOuterTpl');
+
+// Default Arguments:
+// $scriptProperties['is_active'] = $modx->getOption('is_active',$scriptProperties, 1);
+
+// Filter out formatting/control arguments:
+unset($scriptProperties['log_level']);
+unset($scriptProperties['log_target']);
+unset($scriptProperties['innerTpl']);
+unset($scriptProperties['outerTpl']);
+
 
 $F = new \Moxycart\Field($modx);
 
 $results = $F->all($scriptProperties);
-echo '<pre>';
-print_r($results);
-die();
+return $Snippet->format($results, $innerTpl,$outerTpl);

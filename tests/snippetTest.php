@@ -171,21 +171,19 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
                 'currency_id' => 109,
             ));
             $Product->save();
-
-            // create test data for Product Field
-            self::$product_id = $Product->get('product_id');
-            if (!$ProductField = self::$modx->getObject('ProductField', array('product_id'=> self::$product_id, 'field_id'=> self::$Field->get('field_id')))) {        
-                $ProductField = self::$modx->newObject('ProductField');
-                $ProductField->fromArray(array(
-                    'product_id' => self::$product_id,
-                    'field_id' =>  self::$Field->get('field_id'),
-                    'value' => 'Test Value'
-                ));
-                $ProductField->save();
-            }
         }
 
-        
+        // create test data for Product Field
+        self::$product_id = $Product->get('product_id');
+        if (!$ProductField = self::$modx->getObject('ProductField', array('product_id'=> self::$product_id, 'field_id'=> self::$Field->get('field_id')))) {        
+            $ProductField = self::$modx->newObject('ProductField');
+            $ProductField->fromArray(array(
+                'product_id' => self::$product_id,
+                'field_id' =>  self::$Field->get('field_id'),
+                'value' => 'Test Value'
+            ));
+            $ProductField->save();
+        }        
 
     }
 
