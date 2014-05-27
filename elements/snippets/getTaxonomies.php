@@ -16,6 +16,7 @@
  * @param string $dir ASC (default) or DESC
  * @param integer $limit the max number of records
  * @param integer $start the offset
+ *
  * Variables
  * ---------
  * @var $modx modX
@@ -53,4 +54,4 @@ if ($results) {
     return $Snippet->format($results,$innerTpl,$outerTpl);    
 }
 
-$modx->log(\modX::LOG_LEVEL_DEBUG, "No results found",'','Snippt getTaxonomies');
+$modx->log(\modX::LOG_LEVEL_DEBUG, "No results found",'','Snippet getTaxonomies');
