@@ -1,20 +1,9 @@
 <?php include dirname(dirname(__FILE__)).'/header.php';  ?>
 
-<?php
-/**
- * Toggle sorting dir ASC|DESC for a given $column
- *
- */
-function toggle($column,$base_url='?') {
-    if (isset($_GET['sort']) && $_GET['sort'] == $column) {
-        if (isset($_GET['dir']) && $_GET['dir'] == 'ASC') {
-            return $base_url . '&sort='.$column.'&dir=DESC';
-        }
-    }
-    return $base_url . '&sort='.$column.'&dir=ASC';
-}
-$a = (int) $_GET['a'];
+<h2 class="moxycart_cmp_heading">Manage Custom Fields</h2>
 
+<?php
+$a = (int) $_GET['a'];
 print $this->getMsg();
 ?>
 
@@ -32,16 +21,16 @@ print $this->getMsg();
     <thead>
         <tr>
             <th>
-                <a href="<?php print toggle('slug',$data['baseurl']); ?>">Slug</a>
+                <a href="<?php print self::toggle('slug',$data['baseurl']); ?>">Slug</a>
             </th>
             <th>
-                <a href="<?php print toggle('label',$data['baseurl']); ?>">Label</a>
+                <a href="<?php print self::toggle('label',$data['baseurl']); ?>">Label</a>
             </th>
             <th>
-                <a href="<?php print toggle('type',$data['baseurl']); ?>">Type</a>
+                <a href="<?php print self::toggle('type',$data['baseurl']); ?>">Type</a>
             </th>
             <th>
-                <a href="<?php print toggle('group',$data['baseurl']); ?>">Group</a>
+                <a href="<?php print self::toggle('group',$data['baseurl']); ?>">Group</a>
             </th>
             <th>Action</th>
         </tr>

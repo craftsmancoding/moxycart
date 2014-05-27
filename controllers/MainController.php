@@ -13,7 +13,7 @@ class MainController extends BaseController {
     public $loadBaseJavascript = false; // GFD... this can't be set at runtime.
     
     /**
-     * Any specific processing we want to do here. Return a string of html.
+     * 
      * @param array $scriptProperties
      */
     public function getIndex(array $scriptProperties = array()) {
@@ -25,6 +25,16 @@ class MainController extends BaseController {
         $this->setPlaceholders($scriptProperties);
 */
         return $this->fetchTemplate('main/index.php');
+     
+    }
+
+    /**
+     * @param array $scriptProperties
+     */
+    public function getSettings(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
+        $this->addStandardLayout();
+        return $this->fetchTemplate('main/settings.php');
      
     }
         

@@ -67,26 +67,18 @@ class BaseController extends \modExtraManagerController {
     function __construct(\modX &$modx,$config = array()) {
         parent::__construct($modx,$config);
         static::$x =& $modx;
-/*
-        $this->modx =& $modx;
-        $this->config = !empty($config) && is_array($config) ? $config : array();
-
-        $this->core_path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
-        $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
-        $this->setProperty('core_path', $this->core_path);
-        $this->setProperty('assets_url', $this->assets_url);
-*/
-
     }
     
     /**
      * Catch all for bad function requests -- our 404
      */
     public function __call($name,$args) {
-//        print 'NOT FOUND...'; exit;
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'[moxycart] Invalid function name '.__FUNCTION__);
-        print 'Invalid routing function name: '.$name; exit;
-        //return $this->help($args);
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'[moxycart] Invalid function name '.$name);
+        $this->addStandardLayout(); // For some reason we have to do this here (?)
+        $class = '\\Moxycart\\ErrorController';
+        $Error = new $class($this->modx,$config);
+        $args['msg'] = 'Invalid routing function name: '. $name;
+        return $Error->get404($args);
     }
 
     
@@ -94,11 +86,6 @@ class BaseController extends \modExtraManagerController {
         header('HTTP/1.0 401 Unauthorized');
         print 'Unauthorized';
         exit;
-    }
-
-    public function sendError($msg='Error') {
-        $this->setPlaceholder('msg',$msg);
-        return $this->fetchTemplate('error.php');        
     }
   
 
@@ -156,23 +143,6 @@ class BaseController extends \modExtraManagerController {
     }
     
     /**
-     * Initializes the main manager controller. You may want to load certain classes,
-     * assets that are shared across all controllers or configuration. 
-     *
-     */
-    public function initialize() {
-        $this->assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/assets/');
-        $this->mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
-        //$this->modx->addPackage('moxycart',$this->core_path.'model/','moxy_');
-    }
-    /**
-     * Defines the lexicon topics to load in our controller.
-     * @return array
-     */
-    public function getLanguageTopics() {
-        return array('moxycart:default');
-    }
-    /**
      * We can use this to check if the user has permission to see this controller
      * @return bool
      */
@@ -180,35 +150,8 @@ class BaseController extends \modExtraManagerController {
         return true; // TODO
     }
 
-
     /**
-     * Gotta look up the URL of our CMP and its actions
-
-     * @param string $class of one of our controllers
-     * @param string $method default: index
-     * @param array any optional arguments, e.g. array('action'=>'children','parent'=>123)
-     * @return string
-     */
-    public static function url($class='',$method='index',$args=array()) {
-        // future: pass as args:
-        $namespace='moxycart';
-        $controller='index';
-        $url = MODX_MANAGER_URL;
-        if ($Action = static::$x->getObject('modAction', array('namespace'=>$namespace,'controller'=>$controller))) {
-            $url .= '?a='.$Action->get('id');
-            if ($class && $method) {
-                $url .= '&class='.$class.'&method='.$method;
-                if ($args) {
-                    foreach ($args as $k=>$v) {
-                        $url.='&'.$k.'='.$v;
-                    }
-                }
-            }
-        }
-        return $url;
-    }
-
-    /**
+     * Override parent function. 
      * Override Smarty. I don't wants it. But BEWARE: the loadHeader and loadFooter bits require 
      * the functionality of the original fetchTemplate function.  ARRRGH.  You try to escape but you can't.
      *
@@ -216,9 +159,9 @@ class BaseController extends \modExtraManagerController {
      * @return rendered string (e.g. HTML)
      */
     public function fetchTemplate($file) {
-        // Conditional override! Ack!
-        // If we don't give Smarty a free pass, we end up with errors "View file does not exist" because
-        // MODX relies on this fetchTemplate function to load up its header.tpl and footer.tpl files
+        // Conditional override! Gross! 
+        // If we don't give Smarty a free pass, we end up with "View file does not exist" errors because
+        // MODX relies on the parent fetchTemplate function to load up its header.tpl and footer.tpl files. Ick.
         if (substr($file,-4) == '.tpl') {
             return parent::fetchTemplate($file);
         }
@@ -233,6 +176,24 @@ class BaseController extends \modExtraManagerController {
 		}
 		$this->modx->log(\modX::LOG_LEVEL_ERROR, 'View file does not exist: ' .$path.$file, __FUNCTION__,__LINE__);
 		return $this->modx->lexicon('view_not_found', array('file'=> 'views/'.$file));
+    }
+        
+    /**
+     * Defines the lexicon topics to load in our controller.
+     * @return array
+     */
+    public function getLanguageTopics() {
+        return array('moxycart:default');
+    }
+
+    /**
+     * Return a flash message
+     *
+     */
+    public function getMsg() {
+        $msg = (isset($_SESSION['msg'])) ? $_SESSION['msg'] : '';
+        unset($_SESSION['msg']);
+        return $msg;
     }
 
     /**
@@ -338,6 +299,12 @@ class BaseController extends \modExtraManagerController {
         return $this->content;
     }
 
+    // TODO: use the ErrorController
+    public function sendError($msg='Error') {
+        $this->setPlaceholder('msg',$msg);
+        return $this->fetchTemplate('error.php');        
+    }
+
     /**
      * Set a flash message
      *
@@ -356,15 +323,48 @@ class BaseController extends \modExtraManagerController {
 		return $this->modx->lexicon('view_not_found', array('file'=> 'views/msgs/'.$type.'.php'));
 
     }
-    
+
     /**
-     * Return a flash message
-     *
+     * Used to toggle sort parameters in column headers
+     * 
+     * @param string $column name
+     * @param string $base_url 
+     * @return string
      */
-    public function getMsg() {
-        $msg = (isset($_SESSION['msg'])) ? $_SESSION['msg'] : '';
-        unset($_SESSION['msg']);
-        return $msg;
+    public static function toggle($column,$base_url='?') {
+        if (isset($_GET['sort']) && $_GET['sort'] == $column) {
+            if (isset($_GET['dir']) && $_GET['dir'] == 'ASC') {
+                return $base_url . '&sort='.$column.'&dir=DESC';
+            }
+        }
+        return $base_url . '&sort='.$column.'&dir=ASC';
     }
     
+    /**
+     * Gotta look up the URL of our CMP and its actions
+
+     * @param string $class of one of our controllers
+     * @param string $method default: index
+     * @param array any optional arguments, e.g. array('action'=>'children','parent'=>123)
+     * @return string
+     */
+    public static function url($class='',$method='index',$args=array()) {
+        // future: pass as args:
+        $namespace='moxycart';
+        $controller='index';
+        $url = MODX_MANAGER_URL;
+        if ($Action = static::$x->getObject('modAction', array('namespace'=>$namespace,'controller'=>$controller))) {
+            $url .= '?a='.$Action->get('id');
+            if ($class && $method) {
+                $url .= '&class='.$class.'&method='.$method;
+                if ($args) {
+                    foreach ($args as $k=>$v) {
+                        $url.='&'.$k.'='.$v;
+                    }
+                }
+            }
+        }
+        return $url;
+    }    
+        
 }

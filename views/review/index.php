@@ -1,20 +1,9 @@
 <?php include dirname(dirname(__FILE__)).'/header.php';  ?>
 
-<?php
-/**
- * Toggle sorting dir ASC|DESC for a given $column
- *
- */
-function toggle($column,$base_url='?') {
-    if (isset($_GET['sort']) && $_GET['sort'] == $column) {
-        if (isset($_GET['dir']) && $_GET['dir'] == 'ASC') {
-            return $base_url . '&sort='.$column.'&dir=DESC';
-        }
-    }
-    return $base_url . '&sort='.$column.'&dir=ASC';
-}
-$a = (int) $_GET['a'];
+<h2 class="moxycart_cmp_heading">Manage Reviews</h2>
 
+<?php
+$a = (int) $_GET['a'];
 print $this->getMsg();
 ?>
 
@@ -32,13 +21,13 @@ print $this->getMsg();
     <thead>
         <tr>
             <th>
-                <a href="<?php print toggle('slug',$data['baseurl']); ?>">Slug</a>
+                <a href="<?php print self::toggle('slug',$data['baseurl']); ?>">Slug</a>
             </th>
             <th>
-                <a href="<?php print toggle('name',$data['baseurl']); ?>">Name</a>
+                <a href="<?php print self::toggle('name',$data['baseurl']); ?>">Name</a>
             </th>
             <th>
-                <a href="<?php print toggle('description',$data['baseurl']); ?>">Description</a>
+                <a href="<?php print self::toggle('description',$data['baseurl']); ?>">Description</a>
             </th>
             <th>Action</th>
         </tr>

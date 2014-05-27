@@ -1,12 +1,9 @@
 /**
- * CSS file for moxycart extra
- *
- * Copyright 2013 by Everett Griffiths everett@craftsmancoding.com
- * Created on 07-05-2013
- *
  * @package moxycart
+ *
+ * Customize the MODX Resource Tree
  */
- .icon-store .x-tree-node-icon {
+.icon-store .x-tree-node-icon {
     background-image: url(../images/cart-icon.png) !important;
 }
 .icon-taxonomy .x-tree-node-icon {
@@ -19,4 +16,51 @@
 .custom-close-btn {
 	left: 540px !important;
 	top: -13px !important;
+}
+
+/**
+ * CMPs
+ */
+.moxycart_canvas {
+
+}
+
+#moxycart_header {
+    background-image:url('../images/moxycart-logo.png');
+    background-repeat:no-repeat;
+}
+
+h2.moxycart_cmp_heading {
+
+}
+
+#moxycart_nav {
+    list-style-type:none;
+    margin-left: 200px;
+    padding:0;
+}
+.moxycart_nav_item {
+    display:inline;
+    padding: 10px;
+}
+/* not sure if we need this... */
+.moxycart_nav_home {
+
+}
+
+#moxycart_footer {
+
+}
+.moxycart_donation_link {
+
+}
+.moxycart_bug_link {
+
+}
+.moxycart_wiki_link {
+
+}
+
+#moxycart_copyright {
+
 }

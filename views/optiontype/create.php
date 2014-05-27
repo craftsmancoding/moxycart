@@ -16,7 +16,7 @@ input.checkbox {
     display:inline;
 }
 </style>
-<h2>Create New Option Type</h2>
+<h2 class="moxycart_cmp_heading">Create New Option Type</h2>
 <?php
 print \Formbuilder\Form::open($data['baseurl'])
     ->text('slug', $data['slug'], array('label'=>'Slug','description'=>'Lowercase alphanumeric identifier with no spaces or special characters.'))

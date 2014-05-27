@@ -27,6 +27,7 @@ class modelTest extends \PHPUnit_Framework_TestCase {
     // Must be static because we set it up inside a static function
     public static $modx;
     public static $Field;
+    public static $Store;
     
     /**
      * Load up MODX for our tests.
@@ -79,6 +80,25 @@ class modelTest extends \PHPUnit_Framework_TestCase {
             ));
             self::$Field['three']->save();
         }        
+        // Prep: create a parent store 
+        if (!self::$Store = self::$modx->getObject('Store', array('alias'=>'test-store'))) {
+            self::$Store = self::$modx->newObject('Store');
+            self::$Store->fromArray(array(
+                'pagetitle' => 'Test Store',
+                'longtitle' => 'Test Store',
+                'menutitle' => 'Test Store',
+                'description' => 'A temporary store used for testing',
+                'alias' => 'test-store',
+                'uri' => 'test-store/',
+                'class_key' => 'Store',
+                'isfolder' => 1,
+                'published' => 1,
+                 'properties' => '{"moxycart":{"product_type":"regular","product_template":"2","sort_order":"SKU","qty_alert":"5","track_inventory":0,"fields":{"1":true,"3":true},"variations":[],"taxonomies":[]}}',
+                'Template' => array('templatename' => 'Sample Store'),
+            ));
+            self::$Store->save();        
+        }
+        
     }
 
     /**
@@ -167,10 +187,12 @@ class modelTest extends \PHPUnit_Framework_TestCase {
     public function testCount() {
         $F = new Field(self::$modx);
         $cnt = $F->count(array('slug:STARTS WITH'=>'t'));
-        $this->assertEquals(2,$cnt);
+        $cnt2 = self::$modx->getCount('Field', array('slug:LIKE'=>'t%'));
+        $this->assertEquals($cnt2,$cnt);
 
         $cnt = $F->count(array('type:>='=>'text'));
-        $this->assertEquals(2,$cnt);
+        $cnt2 = self::$modx->getCount('Field', array('type:>=' => 'text'));
+        $this->assertEquals($cnt2,$cnt);
     }
     
     public function testDebug() {
@@ -239,82 +261,51 @@ class modelTest extends \PHPUnit_Framework_TestCase {
 
     
     public function testProductRelations() {
-        self::$modx->setLogTarget('ECHO');
-        self::$modx->setLogLevel(2);
-
-        $P = self::$modx->newObject('Product', array('name'=>'Dick','alias'=>'dick'));
-        $PR = self::$modx->newObject('ProductRelation', array('product_id'=>'', 'related_id'=>2,'type'=>'related'));
+        $P = self::$modx->newObject('Product', array('name'=>'Test1','alias'=>'test-product1','store_id'=>self::$Store->get('id')));
+        $P2 = new Product(self::$modx);
+        $P2->fromArray(array('name'=>'Test2','alias'=>'test-product2','store_id'=>self::$Store->get('id')));
+        $result = $P2->save();
+        $this->assertTrue($result);
+        
+        $PR = self::$modx->newObject('ProductRelation', array('product_id'=>'', 'related_id'=>$P2->get('product_id'),'type'=>'related'));
 
         $result = $P->addMany($PR);
         
-        if (!$result) {
-            print 'problem adding many.'."\n";
-            $validator = $P->getValidator();
-            if ($validator->hasMessages()) {
-                foreach ($validator->getMessages() as $message) {
-                    print $message['field'].': '. $message['message']."\n";
-                }
-            }
-
-        }
         $this->assertTrue($result);
         $result = $P->save();
-        if (!$result) {
-            print "Problem saving prod.\n";
-            $validator = $P->getValidator();
-            if ($validator->hasMessages()) {
-                foreach ($validator->getMessages() as $message) {
-                    print $message['field'].': '. $message['message']."\n";
-                }
-            }
-
-        }
         $this->assertTrue($result);
         $product_id = $P->get('product_id');
         $this->assertFalse(empty($product_id));
-        $Collection = self::$modx->getCollection('ProductRelation', array('product_id'=>$product_id));
+        $Collection = self::$modx->getCollection('ProductRelation', array('product_id'=>$product_id, 'related_id'=>$P2->get('product_id')));
         $this->assertFalse(empty($Collection),'Product Relations were not added to product '.$product_id.'!');
         
         $P->remove();
+        $P2->remove();
     }
 
     public function testProductFields() {
-        self::$modx->setLogTarget('ECHO');
-        self::$modx->setLogLevel(2);
-
         $PF = array();
-        $P = self::$modx->newObject('Product', array('name'=>'Dick','alias'=>'dick'));
+        $P = self::$modx->newObject('Product', array('name'=>'Test3','alias'=>'test-product1','store_id'=>self::$Store->get('id')));
         $PF = self::$modx->newObject('ProductField', array('field_id'=>self::$Field['one']->get('field_id')));
         $result = $P->addMany($PF);
-        
-        if (!$result) {
-            print 'problem adding many.'."\n";
-            $validator = $P->getValidator();
-            if ($validator->hasMessages()) {
-                foreach ($validator->getMessages() as $message) {
-                    print $message['field'].': '. $message['message']."\n";
-                }
-            }
-
-        }
         $this->assertTrue($result);
-
-        $result = $P->save();
-        if (!$result) {
-            print "Problem saving prod.\n";
-            $validator = $P->getValidator();
-            if ($validator->hasMessages()) {
-                foreach ($validator->getMessages() as $message) {
-                    print $message['field'].': '. $message['message']."\n";
-                }
-            }
-
-        }
-        
+        $result = $P->save();        
         $this->assertTrue($result);
         
         $result = $P->remove();
+    }
     
+    public function testQuoteSort(){
+        $P = new Product(self::$modx); // arbitrary
+    
+        $str = $P->quoteSort('group');
+        $this->assertEquals('`group`',$str);
+        $str = $P->quoteSort('`group`');
+        $this->assertEquals('`group`',$str);
+        $str = $P->quoteSort('some.table');
+        $this->assertEquals('`some`.`table`',$str);
+
+        
     }
 
     

@@ -108,27 +108,12 @@ class BaseModel {
     public function __get($key) {
         return $this->modelObj->get($key);
     }
-
-    /**
-     * 
-     */
-    public function get($key) {
-        return $this->modelObj->get($key);
-    }
         
     /**
      *
      *
      */
     public function __set($key, $value) {
-        return $this->modelObj->set($key,$value);
-    }
-
-    /**
-     *
-     *
-     */
-    public function set($key, $value) {
         return $this->modelObj->set($key,$value);
     }
 
@@ -155,21 +140,142 @@ class BaseModel {
     }
     
     /**
-     * Pass thru to object method
-     * @param array $array
+     * Some strings like "group" will fail if you try to use them as a sort column, e.g.
+     *      SELECT * FROM table ORDER BY group ASC LIMIT 20 
+     * So this will properly quote a SQL column. 
+     *      group --> `group`
+     *      `group` --> `group` (unchanged)
+     *      tbl.col --> `tbl`.`col`
      */
-    public function fromArray(array $array, $keyPrefix= '', $setPrimaryKeys= false, $rawValues= false, $adhocValues= false) {
-        return $this->modelObj->fromArray($array,$keyPrefix, $setPrimaryKeys,$rawValues, $adhocValues);
-    }
-
-    public function getPrimaryKey() {
-        return $this->modelObj->getPrimaryKey();
+    public function quoteSort($str) {
+        if (!is_scalar($str)) {
+            throw new \Exception('prepareSort expects string');
+        }
+        $parts = explode('.',$str);
+        $parts = array_map(function($v){ return '`'.trim($v,'`').'`'; }, $parts);
+        return implode('.',$parts);
     }
     
-    public function remove() {
-        return $this->modelObj->remove();
+    /**
+     * Retrive "all" records matching the filter $args.
+     *
+     * We use getIterator, but we have to work around the "feature" (bug?) that 
+     * it will not return an empty array if it has no results. See
+     * https://github.com/modxcms/revolution/issues/11373
+     *
+     * @param array $arguments (including filters)
+     * @param boolean $debug
+     * @return mixed xPDO iterator (i.e. a collection, but memory efficient) or SQL query string
+     */
+    public function all($args,$debug=false) {
+    
+        // If you get this error: "Call to a member function getOption() on a non-object", it could mean:
+        // 1) you tried to call this method statically, e.g. Product::all()
+        // 2) you forgot to initialize the class and pass a modx instance to the contructor (dependency injection!)
+        $limit = (int) $this->modx->getOption('limit',$args,$this->modx->getOption('moxycart.default_per_page','',$this->modx->getOption('default_per_page')));
+        $offset = (int) $this->modx->getOption('offset',$args,0);
+        $sort = $this->quoteSort($this->modx->getOption('sort',$args,$this->default_sort_col));
+        $dir = $this->modx->getOption('dir',$args,$this->default_sort_dir);
+        $select_cols = $this->modx->getOption('select',$args);
+        
+        // Clear out non-filter criteria
+        $args = self::getFilters($args); 
+            
+        $criteria = $this->modx->newQuery($this->xclass);
+
+        if ($args) {
+            $criteria->where($args);
+        }
+        
+        if ($limit) {
+            $criteria->limit($limit, $offset); 
+            $criteria->sortby($sort,$dir);
+        }
+    
+        if ($debug) {
+            $criteria->prepare();
+            return $criteria->toSQL();
+        }
+
+        // Both array and string input seem to work
+        if (!empty($select_cols)) {
+            $criteria->select($select_cols);
+        }
+        // Workaround for issue https://github.com/modxcms/revolution/issues/11373
+        $collection = $this->modx->getIterator($this->xclass,$criteria);
+        foreach ($collection as $c) {
+            $collection->rewind();           
+            return $collection;
+        }
+        return array();
     }
 
+
+    /**
+     * Edit a collection of records. E.g. this can be used to handle a complex form allowing 
+     * the user to edit multiple records at once.
+     * 
+     * @param array $records
+     * @return boolean
+     */
+    public function bulkEdit($records) {
+    
+    }
+    
+    /**
+     * 
+     * @param array $args
+     * @return integer
+     */
+    public function count($args) {
+        if(!isset($args['limit'])) $args['limit'] = 0;
+        // Clear out non-filter criteria
+        $args = $this->getFilters($args); 
+        
+        $criteria = $this->modx->newQuery($this->xclass);
+        if ($args) {
+            $criteria->where($args);
+        }
+        return $this->modx->getCount($this->xclass,$criteria);
+    }
+
+    /**
+     * Delete an object by its primary key
+     */    
+    public static function delete(int $id) {
+        if ($Obj = $this->find($id)) {
+            return $Obj->remove();
+        }
+        else {
+            throw new \Exception('Object not found.');
+        }
+    }
+    
+    /**
+     * Retrieve a single object by its primary key id -- we pass this back to the constructor
+     * so we can return an instance of this class. (The "get" function is reserved for the single
+     * object, so we can't use it to operate on a collection).
+     *
+     * @param integer $id
+     * @return mixed
+     */    
+    public function find($id) {
+        if ($obj = $this->modx->getObject($this->xclass, $id)) {
+            $classname = '\\Moxycart\\'.$this->xclass;        
+            return new $classname($this->modx,$obj);
+        }
+        return false;
+    }
+    
+    /**
+     * 
+     */
+/*
+    public function get($key) {
+        return $this->modelObj->get($key);
+    }
+*/
+    
     /**
      * Return any validation errors
      */
@@ -208,62 +314,6 @@ class BaseModel {
             if (is_integer($k)) unset($array[$k]);
         }
         return $array;
-    }
-
-
-    /**
-     * Retrive "all" records matching the filter $args.
-     *
-     * We use getIterator, but we have to work around the "feature" (bug?) that 
-     * it will not return an empty array if it has no results. See
-     * https://github.com/modxcms/revolution/issues/11373
-     *
-     * @param array $arguments (including filters)
-     * @param boolean $debug
-     * @return mixed xPDO iterator (i.e. a collection, but memory efficient) or SQL query string
-     */
-    public function all($args,$debug=false) {
-        
-        
-        // If you get this error: "Call to a member function getOption() on a non-object", it could mean:
-        // 1) you tried to call this method statically, e.g. Product::all()
-        // 2) you forgot to initialize the class and pass a modx instance to the contructor (dependency injection!)
-        $limit = (int) $this->modx->getOption('limit',$args,$this->modx->getOption('moxycart.default_per_page','',$this->modx->getOption('default_per_page')));
-        $offset = (int) $this->modx->getOption('offset',$args,0);
-        $sort = $this->modx->getOption('sort',$args,$this->default_sort_col);
-        $dir = $this->modx->getOption('dir',$args,$this->default_sort_dir);
-        $select_cols = $this->modx->getOption('select',$args);
-        
-        // Clear out non-filter criteria
-        $args = self::getFilters($args); 
-            
-        $criteria = $this->modx->newQuery($this->xclass);
-
-        if ($args) {
-            $criteria->where($args);
-        }
-        
-        if ($limit) {
-            $criteria->limit($limit, $offset); 
-            $criteria->sortby($sort,$dir);
-        }
-    
-        if ($debug) {
-            $criteria->prepare();
-            return $criteria->toSQL();
-        }
-
-        // Both array and string input seem to work
-        if (!empty($select_cols)) {
-            $criteria->select($select_cols);
-        }
-        // Workaround for issue https://github.com/modxcms/revolution/issues/11373
-        $collection = $this->modx->getIterator($this->xclass,$criteria);
-        foreach ($collection as $c) {
-            $collection->rewind();           
-            return $collection;
-        }
-        return array();
     }
     
     /**
@@ -317,56 +367,10 @@ class BaseModel {
     }
     
     /**
-     * 
-     * @param array $args
-     * @return integer
-     */
-    public function count($args) {
-        if(!isset($args['limit'])) $args['limit'] = 0;
-        // Clear out non-filter criteria
-        $args = $this->getFilters($args); 
-        
-        $criteria = $this->modx->newQuery($this->xclass);
-        if ($args) {
-            $criteria->where($args);
-        }
-        return $this->modx->getCount($this->xclass,$criteria);
-    }
-    
-    /**
+     * Save the update with a couple UI enhancements:
      *
-     *
-     */    
-    public static function delete(int $id) {
-        if ($Obj = $this->find($id)) {
-            return $Obj->remove();
-        }
-        else {
-            throw new \Exception('Object not found.');
-        }
-    }
-    
-    /**
-     * Retrieve a single object by its primary key id -- we pass this back to the constructor
-     * so we can return an instance of this class. (The "get" function is reserved for the single
-     * object, so we can't use it to operate on a collection).
-     *
-     * @param integer $id
-     * @return mixed
-     */    
-    public function find($id) {
-        if ($obj = $this->modx->getObject($this->xclass, $id)) {
-            $classname = '\\Moxycart\\'.$this->xclass;        
-            return new $classname($this->modx,$obj);
-        }
-        return false;
-    }
-    
-
-    /**
-     * Save the update. This will store any validation errors in $this->errors
-     * And here's where we timestamp our updates: some classes will persist this
-     * timestamp, others will simply ignore it.
+     * - any validation errors stored in $this->errors
+     * - timestamp our updates: some classes will persist this, some will ignore it. meh.
      *
      * @return mixed integer false on fail
      */
@@ -384,6 +388,15 @@ class BaseModel {
         }
         return $result; 
     }
-    
+ 
+    /**
+     *
+     *
+     */
+/*
+    public function set($key, $value) {
+        return $this->modelObj->set($key,$value);
+    }   
+*/ 
 }
 /*EOF*/

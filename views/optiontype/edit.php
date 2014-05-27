@@ -16,7 +16,7 @@ input.checkbox {
     display:inline;
 }
 </style>
-<h2>Edit Option Type <?php print $data['slug']; ?></h2>
+<h2 class="moxycart_cmp_heading">Edit Option Type <?php print $data['slug']; ?></h2>
 <?php
 print \Formbuilder\Form::open($data['baseurl'])
     ->hidden('otype_id',$data['otype_id'])

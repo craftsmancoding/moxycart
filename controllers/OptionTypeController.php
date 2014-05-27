@@ -69,6 +69,25 @@ class OptionTypeController extends BaseController {
     }
 
     /**
+     * Manage OptionTerms for this OptionType
+     *
+     */
+    public function getTerms(array $scriptProperties = array()) {    
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
+        $this->addStandardLayout();
+        $otype_id = (int) $this->modx->getOption('otype_id',$scriptProperties);
+        $Obj = new OptionType($this->modx);    
+        if (!$result = $Obj->find($otype_id)) {
+            return $this->sendError('Page not found.');
+        }
+        $scriptProperties['baseurl'] = self::url('optiontype','terms',array('otype_id'=>$otype_id));
+        $this->setPlaceholders($scriptProperties);
+        $this->setPlaceholders($result->toArray());
+        $this->setPlaceholder('result',$result);
+        return $this->fetchTemplate('optiontype/terms.php');
+    }
+
+    /**
      * 
      *
      *
