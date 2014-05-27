@@ -308,6 +308,25 @@ class modelTest extends \PHPUnit_Framework_TestCase {
         
     }
 
+    /**
+     *
+     */
+    public function testIndexedToRecordset() {
+        $P = new Product(self::$modx); // arbitrary
+        $index = array(
+            'first_name' => array('Bob','Chucky','Dudley'),
+            'last_name' => array('Barker','Cheese','Doolittle'),
+            'number' => array('222-2222','333-3333','444-4444')
+        );
+        $expected = array(
+            array('first_name'=>'Bob','last_name'=>'Barker','number'=>'222-2222'),
+            array('first_name'=>'Chucky','last_name'=>'Cheese','number'=>'333-3333'),
+            array('first_name'=>'Dudley','last_name'=>'Doolittle','number'=>'444-4444'),            
+        );
+        
+        $actual = $P->indexedToRecordset($index);
+        $this->assertEquals($actual,$expected);
+    }
     
     
 }

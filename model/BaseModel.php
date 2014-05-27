@@ -140,23 +140,6 @@ class BaseModel {
     }
     
     /**
-     * Some strings like "group" will fail if you try to use them as a sort column, e.g.
-     *      SELECT * FROM table ORDER BY group ASC LIMIT 20 
-     * So this will properly quote a SQL column. 
-     *      group --> `group`
-     *      `group` --> `group` (unchanged)
-     *      tbl.col --> `tbl`.`col`
-     */
-    public function quoteSort($str) {
-        if (!is_scalar($str)) {
-            throw new \Exception('prepareSort expects string');
-        }
-        $parts = explode('.',$str);
-        $parts = array_map(function($v){ return '`'.trim($v,'`').'`'; }, $parts);
-        return implode('.',$parts);
-    }
-    
-    /**
      * Retrive "all" records matching the filter $args.
      *
      * We use getIterator, but we have to work around the "feature" (bug?) that 
@@ -220,6 +203,42 @@ class BaseModel {
      */
     public function bulkEdit($records) {
     
+    }
+    
+    /**
+     * Convert data in an indexed structure to a recordset.
+     * This is necessary when processing forms with multiple records of data:
+     *
+     *     Record 1:
+     *      <input name="x[]" value="A"/>
+     *      <input name="y[]" value="B">
+     *     Record 2:
+     *      <input name="x[]" value="C"/>
+     *      <input name="y[]" value="D"/>
+     * 
+     * Data arrives indexed like this:
+     *      array( 'x' => array(0=>A, 1=>C) ),
+     *      array( 'y' => array(0=>B, 1=>D) ),
+     *
+     * Whereas we want it formatted as a recordset like this:
+     *      array(
+     *          array('x'=>'A', 'y' => 'B'),
+     *          array('x'=>'C', 'y' => 'D'),
+     *     )
+     *
+     * This function converts the format.
+     *
+     * @param array $indexed array
+     * @return array record set
+     */
+    public function indexedToRecordset(array $indexed) {
+        $out = array();
+        foreach($indexed as $k => $v) {
+            foreach ($v as $i => $v2) {
+                $out[$i][$k] = $v[$i];
+            }
+        }
+        return $out;        
     }
     
     /**
@@ -365,7 +384,24 @@ class BaseModel {
         
         return false;
     }
-    
+
+    /**
+     * Some strings like "group" will fail if you try to use them as a sort column, e.g.
+     *      SELECT * FROM table ORDER BY group ASC LIMIT 20 
+     * So this will properly quote a SQL column. 
+     *      group --> `group`
+     *      `group` --> `group` (unchanged)
+     *      tbl.col --> `tbl`.`col`
+     */
+    public function quoteSort($str) {
+        if (!is_scalar($str)) {
+            throw new \Exception('prepareSort expects string');
+        }
+        $parts = explode('.',$str);
+        $parts = array_map(function($v){ return '`'.trim($v,'`').'`'; }, $parts);
+        return implode('.',$parts);
+    }
+        
     /**
      * Save the update with a couple UI enhancements:
      *

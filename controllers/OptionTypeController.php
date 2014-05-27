@@ -78,15 +78,55 @@ class OptionTypeController extends BaseController {
         $otype_id = (int) $this->modx->getOption('otype_id',$scriptProperties);
         $Obj = new OptionType($this->modx);    
         if (!$result = $Obj->find($otype_id)) {
-            return $this->sendError('Page not found.');
+            return $this->sendError('Invalid option type');
         }
+        $Terms = new OptionTerm($this->modx);
+        $Terms = $Terms->all(array('otype_id'=>$otype_id,'sort'=>'seq'));
         $scriptProperties['baseurl'] = self::url('optiontype','terms',array('otype_id'=>$otype_id));
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($result->toArray());
         $this->setPlaceholder('result',$result);
+        $this->setPlaceholder('terms', $Terms);
         return $this->fetchTemplate('optiontype/terms.php');
     }
 
+    public function postTerms(array $scriptProperties = array()) {    
+//        return '<pre>' .print_r($scriptProperties,true).'</pre>';
+        $OT = new OptionType($this->modx);
+        $otype_id = (int) $this->modx->getOption('otype_id',$scriptProperties);
+        $OT = $OT->find($otype_id);
+        $records = $OT->indexedToRecordset($scriptProperties);
+        $OT->dictateTerms($records);
+/*
+        $cnt = count($scriptProperties['otype_id']);
+        for ( $i= 0; $i <= $cnt; $i++ ) {
+//            return 'avast:'.$scriptProperties['slug'][$i];
+            $T = new OptionTerm($this->modx);
+            if ($oterm_id = $scriptProperties['oterm_id'][$i]) {
+//                return 'loading existing:'.$oterm_id;
+                $T = $T->find($oterm_id);
+            }
+//            return 'New.';
+            $T->otype_id = $scriptProperties['otype_id'][$i];
+            $T->slug = $scriptProperties['slug'][$i];
+            $T->name = $scriptProperties['name'][$i];
+            $T->mod_price = $scriptProperties['mod_price'][$i];
+            $T->mod_weight = $scriptProperties['mod_weight'][$i];
+            $T->mod_code = $scriptProperties['mod_code'][$i];
+            $T->mod_category = $scriptProperties['mod_category'][$i];
+            $T->seq = $i;
+//return '<pre>'.print_r($T->toArray(),true);            
+            if ($T->slug) {
+                if (!$T->save()) {
+                    return '<pre>'.print_r($T->errors,true).'</pre>';
+                }
+            }
+        }
+*/
+        $this->setMsg('Terms updated.','success');
+        return $this->getTerms(array('otype_id'=>$scriptProperties['otype_id']));
+        
+    }
     /**
      * 
      *

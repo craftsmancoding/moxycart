@@ -27,6 +27,7 @@ class optiontypeTest extends \PHPUnit_Framework_TestCase {
     // Must be static because we set it up inside a static function
     public static $modx;
     public static $OType;
+    public static $OTerm;
     
     /**
      * Load up MODX for our tests.
@@ -41,22 +42,29 @@ class optiontypeTest extends \PHPUnit_Framework_TestCase {
         self::$modx->addPackage('foxycart',"{$core_path}model/orm/",'foxy_');
 
         // !OptionType
-/*
-        if (!self::$Field['one'] = self::$modx->getObject('Field', array('slug'=>'one'))) {
-            self::$Field['one'] = self::$modx->newObject('Field');
-            self::$Field['one']->fromArray(array(
-                'slug' => 'one',
-                'label' => 'Test One',
-                'description' => 'Testing Field',
-                'seq' => 0,
-                'group' => 'GroupA',
-                'type' => 'text'
+        if (!self::$OType['color_test'] = self::$modx->getObject('ObjectType', array('slug'=>'color_test'))) {
+            self::$OType['color_test'] = self::$modx->newObject('ObjectType');
+            self::$OType['color_test']->fromArray(array(
+                'slug' => 'color_test',
+                'name' => 'Test One',
+                'description' => 'Testing Field'
             ));
-            if(!self::$Field['one']->save()) {
-                print 'Could not save field!'; 
+            if(!self::$OType['color_test']->save()) {
+                print 'Could not save option type!'; 
             }
         }
-*/
+        if (!self::$OTerm['red_test'] = self::$modx->getObject('ObjectTerm', array('slug'=>'red_test'))) {
+            self::$OType['red_test'] = self::$modx->newObject('ObjectTerm');
+            self::$OType['red_test']->fromArray(array(
+                'otype_id' => self::$OType['color_test']->get('otype_id'),
+                'slug' => 'red_test',
+                'name' => 'Test Red'
+            ));
+            if(!self::$OTerm['red_test']->save()) {
+                print 'Could not save option type!'; 
+            }
+        }
+
     }
 
     /**
