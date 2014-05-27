@@ -326,8 +326,6 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         // You have to do this for EACH test function when you are testing a Snippet!
         global $modx;
         $modx = self::$modx;
-
-        
         $props = array();
         $props['store_id'] = self::$Store->get('id');
         $props['log_level'] = 4;
@@ -367,6 +365,22 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         $props['outerTpl'] = '<ul>[[+content]]</ul>';
         $actual = self::$modx->runSnippet('getTaxonomies', $props);  
         $expected = '<ul><li>Taxonomy A</li><li>Taxonomy B</li><li>Taxonomy C</li></ul>';
+        $this->assertEquals(normalize_string($expected), normalize_string($actual));    
+    }
+
+    /**
+     * Test SortTaxonomies
+     */
+    public function testSortTaxonomies() {
+        global $modx;
+        $modx = self::$modx;
+        $props = array();
+        $props['sort'] = 'id';
+        $props['dir'] = 'DESC';
+        $props['innerTpl'] = '<li>[[+pagetitle]]</li>';
+        $props['outerTpl'] = '<ul>[[+content]]</ul>';
+        $actual = self::$modx->runSnippet('getTaxonomies', $props);  
+        $expected = '<ul><li>Taxonomy C</li><li>Taxonomy B</li><li>Taxonomy A</li></ul>';
         $this->assertEquals(normalize_string($expected), normalize_string($actual));    
     }
     
