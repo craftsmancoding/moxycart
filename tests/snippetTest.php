@@ -27,6 +27,8 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
     // Must be static because we set it up inside a static function
     public static $modx;
     public static $Store;
+    public static $Field;
+    public static $product_id;
     
     /**
      * Load up MODX for our tests.
@@ -58,6 +60,20 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
                 'Template' => array('templatename' => 'Sample Store'),
             ));
             self::$Store->save();        
+        }
+
+        // Prep: create a Test Product Field
+        if (!self::$Field = self::$modx->getObject('Field', array('slug'=>'test-field'))) {
+            self::$Field = self::$modx->newObject('Field');
+            self::$Field->fromArray(array(
+                'slug' => 'Test-field',
+                'label' => 'Test Field',
+                'description' => 'Test Field',
+                'group' => 'GroupA',
+                'seq'   => 0,
+                'type'=>'text'
+            ));
+            self::$Field->save();       
         }
         
         // Rustle up some products
@@ -155,7 +171,21 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
                 'currency_id' => 109,
             ));
             $Product->save();
+
+            // create test data for Product Field
+            self::$product_id = $Product->get('product_id');
+            if (!$ProductField = self::$modx->getObject('ProductField', array('product_id'=> self::$product_id, 'field_id'=> self::$Field->get('field_id')))) {        
+                $ProductField = self::$modx->newObject('ProductField');
+                $ProductField->fromArray(array(
+                    'product_id' => self::$product_id,
+                    'field_id' =>  self::$Field->get('field_id'),
+                    'value' => 'Test Value'
+                ));
+                $ProductField->save();
+            }
         }
+
+        
 
     }
 
@@ -164,6 +194,7 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
      */
     public static function tearDownAfterClass() {
         self::$Store->remove();
+        self::$Field->remove();
     }
 
 
@@ -226,7 +257,24 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         $expected = '<ul><li>Southpark Tshirt: 19</li><li>Family Guy Tshirt: 20</li><li>Simpsons Tshirt: 21</li></ul>';
         $this->assertEquals(normalize_string($expected), normalize_string($actual));
     }
- 
+
+    /**
+     * Seems that you have to force the Snippet to be cached before this will work.
+     */
+    public function testSecure() {
+        global $modx;
+        $modx = self::$modx;
+        
+        $props = array();
+        $props['options'] = 'sample-api-key';
+        $props['name'] = 'price';
+        $props['input'] = '29.99';
+        $actual = $modx->runSnippet('secure', $props);
+        $expected = '||9490fad91f94bf559168219c2efdeee5ddda247edd8fb3bc483fb9a36542efb6';
+        $this->assertEquals(normalize_string($expected), normalize_string($actual));
+        
+    }
+
     /**
      * Test the getProducts Snippet
      *
@@ -251,20 +299,16 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Seems that you have to force the Snippet to be cached before this will work.
+     * Test the getProductFields Snippet
+     *
      */
-    public function testSecure() {
+    public function testGetProductFields() {
         global $modx;
         $modx = self::$modx;
-        
         $props = array();
-        $props['options'] = 'sample-api-key';
-        $props['name'] = 'price';
-        $props['input'] = '29.99';
-        $actual = $modx->runSnippet('secure', $props);
-        $expected = '||9490fad91f94bf559168219c2efdeee5ddda247edd8fb3bc483fb9a36542efb6';
-        $this->assertEquals(normalize_string($expected), normalize_string($actual));
-        
+        $props['product_id'] = self::$product_id; 
+        $props['test_id'] = 'test';      
+        self::$modx->runSnippet('getProductFields', $props);        
     }
     
 }

@@ -1,5 +1,89 @@
 [
     {
+        "name": "craftsmancoding/formbuilder",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/craftsmancoding/formbuilder.git",
+            "reference": "921ed15f0bbdf038c46bf1162efbe895753e90dc"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/craftsmancoding/formbuilder/zipball/921ed15f0bbdf038c46bf1162efbe895753e90dc",
+            "reference": "921ed15f0bbdf038c46bf1162efbe895753e90dc",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2014-05-20 19:04:38",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "Formbuilder\\": "src/"
+            }
+        },
+        "authors": [
+            {
+                "name": "Everett Griffiths",
+                "email": "everett@craftsmancoding.com"
+            }
+        ],
+        "description": "Generate form elements for forms everywhere.",
+        "keywords": [
+            "elements",
+            "forms",
+            "html"
+        ],
+        "support": {
+            "source": "https://github.com/craftsmancoding/formbuilder/tree/master",
+            "issues": "https://github.com/craftsmancoding/formbuilder/issues"
+        }
+    },
+    {
+        "name": "craftsmancoding/pagination",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/craftsmancoding/pagination.git",
+            "reference": "43f28d2fdb3a376bd6c0718d53ba039b5f4288e1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/craftsmancoding/pagination/zipball/43f28d2fdb3a376bd6c0718d53ba039b5f4288e1",
+            "reference": "43f28d2fdb3a376bd6c0718d53ba039b5f4288e1",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2014-05-08 16:45:57",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "Pagination\\": "src/"
+            }
+        },
+        "authors": [
+            {
+                "name": "Everett Griffiths",
+                "email": "everett@craftsmancoding.com"
+            }
+        ],
+        "description": ".",
+        "keywords": [
+            "pagination"
+        ],
+        "support": {
+            "source": "https://github.com/craftsmancoding/pagination/tree/master",
+            "issues": "https://github.com/craftsmancoding/pagination/issues"
+        }
+    },
+    {
         "name": "ezyang/htmlpurifier",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
@@ -45,89 +129,5 @@
         "keywords": [
             "html"
         ]
-    },
-    {
-        "name": "craftsmancoding/pagination",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/craftsmancoding/pagination.git",
-            "reference": "43f28d2fdb3a376bd6c0718d53ba039b5f4288e1"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/craftsmancoding/pagination/zipball/43f28d2fdb3a376bd6c0718d53ba039b5f4288e1",
-            "reference": "43f28d2fdb3a376bd6c0718d53ba039b5f4288e1",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0"
-        },
-        "time": "2014-05-08 16:45:57",
-        "type": "library",
-        "installation-source": "source",
-        "autoload": {
-            "psr-4": {
-                "Pagination\\": "src/"
-            }
-        },
-        "authors": [
-            {
-                "name": "Everett Griffiths",
-                "email": "everett@craftsmancoding.com"
-            }
-        ],
-        "description": ".",
-        "keywords": [
-            "pagination"
-        ],
-        "support": {
-            "source": "https://github.com/craftsmancoding/pagination/tree/master",
-            "issues": "https://github.com/craftsmancoding/pagination/issues"
-        }
-    },
-    {
-        "name": "craftsmancoding/formbuilder",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/craftsmancoding/formbuilder.git",
-            "reference": "c87e37e5f6a204fdba18006d324e519416fd6b69"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/craftsmancoding/formbuilder/zipball/c87e37e5f6a204fdba18006d324e519416fd6b69",
-            "reference": "c87e37e5f6a204fdba18006d324e519416fd6b69",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0"
-        },
-        "time": "2014-05-14 22:07:45",
-        "type": "library",
-        "installation-source": "source",
-        "autoload": {
-            "psr-4": {
-                "Formbuilder\\": "src/"
-            }
-        },
-        "authors": [
-            {
-                "name": "Everett Griffiths",
-                "email": "everett@craftsmancoding.com"
-            }
-        ],
-        "description": "Generate form elements for forms everywhere.",
-        "keywords": [
-            "elements",
-            "forms",
-            "html"
-        ],
-        "support": {
-            "source": "https://github.com/craftsmancoding/formbuilder/tree/master",
-            "issues": "https://github.com/craftsmancoding/formbuilder/issues"
-        }
     }
 ]

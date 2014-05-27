@@ -32,11 +32,15 @@ require_once $core_path .'vendor/autoload.php';
 $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('getProductFields',$scriptProperties);
 
+$scriptProperties['product_id'] = $modx->getOption('product_id',$scriptProperties);
 
-/*
-$scriptProperties['innerTpl'] = $modx->getOption('innerTpl',$scriptProperties, 'ProductSpec');
+echo '<pre>';
+print_r($scriptProperties);
+die();
 
-$moxySnippet = new Moxycart\Snippet($modx);
-$out = $moxySnippet->execute('json_product_specs',$scriptProperties);
-return $out;
-*/
+$F = new \Moxycart\Field($modx);
+
+$results = $F->all($scriptProperties);
+echo '<pre>';
+print_r($results);
+die();
