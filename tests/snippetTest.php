@@ -27,6 +27,7 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
     // Must be static because we set it up inside a static function
     public static $modx;
     public static $Store;
+    public static $Tax;
     public static $Field;
     public static $product_id;
     
@@ -60,6 +61,46 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
                 'Template' => array('templatename' => 'Sample Store'),
             ));
             self::$Store->save();        
+        }
+
+       if (!self::$Tax['A'] = self::$modx->getObject('Taxonomy', array('alias'=>'test-taxonomy-a'))) {
+            self::$Tax['A'] = self::$modx->newObject('Taxonomy');
+            self::$Tax['A']->fromArray(array(
+                'pagetitle' => 'Taxonomy A',
+                'alias' => 'test-taxonomy-a',
+                'uri' => 'test-taxonomy-a/',
+                'class_key' => 'Taxonomy',
+                'isfolder' => 1,
+                'published' => 1,
+                 'properties' => '',
+            ));
+            self::$Tax['A']->save();        
+        }
+        if (!self::$Tax['B'] = self::$modx->getObject('Taxonomy', array('alias'=>'test-taxonomy-b'))) {
+            self::$Tax['B'] = self::$modx->newObject('Taxonomy');
+            self::$Tax['B']->fromArray(array(
+                'pagetitle' => 'Taxonomy B',
+                'alias' => 'test-taxonomy-b',
+                'uri' => 'test-taxonomy-b/',
+                'class_key' => 'Taxonomy',
+                'isfolder' => 1,
+                'published' => 1,
+                 'properties' => '',
+            ));
+            self::$Tax['B']->save();        
+        }
+        if (!self::$Tax['C'] = self::$modx->getObject('Taxonomy', array('alias'=>'test-taxonomy-c'))) {
+            self::$Tax['C'] = self::$modx->newObject('Taxonomy');
+            self::$Tax['C']->fromArray(array(
+                'pagetitle' => 'Taxonomy C',
+                'alias' => 'test-taxonomy-c',
+                'uri' => 'test-taxonomy-c/',
+                'class_key' => 'Taxonomy',
+                'isfolder' => 1,
+                'published' => 1,
+                 'properties' => '',
+            ));
+            self::$Tax['C']->save();        
         }
 
         // Prep: create a Test Product Field
@@ -193,6 +234,9 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
     public static function tearDownAfterClass() {
         self::$Store->remove();
         self::$Field->remove();
+        self::$Tax['A']->remove();
+        self::$Tax['B']->remove();
+        self::$Tax['C']->remove(); 
     }
 
 
@@ -319,10 +363,10 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         global $modx;
         $modx = self::$modx;
         $props = array();
-        $props['innerTpl'] = '<li>[[+id]]: [[+pagetitle]]</li>';
+        $props['innerTpl'] = '<li>[[+pagetitle]]</li>';
         $props['outerTpl'] = '<ul>[[+content]]</ul>';
         $actual = self::$modx->runSnippet('getTaxonomies', $props);  
-        $expected = '<ul><li>515: Taxonomy C</li><li>513: Taxonomy A</li><li>514: Taxonomy B</li></ul>';
+        $expected = '<ul><li>Taxonomy A</li><li>Taxonomy B</li><li>Taxonomy C</li></ul>';
         $this->assertEquals(normalize_string($expected), normalize_string($actual));    
     }
     
