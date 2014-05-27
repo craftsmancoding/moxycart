@@ -87,6 +87,7 @@ class Product extends xPDOObject {
      * We intercept this so we can ensure that the product always grab's the URI from the parent store
      * TODO: cache the lookup
      */
+/*
     public function save($cacheFlag= null) {
         // No store id?
         // $this->xpdo->error->failure($this->xpdo->lexicon('permission_denied'));
@@ -95,5 +96,6 @@ class Product extends xPDOObject {
         }
         return parent::save($cacheFlag);
     }
+*/
 
 }

@@ -10,8 +10,10 @@ $xpdo_meta_map['OptionTerm']= array (
     'otype_id' => NULL,
     'slug' => NULL,
     'name' => NULL,
-    'sku_prefix' => NULL,
-    'sku_suffix' => NULL,
+    'mod_price' => 0,
+    'mod_weight' => 0,
+    'mod_code' => '',
+    'mod_category' => '',
     'seq' => NULL,
   ),
   'fieldMeta' => 
@@ -48,19 +50,37 @@ $xpdo_meta_map['OptionTerm']= array (
       'phptype' => 'string',
       'null' => false,
     ),
-    'sku_prefix' => 
+    'mod_price' => 
     array (
-      'dbtype' => 'varchar',
-      'precision' => '16',
-      'phptype' => 'string',
+      'dbtype' => 'decimal',
+      'precision' => '8,2',
+      'phptype' => 'float',
       'null' => false,
+      'default' => 0,
     ),
-    'sku_suffix' => 
+    'mod_weight' => 
+    array (
+      'dbtype' => 'decimal',
+      'precision' => '8,2',
+      'phptype' => 'float',
+      'null' => false,
+      'default' => 0,
+    ),
+    'mod_code' => 
     array (
       'dbtype' => 'varchar',
-      'precision' => '16',
+      'precision' => '255',
       'phptype' => 'string',
       'null' => false,
+      'default' => '',
+    ),
+    'mod_category' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
     ),
     'seq' => 
     array (
@@ -135,24 +155,6 @@ $xpdo_meta_map['OptionTerm']= array (
           'message' => 'Field slug must be at least 1 character.',
         ),
         'slugchars' => 
-        array (
-          'type' => 'preg_match',
-          'rule' => '/^[a-z0-9\\-_]+$/i',
-          'message' => 'Contains invalid characters.',
-        ),
-      ),
-      'sku_prefix' => 
-      array (
-        'sku_prefix_chars' => 
-        array (
-          'type' => 'preg_match',
-          'rule' => '/^[a-z0-9\\-_]+$/i',
-          'message' => 'Contains invalid characters.',
-        ),
-      ),
-      'sku_suffix' => 
-      array (
-        'sku_suffix_chars' => 
         array (
           'type' => 'preg_match',
           'rule' => '/^[a-z0-9\\-_]+$/i',

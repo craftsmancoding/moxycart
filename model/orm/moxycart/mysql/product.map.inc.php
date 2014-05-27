@@ -573,27 +573,5 @@ $xpdo_meta_map['Product']= array (
   ),
   'validation' => 
   array (
-    'rules' => 
-    array (
-      'name' => 
-      array (
-        'minlength' => 
-        array (
-          'type' => 'xPDOValidationRule',
-          'rule' => 'xPDOMinLengthValidationRule',
-          'value' => '1',
-          'message' => 'Product name must be at least 1 character.',
-        ),
-      ),
-      'alias' => 
-      array (
-        'validURLchars' => 
-        array (
-          'type' => 'preg_match',
-          'rule' => '/^[a-z0-9\\-_\\/]+$/i',
-          'message' => 'Contains invalid URL characters.',
-        ),
-      ),
-    ),
   ),
 );

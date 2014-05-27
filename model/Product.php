@@ -658,9 +658,57 @@ class Product extends BaseModel {
     }
     
     /**
-     * Override here for special stuff re variations
+     * Add a child variant to the current product. 
+     *
+     * PRODUCT OPTION MODIFIERS
+     * https://wiki.foxycart.com/v/1.1/cheat_sheet
+     * https://wiki.foxycart.com/v/0.6.0/getting_started/adding_links_and_forms
+         p for price
+         w for weight
+         c for product code
+         y for category (v070+ only)
+         
+            <select name="size">
+            	<option value="S{p+1.50|w-1|c:01a|y:teeny_category}">Small</option>
+            	<option value="XL{p+2.50|w+1|c:01d}">X-Large</option>
+            	<option value="Custom{p:5|w+1|c:01s}">Custom</option>
+            </select>
+        
+        $matrix = array( $otype_id => $oterm_id [, $otype_id2 => $oterm_id2 ... ] )
+     */
+    public function addVariant($matrix) {
+        $this_product_id = $this->_verifyExisting();
+        $V = new Variant($this->modx);
+        //$V->alias = $V->
+        
+    }
+    
+    
+    /** 
+     *
+     */
+    
+    /**
+     * Override here for special stuff
      */
     public function save() {
+        // /^[a-z0-9\-_\/]+$/i
+
+        $result = true; 
+        if (!preg_match('/^[a-z0-9\-_\/]+$/i', $this->get('alias'))) {
+            $this->errors['store_id'] = 'Invalid Store ID';
+            $result = false;        
+        }
+        if (!$Store = $this->modx->getObject('Store', $this->get('store_id'))) {
+            $this->errors['store_id'] = 'Invalid Store ID';
+            $result = false;
+        }
+        else {
+            $this->set('uri', $Store->get('uri').$this->get('alias'));
+        }
+        if (!$result) {
+            return false;
+        }
         return parent::save();
     }
     

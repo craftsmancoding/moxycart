@@ -129,9 +129,10 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<composite alias="Relations" class="ProductRelation" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Reviews" class="Review" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		
+		<!-- These need to be enforced in complex ways depending on whether the product is a variant -->
         <validation>
-            <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Product name must be at least 1 character."/>
-            <rule field="alias" name="validURLchars" type="preg_match" rule="/^[a-z0-9\-_\/]+$/i" message="Contains invalid URL characters." />
+            <!--rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Product name must be at least 1 character."/-->
+            <!--rule field="alias" name="validURLchars" type="preg_match" rule="/^[a-z0-9\-_\/]+$/i" message="Contains invalid URL characters." /-->
             <!--rule field="parent_id"
                   name="validParent"
                   type="xPDOValidationRule"
@@ -324,8 +325,16 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<field key="otype_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" index="index" comment="unique lowercase slug"/>
 		<field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
-		<field key="sku_prefix" dbtype="varchar" precision="16" phptype="string" null="false" />
-		<field key="sku_suffix" dbtype="varchar" precision="16" phptype="string" null="false" />
+		
+		<!--field key="sku_prefix" dbtype="varchar" precision="16" phptype="string" null="false" />
+		<field key="sku_suffix" dbtype="varchar" precision="16" phptype="string" null="false" /-->
+		
+		<!-- Product Option Modifiers https://wiki.foxycart.com/v/1.1/cheat_sheet#product_option_modifiers -->
+		<field key="mod_price" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>
+        <field key="mod_weight" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>
+        <field key="mod_code" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="mod_category" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
 		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
@@ -342,8 +351,8 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<validation>
             <rule field="slug" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field slug must be at least 1 character."/>
             <rule field="slug" name="slugchars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
-            <rule field="sku_prefix" name="sku_prefix_chars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
-            <rule field="sku_suffix" name="sku_suffix_chars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
+            <!--rule field="sku_prefix" name="sku_prefix_chars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
+            <rule field="sku_suffix" name="sku_suffix_chars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." /-->
             <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Name must be at least 1 character."/>
             <!--rule field="otype_id"
                   name="validOptionTerm"

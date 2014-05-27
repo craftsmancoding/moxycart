@@ -915,4 +915,49 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $x = $P->hashDelta($h1,$h2);
         $this->assertEquals(array('z'=>'zebra'), $x); 
     }
+
+    /**
+     *
+     *
+     */
+    public function testProductWithoutStore() {
+        $P = new Product(self::$modx);
+        $P->fromArray(array(
+            'store_id' => 'invalid',
+            'name' => 'Orphan Product',
+            'title' => 'I got no store',
+            'alias' => 'orphan-product',
+        ));
+   
+        $result = $P->save();
+        
+        $this->assertFalse($result);
+        $this->assertEquals('Invalid Store ID', $P->errors['store_id']);
+        
+    }
+
+    /**
+     *
+     *
+     */
+    public function testVariantWithoutProduct() {
+        $P = new Product(self::$modx);
+        $One = $P->one(array(
+            'store_id' => self::$Store->get('id'),
+            'sku' => 'SOUTHPARK-TSHIRT'));        
+        $P->addRelations(array(-1,-2,-3));
+   
+    }
+
+    /**
+     * 
+     */
+    public function testVariantAdd() {
+        $P = new Product(self::$modx);
+        
+    }
+
+    public function testVariantMatrixJSON() {
+    
+    }
 }

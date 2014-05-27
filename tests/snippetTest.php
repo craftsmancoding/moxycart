@@ -35,6 +35,7 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
     public static function setUpBeforeClass() {        
         self::$modx = new \modX();
         self::$modx->initialize('mgr');
+
         $core_path = self::$modx->getOption('moxycart.core_path','',MODX_CORE_PATH.'components/moxycart/');
         self::$modx->addExtensionPackage('moxycart',"{$core_path}model/orm/", array('tablePrefix'=>'moxy_'));
         self::$modx->addPackage('moxycart',"{$core_path}model/orm/",'moxy_');
@@ -235,6 +236,7 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         // You have to do this for EACH test function when you are testing a Snippet!
         global $modx;
         $modx = self::$modx;
+
         
         $props = array();
         $props['store_id'] = self::$Store->get('id');

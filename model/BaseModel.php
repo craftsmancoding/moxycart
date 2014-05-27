@@ -46,6 +46,27 @@ class BaseModel {
     
     // Store any validation errors here
     public $errors = array();
+
+    /**
+     * Special words reserved for use by the Foxycart API
+     *
+     * From https://wiki.foxycart.com/v/1.1/cheat_sheet
+     * 1:, 2:, 3:, 4:, etc
+     * h: session variables
+     */
+    public $reserved_words = array(
+        'name','price','image','url','code','quantity','quantity_max','quantity_min',
+        'category','weight','length','width','height','shipto','id',
+        'discount_quantity_amount','discount_quantity_percentage','discount_price_amount',
+        'discount_price_percentage','allunits','incremental','repeat','single','sub_frequency',
+        'sub_startdate','sub_enddate','sub_token','sub_cancel','cart','empty','coupon','redirect',
+        'output','callback','fc_auth_token','customer_email','customer_first_name','shipping_first_name',
+        'customer_last_name','shipping_last_name','customer_address1','shipping_address1','customer_address2',
+        'shipping_address2','customer_phone','shipping_phone','customer_company','shipping_company',
+        'customer_city','shipping_city','customer_postal_code','shipping_postal_code','customer_state',
+        'shipping_state','customer_country','shipping_country',
+        // Plus any fields that are columns of the main products table!
+    );
     
     /** 
      * We set $this->modelObj here instead of extending the base xpdoObject class because

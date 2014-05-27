@@ -130,9 +130,8 @@ class validationTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse($result);
 
         $errors = $F->getErrors();
-//print_r($errors); exit;
+
         $this->assertEquals($errors['slug'], 'Contains invalid characters.');
-        //$this->assertEquals($errors['name'], 'Field name must be at least 1 character.'); 
         $this->assertEquals($errors['type'], 'Contains invalid characters.');
 
     }
