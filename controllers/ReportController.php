@@ -2,12 +2,12 @@
 /**
  * The name of the controller is based on the action (home) and the
  * namespace. This home controller is loaded by default because of
- * our IndexManagerController.
+ * our IndexManagerController (see index.class.php)
  */
 namespace Moxycart;
 
 require_once MODX_CORE_PATH.'model/modx/modmanagercontroller.class.php'; 
-class MainController extends BaseController {
+class ReportController extends BaseController {
     public $loadHeader = false;
     public $loadFooter = false;
     public $loadBaseJavascript = false; // GFD... this can't be set at runtime.
@@ -17,16 +17,8 @@ class MainController extends BaseController {
      * @param array $scriptProperties
      */
     public function getIndex(array $scriptProperties = array()) {
-        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
-        $this->addStandardLayout();
-/*
-        $scriptProperties['baseurl'] = self::url('optiontype','index');
-        $this->setPlaceholder('results', $results);
-        $this->setPlaceholders($scriptProperties);
-*/
-        return $this->fetchTemplate('main/index.php');
-     
+        return 'Reports go here.';
     }
-        
+
 }
 /*EOF*/

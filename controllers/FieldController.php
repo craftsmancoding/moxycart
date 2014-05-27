@@ -20,13 +20,13 @@ class FieldController extends BaseController {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         $this->addStandardLayout();
         $Obj = new Field($this->modx);
-        $results = $Obj::all($scriptProperties);
+        $results = $Obj->all($scriptProperties);
         // We need these for pagination
-        $scriptProperties['count'] = $Obj::count($scriptProperties);        
-        $scriptProperties['baseurl'] = self::url('currency','index');
+        $scriptProperties['count'] = $Obj->count($scriptProperties);        
+        $scriptProperties['baseurl'] = self::url('field','index');
         $this->setPlaceholder('results', $results);
         $this->setPlaceholders($scriptProperties);
-        return $this->fetchTemplate('currency/index.php');
+        return $this->fetchTemplate('field/index.php');
     }
 
     /**
@@ -36,16 +36,16 @@ class FieldController extends BaseController {
     public function getEdit(array $scriptProperties = array()) {    
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         $this->addStandardLayout();
-        $currency_id = (int) $this->modx->getOption('currency_id',$scriptProperties);
-        $Obj = new \Moxycart\Model\Currency($this->modx);    
-        if (!$result = $Obj::find($currency_id)) {
+        $field_id = (int) $this->modx->getOption('field_id',$scriptProperties);
+        $Obj = new Field($this->modx);    
+        if (!$result = $Obj->find($field_id)) {
             return $this->sendError('Page not found.');
         }
-        $scriptProperties['baseurl'] = self::url('currency','edit',array('currency_id'=>$currency_id));
+        $scriptProperties['baseurl'] = self::url('field','edit',array('field_id'=>$field_id));
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($result->toArray());
         $this->setPlaceholder('result',$result);
-        return $this->fetchTemplate('currency/edit.php');
+        return $this->fetchTemplate('field/edit.php');
     }
 
     /**
@@ -55,16 +55,16 @@ class FieldController extends BaseController {
      */
     public function postEdit(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
-        $currency_id = (int) $this->modx->getOption('currency_id',$scriptProperties);
-        $Obj = new \Moxycart\Model\Currency($this->modx);    
-        if (!$result = $Obj::find($currency_id)) {
+        $field_id = (int) $this->modx->getOption('field_id',$scriptProperties);
+        $Obj = new Field($this->modx);    
+        if (!$result = $Obj::find($field_id)) {
             return $this->sendError('Page not found.');
         }
         $result->fromArray($scriptProperties);
         if (!$result->save()) {
             return $this->sendError('There was a problem saving.');
         }
-        $this->setMsg('Currency saved.','success');
+        $this->setMsg('Field saved.','success');
         return $this->getIndex(array());
     }
 
@@ -76,15 +76,13 @@ class FieldController extends BaseController {
     public function getCreate(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         $this->addStandardLayout();
-        $Obj = new \Moxycart\Model\Currency($this->modx);    
-        if (!$result = $Obj::create()) {
-            return $this->sendError('Page not found.');
-        }
-        $scriptProperties['baseurl'] = self::url('currency','create');
+        $Obj = new Field($this->modx);    
+
+        $scriptProperties['baseurl'] = self::url('field','create');
         $this->setPlaceholders($scriptProperties);
-        $this->setPlaceholders($result->toArray());
-        $this->setPlaceholder('result',$result);
-        return $this->fetchTemplate('currency/create.php');
+        $this->setPlaceholders($Obj->toArray());
+        $this->setPlaceholder('result',$Obj);
+        return $this->fetchTemplate('field/create.php');
     }
 
     /**
@@ -95,12 +93,12 @@ class FieldController extends BaseController {
     public function postCreate(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
 
-        $Obj = new \Moxycart\Model\Currency($this->modx);    
-        $result = $Obj::create($scriptProperties);
-        if (!$result->save()) {
+        $Obj = new Field($this->modx);    
+        $Obj->fromArray($scriptProperties);
+        if (!$Obj->save()) {
             return $this->sendError('Error Saving.');        
         }
-        $this->setMsg('Currency Created.','success');
+        $this->setMsg('Field Created.','success');
         return $this->getIndex(array());
     }
         

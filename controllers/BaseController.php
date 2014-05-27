@@ -218,7 +218,7 @@ class BaseController extends \modExtraManagerController {
     public function fetchTemplate($file) {
         // Conditional override! Ack!
         // If we don't give Smarty a free pass, we end up with errors "View file does not exist" because
-        // MODX relies on this fetchTemplate function to load up the header.tpl and footer.tpl files
+        // MODX relies on this fetchTemplate function to load up its header.tpl and footer.tpl files
         if (substr($file,-4) == '.tpl') {
             return parent::fetchTemplate($file);
         }

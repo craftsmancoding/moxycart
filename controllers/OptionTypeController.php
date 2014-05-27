@@ -7,7 +7,7 @@
 namespace Moxycart;
 
 require_once MODX_CORE_PATH.'model/modx/modmanagercontroller.class.php'; 
-class AssetController extends BaseController {
+class OptionTypeController extends BaseController {
     public $loadHeader = false;
     public $loadFooter = false;
     public $loadBaseJavascript = false; // GFD... this can't be set at runtime.
@@ -19,14 +19,14 @@ class AssetController extends BaseController {
     public function getIndex(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         $this->addStandardLayout();
-        $Obj = new Field($this->modx);
+        $Obj = new OptionType($this->modx);
         $results = $Obj->all($scriptProperties);
         // We need these for pagination
         $scriptProperties['count'] = $Obj->count($scriptProperties);        
-        $scriptProperties['baseurl'] = self::url('asset','index');
+        $scriptProperties['baseurl'] = self::url('optiontype','index');
         $this->setPlaceholder('results', $results);
         $this->setPlaceholders($scriptProperties);
-        return $this->fetchTemplate('asset/index.php');
+        return $this->fetchTemplate('optiontype/index.php');
     }
 
     /**
@@ -36,16 +36,16 @@ class AssetController extends BaseController {
     public function getEdit(array $scriptProperties = array()) {    
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         $this->addStandardLayout();
-        $asset_id = (int) $this->modx->getOption('asset_id',$scriptProperties);
-        $Obj = new Field($this->modx);    
-        if (!$result = $Obj->find($asset_id)) {
+        $otype_id = (int) $this->modx->getOption('otype_id',$scriptProperties);
+        $Obj = new OptionType($this->modx);    
+        if (!$result = $Obj->find($otype_id)) {
             return $this->sendError('Page not found.');
         }
-        $scriptProperties['baseurl'] = self::url('asset','edit',array('asset_id'=>$asset_id));
+        $scriptProperties['baseurl'] = self::url('optiontype','edit',array('otype_id'=>$otype_id));
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($result->toArray());
         $this->setPlaceholder('result',$result);
-        return $this->fetchTemplate('asset/edit.php');
+        return $this->fetchTemplate('optiontype/edit.php');
     }
 
     /**
@@ -55,16 +55,16 @@ class AssetController extends BaseController {
      */
     public function postEdit(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
-        $asset_id = (int) $this->modx->getOption('asset_id',$scriptProperties);
-        $Obj = new Field($this->modx);    
-        if (!$result = $Obj::find($asset_id)) {
+        $otype_id = (int) $this->modx->getOption('otype_id',$scriptProperties);
+        $Obj = new OptionType($this->modx);    
+        if (!$result = $Obj::find($otype_id)) {
             return $this->sendError('Page not found.');
         }
         $result->fromArray($scriptProperties);
         if (!$result->save()) {
             return $this->sendError('There was a problem saving.');
         }
-        $this->setMsg('Field saved.','success');
+        $this->setMsg('OptionType saved.','success');
         return $this->getIndex(array());
     }
 
@@ -76,13 +76,13 @@ class AssetController extends BaseController {
     public function getCreate(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         $this->addStandardLayout();
-        $Obj = new Field($this->modx);    
+        $Obj = new OptionType($this->modx);    
 
-        $scriptProperties['baseurl'] = self::url('asset','create');
+        $scriptProperties['baseurl'] = self::url('optiontype','create');
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($Obj->toArray());
         $this->setPlaceholder('result',$Obj);
-        return $this->fetchTemplate('asset/create.php');
+        return $this->fetchTemplate('optiontype/create.php');
     }
 
     /**
@@ -93,12 +93,12 @@ class AssetController extends BaseController {
     public function postCreate(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
 
-        $Obj = new Field($this->modx);    
+        $Obj = new OptionType($this->modx);    
         $Obj->fromArray($scriptProperties);
         if (!$Obj->save()) {
             return $this->sendError('Error Saving.');        
         }
-        $this->setMsg('Field Created.','success');
+        $this->setMsg('Option Type Created.','success');
         return $this->getIndex(array());
     }
         
