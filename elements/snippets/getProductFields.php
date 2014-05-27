@@ -40,10 +40,6 @@ $outerTpl = $modx->getOption('outerTpl',$scriptProperties, 'ProductOuterTpl');
 // $scriptProperties['is_active'] = $modx->getOption('is_active',$scriptProperties, 1);
 
 // Filter out formatting/control arguments:
-unset($scriptProperties['log_level']);
-unset($scriptProperties['log_target']);
-unset($scriptProperties['innerTpl']);
-unset($scriptProperties['outerTpl']);
 
 $criteria = $modx->newQuery('ProductField');
         
@@ -51,6 +47,11 @@ if ($product_id) {
     $criteria->where(array('product_id'=>$product_id));
 }
 
+
 $results = $modx->getCollectionGraph('ProductField','{"Field":{},"Product":{}}',$criteria);
 
-return $Snippet->format($results, $innerTpl,$outerTpl);
+if ($results) {
+    return $Snippet->format($results,$innerTpl,$outerTpl);    
+}
+
+$modx->log(\modX::LOG_LEVEL_DEBUG, "No results found",'','getProducts',__LINE__);

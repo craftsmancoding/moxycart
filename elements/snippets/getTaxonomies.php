@@ -30,10 +30,20 @@ require_once $core_path .'vendor/autoload.php';
 $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('getTaxonomies',$scriptProperties);
 
-/*
-$scriptProperties['innerTpl'] = $modx->getOption('innerTpl',$scriptProperties, 'TaxonomyTpl');
+$criteria = $modx->newQuery('Taxonomy');
+$criteria->where(array('class_key'=>'Taxonomy'));
+$pages = $modx->getCollection('Taxonomy',$criteria);
 
-$moxySnippet = new Moxycart\Snippet($modx);
-$out = $moxySnippet->execute('json_taxonomies',$scriptProperties);
-return $out;
-*/
+$results = array();
+foreach ($pages as $p) {
+    $results[] = array(
+        'id' => $p->get('id'),
+        'pagetitle' => $p->get('pagetitle')
+    );
+}
+
+if (!empty($results)) {
+    return $Snippet->format($results,$innerTpl,$outerTpl);    
+}
+
+$modx->log(\modX::LOG_LEVEL_DEBUG, "No results found",'','getTaxonomies',__LINE__);

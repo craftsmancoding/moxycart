@@ -304,9 +304,26 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         global $modx;
         $modx = self::$modx;
         $props = array();
-        $props['product_id'] = self::$product_id; 
-        $props['test_id'] = 'test';      
-        self::$modx->runSnippet('getProductFields', $props);        
+        $props['product_id'] = self::$product_id;
+        $props['innerTpl'] = '<li>[[+product_id]]: [[+value]]</li>';
+        $props['outerTpl'] = '<ul>[[+content]]</ul>'; 
+        $actual = self::$modx->runSnippet('getProductFields', $props);  
+        $expected = '<ul><li>'.self::$product_id.': Test Value</li></ul>';
+        //$this->assertEquals(normalize_string($expected), normalize_string($actual));     
+    }
+
+    /**
+     * Test getTaxonomies
+     */
+    public function testGetTaxonomies() {
+        global $modx;
+        $modx = self::$modx;
+        $props = array();
+        $props['innerTpl'] = '<li>[[+id]]: [[+pagetitle]]</li>';
+        $props['outerTpl'] = '<ul>[[+content]]</ul>';
+        $actual = self::$modx->runSnippet('getTaxonomies', $props);  
+        $expected = '<ul><li>515: Taxonomy C</li><li>513: Taxonomy A</li><li>514: Taxonomy B</li></ul>';
+        $this->assertEquals(normalize_string($expected), normalize_string($actual));    
     }
     
 }
