@@ -38,7 +38,7 @@ $outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</u
 $limit = (int) $modx->getOption('limit', $scriptProperties); 
 $start = (int) $modx->getOption('start', $scriptProperties); 
 $sort = $modx->getOption('sort', $scriptProperties,'pagetitle');
-$dir = $modx->getOption('sort', $scriptProperties,'ASC'); 
+$dir = $modx->getOption('dir', $scriptProperties,'ASC'); 
 
 $criteria = $modx->newQuery('Taxonomy');
 $criteria->where(array('class_key'=>'Taxonomy'));
