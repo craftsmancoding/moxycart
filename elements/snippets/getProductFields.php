@@ -41,13 +41,12 @@ $outerTpl = $modx->getOption('outerTpl',$scriptProperties, 'ProductOuterTpl');
 // $scriptProperties['is_active'] = $modx->getOption('is_active',$scriptProperties, 1);
 
 // Filter out formatting/control arguments:
-unset($scriptProperties['log_level']);
-unset($scriptProperties['log_target']);
-unset($scriptProperties['innerTpl']);
-unset($scriptProperties['outerTpl']);
 
 
-$F = new \Moxycart\Field($modx);
+$PF = new \Moxycart\ProductField($modx);
 
-$results = $F->all($scriptProperties);
-return $Snippet->format($results, $innerTpl,$outerTpl);
+if ($results = $PF->all($scriptProperties)) {
+    return $Snippet->format($results,$innerTpl,$outerTpl);    
+}
+
+$modx->log(\modX::LOG_LEVEL_DEBUG, "No results found",'','getProducts',__LINE__);

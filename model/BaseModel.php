@@ -223,7 +223,8 @@ class BaseModel {
      * @return mixed xPDO iterator (i.e. a collection, but memory efficient) or SQL query string
      */
     public function all($args,$debug=false) {
-
+        
+        
         // If you get this error: "Call to a member function getOption() on a non-object", it could mean:
         // 1) you tried to call this method statically, e.g. Product::all()
         // 2) you forgot to initialize the class and pass a modx instance to the contructor (dependency injection!)
@@ -235,7 +236,7 @@ class BaseModel {
         
         // Clear out non-filter criteria
         $args = self::getFilters($args); 
-  
+            
         $criteria = $this->modx->newQuery($this->xclass);
 
         if ($args) {
@@ -259,7 +260,7 @@ class BaseModel {
         // Workaround for issue https://github.com/modxcms/revolution/issues/11373
         $collection = $this->modx->getIterator($this->xclass,$criteria);
         foreach ($collection as $c) {
-            $collection->rewind();
+            $collection->rewind();           
             return $collection;
         }
         return array();
