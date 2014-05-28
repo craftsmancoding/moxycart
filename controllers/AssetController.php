@@ -19,7 +19,7 @@ class AssetController extends BaseController {
     public function getIndex(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         $this->addStandardLayout();
-        $Obj = new Field($this->modx);
+        $Obj = new Asset($this->modx);
         $results = $Obj->all($scriptProperties);
         // We need these for pagination
         $scriptProperties['count'] = $Obj->count($scriptProperties);        
@@ -37,7 +37,7 @@ class AssetController extends BaseController {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         $this->addStandardLayout();
         $asset_id = (int) $this->modx->getOption('asset_id',$scriptProperties);
-        $Obj = new Field($this->modx);    
+        $Obj = new Asset($this->modx);
         if (!$result = $Obj->find($asset_id)) {
             return $this->sendError('Page not found.');
         }
@@ -49,6 +49,18 @@ class AssetController extends BaseController {
     }
 
     /**
+     * Ajax posts here
+     *
+     */
+    public function postUpload(array $scriptProperties = array()) {    
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
+        $Obj = new Asset($this->modx);
+        $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
+        return '<pre>'.print_r($scriptProperties,true).'</pre>';
+        
+    }
+
+    /**
      * 
      *
      *
@@ -56,7 +68,7 @@ class AssetController extends BaseController {
     public function postEdit(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         $asset_id = (int) $this->modx->getOption('asset_id',$scriptProperties);
-        $Obj = new Field($this->modx);    
+        $Obj = new Asset($this->modx);    
         if (!$result = $Obj::find($asset_id)) {
             return $this->sendError('Page not found.');
         }
@@ -76,7 +88,7 @@ class AssetController extends BaseController {
     public function getCreate(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         $this->addStandardLayout();
-        $Obj = new Field($this->modx);    
+        $Obj = new Asset($this->modx);    
 
         $scriptProperties['baseurl'] = self::url('asset','create');
         $this->setPlaceholders($scriptProperties);
@@ -93,7 +105,7 @@ class AssetController extends BaseController {
     public function postCreate(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
 
-        $Obj = new Field($this->modx);    
+        $Obj = new Asset($this->modx);    
         $Obj->fromArray($scriptProperties);
         if (!$Obj->save()) {
             return $this->sendError('Error Saving.');        

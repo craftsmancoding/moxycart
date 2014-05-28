@@ -12,6 +12,48 @@ class ProductController extends BaseController {
     public $loadHeader = false;
     public $loadFooter = false;
     public $loadBaseJavascript = false; // GFD... this can't be set at runtime.
+
+
+    /**
+    * Load TinyMCE
+    * Add modx-richtext class on textarea
+    * @param
+    * @return
+    **/
+    private function _load_tinyMCE() 
+    {
+        $_REQUEST['a'] = '';  /* fixes E_NOTICE bug in TinyMCE */
+
+        $plugin= $this->modx->getObject('modPlugin',array('name'=>'TinyMCE'));
+
+        // Plugin not present.
+        if (!$plugin) {
+            return '';
+        }
+
+        $tinyPath =  $this->modx->getOption('core_path').'components/tinymce/';
+        $tinyUrl =  $this->modx->getOption('assets_url').'components/tinymce/';
+        
+        $tinyproperties = $plugin->getProperties();
+        require_once $tinyPath.'tinymce.class.php';
+        $tiny = new TinyMCE( $this->modx, $tinyproperties);
+
+        //$tinyproperties['language'] =  $modx->getOption('fe_editor_lang',array(),$language);
+        $tinyproperties['frontend'] = true;
+        $tinyproperties['cleanup'] = true; /* prevents "bogus" bug */
+        $tinyproperties['width'] = empty ( $props['tinywidth'] )? '95%' :  $props['tinywidth'];
+        $tinyproperties['height'] = empty ( $props['tinyheight'])? '400px' :  $props['tinyheight'];
+       //$tinyproperties['resource'] =  $resource;
+        $tiny->setProperties($tinyproperties);
+        $tiny->initialize();
+
+         $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            delete Tiny.config.setup; // remove manager specific initialization code (depending on ModExt)
+            Ext.onReady(function() {
+                MODx.loadRTE();
+            });
+        </script>');
+    }
     
     /**
      * Any specific processing we want to do here. Return a string of html.
@@ -32,8 +74,8 @@ class ProductController extends BaseController {
         // We need these for pagination
         $scriptProperties['count'] = $Obj->count($scriptProperties);        
         $scriptProperties['baseurl'] = self::url('product','index');
-        $this->setPlaceholder('results', $results);
         $this->setPlaceholders($scriptProperties);
+        $this->setPlaceholder('results', $results);
         return $this->fetchTemplate('product/index.php');
     }
 
@@ -53,6 +95,8 @@ class ProductController extends BaseController {
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($result->toArray());
         $this->setPlaceholder('result',$result);
+        $this->setPlaceholder('pagetitle','Edit Product');
+        $this->setPlaceholder('product_form_action','product_update');
         return $this->fetchTemplate('product/edit.php');
     }
 
@@ -81,7 +125,14 @@ class ProductController extends BaseController {
      *
      */
     public function postEdit(array $scriptProperties = array()) {
-        return print_r($scriptProperties,true);
+        $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
+        $out = array(
+            'success' => true,
+            'msg' => 'Product Created Successfully',
+            'product_id' => $product_id
+        );
+        return json_encode($out);
+        return '<pre>'.print_r($scriptProperties,true).'</pre>';
     }
     
     /**
@@ -91,13 +142,27 @@ class ProductController extends BaseController {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         $this->addStandardLayout();
         $Obj = new Product($this->modx);    
-        $Obj->store_id = (int) $this->modx->getOption('product_id',$scriptProperties);
-        
+        $Obj->store_id = (int) $this->modx->getOption('store_id',$scriptProperties);
+        $Obj->inheritFromStore($Obj->store_id);
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($Obj->toArray());
+        $this->setPlaceholder('pagetitle','Create New Product');
+        $this->setPlaceholder('product_form_action','product_create');        
         $this->setPlaceholder('result',$Obj);
-        return $this->fetchTemplate('product/create.php');
+        return $this->fetchTemplate('product/edit.php');
     }
+
+    public function postCreate(array $scriptProperties = array()) {
+        $product_id = '';
+        $out = array(
+            'success' => true,
+            'msg' => 'Product Created Successfully',
+            'product_id' => $product_id
+        );
+        return json_encode($out);
+        //return '<pre>'.print_r($scriptProperties,true).'</pre>';
+    }
+
     
     /**
      * Basically take a product ID (product_id) and forward 

@@ -186,10 +186,11 @@ jQuery(function() {
     });  
 
 	$(document).on('submit','#product_update',function(){     
+
 	        var values = $(this).serialize();
 	        var rand = Math.random()*10000000000000000;
 	        console.log('product_update');
-		    $.post( controller_url + '&class=Product&method=Edit&rand='+rand, values, function(data){
+		    $.post( controller_url + '&class=product&method=edit&rand='+rand, values, function(data){
 		    	$('.moxy-msg').show();
 		    	data = $.parseJSON(data);
 		    	if(data.success == true) {
@@ -202,15 +203,18 @@ jQuery(function() {
 		    	$('#product_name').text( $('#name').val() );
 		    } );
 		    return false;
+
 	});
 
 	$(document).on('submit','#product_create', function(){
+        console.log('product_create');
 		var values = $(this).serialize();
-		var url = connector_url + 'product_save';
-	    $.post( url+"&action=create", values, function( data ){
+        var rand = Math.random()*10000000000000000;
+
+	    $.post( controller_url + '&class=product&method=create&rand='+rand, values, function(data){
 	    	data = $.parseJSON(data);
 	    	if(data.success == true) {
-	    		window.location.href = redirect_url + data.product_id;
+	    		window.location.href = controller_url + '&class=product&method=edit&product_id=' + data.product_id;
 	    	} else{
 	    		$('#moxy-result').html('Failed');
 	    		$('#moxy-result-msg').html(data.msg);

@@ -7,7 +7,7 @@
     $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
     $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
     $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
-    $this->modx->regClientCSS('http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
+    $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
     $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
     $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
     $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
@@ -21,10 +21,10 @@
 		var controller_url = "'.$this->config['controller_url'].'";
         var use_editor = "'.$this->modx->getOption('use_editor').'";
         var assets_url = "'.$this->config['assets_url'].'";    		
-        var variation_url = "'.$this->config['controller_url'].'&parent_id='.$product_id.'";
+        var variation_url = "'.$this->config['controller_url'].'&parent_id='.$data['result']->product_id.'";
 
         jQuery(document).ready(function() {
-                var myDropzone = new Dropzone("div#image_upload", {url: connector_url+"image_save&product_id='.$product_id.'"});
+                var myDropzone = new Dropzone("div#image_upload", {url: controller_url+"&class=asset&method=upload&product_id='.$data['result']->product_id.'"});
                 
                 // Refresh the list on success (append new tile to end)
                 myDropzone.on("success", function(file,response) {
@@ -34,7 +34,7 @@
                     console.log(response);
                     if (response.success) {
                        
-                        var url = connector_url + "get_image&image_id=" + response.image_id;
+                        var url = controller_url + "&class=asset&method=view&asset_id=" + response.asset_id;
                         jQuery.post( url, function(data){
                             jQuery("#product_images").append(data);
                             jQuery(".dz-preview").remove();
@@ -53,11 +53,13 @@
         });
 
 		Ext.onReady(function() {   		
-			renderProductVariationProductsGrid();
+			// renderProductVariationProductsGrid();
 		});
 		</script>
 	');
-
+    if ($this->modx->getOption('use_editor')) {
+        $this->_load_tinyMCE();
+    }
 ?>
 <script>
 function add_relation(product_id,name,sku) {
@@ -105,7 +107,7 @@ function remove_relation(product_id) {
             <?php
             endif;
             ?>
-			<a class="btn" href="<?php print MODX_MANAGER_URL.'?a=30&id='.$data['store_id']; ?>">Close</a>
+			<a class="btn" href="<?php print MODX_MANAGER_URL.'?a=30&id='.$data['store_id']; ?>">Back to Product List</a>
 		</div>
 	</div>
 	
@@ -113,12 +115,19 @@ function remove_relation(product_id) {
 	<ul id="moxytab" class="menu">
 		<li class="product-link active"><a href="#product">Product</a></li>
 		<li class="settings-link" ><a href="#settings_tab">Product Settings</a></li>
-		<li class="variations-link" ><a href="#variations_tab">Variations</a></li>
-		<li class="specs-link" ><a href="#specs_tab">Specs</a></li>
+		<?php // if($this->modx->getOption('moxycart.enable_variations')):?>
+    		<li class="variations-link" ><a href="#variations_tab">Variations</a></li>
+		<?php // endif; ?>
+		<li class="fields-link" ><a href="#fields_tab">Custom Fields</a></li>
 		<li class="related-link" ><a href="#related_tab">Related</a></li>
-        <li class="reviews-link" ><a href="#reviews_tab">Reviews</a></li>
-		<li class="images-link" ><a href="#images_tab">Images</a></li>
-		<li class="product-link" ><a href="#taxonomies_tab">Taxonomies</a></li>
+		<?php // if($this->modx->getOption('moxycart.enable_reviews')):?>
+            <li class="reviews-link" ><a href="#reviews_tab">Reviews</a></li>
+        <?php // endif; ?>
+		<li class="assets-link" ><a href="#assets_tab">Assets</a></li>
+		<?php //if($this->modx->getOption('moxycart.enable_taxonomies')):?>
+    		<li class="taxonomies-link" ><a href="#taxonomies_tab">Taxonomies</a></li>
+		<?php //endif; ?>
+		<li class="orders-link" ><a href="#orders_tab">View Orders</a></li>
 	</ul>
 
 	<div id="product" class="content">
@@ -135,6 +144,16 @@ function remove_relation(product_id) {
                                 <input type="text"  style="width:94%;" name="alias" id="alias" value="">
                                 <label for="content">Description</label>
                                 <textarea id="description" style="width:94%;" rows="3" name="description"></textarea>
+
+                                <label for="sku">SKU</label>
+                                <input type="text" style="width:94%;" id="sku" name="sku" value=""/>
+
+                                <label for="price">Price</label>
+                                <input type="text" style="width:94%;" id="price" name="price" value=""/>
+
+                                <label for="price_strike_thru">Strike-Through Price</label>
+                                <input type="text" style="width:94%;" id="price_strike_thru" name="price_strike_thru" value=""/>
+                                
                             </td>
                             <td style="width:30%;vertical-align: top;">
                             	<label for="category">In Menu</label>
@@ -175,21 +194,8 @@ function remove_relation(product_id) {
                     <tbody>
                          <tr>
                             <td style="width:70%;vertical-align: top;">
-                                <label for="sku">SKU</label>
-                                <input type="text" style="width:94%;" id="sku" name="sku" value=""/>
-
-                                <label for="price">Price</label>
-                                <input type="text" style="width:94%;" id="price" name="price" value=""/>
-
-                                <label for="price_strike_thru">Strike-Through Price</label>
-                                <input type="text" style="width:94%;" id="price_strike_thru" name="price_strike_thru" value=""/>
 								
-								 <label for="currency_id">Currency</label>
-                                <select style="width:40%;" name="currency_id" id="currency_id">
-                                	<?php print $data['currencies']; ?>
-								</select>
-
-								 <label for="qty_inventory">Inventory</label>
+								<label for="qty_inventory">Inventory</label>
                                 <input type="text" style="width:94%;" id="qty_inventory" name="qty_inventory" value=""/>
 
                                 <label for="qty_alert">Alert Qty</label>
@@ -215,14 +221,14 @@ function remove_relation(product_id) {
                                 <input type="text" style="width:90%;" name="price_sale" id="price_sale" value="">
 
                                 <label for="sale_start">Sale Start</label>
-								<div class="input-append date datepicker" data-date="<?php echo date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
+								<div class="input-append date datepicker" data-date="<?php print date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
 											<span class="add-on"><i class="icon icon-calendar"></i></span>
 										  <input type="text" name="sale_start" id="sale_start" class="span3" maxlength="10" value="">
 										  
 								</div>
 
 								<label for="sale_end">Sale End</label>
-								<div class="input-append date datepicker" data-date="<?php echo date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
+								<div class="input-append date datepicker" data-date="<?php print date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
 									<span class="add-on"><i class="icon icon-calendar"></i></span>
 										  <input type="text" name="sale_end" id="sale_end" class="span3" maxlength="10" value="">
 										  
@@ -251,17 +257,17 @@ function remove_relation(product_id) {
 
 	<div id="variations_tab" class="content"><br>
 		<?php if(isset($data['product_id'])) : ?>
-			<a id="manage_inventory" class="btn" href="<?php print $data['mgr_connector_url']; ?>product_inventory&product_id=<?php print $data['product_id']; ?>">Manage Variation Inventory</a>
+			<a id="manage_inventory" class="btn" href="<?php print self::url('product', 'inventory',array('product_id'=>$data['product_id'])); ?>">Manage Variation Inventory</a>
 		<?php endif; ?>
 		<div id="product_variations" style="padding-top:10px;">
 		</div>
     </div>
 	
-	<div id="specs_tab" class="content">
+	<div id="fields_tab" class="content">
 			<table class="table table-bordered" id="product_specs">
 				<thead>
 					<tr>
-						<th>Spec</th>
+						<th>Field</th>
 						<th>Value</th>
 						<th>Description</th>
 					</tr>
@@ -283,7 +289,7 @@ function remove_relation(product_id) {
 		</select>
 
 		<button class="btn" onclick="javascript:get_spec(jQuery('#spec_id').val()); return false;">Attach Spec</button>
-		<a class="btn btn-custom" href="<?php echo $data['mgr_connector_url'].'specs_manage';  ?>">Add New Spec</a>
+		<a class="btn btn-custom" href="<?php print self::url('field','create');  ?>">Add New Spec</a>
 
 	</div>
 	
@@ -390,10 +396,10 @@ function remove_relation(product_id) {
                   </table>
     </div>
 
-	<div id="images_tab" class="content">	
+	<div id="assets_tab" class="content">	
         <div class="dropzone-wrap" id="image_upload">
             <div class="featured-img">
-                <img src="<?php print $this->modx->getOption('moxycart.assets_url','', MODX_ASSETS_URL); ?>components/moxycart/images/featured-img.png" alt=""  title="Primary Thumbnail">
+                <img src="<?php print $this->config['assets_url']; ?>images/featured-img.png" alt=""  title="Primary Thumbnail">
             </div>
         	<ul class="clearfix" id="product_images">
                 <?php print isset($data['images']) ? $data['images'] : ''; ?>
@@ -419,7 +425,7 @@ function remove_relation(product_id) {
                     <h4 class="modal-title" id="myModalLabel">Update Image</h4>
 
                     <div class="loader-ajax">
-                        <img src="<?php print $data['loader_path']; ?>" alt="">
+                        <img src="<?php print $this->config['assets_url']; ?>images/gif-load.gif" alt="">
                     </div>
                     
                   </div>
@@ -445,6 +451,9 @@ function remove_relation(product_id) {
 
 	</div>
 
+    <div id="orders_tab" class="content">
+    
+    </div>    
 </div>
 
 

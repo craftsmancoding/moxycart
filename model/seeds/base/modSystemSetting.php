@@ -50,6 +50,13 @@ return array(
 		'area' => 'moxycart:default'
     ),
     array(
+        'key'  =>     'moxycart.enable_taxonomies',
+		'value'=>     0,
+		'xtype'=>     'combo-boolean',
+		'namespace' => 'moxycart',
+		'area' => 'moxycart:default'
+    ),
+    array(
         'key'  =>     'moxycart.thumbnail_width',
 		'value'=>     '240',
 		'xtype'=>     'textfield',
