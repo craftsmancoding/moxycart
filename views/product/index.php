@@ -1,6 +1,6 @@
 <div>
-    <span class="btn">Add Product</span> 
-    <span class="btn">Manage Inventory</span>
+    <a class="btn" href="<?php print static::url('product','create',array('store_id'=>$data['store_id'])); ?>">Add Product</a> 
+    <a class="btn" href="<?php print static::url('product','inventory',array('store_id'=>$data['store_id'])); ?>">Manage Inventory</a>
     
     
     <form action="<?php print $data['baseurl']; ?>">

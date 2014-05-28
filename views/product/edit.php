@@ -7,6 +7,7 @@
     $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
     $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
     $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
+    $this->modx->regClientCSS('http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
     $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
     $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
     $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
@@ -77,7 +78,6 @@ function remove_relation(product_id) {
     jQuery('#product_'+product_id+' strong').css("color","black");    
 }
 </script>
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
 <div class="moxy-msg">
 	<div id="moxy-result"></div>
