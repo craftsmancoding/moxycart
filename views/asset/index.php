@@ -34,7 +34,7 @@ print $this->getMsg();
     </form>
 </div>
 <?php if ($data['results']): ?>
-<table>
+<table class="classy">
     <thead>
         <tr>
             <th>

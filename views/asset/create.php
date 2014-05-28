@@ -1,35 +1,29 @@
 <?php include dirname(dirname(__FILE__)).'/header.php';  ?>
-<style>
-label {
-    display:block;
-    font-weight:bold;
-}
-label.checkboxlabel {
-    display:inline;
-}
-input {
-    display: block;
-    margin-bottom:10px;    
-}
-input.checkbox {
-    display:inline;
-}
-</style>
-<h2>Create New Field</h2>
+<div class="moxycart_canvas_inner">
+    <h2>Create New Asset</h2>
+</div>
+
+<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>We're glad you're here.</p></div>
+
+<div class="moxycart_canvas_inner">
+
 <?php
+\Formbuilder\Form::setTpl('description','<p class="description-txt">[+description+]</p>');
 print \Formbuilder\Form::open($data['baseurl'])
-    ->text('slug', $data['slug'], array('label'=>'Slug','description'=>'Lowercase alphanumeric identifier with no spaces or special characters.'))
-    ->text('label', $data['label'], array('label'=>'Label','description'=>'Human readable name for this field.'))
-    ->dropdown('type', array('text'=>'Text','textarea'=>'Textarea','checkbox'=>'Checkbox','dropdown'=>'Dropdown','multicheck'=>'Multi-Check'), $data['type'], array('label'=>'Field Type', 'description'=>'Choose what type of field this is.'))
-    ->text('description', $data['description'], array('label'=>'Description', 'description'=>'A brief description of the field.'))
-    ->textarea('config', $data['config'], array('label'=>'Configuration','description'=>'Some fields require special customization via a JSON array.'))
-    ->text('group', $data['group'], array('label'=>'Group','description'=>'Fields with the same group value will appear together.'))
-    ->submit('','Save')
-    ->close();
+   ->text('slug', $data['slug'], array('label'=>'Slug','description'=>'Lowercase alphanumeric identifier with no spaces or special characters.','class'=>'input input-half'))
+        ->text('label', $data['label'], array('label'=>'Label','description'=>'Human readable name for this field.','class'=>'input input-half'))
+        ->dropdown('type', array('text'=>'Text','textarea'=>'Textarea','checkbox'=>'Checkbox','dropdown'=>'Dropdown','multicheck'=>'Multi-Check'), $data['type'], array('label'=>'Field Type', 'description'=>'Choose what type of field this is.'))
+        ->text('description', $data['description'], array('label'=>'Description', 'description'=>'A brief description of the field.','class'=>'input input-half'))
+        ->textarea('config', $data['config'], array('label'=>'Configuration','description'=>'Some fields require special customization via a JSON array.'))
+        ->html('<br>')
+        ->text('group', $data['group'], array('label'=>'Group','description'=>'Fields with the same group value will appear together.','class'=>'input input-half'))
+        ->submit('','Save',array('class'=>'btn moxycart-btn'))
+        ->close();
 ?>
 
 <div>
     <a href="<?php print static::url('field','index'); ?>" class="btn btn-cancel">Cancel</a>
 </div>
 
+</div>
 <?php include dirname(dirname(__FILE__)).'/footer.php';  ?>

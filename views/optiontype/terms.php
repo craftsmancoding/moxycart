@@ -20,29 +20,21 @@ function remove_term(event) {
 }
 
 </script>
-<style>
-label {
-    display:block;
-    font-weight:bold;
-}
-label.checkboxlabel {
-    display:inline;
-}
-input {
-    display: block;
-    margin-bottom:10px;    
-}
-input.checkbox {
-    display:inline;
-}
-</style>
-<h2 class="moxycart_cmp_heading">Manage Terms: <?php print $data['slug']; ?></h2>
+
+<div class="moxycart_canvas_inner">
+    <h2 class="moxycart_cmp_heading">Manage Terms: <?php print $data['slug']; ?></h2>
+</div>
+
+<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Here you can Edit Option Types.</p></div>
+
+<div class="moxycart_canvas_inner">
+
 
 <?php
 print $this->getMsg();
 ?>
 
-<span class="button" onclick="javascript:add_term();">Add Term</span>
+<span class="button btn moxycart-btn" onclick="javascript:add_term();">Add Term</span>
 
 <?php
 /*
@@ -57,12 +49,12 @@ print \Formbuilder\Form::open($data['baseurl'])
 ?>
 <form action="<?php print $data['baseurl']; ?>" method="post" >
     <input type="hidden" name="otype_id" value="<?php print $data['otype_id']; ?>" />
-    <table id="option_terms">
+    <table id="option_terms" class="classy">
         <thead>
-            <tr>
-                <td colspan="2">&nbsp;</td>
-                <td colspan="4">Modfiers</td>
-            </tr>
+<!--             <tr>
+    <td colspan="2">&nbsp;</td>
+    <td colspan="4">Modfiers</td>
+</tr> -->
             <tr>
                 <th>Slug</th>
                 <th>Name</th>
@@ -73,40 +65,43 @@ print \Formbuilder\Form::open($data['baseurl'])
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($data['terms'] as $t): ?>
-                <tr>
-                    <td>
-                        <input type="hidden" name="oterm_id[]" value="<?php print $t->oterm_id; ?>" />
-                        <input type="text" name="slug[]" placeholder="slug" value="<?php print htmlentities($t->slug); ?>" />
-                    </td>
-                    <td>
-                        <input type="text" name="name[]" placeholder="Name" value="<?php print htmlentities($t->name); ?>" />
-                    </td>
-                    <td>
-                        <input type="text" name="mod_price[]" placeholder="0" value="<?php print htmlentities($t->mod_price); ?>" />
-                    </td>
-                    <td>
-                        <input type="text" name="mod_weight[]" placeholder="0" value="<?php print htmlentities($t->mod_weight); ?>" />
-                    </td>    
-                    <td>
-                        <input type="text" name="mod_code[]" placeholder="SKU" value="<?php print htmlentities($t->mod_code); ?>" />
-                    </td>
-                    <td>
-                        <input type="text" name="mod_category[]" placeholder="Default" value="<?php print htmlentities($t->mod_category); ?>" />
-                    </td>        
-                    <td>
-                        <span class="button" onclick="javascript:remove_term.call(this,event);">Remove</span>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
+            <?php if(!empty($data['terms'])) : ?>
+                <?php foreach ($data['terms'] as $t): ?>
+                    <tr>
+                        <td>
+                            <input type="hidden" name="oterm_id[]" value="<?php print $t->oterm_id; ?>" />
+                            <input type="text" name="slug[]" placeholder="slug" value="<?php print htmlentities($t->slug); ?>" />
+                        </td>
+                        <td>
+                            <input type="text" name="name[]" placeholder="Name" value="<?php print htmlentities($t->name); ?>" />
+                        </td>
+                        <td>
+                            <input type="text" name="mod_price[]" placeholder="0" value="<?php print htmlentities($t->mod_price); ?>" />
+                        </td>
+                        <td>
+                            <input type="text" name="mod_weight[]" placeholder="0" value="<?php print htmlentities($t->mod_weight); ?>" />
+                        </td>    
+                        <td>
+                            <input type="text" name="mod_code[]" placeholder="SKU" value="<?php print htmlentities($t->mod_code); ?>" />
+                        </td>
+                        <td>
+                            <input type="text" name="mod_category[]" placeholder="Default" value="<?php print htmlentities($t->mod_category); ?>" />
+                        </td>        
+                        <td>
+                            <span class="button" onclick="javascript:remove_term.call(this,event);">Remove</span>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else : ?>
+            <tr><td colspan="7"><div class="danger">No terms Found...</div></td></tr>
+            <?php endif; ?>
+
         </tbody>
     </table>
-    <input type="submit" value="Save Terms"/>
-</form>
-<div>
-    
+    <br>
+    <input type="submit" class="btn" value="Save Terms"/>
     <a href="<?php print static::url('field','index'); ?>" class="btn btn-cancel">Cancel</a>
-</div>
+</form>
 
 <?php
 /*
@@ -142,4 +137,5 @@ requests to get it.
 </tr>
 </textarea>
 
+</div>
 <?php include dirname(dirname(__FILE__)).'/footer.php';  ?>
