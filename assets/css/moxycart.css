@@ -3,6 +3,15 @@
  *
  * Customize the MODX Resource Tree
  */
+
+ a {
+    color: #727272;
+    text-decoration: none;
+ }
+
+ a:hover {
+    color: #77963d;
+ }
 .icon-store .x-tree-node-icon {
     background-image: url(../images/cart-icon.png) !important;
 }
@@ -22,23 +31,30 @@
  * CMPs
  */
 .moxycart_canvas {
-
+    background: #fff;
+    border: 1px solid #999999;
+    margin: 0px 10px 0px;
+    padding-top: 
 }
 
-#moxycart_header {
-    background-image:url('../images/moxycart-logo.png');
-    background-repeat:no-repeat;
+.moxycart_canvas_inner {
+    padding: 20px;
 }
 
 h2.moxycart_cmp_heading {
-
+    margin-bottom: 0px;
 }
 
 #moxycart_nav {
     list-style-type:none;
-    margin-left: 200px;
     padding:0;
+    list-style-type: none;
+    padding: 0;
+    float: right;
+    margin: 40px 10px 5px 10px;
+    font-size: 11px;
 }
+
 .moxycart_nav_item {
     display:inline;
     padding: 10px;
@@ -49,7 +65,9 @@ h2.moxycart_cmp_heading {
 }
 
 #moxycart_footer {
-
+    text-align: center;
+    display: block;
+    margin-top: 20px; 
 }
 .moxycart_donation_link {
 
@@ -62,5 +80,120 @@ h2.moxycart_cmp_heading {
 }
 
 #moxycart_copyright {
-
+    color: #727272;
+    margin-top: 6px;
+    font-style: italic;
 }
+
+#moxycart_buttons {
+    width: 100%; 
+}
+#moxycart_buttons ul:before,
+#moxycart_buttons ul:after {
+    content: " ";
+    display: table;
+}
+#moxycart_buttons ul:after {
+    clear: both;
+}
+#moxycart_buttons ul {
+    width: 102%;
+    margin: -1% 0 0 -1%;
+    /* clearfix */
+    *zoom: 1;
+}
+#moxycart_buttons ul li {
+    display: table;
+    position: relative;
+    float: left;
+    width: 32%;
+    margin: 0;
+    padding: 1% 0 0 1%;
+}
+#moxycart_buttons ul li a {
+    display: table-cell;
+    height: 65px;
+    width: 100%;
+    position: relative;
+    padding: 0px 15px 0px 70px;
+    text-decoration: none;
+    vertical-align: middle;
+    /* MODX 2.x.x Manager Button Styles */
+    font: bold 11px tahoma, verdana, helvetica, sans-serif;
+    color: #53595f;
+    background: url(../images/modx-theme/form/button-bg.svg) repeat-x scroll 0 bottom rgba(222,222,222,1);
+    background:-moz-linear-gradient(center bottom,#dedede 0%,#ffffff 100%) repeat scroll 0 0 transparent;
+    background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#ffffff),color-stop(100%,#dedede));
+    background:-webkit-linear-gradient(center bottom,#dedede 0%,#ffffff 100%);
+    background:-o-linear-gradient(center bottom,#dedede 0%,#ffffff 100%);
+    background:-ms-linear-gradient(center bottom,#dedede 0%,#ffffff 100%); 
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#ffffff,endColorstr=#dedede,GradientType=0);
+    background:linear-gradient(center bottom,#dedede 0%,#ffffff 100%);
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    -khtml-border-radius:3px;
+    border-radius:3px;
+    border: 1px solid gray;
+    border-color: #CACACA #C0C0C0 #AAA;
+    -moz-box-shadow:rgba(0,0,0,0.2) 0 0 1px;
+    -webkit-box-shadow:rgba(0,0,0,0.2) 0 0 1px;
+    -o-box-shadow:rgba(0,0,0,0.2) 0 0 1px;
+    box-shadow:rgba(0,0,0,0.2) 0 0 1px;
+}
+#moxycart_buttons ul li a:hover {
+    background:-moz-linear-gradient(center bottom,#cecece 0%,#ffffff 100%) repeat scroll 0 0 transparent;
+    background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#ffffff),color-stop(100%,#cecece));
+    background:-webkit-linear-gradient(center bottom,#cecece 0%,#ffffff 100%);
+    background:-o-linear-gradient(center bottom,#cecece 0%,#ffffff 100%);
+    background:-ms-linear-gradient(center bottom,#cecece 0%,#ffffff 100%); 
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#ffffff,endColorstr=#cecece,GradientType=0);
+    background:linear-gradient(center bottom,#cecece 0%,#ffffff 100%);
+}
+#moxycart_buttons ul li a span {
+    display: block;
+    line-height: 1.4;
+}
+#moxycart_buttons ul li a span.headline {
+    font-size: 12px;
+}
+#moxycart_buttons ul li a span.subline {
+    font-weight: normal;
+}
+#moxycart_buttons ul li a span.icon {
+    display: block;
+    width: 36px;
+    height: 36px;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+}
+
+.setting .icon {
+    background: url(../images/setting.png) no-repeat;
+}
+
+.reviews .icon {
+    background: url(../images/reviews.png) no-repeat;
+}
+
+.assets .icon {
+    background: url(../images/assets.png) no-repeat;
+}
+
+.fields .icon {
+    background: url(../images/fields.png) no-repeat;
+}
+
+.product .icon {
+    background: url(../images/product.png) no-repeat;
+}
+
+/* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
+   j.mp/bestclearfix */
+.clear:before, .clear:after,
+.clearfix:before, .clearfix:after { content: "\0020"; display: block; height: 0; visibility: hidden; }
+.clear:after,
+.clearfix:after { clear: both; }
+/* Fix clearfix: blueprintcss.lighthouseapp.com/projects/15318/tickets/5-extra-margin-padding-bottom-of-page */
+.clear,
+.clearfix { zoom: 1; }
