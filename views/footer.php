@@ -3,7 +3,6 @@
  * Please change the CSS IDs and HTML here to whatever you want!
  */
 ?>
-	</div><!-- /moxycart_canvas_inner -->
 </div><!-- /moxycart_canvas -->
 
 <div id="moxycart_footer">
