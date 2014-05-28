@@ -16,15 +16,12 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
 //        $this->addJavascript($assets_url . 'js/productcontainer.js');
         $this->addJavascript($assets_url . 'js/store.js');
         $store_id = (int) (isset($_GET['id'])) ? $_GET['id'] : 0;
-    	$moxycart_connector_url = $assets_url.'connector.php?f=';
-    	//getControllerUrl()
-    	$moxycart_connector_url = '/manager/index.php?a=';
-    	if ($Action = $this->modx->getObject('modAction', array('namespace'=>'moxycart','controller'=>'index'))) {
-    	   $moxycart_connector_url .= $Action->get('id');   
-    	}
-    	
+    	$B = new \Moxycart\BaseController($this->modx); 
+    	$moxycart_connector_url = $B->url();
+
     	$this->addHtml('
 			<script type="text/javascript">
+                console.log("Loading class '.__CLASS__.'");
                 /*
                 @param integer offset
                 @param string sort column name
