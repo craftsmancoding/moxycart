@@ -63,6 +63,8 @@ function paint(page,data,target) {
     var url = controller_url('page',page);
     jQuery.get(url, data, function( response ) {    
         replace_me(target,response);
+        jQuery('#moxycart_msg').html('');
+        jQuery('#moxycart_msg').show();
     })
     .fail(function() {
         console.error('[paint] get request to %s failed', url);

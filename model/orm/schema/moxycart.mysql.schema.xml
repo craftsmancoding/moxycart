@@ -413,7 +413,6 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 	<object class="ProductOptionType" table="product_option_types" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="otype_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-        <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
         <field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" length="" collation="A" null="false" />

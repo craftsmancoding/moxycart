@@ -20,7 +20,7 @@ function remove_term(event) {
     <h2 class="moxycart_cmp_heading">Manage Terms: <?php print $data['slug']; ?></h2>
 </div>
 
-<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Here you can Edit Option Types.</p></div>
+<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Define which terms should appear in your option list.  Optionally, you can trigger modifications to the price, weight, SKU code, or Foxycart category when a specific term is selected.</p></div>
 
 <div class="moxycart_canvas_inner">
 
@@ -84,7 +84,7 @@ print \Formbuilder\Form::open($data['baseurl'])
                             <input type="text" name="mod_category[]" placeholder="Default" value="<?php print htmlentities($t->mod_category); ?>" />
                         </td>        
                         <td>
-                            <span class="button" onclick="javascript:remove_term.call(this,event);">Remove</span>
+                            <span class="btn" onclick="javascript:remove_term.call(this,event);">Remove</span>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -129,7 +129,7 @@ requests to get it.
         <input type="text" name="mod_category[]" placeholder="Default" value="" />
     </td>        
     <td>
-        <span class="button" onclick="javascript:remove_term.call(this,event);">Remove</span>
+        <span class="btn" onclick="javascript:remove_term.call(this,event);">Remove</span>
     </td>
 </tr>
 </textarea>

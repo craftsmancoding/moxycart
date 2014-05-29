@@ -5,10 +5,12 @@
  * @PluginEvents OnManagerPageInit,OnPageNotFound,OnBeforeCacheUpdate
  *
  */
+ 
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
 include_once $core_path .'vendor/autoload.php';
 $cache_dir = 'moxycart';
-
+//$modx->setLogLevel(4);
+$modx->log(modX::LOG_LEVEL_DEBUG,'Bang: '.$modx->event->name);
 switch ($modx->event->name) {
 
     //------------------------------------------------------------------------------
@@ -17,6 +19,7 @@ switch ($modx->event->name) {
     //------------------------------------------------------------------------------
     case 'OnManagerPageInit':
         $assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
+        $modx->log(modX::LOG_LEVEL_DEBUG,'Registering '.$assets_url.'css/moxycart.css','','moxycart Plugin:OnManagerPageInit');
         $modx->regClientCSS($assets_url.'css/moxycart.css');
         break;
         
@@ -25,14 +28,16 @@ switch ($modx->event->name) {
     //  Query for our custom product and format it using a MODX template
     //------------------------------------------------------------------------------
     case 'OnPageNotFound':
+
         // Trim the base url off the front of the request uri
         $uri = preg_replace('/^'.preg_quote(MODX_BASE_URL,'/').'/','', $_SERVER['REQUEST_URI']);
     
-        $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin] URI requested : '.$uri);
+        $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin] URI requested : '.$uri,'','moxycart Plugin:OnPageNotFound');
         
         $modx->addPackage('moxycart',$core_path.'model/orm/','moxy_');
-
-        $refresh = true; // used if you want to turn off caching (good for testing)        
+        
+        
+        $refresh = !$modx->getOption('moxycart.product_cache'); // used if you want to turn off caching (good for testing)        
 
         $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
         $fingerprint = 'product/'.$uri;
@@ -41,10 +46,10 @@ switch ($modx->event->name) {
 
         // Cache our custom browser-specific version of the page.
         if ($refresh || empty($product_attributes)) {
-            $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin] Refresh requested or no cached data detected.');
+            $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin] Refresh requested or no cached data detected.','','moxycart Plugin refresh');
             
-            // Specs are no more!  We now use Fields
-            //$Product = $modx->getObjectGraph('Product','{"Specs":{"Spec":{}}}',array('uri'=>$uri));
+            
+            $Product = $modx->getObjectGraph('Product','{"Fields":{"Field":{}}}',array('uri'=>$uri));
 
             if (!$Product) {
                 $modx->log(modX::LOG_LEVEL_INFO,'[moxycart plugin] No Product found for uri '.$uri);
@@ -53,9 +58,9 @@ switch ($modx->event->name) {
 
             $product_attributes = $Product->toArray();
 
-            //foreach ($Product->Specs as $S) {
-            //    $product_attributes[$S->Spec->get('identifier')] = $S->get('value');
-            //}
+            foreach ($Product->Fields as $F) {
+                $product_attributes[$F->Field->get('slug')] = $F->get('value');
+            }
           
             
             if (!$Template = $modx->getObject('modTemplate', $Product->get('template_id'))) {
@@ -87,6 +92,7 @@ switch ($modx->event->name) {
     //  Clear out our custom cache files.
     //------------------------------------------------------------------------------
     case 'OnBeforeCacheUpdate':
+        $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin]','OnBeforeCacheUpdate');
         $modx->cacheManager->clean(array(xPDO::OPT_CACHE_KEY => $cache_dir));
         break;
 }

@@ -81,9 +81,13 @@ class PageController extends BaseController {
     public function getProducts(array $scriptProperties = array()) {
         $Obj = new Product($this->modx);
         $results = $Obj->all($scriptProperties);
-//        return $results; exit;
-        $this->setPlaceholder('results', $results);
+        $count = $Obj->count($scriptProperties);
+        $offset = (int) $this->modx->getOption($scriptProperties,'offset',0);
         $this->setPlaceholders($scriptProperties);
+        $this->setPlaceholder('results', $results);
+        $this->setPlaceholder('count', $count);
+        $this->setPlaceholder('offset', $offset);
+
         return $this->fetchTemplate('main/products.php');
     }
  
@@ -105,6 +109,34 @@ class PageController extends BaseController {
         $this->setPlaceholders($result->toArray());
         $this->setPlaceholder('result',$result);
         return $this->fetchTemplate('product/edit.php');
+    }
+
+     public function getProductInventory(array $scriptProperties = array()) {
+        $Obj = new Product($this->modx);
+        $scriptProperties['limit'] = 0;
+        $results = $Obj->all($scriptProperties);
+        $count = $Obj->count($scriptProperties);
+        $offset = (int) $this->modx->getOption($scriptProperties,'offset',0);
+        $this->setPlaceholders($scriptProperties);
+        $this->setPlaceholder('results', $results);
+        $this->setPlaceholder('count', $count);
+        $this->setPlaceholder('offset', $offset);
+
+        return $this->fetchTemplate('product/inventory.php');
+    }    
+
+    /**
+     * Basically take a product ID (product_id) and forward 
+     *
+     */
+    public function getProductPreview(array $scriptProperties = array()) {
+        $product_id = (int) $this->modx->getOption('product_id', $scriptProperties);
+        $Obj = new Product($this->modx);    
+        if (!$result = $Obj->find($product_id)) {
+            return $this->sendError('Page not found.');
+        }
+        header('Location: '.MODX_SITE_URL . $result->get('uri'));
+        exit;        
     }
 
     
@@ -301,6 +333,24 @@ class PageController extends BaseController {
         return $this->fetchTemplate('main/settings.php');
      
     }
+    
+    //------------------------------------------------------------------------------
+    //! Store
+    //------------------------------------------------------------------------------
+    /**
+     * Called from the Store CRC 
+     *
+     * @param array $scriptProperties
+     */
+    public function getStoreProducts(array $scriptProperties = array()) {
+        $this->scriptProperties['_nolayout'] = true;
+        $Obj = new Product($this->modx);
+        $results = $Obj->all($scriptProperties);
+        $this->setPlaceholder('results', $results);
+        $this->setPlaceholders($scriptProperties);
+        return $this->fetchTemplate('main/storeproducts.php');
+    }
+    
     
     
     public function getTest(array $scriptProperties = array()) {

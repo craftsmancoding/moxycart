@@ -36,6 +36,44 @@ class Product extends BaseModel {
         return $this->product_id; 
     }
 
+    /**
+     * Load a product AND its fields from a given $url
+     *
+     * @param string $uri relative to MODX_BASE_URL e.g. "mystore/myproduct"
+     * @param boolean $force_fresh if true, result will not be served from cache
+     * @return mixed array of product attributes or false on not found
+     */
+    public function request($uri,$force_fresh=false) {
+    
+        $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
+        $fingerprint = 'product/'.$uri;
+
+        $product_attributes = $this->modx->cacheManager->get($fingerprint, $cache_opts);
+
+        // Cache our custom browser-specific version of the page.
+        if ($force_fresh || empty($product_attributes)) {
+            $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Refresh requested or no cached data detected.','',__CLASS__,__FUNCTION__,__LINE__);
+               
+            $Product = $this->modx->getObjectGraph('Product','{"Fields":{"Field":{}}}',array('uri'=>$uri));
+
+            if (!$Product) {
+                $this->modx->log(\modX::LOG_LEVEL_DEBUG,'No Product found for uri '.$uri,'',__CLASS__,__FUNCTION__,__LINE__);
+                return false;  // it's a real 404
+            } 
+
+            $product_attributes = $Product->toArray();
+
+            foreach ($Product->Fields as $F) {
+                $product_attributes[$F->Field->get('slug')] = $F->get('value');
+            }
+            
+            $this->modx->cacheManager->set($fingerprint, $product_attributes, $Product->lifetime, $cache_opts);
+            
+        }
+        
+        return $product_attributes; 
+    }
+    
     //------------------------------------------------------------------------------
     public function addReview() {
         // addOne not good enough?
@@ -458,24 +496,41 @@ class Product extends BaseModel {
     //! Fields
     //------------------------------------------------------------------------------
     /** 
-     * Add fields to a product
-     * @param array $array of taxonomy page ids
+     * Add field data to a product.  We don't do this via addMany... shrugs.
+     *
+     * array(
+     *      array(
+     *          'field_id' => 123,          (required)
+     *          'value'=>'something'        (optional)
+     *          'seq' => 1                  (optional)
+     *      ),
+     * )
+     *
+     * @param array $data of ProductField data -- they omit the product_id since that is inherited
      */
-    public function addFields(array $array) {
+    public function addFields(array $data) {
         $this_product_id = $this->_verifyExisting();
 
-        foreach ($array as $id) {
-            $props = array(
-                'product_id'=> $this_product_id, 
-                'field_id'=> $id
-            );
-            if (!$PF = $this->modx->getObject('ProductField', $props)) {
-                if (!$F = $this->modx->getObject('Field', $id)) {
-                    throw new \Exception('Invalid field ID '.$id);    
-                }
-                $PF = $this->modx->newObject('ProductField', $props);
-                $PF->save();
+        foreach ($data as $r) {
+            if (!isset($r['field_id'])) {
+                $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Missing field_id','',__CLASS__,__FUNCTION__,__LINE__); 
+                continue;
             }
+            if (!$F = $this->modx->getObject('Field', $r['field_id'])) {
+                throw new \Exception('Invalid field ID '.$r['field_id']);    
+            }            
+
+            $props = array(
+                'product_id' => $this_product_id,
+                'field_id' => $r['field_id'] 
+            );
+
+            if (!$PF = $this->modx->getObject('ProductField', $props)) {                
+                $PF = $this->modx->newObject('ProductField', $props);
+            }
+            if (isset($r['value'])) $PF->set('value', $r['value']);
+            if (isset($r['seq'])) $PF->set('seq', $r['seq']);
+            $PF->save();
         }
 
         return true;    
@@ -502,16 +557,21 @@ class Product extends BaseModel {
     }
 
     /**
-     * Dictate fields for the current product.
+     * Dictate fields for the current product. See $data structure above @addFields()
+     *
      * This will remove all fields not in the given $array, add any new relations from the $array,
      * it will order the relations based on the incoming $array order (seq will be set).
      * Exeptions are thrown if the product ids do not exist.
      *
-     * @param array $dictate'd related_id's
+     * @param array $data of records
      */
-    public function dictateFields(array $dictate) {
+    public function dictateFields(array $data) {
         $this_product_id = $this->_verifyExisting();
         
+        $dictate = array();
+        foreach($data as $r) {
+            $dictate[] = $r['field_id'];
+        }
         $props = array(
             'product_id'=> $this_product_id,
         );
@@ -525,13 +585,99 @@ class Product extends BaseModel {
         $to_remove = array_diff($existing,$dictate);
         $to_add = array_diff($dictate,$existing);
 
+        $newdata = array();
+        foreach ($data as $r) {
+            if (in_array($r['field_id'],$to_add)) {
+                $newdata[] = $r;
+            }
+        }
+
         $this->removeFields($to_remove);
-        $this->addFields($to_add);
+        $this->addFields($newdata);
         
         return true;
     
     }
 
+    /**
+     * Data format should be ??? saveComplete
+     *
+     
+     'title' => 'myproduct',
+     'price' => 14.99
+     // ...etc...
+     
+     // Related Data
+     'Assets' => array(
+        array(
+            'asset_id' => 123,
+            'group' => 'MyGroup',
+            'seq' => 1
+        )
+     ),
+     // Names come from alias in the schema
+     'Fields' => array(
+        array(
+            'field_id' => 4,
+            'value' => 'Something'
+        )
+     ),
+     'OptionTypes' => array(
+        array(
+            'otype_id' => 5,
+            'seq' => 0
+        )
+     ),
+     'Relations' => array(
+        array(
+            'related_id' => 53,
+            'type' => 'related',
+            'seq' => 1
+        )
+     ),
+     'Taxonomies' => array(
+        array(
+            'taxonomy_id' => 53,
+            'seq' => 0,
+        )
+     ),
+     'Terms' => array(
+        array(
+            'term_id' => 53,
+            'seq' => 1,
+        )
+     ),
+     
+     @param array $data (e.g. from $_POST)
+     */
+    public function saveRelated($data) {
+        // Extra stuff is ignored
+        $this->fromArray($data);
+        if (!$this->save()) {
+            return false;
+        }
+        $product_id = $this->get('product_id');
+        if (isset($data['Assets'])) {
+        
+        }
+        if (isset($data['Fields'])) {
+        
+        }
+        if (isset($data['OptionTypes'])) {
+        
+        }
+        if (isset($data['Relations'])) {
+        
+        }
+        if (isset($data['Taxonomies'])) {
+        
+        }
+        
+        if (isset($data['Terms'])) {
+        
+        }
+        
+    }
     /** 
      * get all Fields and Values for this product
      * @param array $array of taxonomy page ids
@@ -549,13 +695,11 @@ class Product extends BaseModel {
     //! OptionTypes
     //------------------------------------------------------------------------------
     /** 
-     * Add variation-types to a product. This will update the "is_variant" attribute
-     * on all matched rows.
+     * Add variation-types to a product. 
      *
      * @param array $array of otype_ids
-     * @param boolean $is_variant triggers super special functionality (default: false)
      */
-    public function addOptionTypes(array $array, $is_variant=false) {
+    public function addOptionTypes(array $array) {
         $this_product_id = $this->_verifyExisting();
 
         foreach ($array as $id) {
@@ -569,7 +713,6 @@ class Product extends BaseModel {
                 }
                 $PVT = $this->modx->newObject('ProductOptionType', $props);
             }
-            $PVT->set('is_variant', $is_variant);
             $PVT->save();
         }
 
@@ -602,9 +745,8 @@ class Product extends BaseModel {
      * Exeptions are thrown if the product ids do not exist.
      *
      * @param array $dictate'd otype_id's
-     * @param boolean $is_variant triggers super special functionality (default: false)     
      */
-    public function dictateOptionTypes(array $dictate, $is_variant=false) {
+    public function dictateOptionTypes(array $dictate) {
         $this_product_id = $this->_verifyExisting();
         
         $props = array(
@@ -664,7 +806,7 @@ class Product extends BaseModel {
             }
         }
         else {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, 'store_id does not exist',__CLASS__);
+            $this->modx->log(\modX::LOG_LEVEL_ERROR, 'store_id does not exist',__CLASS__);
         } 
         
     }

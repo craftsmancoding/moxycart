@@ -8,6 +8,13 @@
 
 	<div id="moxycart_buttons">
 	<ul>
+	    <li class="product">
+	        <a href="<?php print self::page('products'); ?>" title="Manage Products">
+	            <span class="icon"></span>
+	            <span class="headline">Products</span>
+	            <span class="subline">Manage Products</span>
+	        </a>
+	    </li>	
 	    <li class="assets">
 	        <a href="<?php print self::page('assets'); ?>" title="Manage Assets">
 	            <span class="icon"></span>

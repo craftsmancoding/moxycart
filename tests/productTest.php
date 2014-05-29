@@ -517,8 +517,8 @@ class productTest extends \PHPUnit_Framework_TestCase {
         self::$VTerm['embossed']->remove();
         self::$VTerm['silkscreen']->remove();
         self::$VTerm['gold']->remove();
-*/
         
+*/
 
     }
     
@@ -819,33 +819,58 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $fields[] = self::$Field['two']->get('field_id');
         $fields[] = self::$Field['three']->get('field_id');
         
-        $One->addFields($fields);
+        $data = array();
+        $data[] = array('field_id' => self::$Field['one']->get('field_id'), 'value'=>'Uno');
+        $data[] = array('field_id' => self::$Field['two']->get('field_id'), 'value'=>'Dos');
+        $data[] = array('field_id' => self::$Field['three']->get('field_id'), 'value'=>'Tres');
         
+        $One->addFields($data);
+
         // Verify they all exist:
         $Collection = self::$modx->getCollection('ProductField', array('product_id'=>$product_id));
         $this->assertFalse(empty($Collection),'Product Fields were not added!');
         $cnt = self::$modx->getCount('ProductField', array('product_id'=>$product_id));
         $this->assertEquals(count($fields), $cnt);
-        foreach ($fields as $id) {
-            $PT = self::$modx->getObject('ProductField', array('product_id'=>$product_id,'field_id'=>$id));
-            $this->assertFalse(empty($PT));
-        }
+
+        // Check Values
+        $PT = self::$modx->getObject('ProductField', array('product_id'=>$product_id,'field_id'=>self::$Field['one']->get('field_id')));
+        $this->assertFalse(empty($PT));
+        $this->assertEquals('Uno', $PT->get('value'));
+        $PT = self::$modx->getObject('ProductField', array('product_id'=>$product_id,'field_id'=>self::$Field['two']->get('field_id')));
+        $this->assertFalse(empty($PT));
+        $this->assertEquals('Dos', $PT->get('value'));
+        $PT = self::$modx->getObject('ProductField', array('product_id'=>$product_id,'field_id'=>self::$Field['three']->get('field_id')));
+        $this->assertFalse(empty($PT));
+        $this->assertEquals('Tres', $PT->get('value'));
+
         
         // Add duplicates, verify that nothing new was created.
-        $One->addFields($fields);
+        $cnt1 = self::$modx->getCount('ProductField', array('product_id'=>$product_id));
+        $One->addFields($data);
         $cnt2 = self::$modx->getCount('ProductField', array('product_id'=>$product_id));
-        $this->assertEquals($cnt, $cnt2);
+        $this->assertEquals($cnt1, $cnt2);
         
-        // Remove all but one
-        $odd_man_out = array_pop($fields);
-        $One->removeFields($fields);
-        $cnt3 = self::$modx->getCount('ProductField', array('product_id'=>$One->get('product_id')));
-        $this->assertEquals($cnt3, 1); // should be only one left
+        // Remove 2
+        $cnt_before = self::$modx->getCount('ProductField', array('product_id'=>$One->get('product_id')));
+        $One->removeFields(array(self::$Field['two']->get('field_id'), self::$Field['three']->get('field_id')));
+        $cnt_after = self::$modx->getCount('ProductField', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt_before-2, $cnt_after, 'Two fields should have been deleted'); // should be 2 fewer
         
-        // Now, dictate the fields: this should add and remove
-        $One->dictateFields($fields);
-        $cnt4 = self::$modx->getCount('ProductField', array('product_id'=>$One->get('product_id')));
-        $this->assertEquals($cnt4, count($fields)); 
+        // Now, dictate the fields: this should remove one and add back two and three
+        array_shift($data);
+
+        $One->dictateFields($data);
+
+        $x = self::$modx->getObject('ProductField', array('product_id'=>$One->get('product_id'),'field_id'=>self::$Field['one']->get('field_id')));
+        $this->assertTrue(empty($x));
+        
+        $y = self::$modx->getObject('ProductField', array('product_id'=>$One->get('product_id'),'field_id'=>self::$Field['two']->get('field_id')));
+        $this->assertFalse(empty($y));
+        $this->assertEquals('Dos',$y->get('value'));
+        
+        $z = self::$modx->getObject('ProductField', array('product_id'=>$One->get('product_id'),'field_id'=>self::$Field['three']->get('field_id')));
+        $this->assertFalse(empty($z));
+        $this->assertEquals('Tres',$z->get('value')); 
     }    
 
 
@@ -936,7 +961,77 @@ class productTest extends \PHPUnit_Framework_TestCase {
         // $this->assertEquals('Invalid Store ID', $P->errors['store_id']);
         
     }
+    
+    /**
+     *
+     *
+     */
+    public function testRequest() {
+        // Load up a product with some fields.
+        $P = new Product(self::$modx);
+        $One = $P->one(array(
+            'store_id' => self::$Store->get('id'),
+            'sku' => 'SOUTHPARK-TSHIRT'));
+                    
+        $fields = array();
+        $fields[] = self::$Field['one']->get('field_id');
+        $fields[] = self::$Field['two']->get('field_id');
+        $fields[] = self::$Field['three']->get('field_id');
+        
+        $One->dictateFields($fields);
 
+        $url = $One->get('url');
+
+        $this->assertEquals('test-store/south-park-tshirt',$url);
+
+        $data = $P->request($url);
+    
+    }
+
+    /**
+     * Makin' sure our calculated fields are legit
+     *
+     */
+    public function testCalculatedPrice() {
+        // Sale Price
+        $P = new Product(self::$modx);
+        $P->sale_start = date('Y-m-d H:i:s',strtotime('-1 days')); // yesterday
+        $P->sale_end = date('Y-m-d H:i:s',strtotime('+1 days')); // tomorrow
+        $P->price = 149.00;
+        $P->price_sale = 99.00;
+        $this->assertEquals(99.00, $P->calculated_price);
+
+        // Regular Price
+        $P = new Product(self::$modx);
+        $P->sale_start = date('Y-m-d H:i:s',strtotime('-7 days')); // last week
+        $P->sale_end = date('Y-m-d H:i:s',strtotime('-1 days')); // yesterday
+        $P->price = 149.00;
+        $P->price_sale = 99.00;
+        $this->assertEquals(149.00, $P->calculated_price);
+
+        // Regular Price (no sale)
+        $P = new Product(self::$modx);
+        $P->price = 149.00;
+        $P->price_sale = 99.00;
+        $this->assertEquals(149.00, $P->calculated_price);
+        
+    }
+    
+    /**
+     * We can only cache until the end of the sale
+     */
+    public function testCacheLifetime() {
+        // With a sale date
+        $P = new Product(self::$modx);
+        $tmw = strtotime('+1 days');
+        $P->sale_end = date('Y-m-d H:i:s',$tmw); // tomorrow
+        $lifetime = $tmw - time();
+        $this->assertEquals($lifetime, $P->cache_lifetime);
+        // Without
+        $P = new Product(self::$modx);
+        $this->assertEquals(0, $P->cache_lifetime);
+    }
+    
     /**
      *
      *

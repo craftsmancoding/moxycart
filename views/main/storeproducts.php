@@ -1,20 +1,14 @@
-<div class="moxycart_canvas_inner">
-    <h2 class="moxycart_cmp_heading" id="moxycart_pagetitle">Manage Products</h2>
-</div>
-
-<div class="moxycart_canvas_inner">
-
 <div>
-    <span class="button btn moxycart-btn" onclick="javascript:paint('productcreate');">Add Product</span>
-    <span class="btn" onclick="javascript:paint('productinventory');">Manage Inventory</span>
-            
-    <!--form action="<?php print $data['baseurl']; ?>">
+    <a class="btn" href="<?php print static::url('product','create',array('store_id'=>$data['store_id'])); ?>">Add Product</a> 
+    <a class="btn" href="<?php print static::url('product','inventory',array('store_id'=>$data['store_id'])); ?>">Manage Inventory</a>
+        
+    <form action="<?php print $data['baseurl']; ?>">
         <input type="text" name="name:LIKE" placeholder="Search..." />    
         <input type="submit" value="Filter"/>
-    </form-->
+    </form>
 </div>
 <?php if ($data['results']): ?>
-<table class="classy">
+<table>
     <thead>
         <tr>
             <th>Name</th>
@@ -29,9 +23,7 @@
         <td><?php print $r->get('name'); ?></td>
         <td><?php print $r->get('sku'); ?></td>
         <td><?php print $r->get('category'); ?></td>
-        <td>
-            <span class="button btn" onclick="javascript:paint('productedit',{product_id:<?php print $r->get('product_id'); ?>});">Edit</span>
-             <a href="<?php print static::page('productpreview',array('product_id'=>$r->get('product_id'))); ?>" class="btn" target="_blank">Preview</a></td>
+        <td><a href="<?php print static::url('product','edit',array('product_id'=>$r->get('product_id'))); ?>" class="btn">Edit</a> <a href="<?php print static::url('product','preview',array('product_id'=>$r->get('product_id'))); ?>" class="btn">Preview</a></td>
     </tr>
 <?php endforeach; ?>
     </tbody>
@@ -45,9 +37,9 @@
 
 <?php 
 // Pagination : see the get_data function in the controllers/store/upudate.class.php
+$offset = (int) (isset($_GET['offset'])) ? $_GET['offset'] : 0;
 $results_per_page = (int) $this->modx->getOption('moxycart.default_per_page','',$this->modx->getOption('default_per_page'));
-
-print \Pagination\Pager::links($data['count'], $data['offset'], $results_per_page)
+print \Pagination\Pager::links($data['count'], $offset, $results_per_page)
     ->setBaseUrl($data['baseurl'])
     ->setTpls(
         array(
@@ -69,4 +61,3 @@ print \Pagination\Pager::links($data['count'], $data['offset'], $results_per_pag
     	)
     );
 ?>
-</div>

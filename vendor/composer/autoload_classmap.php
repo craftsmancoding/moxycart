@@ -23,7 +23,6 @@ return array(
     'Moxycart' => $baseDir . '/model/orm/moxycart/moxycart.class.php',
     'Moxycart\\Asset' => $baseDir . '/model/Asset.php',
     'Moxycart\\BaseModel' => $baseDir . '/model/BaseModel.php',
-    'Moxycart\\Currency' => $baseDir . '/model/Currency.php',
     'Moxycart\\Field' => $baseDir . '/model/Field.php',
     'Moxycart\\Image' => $baseDir . '/model/Image.php',
     'Moxycart\\OptionTerm' => $baseDir . '/model/OptionTerm.php',

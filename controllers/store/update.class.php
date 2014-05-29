@@ -31,7 +31,7 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
                     sort = typeof sort !== "undefined" ? sort : "name";
                     dir = typeof dir !== "undefined" ? dir : "ASC";
 					Ext.Ajax.request({
-                        url: connector_url+"&class=page&method=products&offset="+offset+"&sort="+sort+"&dir="+dir+"&store_id='.$store_id.'",
+                        url: connector_url+"&class=page&method=storeproducts&offset="+offset+"&sort="+sort+"&dir="+dir+"&store_id='.$store_id.'",
                         params: {},
                         async:false,
                         success: function(response){

@@ -10,9 +10,10 @@ class Product extends xPDOObject {
     }
     
     /**
-     * Override to provide calculated fields
+     * Modifiers: overrides to provide calculated fields
      */
     public function get($k, $format = null, $formatTemplate= null) {
+        // Return the sale price if the product is on sale
         if ($k=='calculated_price') {
             $now = strtotime(date('Y-m-d H:i:s'));
             $sale_start = strtotime($this->get('sale_start'));
@@ -20,12 +21,23 @@ class Product extends xPDOObject {
         
             $calculated_price = $this->get('price');
             // if on sale use price sale
-            if($sale_start <= $now && $sale_end >= $now) {
+            if(($sale_start <= $now) && ($sale_end >= $now)) {
                 $calculated_price = $this->get('price_sale');
             } 
 
             return $calculated_price;            
         
+        }
+        // Termines how long we can cache this for
+        elseif($k=='cache_lifetime') {
+            $now = strtotime(date('Y-m-d H:i:s'));
+            $sale_end = strtotime($this->get('sale_end'));
+        
+            if ($sale_end && $sale_end >= $now) {
+                return $sale_end - $now;                
+            }
+                        
+            return 0;        
         }
         else {
             return parent::get($k, $format, $formatTemplate);
@@ -63,26 +75,7 @@ class Product extends xPDOObject {
         
         return $data;
     }
-        
-    /**
-     * Used to calculate how long a product could be cached for.
-     * If there is a sale, the cache is good until the end of the 
-     * sale. Otherwise, the product may be cached indefinitely (0).
-     *
-     * @return integer
-     */
-    public function get_lifetime() {
-        
-            $now = strtotime(date('Y-m-d H:i:s'));
-            $sale_end = strtotime($this->get('sale_end'));
-        
-            if ($sale_end && $sale_end >= $now) {
-                return $sale_end - $now;                
-            }
-                        
-            return 0;
-    }
-    
+            
     /** 
      * We intercept this so we can ensure that the product always grab's the URI from the parent store
      * TODO: cache the lookup
