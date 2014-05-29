@@ -1,13 +1,10 @@
 <?php
 /**
- * The name of the controller is based on the action (home) and the
- * namespace. This home controller is loaded by default because of
- * our IndexManagerController.
+ * See the IndexManagerController class (index.class.php) for routing info.
+ *
+ * @package moxycart 
  */
 namespace Moxycart;
-//use Moxycart\Model;
-
-require_once MODX_CORE_PATH.'model/modx/modmanagercontroller.class.php'; 
 class ProductController extends BaseController {
     public $loadHeader = false;
     public $loadFooter = false;
@@ -100,7 +97,7 @@ class ProductController extends BaseController {
         return $this->fetchTemplate('product/edit.php');
     }
 
-/**
+    /**
      * Post data here to save it.  Data should be in the following format:
      *
      * keys in $_POST should match *exactly* column names in products table, e.g.
@@ -179,33 +176,12 @@ class ProductController extends BaseController {
         exit;        
     }
     
-    
-    /**
-     * Register needed assets. Using this method, it will automagically
-     * combine and compress them if that is enabled in system settings.
-     */
-    public function loadCustomCssJs() {
-/*
-        $this->addCss('url/to/some/css_file.css');
-        $this->addJavascript('url/to/some/javascript.js');
-        $this->addLastJavascript('url/to/some/javascript_load_last.js');
-        $this->addHtml('<script type="text/javascript">
-        Ext.onReady(function() {
-            // We could run some javascript here
-        });
-        </script>');
-*/
+    public function postTest(array $scriptProperties = array()) {
+        $out = array(
+            'newtitle' => 'New Title at '.date('H:i:s')
+        );
+        return json_encode($out);
     }
-    
-    /**
-     * Controls what is sent to the fetchTemplate function
-     */
-/*
-    public function getTemplateFile() {
-        return 'product/list.php';
-    }
-*/
-    
 
         
 }

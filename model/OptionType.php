@@ -8,9 +8,9 @@ namespace Moxycart;
 class OptionType extends BaseModel {
 
     public $xclass = 'OptionType';
-    public $default_sort_col = 'name';
+    public $default_sort_col = 'name';     
     public $otype_id;
-    
+
     /**
      * Verify that the existing product is in fact an existing, valid, persisted product
      * and not a new, unsaved product.

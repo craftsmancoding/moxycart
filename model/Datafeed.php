@@ -20,6 +20,7 @@ class Datafeed {
 	public $rc4crypt;
     public $callbacks_raw = array();
     public $callbacks = array();
+
     
     /** 
      * Some dependency injection here would be nice, but we can't really inject 

@@ -181,7 +181,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 	<!-- a la custom fields-->
 	<object class="Field" table="fields" extends="xPDOObject">
 		<field key="field_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" index="index" comment="unique lowercase slug"/>
+		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" index="unique" comment="unique lowercase slug"/>
 		<field key="label" dbtype="varchar" precision="64" phptype="string" null="false" comment="Human readable, translated."/>
 		<field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<!-- JSON data -->
@@ -248,7 +248,8 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 
 	<!-- ! Review -->
 	<!-- Some fields may be redundant because conf allows for anonymous users to post reviews -->
-	<object class="Review" table="reviews" extends="xPDOSimpleObject">
+	<object class="Review" table="reviews" extends="xPDOObject">
+        <field key="review_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="author_id" dbtype="int" precision="11" phptype="integer" null="true" comment="null ok: user may not be logged in"/>
         <field key="name" dbtype="varchar" precision="100" phptype="string" null="false" />
@@ -259,10 +260,10 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 
 		<field key="timestamp_created" dbtype="timestamp" phptype="timestamp" null="true" default="CURRENT_TIMESTAMP" />
 		<field key="timestamp_modified" dbtype="timestamp" phptype="timestamp" null="true" />
-        
-		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="id" length="" collation="A" null="false" />
-		</index>
+		
+        <index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="product_id" length="" collation="A" null="false" />
+		</index>        
 			
         <aggregate alias="Author" class="modUser" local="author_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />

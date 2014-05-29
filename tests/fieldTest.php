@@ -41,7 +41,6 @@ class fieldTest extends \PHPUnit_Framework_TestCase {
         self::$modx->addPackage('foxycart',"{$core_path}model/orm/",'foxy_');
 
         // !Field
-/*
         if (!self::$Field['one'] = self::$modx->getObject('Field', array('slug'=>'one'))) {
             self::$Field['one'] = self::$modx->newObject('Field');
             self::$Field['one']->fromArray(array(
@@ -56,7 +55,6 @@ class fieldTest extends \PHPUnit_Framework_TestCase {
                 print 'Could not save field!'; 
             }
         }
-*/
     }
 
     /**
@@ -66,6 +64,23 @@ class fieldTest extends \PHPUnit_Framework_TestCase {
 //        self::$OType['test-sample']->remove();
     }
 
+    public function testDuplicate() {
+//        self::$modx->setLogLevel(4);
+//        self::$modx->setLogTarget('ECHO');
+        $F = new Field(self::$modx);
+        
+        $F->fromArray(array(
+            'slug' => 'one',
+            'label' => 'Test',
+        ));
+        
+        $result = $F->save();
+        
+        $this->assertFalse($result);
+        // print_r($F->errors); 
+        // $criteria->stmt->errorInfo()
+        // print_r(self::$modx->errorInfo()); exit;
+    }
     
     public function testRestrictedWords() {
         $F = new Field(self::$modx);

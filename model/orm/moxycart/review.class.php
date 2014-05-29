@@ -1,6 +1,5 @@
 <?php
-class Review extends xPDOSimpleObject {
-
+class Review extends xPDOObject {
     /**
      * More name cleanup
      */

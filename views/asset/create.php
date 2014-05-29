@@ -3,7 +3,7 @@
     <h2>Create New Asset</h2>
 </div>
 
-<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>We're glad you're here.</p></div>
+<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p></p></div>
 
 <div class="moxycart_canvas_inner">
 

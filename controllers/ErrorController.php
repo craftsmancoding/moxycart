@@ -1,12 +1,10 @@
 <?php
 /**
- * The name of the controller is based on the action (home) and the
- * namespace. This home controller is loaded by default because of
- * our IndexManagerController (see index.class.php)
+ * See the IndexManagerController class (index.class.php) for routing info.
+ *
+ * @package moxycart 
  */
 namespace Moxycart;
-
-require_once MODX_CORE_PATH.'model/modx/modmanagercontroller.class.php'; 
 class ErrorController extends BaseController {
     public $loadHeader = false;
     public $loadFooter = false;
@@ -22,6 +20,5 @@ class ErrorController extends BaseController {
         $this->setPlaceholders($scriptProperties);    
         return $this->fetchTemplate('error/404.php');
     }
-        
 }
 /*EOF*/

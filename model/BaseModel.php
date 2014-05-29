@@ -27,6 +27,7 @@ namespace Moxycart;
 class BaseModel {
 
     public $modx;
+    public $pk = 'id'; // Define the primary key for the table object defined in $xclass
     
     // true if the object is new and un-persisted.
     // false if the object has been saved
@@ -285,16 +286,7 @@ class BaseModel {
         }
         return false;
     }
-    
-    /**
-     * 
-     */
-/*
-    public function get($key) {
-        return $this->modelObj->get($key);
-    }
-*/
-    
+        
     /**
      * Return any validation errors
      */

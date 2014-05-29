@@ -7,7 +7,7 @@ namespace Moxycart;
 class Asset extends BaseModel {
 
     public $xclass = 'Asset';
-    public $default_sort_col = 'name';
+    public $default_sort_col = 'title';
 
     public $src_file;
     public $dst_file;

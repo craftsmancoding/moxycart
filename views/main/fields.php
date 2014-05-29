@@ -1,12 +1,9 @@
-<?php include dirname(dirname(__FILE__)).'/header.php';  ?>
-
 <?php
-$a = (int) $_GET['a'];
 print $this->getMsg();
 ?>
 
 <div class="moxycart_canvas_inner">
-    <h2 class="moxycart_cmp_heading">Manage Custom Fields</h2>
+    <h2 class="moxycart_cmp_heading" id="moxycart_pagetitle">Manage Custom Fields</h2>
 </div>
 
 <div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Here you can Manage Custom Field.</p></div>
@@ -14,29 +11,32 @@ print $this->getMsg();
 <div class="moxycart_canvas_inner">
 
 <div>
-    <a href="<?php print static::url('field','create'); ?>" class="btn moxycart-btn">Add Custom Field</a>
-    <form action="<?php print $data['baseurl']; ?>" method="get">
-        <input type="hidden" name="a" value="<?php print $a; ?>" />
-        <input type="hidden" name="class" value="field" />
+    <span class="button btn moxycart-btn" onclick="javascript:paint('fieldcreate');">Add Custom Field</span>
+    <!--form id="searchform">
         <input type="text" class="input input-half" name="label:LIKE" placeholder="Search..." />    
-        <input type="submit" value="Filter" class="btn" />
-    </form>
+        <span class="button btn" onclick="javascript:searchform('searchform','fields');">Filter</span>
+        <span class="button btn" onclick="javascript:paint('fields');">Show All</span>
+    </form-->
 </div>
 <?php if ($data['results']): ?>
 <table class="classy">
     <thead>
         <tr>
             <th>
-                <a href="<?php print self::toggle('slug',$data['baseurl']); ?>">Slug</a>
+                <!--a href="<?php print self::toggle('slug',$data['baseurl']); ?>">Slug</a-->
+                Slug
             </th>
             <th>
-                <a href="<?php print self::toggle('label',$data['baseurl']); ?>">Label</a>
+                <!--a href="<?php print self::toggle('label',$data['baseurl']); ?>">Label</a-->
+                Label
             </th>
             <th>
-                <a href="<?php print self::toggle('type',$data['baseurl']); ?>">Type</a>
+                <!--a href="<?php print self::toggle('type',$data['baseurl']); ?>">Type</a-->
+                Type
             </th>
             <th>
-                <a href="<?php print self::toggle('group',$data['baseurl']); ?>">Group</a>
+                <!--a href="<?php print self::toggle('group',$data['baseurl']); ?>">Group</a-->
+                Group
             </th>
             <th>Action</th>
         </tr>
@@ -50,7 +50,8 @@ print $this->getMsg();
         <td><?php print $r->get('group'); ?>
         </td>
         <td>
-            <a href="<?php print static::url('field','edit',array('field_id'=>$r->get('field_id'))); ?>" class="btn">Edit</a> 
+            <span class="button btn" onclick="javascript:paint('fieldedit',{field_id:<?php print $r->get('field_id'); ?>});">Edit</span>
+            <span class="button btn" onclick="javascript:mapi('field','delete',{field_id:<?php print $r->get('field_id'); ?>},'fields');">Delete</span>
         </td>
     </tr>
 <?php endforeach; ?>
@@ -71,4 +72,3 @@ print \Pagination\Pager::links($data['count'], $offset, $results_per_page)
     ->setBaseUrl($data['baseurl']);
 ?>
 </div>
-<?php include dirname(dirname(__FILE__)).'/footer.php';  ?>

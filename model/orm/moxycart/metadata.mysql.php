@@ -11,18 +11,18 @@ $xpdo_meta_map = array (
   array (
     0 => 'Product',
     1 => 'Field',
-    2 => 'OptionType',
-    3 => 'OptionTerm',
-    4 => 'Asset',
+    2 => 'Review',
+    3 => 'OptionType',
+    4 => 'OptionTerm',
+    5 => 'Asset',
   ),
   'xPDOSimpleObject' => 
   array (
     0 => 'ProductField',
-    1 => 'Review',
-    2 => 'ProductRelation',
-    3 => 'ProductOptionType',
-    4 => 'ProductTaxonomy',
-    5 => 'ProductTerm',
-    6 => 'ProductAsset',
+    1 => 'ProductRelation',
+    2 => 'ProductOptionType',
+    3 => 'ProductTaxonomy',
+    4 => 'ProductTerm',
+    5 => 'ProductAsset',
   ),
 );

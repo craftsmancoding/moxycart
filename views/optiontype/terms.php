@@ -1,9 +1,3 @@
-<?php 
-$this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
-$this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
-include dirname(dirname(__FILE__)).'/header.php';  
-?>
-
 <script>
 jQuery(function() {
     jQuery('#option_terms tbody').sortable();
@@ -11,6 +5,7 @@ jQuery(function() {
 });
   
 function add_term() {
+    jQuery('#no_terms_found').hide();
     var data = jQuery('#template').val();
     jQuery('#option_terms tbody').append(data);
     jQuery('#option_terms tbody').sortable();
@@ -47,7 +42,7 @@ print \Formbuilder\Form::open($data['baseurl'])
     ->close();
 */
 ?>
-<form action="<?php print $data['baseurl']; ?>" method="post" >
+<form action="<?php print $data['baseurl']; ?>" method="post" id="option_terms">
     <input type="hidden" name="otype_id" value="<?php print $data['otype_id']; ?>" />
     <table id="option_terms" class="classy">
         <thead>
@@ -62,6 +57,7 @@ print \Formbuilder\Form::open($data['baseurl'])
                 <th>Weight</th>
                 <th>Code</th>
                 <th>Category</th>
+                <th>&nbsp;</th>
             </tr>
         </thead>
         <tbody>
@@ -93,14 +89,15 @@ print \Formbuilder\Form::open($data['baseurl'])
                     </tr>
                 <?php endforeach; ?>
             <?php else : ?>
-            <tr><td colspan="7"><div class="danger">No terms Found...</div></td></tr>
+            <tr id="no_terms_found"><td colspan="7"><div class="danger">No terms Found...</div></td></tr>
             <?php endif; ?>
 
         </tbody>
     </table>
     <br>
-    <input type="submit" class="btn" value="Save Terms"/>
-    <a href="<?php print static::url('field','index'); ?>" class="btn btn-cancel">Cancel</a>
+    <span class="btn moxycart-btn" onclick="javascript:submit_form('option_terms', '<?php print self::url('optiontype','terms'); ?>','options');">Save</span>
+    <span class="btn btn-cancel" onclick="javascript:paint('options');">Cancel</span>
+
 </form>
 
 <?php
@@ -138,4 +135,3 @@ requests to get it.
 </textarea>
 
 </div>
-<?php include dirname(dirname(__FILE__)).'/footer.php';  ?>

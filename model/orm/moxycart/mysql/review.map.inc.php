@@ -3,9 +3,10 @@ $xpdo_meta_map['Review']= array (
   'package' => 'moxycart',
   'version' => '1.0',
   'table' => 'reviews',
-  'extends' => 'xPDOSimpleObject',
+  'extends' => 'xPDOObject',
   'fields' => 
   array (
+    'review_id' => NULL,
     'product_id' => NULL,
     'author_id' => NULL,
     'name' => NULL,
@@ -18,6 +19,15 @@ $xpdo_meta_map['Review']= array (
   ),
   'fieldMeta' => 
   array (
+    'review_id' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => false,
+      'index' => 'pk',
+      'generated' => 'native',
+    ),
     'product_id' => 
     array (
       'dbtype' => 'int',
@@ -93,7 +103,7 @@ $xpdo_meta_map['Review']= array (
       'unique' => true,
       'columns' => 
       array (
-        'id' => 
+        'product_id' => 
         array (
           'length' => '',
           'collation' => 'A',

@@ -1,6 +1,3 @@
-<?php include dirname(dirname(__FILE__)).'/header.php';  ?>
-
-
 <div class="moxycart_canvas_inner">
     <h2 class="moxycart_cmp_heading">Moxycart Settings</h2>
 </div>
@@ -48,4 +45,3 @@
     <a class="button btn moxycart-btn" href="<?php print MODX_MANAGER_URL; ?>?a=70">See all Settings</a>
 
 </div>
-<?php include dirname(dirname(__FILE__)).'/footer.php'; ?>

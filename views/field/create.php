@@ -1,5 +1,3 @@
-<?php include dirname(dirname(__FILE__)).'/header.php';  ?>
-
 <div class="moxycart_canvas_inner">
     <h2 class="moxycart_cmp_heading">Create New Field</h2>
 </div>
@@ -10,7 +8,7 @@
 
     <?php
     \Formbuilder\Form::setTpl('description','<p class="description-txt">[+description+]</p>');
-    print \Formbuilder\Form::open($data['baseurl'])
+    print \Formbuilder\Form::open($data['baseurl'],array('id'=>'create_field'))
         ->text('slug', $data['slug'], array('label'=>'Slug','description'=>'Lowercase alphanumeric identifier with no spaces or special characters.','class'=>'input input-half'))
         ->text('label', $data['label'], array('label'=>'Label','description'=>'Human readable name for this field.','class'=>'input input-half'))
         ->dropdown('type', array('text'=>'Text','textarea'=>'Textarea','checkbox'=>'Checkbox','dropdown'=>'Dropdown','multicheck'=>'Multi-Check'), $data['type'], array('label'=>'Field Type', 'description'=>'Choose what type of field this is.'))
@@ -18,13 +16,12 @@
         ->textarea('config', $data['config'], array('label'=>'Configuration','description'=>'Some fields require special customization via a JSON array.'))
         ->html('<br>')
         ->text('group', $data['group'], array('label'=>'Group','description'=>'Fields with the same group value will appear together.','class'=>'input input-half'))
-        ->submit('','Save',array('class'=>'btn moxycart-btn'))
+        ->html('<span class="btn moxycart-btn" onclick="javascript:submit_form(\'create_field\', \''.self::url('field','create').'\',\'fields\');">Save</span>')
+        //->submit('','Save',array('class'=>'btn moxycart-btn'))
         ->close();
     ?>
 
     <div>
-        <a href="<?php print static::url('field','index'); ?>" class="btn btn-cancel">Cancel</a>
+        <span class="btn btn-cancel" onclick="javascript:paint('fields');">Cancel</span>
     </div>
 </div>
-
-<?php include dirname(dirname(__FILE__)).'/footer.php';  ?>

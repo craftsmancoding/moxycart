@@ -2,20 +2,22 @@
     /**
      * Load up your guns
      *
-
      */
-    $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
-    $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
-    $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
-    $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
-    $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
-    $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
-    $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
-    $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
-    $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
-    $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
-    $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');
+        $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
+        $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
+        $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
+        $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.form.min.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
 
+    
+    $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');
 	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
 		var product = '.$data['result']->toJson().';            
 		var controller_url = "'.$this->config['controller_url'].'";

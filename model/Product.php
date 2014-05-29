@@ -11,8 +11,7 @@ namespace Moxycart;
 class Product extends BaseModel {
 
     public $xclass = 'Product';
-    public $default_sort_col = 'name';
-
+    public $default_sort_col = 'name';  
     private $product_id;
     
     /**

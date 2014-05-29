@@ -27,7 +27,7 @@ class controllerTest extends \PHPUnit_Framework_TestCase {
     // Must be static because we set it up inside a static function
     public static $modx;
     public static $moxycart;
-    
+    public static $Field;
     /**
      * Load up MODX for our tests.
      *
@@ -49,6 +49,22 @@ class controllerTest extends \PHPUnit_Framework_TestCase {
 
         // First thing is to pass the modx dependency to the parent controller
         $tmp = new \IndexManagerController(self::$modx);
+
+        // !Field
+        if (!self::$Field['one'] = self::$modx->getObject('Field', array('slug'=>'one'))) {
+            self::$Field['one'] = self::$modx->newObject('Field');
+            self::$Field['one']->fromArray(array(
+                'slug' => 'one',
+                'label' => 'Test One',
+                'description' => 'Testing Field',
+                'seq' => 0,
+                'group' => 'GroupA',
+                'type' => 'text'
+            ));
+            if(!self::$Field['one']->save()) {
+                print 'Could not save field!'; 
+            }
+        }
         
     }
 
@@ -69,15 +85,11 @@ class controllerTest extends \PHPUnit_Framework_TestCase {
     public function testLoadControllers() {
         unset($_REQUEST['class']);
         $result = \IndexManagerController::getInstance(self::$modx);
-        $this->assertTrue(is_a($result, '\\Moxycart\\MainController'), 'Invalid Main controller instance.');
+        $this->assertTrue(is_a($result, '\\Moxycart\\PageController'), 'Invalid Page controller instance.');
 
         $_REQUEST['class'] = 'Product';
         $result = \IndexManagerController::getInstance(self::$modx);
         $this->assertTrue(is_a($result, '\\Moxycart\\ProductController'), 'Invalid Product controller instance.');
-
-        $_REQUEST['class'] = 'Currency';
-        $result = \IndexManagerController::getInstance(self::$modx);
-        $this->assertTrue(is_a($result, '\\Moxycart\\CurrencyController'), 'Invalid Currency controller instance.');
 
         $_REQUEST['class'] = 'Asset';
         $result = \IndexManagerController::getInstance(self::$modx);
@@ -118,25 +130,27 @@ class controllerTest extends \PHPUnit_Framework_TestCase {
      *
      *
      */
-    public function testUtilityFunctions() {
+    public function testURLGeneration() {
         //$url = BaseController::url($class='',$method='index',$args=array())
         $tmp = new BaseController(self::$modx);
-        // /manager/?a=94&class=Xyz&method=derp
-        $url = BaseController::url('Xyz','derp');
-//        print $url;        
+        $classname = 'Xyz';
+        $methodname = 'derp';
+        $url = BaseController::url($classname,$methodname);
+        $m = preg_match('#'.MODX_MANAGER_URL.preg_quote('?a=','#').'\d+'.preg_quote('&class='.$classname.'&method='.$methodname).'#i',$url);
+        $this->assertFalse(empty($m));        
     }
 
     
-/*
-    public function testLoadView() {
-        $file = 'product_template.php';
-        $method = new ReflectionMethod(
-          'MoxycartController', '_load_view'
-        );
-        $method->setAccessible(TRUE);
-        $this->assertTrue($method->invokeArgs(self::$moxycart,array($file)) != 'view_not_found','View Not Found');
+    public function testEditController() {
+        $F = new Field(self::$modx);
+        $F = $F->one(array('slug'=>'one'));
+        
+        $data = $F->toArray();
+        $data['label'] = 'Test '.date('H:i:s');
+        $Controller = new FieldController(self::$modx);
+        $response = $Controller->postEdit($data);
+        $this->assertEquals('{"status":"success","data":{"msg":"Field updated successfully."}}',$response);
     }
-*/
 
     
 }

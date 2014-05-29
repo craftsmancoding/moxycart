@@ -9,7 +9,7 @@ class OptionTerm extends BaseModel {
 
     public $xclass = 'OptionTerm';
     public $default_sort_col = 'name';
-
+    
     /**
      * Validate the otype_id
      *

@@ -1,14 +1,14 @@
 <?php
 /**
- * The almost abstract Manager Controller.
- * In this class, we define stuff we want on all of our controllers.
+ * The "almost abstract" Manager Controller.
+ * As expected, in this class, we define behaviors we want on all of our controllers.
  *
- * WARNING: due to routing present in the "render" function, any functions whose names
- * begin with "get" or "post" may be inadvertently called when the &method argument 
- * passed is prepended with get or post (depending on whether or not post data is present).
+ * See the IndexManagerController class (index.class.php) for routing info.
  *
+ * @package moxycart 
  */
 namespace Moxycart; 
+require_once MODX_CORE_PATH.'model/modx/modmanagercontroller.class.php'; 
 class BaseController extends \modExtraManagerController {
     /** @var bool Set to false to prevent loading of the header HTML. */
     public $loadHeader = true;
@@ -66,7 +66,7 @@ class BaseController extends \modExtraManagerController {
 
     function __construct(\modX &$modx,$config = array()) {
         parent::__construct($modx,$config);
-        static::$x =& $modx;
+        static::$x =& $modx; // kinda dumb...
     }
     
     /**
@@ -78,6 +78,8 @@ class BaseController extends \modExtraManagerController {
         $class = '\\Moxycart\\ErrorController';
         $Error = new $class($this->modx,$config);
         $args['msg'] = 'Invalid routing function name: '. $name;
+        // We need to send headers like this, otherwise Ajax requests etc. get confused.
+        header('HTTP/1.0 404 Not Found');
         return $Error->get404($args);
     }
 
@@ -134,12 +136,16 @@ class BaseController extends \modExtraManagerController {
      * We have to manually re-run this after setting loadBaseJavascript to true.
      * That's the only way to get the resource tree going if your controller has declared 
      * loadBaseJavascript = false -- overriding that at runtime takes this sleight of hand.
+     *
+     * @param array $scriptProperties
      */
-    public function addStandardLayout() {
-        $this->loadHeader = true;
-        $this->loadFooter = true;
-        $this->loadBaseJavascript = true;
-        $this->registerBaseScripts(); // <-- *facepalm*
+    public function addStandardLayout($scriptProperties) {
+        if (!isset($scriptProperties['_nolayout'])) {
+            $this->loadHeader = true;
+            $this->loadFooter = true;
+            $this->loadBaseJavascript = true;
+            $this->registerBaseScripts(); // <-- *facepalm*
+        }
     }
     
     /**
@@ -165,17 +171,55 @@ class BaseController extends \modExtraManagerController {
         if (substr($file,-4) == '.tpl') {
             return parent::fetchTemplate($file);
         }
+        
+//        $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
+        $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
+        $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
+        $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
+//        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.form.min.js');
+/*
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
+*/
+        
+        // Late register here so controllers can add relevant bits of config data
+        if ($this->client_config) {
+            $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+            var moxycart = '.json_encode($this->client_config).';
+            </script>');
+        }
+        
         $path = $this->modx->getOption('moxycart.core_path','', MODX_CORE_PATH.'components/moxycart/').'views/';
 
         $data =& $this->getPlaceholders();
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'View: ' .$file.' data: '.print_r($data,true), __FUNCTION__,__LINE__);
-		if (is_file($path.$file)) {
-			ob_start();
-			include $path.$file;
-			return ob_get_clean();
+		if (!is_file($path.$file)) {
+    		$this->modx->log(\modX::LOG_LEVEL_ERROR, 'View file does not exist: ' .$path.$file, __FUNCTION__,__LINE__);
+    		return $this->modx->lexicon('view_not_found', array('file'=> 'views/'.$file));		
 		}
-		$this->modx->log(\modX::LOG_LEVEL_ERROR, 'View file does not exist: ' .$path.$file, __FUNCTION__,__LINE__);
-		return $this->modx->lexicon('view_not_found', array('file'=> 'views/'.$file));
+		// Load up our page
+        $content = '';
+        if (!isset($this->scriptProperties['_nolayout'])) {
+			ob_start();
+			include $path.'header.php';
+			$content .= ob_get_clean();        
+        }
+
+		ob_start();
+		include $path.$file;
+		$content .= ob_get_clean();
+
+        if (!isset($this->scriptProperties['_nolayout'])) {
+			ob_start();
+			include $path.'footer.php';
+			$content .= ob_get_clean();        
+        }
+        return $content;		
     }
         
     /**
@@ -249,9 +293,12 @@ class BaseController extends \modExtraManagerController {
         // so we do this:       
         $method = $this->config['method'];
         $filters = $this->scriptProperties;
+        $this->addStandardLayout($filters);
         unset($filters['a']);
         unset($filters['class']);
         unset($filters['method']);
+        unset($filters['_nolayout']);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Calling Controller: ' .get_class($this).'::'.$method.' data: '.print_r($filters,true));
         $placeholders = $this->$method($filters);
         
         if (!$this->isFailure && !empty($placeholders) && is_array($placeholders)) {
@@ -299,7 +346,9 @@ class BaseController extends \modExtraManagerController {
         return $this->content;
     }
 
-    // TODO: use the ErrorController
+    /**
+     *
+     */
     public function sendError($msg='Error') {
         $this->modx->log(\modX::LOG_LEVEL_ERROR,'[moxycart] Invalid function name '.$name);
         $this->addStandardLayout(); // For some reason we have to do this here (?)
@@ -372,5 +421,16 @@ class BaseController extends \modExtraManagerController {
         }
         return $url;
     }    
+
+    /**
+     * Gotta look up the URL of a regular page (a function in the PageController)
+
+     * @param string $page name of a function inside PageController (without get/post prefix)
+     * @param array any optional arguments, e.g. array('action'=>'children','parent'=>123)
+     * @return string
+     */
+    public static function page($page,$args=array()) {
+        return self::url('page',$page,$args);
+    }
         
 }

@@ -34,7 +34,7 @@ $xpdo_meta_map['Field']= array (
       'precision' => '64',
       'phptype' => 'string',
       'null' => false,
-      'index' => 'index',
+      'index' => 'unique',
       'comment' => 'unique lowercase slug',
     ),
     'label' => 
