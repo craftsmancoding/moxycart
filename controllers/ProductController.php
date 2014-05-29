@@ -10,47 +10,6 @@ class ProductController extends BaseController {
     public $loadFooter = false;
     public $loadBaseJavascript = false; // GFD... this can't be set at runtime.
 
-
-    /**
-    * Load TinyMCE
-    * Add modx-richtext class on textarea
-    * @param
-    * @return
-    **/
-    private function _load_tinyMCE() 
-    {
-        $_REQUEST['a'] = '';  /* fixes E_NOTICE bug in TinyMCE */
-
-        $plugin= $this->modx->getObject('modPlugin',array('name'=>'TinyMCE'));
-
-        // Plugin not present.
-        if (!$plugin) {
-            return '';
-        }
-
-        $tinyPath =  $this->modx->getOption('core_path').'components/tinymce/';
-        $tinyUrl =  $this->modx->getOption('assets_url').'components/tinymce/';
-        
-        $tinyproperties = $plugin->getProperties();
-        require_once $tinyPath.'tinymce.class.php';
-        $tiny = new TinyMCE( $this->modx, $tinyproperties);
-
-        //$tinyproperties['language'] =  $modx->getOption('fe_editor_lang',array(),$language);
-        $tinyproperties['frontend'] = true;
-        $tinyproperties['cleanup'] = true; /* prevents "bogus" bug */
-        $tinyproperties['width'] = empty ( $props['tinywidth'] )? '95%' :  $props['tinywidth'];
-        $tinyproperties['height'] = empty ( $props['tinyheight'])? '400px' :  $props['tinyheight'];
-       //$tinyproperties['resource'] =  $resource;
-        $tiny->setProperties($tinyproperties);
-        $tiny->initialize();
-
-         $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-            delete Tiny.config.setup; // remove manager specific initialization code (depending on ModExt)
-            Ext.onReady(function() {
-                MODx.loadRTE();
-            });
-        </script>');
-    }
     
     /**
      * Any specific processing we want to do here. Return a string of html.

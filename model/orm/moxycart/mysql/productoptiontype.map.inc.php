@@ -8,7 +8,6 @@ $xpdo_meta_map['ProductOptionType']= array (
   array (
     'product_id' => NULL,
     'otype_id' => NULL,
-    'name' => NULL,
     'seq' => NULL,
   ),
   'fieldMeta' => 
@@ -25,13 +24,6 @@ $xpdo_meta_map['ProductOptionType']= array (
       'dbtype' => 'int',
       'precision' => '11',
       'phptype' => 'integer',
-      'null' => false,
-    ),
-    'name' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '255',
-      'phptype' => 'string',
       'null' => false,
     ),
     'seq' => 

@@ -74,7 +74,7 @@ class BaseController extends \modExtraManagerController {
      */
     public function __call($name,$args) {
         $this->modx->log(\modX::LOG_LEVEL_ERROR,'[moxycart] Invalid function name '.$name);
-        $this->addStandardLayout(); // For some reason we have to do this here (?)
+        $this->addStandardLayout($args); // For some reason we have to do this here (?)
         $class = '\\Moxycart\\ErrorController';
         $Error = new $class($this->modx,$config);
         $args['msg'] = 'Invalid routing function name: '. $name;

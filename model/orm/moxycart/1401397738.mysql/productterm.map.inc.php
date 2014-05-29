@@ -8,6 +8,7 @@ $xpdo_meta_map['ProductTerm']= array (
   array (
     'product_id' => NULL,
     'term_id' => NULL,
+    'seq' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -24,6 +25,13 @@ $xpdo_meta_map['ProductTerm']= array (
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
+    ),
+    'seq' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '3',
+      'phptype' => 'integer',
+      'null' => true,
     ),
   ),
   'indexes' => 

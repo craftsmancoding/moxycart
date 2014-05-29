@@ -1,13 +1,14 @@
 <?php
-$xpdo_meta_map['ProductTerm']= array (
+$xpdo_meta_map['ProductField']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'product_terms',
+  'table' => 'product_fields',
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
     'product_id' => NULL,
-    'term_id' => NULL,
+    'field_id' => NULL,
+    'value' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -18,11 +19,18 @@ $xpdo_meta_map['ProductTerm']= array (
       'phptype' => 'integer',
       'null' => false,
     ),
-    'term_id' => 
+    'field_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
       'phptype' => 'integer',
+      'null' => false,
+    ),
+    'value' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
       'null' => false,
     ),
   ),
@@ -43,44 +51,22 @@ $xpdo_meta_map['ProductTerm']= array (
         ),
       ),
     ),
-    'productterm' => 
-    array (
-      'alias' => 'productterm',
-      'primary' => false,
-      'unique' => true,
-      'type' => 'BTREE',
-      'columns' => 
-      array (
-        'product_id' => 
-        array (
-          'length' => '',
-          'collation' => 'A',
-          'null' => false,
-        ),
-        'term_id' => 
-        array (
-          'length' => '',
-          'collation' => 'A',
-          'null' => false,
-        ),
-      ),
-    ),
   ),
   'aggregates' => 
   array (
-    'Term' => 
-    array (
-      'class' => 'Term',
-      'local' => 'term_id',
-      'foreign' => 'id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
     'Product' => 
     array (
       'class' => 'Product',
       'local' => 'product_id',
       'foreign' => 'product_id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
+    'Field' => 
+    array (
+      'class' => 'Field',
+      'local' => 'field_id',
+      'foreign' => 'field_id',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),

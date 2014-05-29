@@ -1,13 +1,14 @@
 <?php
-$xpdo_meta_map['ProductTerm']= array (
+$xpdo_meta_map['ProductTaxonomy']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'product_terms',
+  'table' => 'product_taxonomies',
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
     'product_id' => NULL,
-    'term_id' => NULL,
+    'taxonomy_id' => NULL,
+    'seq' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -18,12 +19,19 @@ $xpdo_meta_map['ProductTerm']= array (
       'phptype' => 'integer',
       'null' => false,
     ),
-    'term_id' => 
+    'taxonomy_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
+    ),
+    'seq' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '3',
+      'phptype' => 'integer',
+      'null' => true,
     ),
   ),
   'indexes' => 
@@ -43,9 +51,9 @@ $xpdo_meta_map['ProductTerm']= array (
         ),
       ),
     ),
-    'productterm' => 
+    'producttaxonomy' => 
     array (
-      'alias' => 'productterm',
+      'alias' => 'producttaxonomy',
       'primary' => false,
       'unique' => true,
       'type' => 'BTREE',
@@ -57,7 +65,7 @@ $xpdo_meta_map['ProductTerm']= array (
           'collation' => 'A',
           'null' => false,
         ),
-        'term_id' => 
+        'taxonomy_id' => 
         array (
           'length' => '',
           'collation' => 'A',
@@ -68,10 +76,10 @@ $xpdo_meta_map['ProductTerm']= array (
   ),
   'aggregates' => 
   array (
-    'Term' => 
+    'Taxonomy' => 
     array (
-      'class' => 'Term',
-      'local' => 'term_id',
+      'class' => 'Taxonomy',
+      'local' => 'taxonomy_id',
       'foreign' => 'id',
       'cardinality' => 'one',
       'owner' => 'foreign',

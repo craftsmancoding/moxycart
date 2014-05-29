@@ -13,7 +13,7 @@
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
-        //$this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
 
     
     $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');
@@ -59,9 +59,10 @@
 		</script>
 	');
     if ($this->modx->getOption('use_editor')) {
-        $this->_load_tinyMCE();
+        //$this->_load_tinyMCE();
     }
 ?>
+
 <script>
 function add_relation(product_id,name,sku) {
     var tpl = <?php print json_encode($data['related_products.tpl']); ?>;
