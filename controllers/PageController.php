@@ -71,6 +71,42 @@ class PageController extends BaseController {
         return $this->fetchTemplate('asset/edit.php');
     }
 
+    //------------------------------------------------------------------------------
+    //! Products
+    //------------------------------------------------------------------------------
+    /**
+     *
+     * @param array $scriptProperties
+     */
+    public function getProducts(array $scriptProperties = array()) {
+        $Obj = new Product($this->modx);
+        $results = $Obj->all($scriptProperties);
+//        return $results; exit;
+        $this->setPlaceholder('results', $results);
+        $this->setPlaceholders($scriptProperties);
+        return $this->fetchTemplate('main/products.php');
+    }
+ 
+     public function getProductCreate(array $scriptProperties = array()) {
+        $Obj = new Product($this->modx);
+        $results = $Obj->all($scriptProperties);
+        $this->setPlaceholder('results', $results);
+        $this->setPlaceholders($scriptProperties);
+        return $this->fetchTemplate('product/create.php');
+    }    
+
+    public function getProductEdit(array $scriptProperties = array()) {
+        $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
+        $Obj = new Product($this->modx);    
+        if (!$result = $Obj->find($product_id)) {
+            return $this->sendError('Page not found.');
+        }
+        $this->setPlaceholders($scriptProperties);
+        $this->setPlaceholders($result->toArray());
+        $this->setPlaceholder('result',$result);
+        return $this->fetchTemplate('product/edit.php');
+    }
+
     
     //------------------------------------------------------------------------------
     //! Fields

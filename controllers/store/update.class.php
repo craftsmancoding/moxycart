@@ -7,7 +7,7 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
 
     public function loadCustomCssJs() {
 
-        parent::loadCustomCssJs();
+        return parent::loadCustomCssJs();
 
         $mgr_url = $this->modx->getOption('manager_url',null,MODX_MANAGER_URL);
         $assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
@@ -31,7 +31,7 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
                     sort = typeof sort !== "undefined" ? sort : "name";
                     dir = typeof dir !== "undefined" ? dir : "ASC";
 					Ext.Ajax.request({
-                        url: connector_url+"&class=product&method=index&offset="+offset+"&sort="+sort+"&dir="+dir+"&store_id='.$store_id.'",
+                        url: connector_url+"&class=page&method=products&offset="+offset+"&sort="+sort+"&dir="+dir+"&store_id='.$store_id.'",
                         params: {},
                         async:false,
                         success: function(response){

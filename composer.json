@@ -94,25 +94,25 @@
                 "update_object": true, 
                 "unique_key": "url"
             },
-            "Spec": {
+            "Field": {
                 "preserve_keys": true,
                 "update_object": true, 
-                "unique_key": "identifier"
+                "unique_key": "slug"
             },
-            "ProductSpec": {
+            "ProductField": {
                 "preserve_keys": true,
                 "update_object": true, 
-                "unique_key": ["product_id","spec_id"]
+                "unique_key": ["product_id","field_id"]
             },
-            "VariationTerm" : {
+            "OptionTerm" : {
                 "preserve_keys": true,
                 "update_object": true, 
-                "unique_key": ["vtype_id","name"]
+                "unique_key": ["otype_id","slug"]
             },
-            "VariationType" : {
+            "OptionType" : {
                 "preserve_keys": true,
                 "update_object": true, 
-                "unique_key": ["name"]
+                "unique_key": ["slug"]
             },    
             "Store": {
                 "preserve_keys": true,
@@ -162,6 +162,11 @@
                 "preserve_keys": true,
                 "update_object": true, 
                 "unique_key": ["transaction_id"]
+            },
+            "Asset": {
+                "preserve_keys": true,
+                "update_object": true, 
+                "unique_key" : ["url"]
             }
         }
     }

@@ -10,11 +10,10 @@
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.form.min.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
+        //$this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
 
     
     $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');
