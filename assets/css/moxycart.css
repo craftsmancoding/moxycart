@@ -4,14 +4,25 @@
  * Customize the MODX Resource Tree
  */
 
- a {
+a {
+color: #727272;
+text-decoration: none;
+}
+
+a:hover {
+color: #77963d;
+}
+
+/* Spans etc. that need to look like links */
+.linklike {
     color: #727272;
     text-decoration: none;
- }
-
- a:hover {
+    cursor: pointer;
+}
+.linklike:hover {
     color: #77963d;
- }
+} 
+ 
 .icon-store .x-tree-node-icon {
     background-image: url(../images/cart-icon.png) !important;
 }
@@ -250,7 +261,6 @@ h2.moxycart_cmp_heading {
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.26);
   -webkit-font-smoothing: antialiased;
 }
-
 
 select,
 textarea,
