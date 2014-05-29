@@ -314,39 +314,24 @@ class Product extends BaseModel {
     //! Taxonomies
     //------------------------------------------------------------------------------
     /** 
-     * Add taxonomies to a product including meta info (seq). 
-     *
-     * $data format should be:
-     *  array(
-     *      array(
-     *          'taxonomy_id' => 12,
-     *          'seq' => 0,
-     *      ),
-     *  )
-     *
-     * @param array $array of taxonomy data (see above)
+     * Add taxonomies to a product
+     * @param array $array of taxonomy page ids
      */
     public function addTaxonomies(array $array) {
         $this_product_id = $this->_verifyExisting();
 
-        foreach ($array as $r) {
+        foreach ($array as $id) {
             $props = array(
                 'product_id'=> $this_product_id, 
-                'taxonomy_id'=> $r['taxonomy_id']
+                'taxonomy_id'=> $id
             );
-            if (!isset($r['taxonomy_id'])) {
-                $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Missing taxonomy_id','',__CLASS__,__FUNCTION__,__LINE__); 
-                continue;
-            }            
-            if (!$T = $this->modx->getObject('Taxonomy', $r['taxonomy_id'])) {
-                throw new \Exception('Invalid taxonomy ID '.$r['taxonomy_id']);    
-            }
-
             if (!$PT = $this->modx->getObject('ProductTaxonomy', $props)) {
+                if (!$T = $this->modx->getObject('Taxonomy', $id)) {
+                    throw new \Exception('Invalid taxonomy ID '.$id);    
+                }
                 $PT = $this->modx->newObject('ProductTaxonomy', $props);
+                $PT->save();
             }
-            if (isset($r['seq'])) $PT->set('seq', $r['seq']);
-            $PT->save();
         }
 
         return true;    
@@ -376,25 +361,18 @@ class Product extends BaseModel {
      * Dictate taxonomies to the current product.
      * This will remove all taxonomies not in the given $array, add any new relations from the $array,
      * it will order the relations based on the incoming $array order (seq will be set).
-     * Exeptions are thrown if the taxonomy ids do not exist.
+     * Exeptions are thrown if the product ids do not exist.
      *
-     * @param array $data (see addTaxonomy for format)
+     * @param array $dictate'd related_id's
      */
-    public function dictateTaxonomies(array $data) {
+    public function dictateTaxonomies(array $dictate) {
         $this_product_id = $this->_verifyExisting();
         
         $props = array(
             'product_id'=> $this_product_id,
         );
-        $dictate = array();
-        foreach($data as $r) {
-            if (!isset($r['taxonomy_id'])) {
-                $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Missing taxonomy_id','',__CLASS__,__FUNCTION__,__LINE__); 
-                continue;
-            }
-            $dictate[] = $r['taxonomy_id'];
-        }
-        // Array of taxonomy_id's that are already defined
+        
+        // Array of related_id's that are already defined
         $existing = array();
         if($ExistingColl = $this->modx->getObject('ProductTaxonomy', $props)) {
             $existing[] = $ExistingColl->get('taxonomy_id');   
@@ -402,14 +380,9 @@ class Product extends BaseModel {
         
         $to_remove = array_diff($existing,$dictate);
         $to_add = array_diff($dictate,$existing);
-        $newdata = array();
-        foreach ($data as $r) {
-            if (in_array($r['taxonomy_id'],$to_add)) {
-                $newdata[] = $r;
-            }
-        }
+
         $this->removeTaxonomies($to_remove);
-        $this->addTaxonomies($newdata);
+        $this->addTaxonomies($to_add);
         $this->orderTaxonomies($dictate);
         
         return true;

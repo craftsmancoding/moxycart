@@ -677,8 +677,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
     /**
      * 
      *
-     */
-    public function testTaxonomies() {
+     */    public function testTaxonomies() {
         $P = new Product(self::$modx);
         
         $One = $P->one(array(
@@ -699,26 +698,20 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $taxonomies[] = self::$Tax['B']->get('id');
         $taxonomies[] = self::$Tax['C']->get('id');
         
-        $data = array();
-        $data[] = array('taxonomy_id'=>self::$Tax['A']->get('id'), 'seq'=>12);
-        $data[] = array('taxonomy_id'=>self::$Tax['B']->get('id'), 'seq'=>13);
-        $data[] = array('taxonomy_id'=>self::$Tax['C']->get('id'), 'seq'=>14);
-                        
-        $One->addTaxonomies($data);
+        $One->addTaxonomies($taxonomies);
         
         // Verify they all exist:
         $Collection = self::$modx->getCollection('ProductTaxonomy', array('product_id'=>$product_id));
         $this->assertFalse(empty($Collection),'Product Taxonomies were not added!');
         $cnt = self::$modx->getCount('ProductTaxonomy', array('product_id'=>$product_id));
         $this->assertEquals(count($taxonomies), $cnt);
-
-        $PT = self::$modx->getObject('ProductTaxonomy', array('product_id'=>$product_id,'taxonomy_id'=>self::$Tax['C']->get('id')));
-        $this->assertFalse(empty($PT));
-        $this->assertEquals(14, $PT->get('seq'));
-
+        foreach ($taxonomies as $id) {
+            $PT = self::$modx->getObject('ProductTaxonomy', array('product_id'=>$product_id,'taxonomy_id'=>$id));
+            $this->assertFalse(empty($PT));
+        }
         
         // Add duplicates, verify that nothing new was created.
-        $One->addTaxonomies($data);
+        $One->addTaxonomies($taxonomies);
         $cnt2 = self::$modx->getCount('ProductTaxonomy', array('product_id'=>$product_id));
         $this->assertEquals($cnt, $cnt2);
         
@@ -729,19 +722,23 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($cnt3, 1); // should be only one left
         
         // Now, dictate the taxonomies: this should add and remove
-        array_shift($data);
-        $One->dictateTaxonomies($data);
+        $One->dictateTaxonomies($taxonomies);
+        $cnt4 = self::$modx->getCount('ProductTaxonomy', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt4, count($taxonomies)); 
         
         // Verify the order
-        $PT = self::$modx->getObject('ProductTaxonomy', array('product_id'=>$product_id,'taxonomy_id'=>self::$Tax['B']->get('id')));
-        $this->assertFalse(empty($PT));
-        $this->assertEquals(0, $PT->get('seq'));
-        
-        $PT = self::$modx->getObject('ProductTaxonomy', array('product_id'=>$product_id,'taxonomy_id'=>self::$Tax['C']->get('id')));
-        $this->assertFalse(empty($PT));
-        $this->assertEquals(1, $PT->get('seq'));        
+        $c = self::$modx->newQuery('ProductTaxonomy');
+        $c->where(array('product_id'=>$product_id));
+        $c->sortby('seq','ASC');
+        $PT = self::$modx->getCollection('ProductTaxonomy',$c);
+        $i = 0;
+        foreach ($PT as $p) {
+            $this->assertEquals($i, $p->get('seq'));
+            $this->assertEquals($taxonomies[$i], $p->get('taxonomy_id'));
+            $i++;
+        }
     }    
-
+        
     /**
      * 
      *
