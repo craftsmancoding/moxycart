@@ -4481,6 +4481,24 @@ div > input.x-form-field {
   display: none;
 }
 
+
+/**override rules on moxycart.css***/
+label {
+  float: none !important;
+}
+
+
+.product-option-wrap {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.product-option-wrap h2 {
+  background: #ddd;
+  padding: 5px;
+  font-size: 15px;
+}
 /* #product_images .first {
   clear: left !important;
    border: 1px solid yellow !important;

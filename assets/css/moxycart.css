@@ -4,12 +4,16 @@
  * Customize the MODX Resource Tree
  */
 
-a {
-color: #727272;
-text-decoration: none;
+#moxycart_header a,
+#moxycart_canvas a,
+.moxycart_nav_item a {
+  color: #727272;
+  text-decoration: none;
 }
 
-a:hover {
+#moxycart_header a:hover,
+#moxycart_canvas a:hover,
+.moxycart_nav_item a:hover {
 color: #77963d;
 }
 

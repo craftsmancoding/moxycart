@@ -17,40 +17,44 @@ function remove_relation(product_id) {
     jQuery('#product_'+product_id+' strong').css("color","black");    
 }
 </script>
+
 <div class="moxycart_canvas_inner">
+    <h2 class="moxycart_cmp_heading">Edit Product Title Here</h2>
+</div>
+
+<form method="post" id="<?php print $data['product_form_action']; ?>" action="#">
+
+    <div class="moxy-header clearfix">
+
+        <div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder">
+            <div class="pull-right">
+                <?php
+                if ($data['product_form_action'] == 'product_update'):
+                ?>
+                    <button class="btn" id="product_update">Save</button>
+                    <a class="btn" href="<?php print static::page('products'); ?>" target="_blank">View</a>
+                    <a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a>
+                <?php    
+                else:
+                ?>
+                    <button class="btn" id="product_create">Save</button>
+                <?php
+                endif;
+                ?>
+                <a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a>
+            </div>
+        </div>
+    </div>
+
+<div class="moxycart_canvas_inner">
+
 
 <div class="moxy-msg">
 	<div id="moxy-result"></div>
 	<div id="moxy-result-msg"></div>
 </div>
 
-
-<form method="post" id="<?php print $data['product_form_action']; ?>" action="#">
-<div id="modx-panel-workspace" class="x-plain container">
-	<div class="moxy-header clearfix">
-		<div class="moxy-header-title">
-			<h2><?php print $data['pagetitle']; ?></h2>
-		</div>
-			
-		<div class="moxy-buttons-wrapper______">
-            <?php
-            if ($data['product_form_action'] == 'product_update'):
-            ?>
-                <button class="btn" id="product_update">Save</button>
-                <a class="btn" href="<?php print static::page('products'); ?>" target="_blank">View</a>
-                <a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a>
-            <?php    
-            else:
-            ?>
-                <button class="btn" id="product_create">Save</button>
-            <?php
-            endif;
-            ?>
-            <a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a>
-		</div>
-	</div>
-	
-	
+		
 	<ul id="moxytab" class="menu">
 		<li class="product-link active"><a href="#product">Product</a></li>
 		<li class="settings-link" ><a href="#settings_tab">Product Settings</a></li>
@@ -161,12 +165,15 @@ function remove_relation(product_id) {
 								?>
 				
 								<label for="weight">Weight</label>
-								<input type="weight" style="width:94%;" id="weight" name="weight" value=""/>
-
-                                <h3>Product Options</h3>
-                                <?php
-								print \Formbuilder\Form::multicheck('OptionTypes', $data['OptionTypes'], $data['otype_ids']);
-								?>
+								<input type="text" style="width:50%;" id="weight" name="weight" value=""/>
+                                
+                                <div class="product-option-wrap">
+                                     <h2>Product Options</h2>
+                                    <?php
+                                    print \Formbuilder\Form::multicheck('OptionTypes', $data['OptionTypes'], $data['otype_ids']);
+                                    ?>
+                                </div>
+                               
     
 								
                             </td>
@@ -200,10 +207,8 @@ function remove_relation(product_id) {
                                  <label for="back_order_cap">Back Order Cap</label>
                                 <input type="text" style="width:90%;" name="back_order_cap" id="back_order_cap" value="">
 
+                            
                                 <label for="store_id">Product Container</label>
-								<select style="width:90%;" name="store_id" id="store_id">
-									<?php print $data['stores']; ?>
-								</select>
 								<?php
 								print \Formbuilder\Form::dropdown('store_id', $data['stores'], $data['store_id']);
 								?>
@@ -420,7 +425,6 @@ function remove_relation(product_id) {
     <div id="orders_tab" class="content">
     
     </div>    
-</div>
 
 </form>
 
