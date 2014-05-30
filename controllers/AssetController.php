@@ -30,7 +30,8 @@ class AssetController extends APIController {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API $_FILES: '.print_r($_FILES,true),'',__CLASS__,__FUNCTION__,__LINE__);
         $fieldname = $this->modx->getOption('fieldname', $scriptProperties,'file');
-//        $classname = '\\Moxycart\\'.$this->model;
+        $product_id = $this->modx->getOption('product_id', $scriptProperties); // Optionally associate it with a product
+
         if (empty($_FILES)) {
             return $this->sendFail(array('errors'=> 'No FILE data detected.'));
         }
@@ -44,13 +45,20 @@ class AssetController extends APIController {
         
 //        try {
             $Model = new Asset($this->modx);    
-            $Asset = $Model->fromFile($_FILES[$fieldname]['tmp_name'],$_FILES[$fieldname]['name'],$storage_basedir);
+            $Asset = $Model->fromFile($_FILES[$fieldname],$storage_basedir);
     
             if (!$Asset->save()) {
                 return $this->sendFail(array('errors'=> $Model->errors));
             }
+            if ($product_id) {
+                $PA = $this->modx->newObject('ProductAsset',array('product_id'=>$product_id,'asset_id'=>$Asset->getPrimaryKey()));
+                $PA->save();
+            }
+            
             return $this->sendSuccess(array(
-                'msg' => sprintf('%s created successfully.',$this->model)
+                'msg' => sprintf('%s created successfully.',$this->model),
+                'class' => $this->model,
+                'fields' => $Asset->toArray()
             ));
 //        }
          // oddly, trapping exceptions here winds us up on the MODX error pages

@@ -182,13 +182,11 @@ class PageController extends BaseController {
                         console.log(response);
                         response = jQuery.parseJSON(response);
                         console.log(response);
-                        if (response.success) {
-                           
-                            var url = moxycart.controller_url + "&class=asset&method=view&asset_id=" + response.asset_id;
-                            jQuery.post( url, function(data){
-                                jQuery("#product_images").append(data);
-                                jQuery(".dz-preview").remove();
-                            });
+                        if (response.status == "success") {
+                        
+                            var data = parse_tpl("product_image",response.data.fields);
+                            jQuery("#product_images").append(data);
+                            jQuery(".dz-preview").remove();
                        } 
                        // TODO: better formatting
                        else {                           
@@ -212,6 +210,10 @@ class PageController extends BaseController {
         
         
         // assets
+        $c = $this->modx->newQuery('ProductAsset');
+        $c->where(array('ProductAsset.product_id' => $product_id));
+        $PA = $this->modx->getCollectionGraph('ProductAsset','{"Asset":{}}',array('product_id'=> $product_id));
+        $this->setPlaceholder('product_assets',$PA);
         
         // product_fields
         $c = $this->modx->newQuery('ProductField');

@@ -151,9 +151,11 @@ class Asset extends BaseModel {
         if (!isset($FILE['tmp_name']) || !isset($FILE['name'])) {
             throw new \Exception('Missing required keys in FILE array.');        
         }
-        // For Thumbnails
+        // For Thumbnails (future: read from config)
         $w = $this->modx->getOption('moxycart.thumbnail_width');
         $h = $this->modx->getOption('moxycart.thumbnail_height');
+        $subdir = $this->modx->getOption('moxycart.thumbnail_dir');
+        // $storage_basedir = from config!!
         
         $src = $FILE['tmp_name']; // source file
         $this->_validFile($src);
@@ -185,7 +187,9 @@ class Asset extends BaseModel {
             $obj->set('width', $info['width']);
             $obj->set('height', $info['height']);
             $obj->set('duration', $info['duration']);
-            $obj->set('thumbnail_url',$this->getThumbnail($dst,$storage_basedir,$w,$h));
+            if ($thumb_fullpath = $this->getThumbnail($dst,$subdir,$w,$h)) {
+                $obj->set('thumbnail_url',$this->getRelPath($thumb_fullpath, $storage_basedir));
+            }
         }
         else {
             $obj->set('is_image', 0);

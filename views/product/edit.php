@@ -1,15 +1,11 @@
 <script>
 /**
+ * Handlebars Parsing
+ *
  * @param string src of a handlebars id :<script id="entry-template" type="text/x-handlebars-template"> 
  * @param object data key/value pairs
  */
 function parse_tpl(src,data) {
-/*
-    var tpl = jQuery('#related_product_template').val();
-    tpl = tpl.replace(/\[\[\+product_id\]\]/g, data.id );
-    tpl = tpl.replace(/\[\[\+name\]\]/g, data.value );
-    return tpl;
-*/
     var source   = jQuery('#'+src).html();
     var template = Handlebars.compile(source);
     return template(data);    
@@ -110,6 +106,19 @@ function get_field_instance() {
 </tr>
 </script>
 
+<script id="product_image" type="text/x-handlebars-template">
+<li class="li_product_image" id="product-image-{{asset_id}}">
+	<div class="img-info-wrap">
+	    <a class="edit-img" href="#{{asset_id}}" data-image_id="{{asset_id}}" data-toggle="modal" data-target="#update-image">
+		  <img src="{{thumbnail_url}}?rand=<?php print uniqid(); ?>" alt="{{alt}}" width="" />
+		</a>
+	    <input type="hidden" name="Assets[asset_id][]" value="{{asset_id}}" />
+	    <!-- Button trigger modal -->
+		
+		<!-- Modal-->
+	</div>
+</li>
+</script>
 <div class="moxycart_canvas_inner clearfix">
     <h2 class="moxycart_cmp_heading pull-left">Edit Product: <?php print htmlentities($data['name']); ?></h2>
 
@@ -461,8 +470,20 @@ function get_field_instance() {
 	<div id="assets_tab" class="content">	
         <div class="dropzone-wrap" id="image_upload">
         	<ul class="clearfix" id="product_images">
-                <?php print isset($data['images']) ? $data['images'] : ''; ?>
+                <?php foreach ($data['product_assets'] as $a): ?>
+                    <li class="li_product_image" id="product-image-<?php print $a->get('asset_id'); ?>">
+                    	<div class="img-info-wrap">
+                    	    <a class="edit-img" href="#<?php print $a->get('asset_id'); ?>" data-image_id="<?php print $a->get('asset_id'); ?>" data-toggle="modal" data-target="#update-image">
+                    		  <img src="<?php print $a->Asset->get('thumbnail_url'); ?>?rand=<?php print uniqid(); ?>" alt="<?php print $a->Asset->get('alt'); ?>" width="" />
+                    		</a>
+                    	    <input type="hidden" name="Assets[asset_id][]" value="<?php print $a->get('asset_id'); ?>" />
+                    	    <!-- Button trigger modal -->
+                    		
+                    		<!-- Modal-->
+                    	</div>
+                    </li>            
                 
+                <?php endforeach; ?>
             </ul>
 
 

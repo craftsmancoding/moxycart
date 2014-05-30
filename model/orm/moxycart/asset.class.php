@@ -22,22 +22,28 @@ class Asset extends xPDOObject {
      * when complex queries (e.g. getCollectionGraph) are run.
      *
      */
-/*
     public function get($k, $format = null, $formatTemplate= null) {
         // Return the sale price if the product is on sale
         if ($k=='thumbnail_url') {
             $raw  = parent::get($k, $format, $formatTemplate);
-            // MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
+            // Fallback to placehold.it e.g. http://placehold.it/350x150&text=PDF
+            if (empty($raw)) {
+                $ext = strtolower(strrchr($this->get('url'), '.'));
+                $w = $this->xpdo->getOption('moxycart.thumbnail_width');
+                $h = $this->xpdo->getOption('moxycart.thumbnail_height');
+                return sprintf('http://placehold.it/%sx%s&text=%s',$w,$h,$ext);
+            }
             // Passthru if the user has set a full URL
-            if(filter_var($raw, FILTER_VALIDATE_URL)) {
+            elseif(filter_var($raw, FILTER_VALIDATE_URL)) {
                 return $raw;
             }
+
+            return MODX_ASSETS_URL . $this->xpdo->getOption('moxycart.upload_dir').$raw;
             
         }
         else {
             return parent::get($k, $format, $formatTemplate);
         }
     }
-*/
 
 }
