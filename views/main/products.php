@@ -30,7 +30,8 @@
         <td><?php print $r->get('sku'); ?></td>
         <td><?php print $r->get('category'); ?></td>
         <td>
-            <span class="button btn" onclick="javascript:paint('productedit',{product_id:<?php print $r->get('product_id'); ?>});">Edit</span>
+            <!--span class="button btn" onclick="javascript:paint('productedit',{product_id:<?php print $r->get('product_id'); ?>});">Edit</span-->
+             <a href="<?php print static::page('productedit',array('product_id'=>$r->get('product_id'))); ?>" class="button btn">Edit</a>
              <a href="<?php print static::page('productpreview',array('product_id'=>$r->get('product_id'))); ?>" class="btn" target="_blank">Preview</a></td>
     </tr>
 <?php endforeach; ?>
