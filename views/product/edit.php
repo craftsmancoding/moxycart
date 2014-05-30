@@ -270,17 +270,28 @@ jQuery(function() {
 						<th>Field</th>
 						<th>Value</th>
 						<th>Description</th>
+						<th>&nbsp;</th>
 					</tr>
 				</thead>
-				<tbody id="specs">
-	                <?php
-	                	if ($data['product_fields']) {
-	                    	print $data['product_fieldss'];
-		                }
-		                else {
-						    print '<tr id="no_specs_msg"><td colspan="3">No Custom Fields Found</td></tr>';
-						}
-					?>
+				<tbody id="fields">
+	                <?php if ($data['product_fields']) : ?>
+                        <?php foreach ($data['product_fields'] as $f):?>
+                            <tr>
+                                <td><?php printf ('%s (%s)',$f->Field->get('label'),$f->Field->get('slug')); ?></td>
+                                <td>
+                                    <input type="hidden" name="Fields[field_id][]" value="<?php print $f->get('field_id'); ?>" />
+                                <?php
+                                    $type = $f->Field->get('type');
+                                    print \Formbuilder\Form::$type('Fields[value][]');
+                                ?>
+                                </td>
+                                <td><?php print $f->Field->get('description'); ?></td>
+                                <td><span class="btn" onclick="javascript:remove_me.call(this,event,'tr');">Remove</span></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+				        <tr id="no_specs_msg"><td colspan="3">No Custom Fields Found</td></tr>
+					<?php endif; ?>
 				</tbody>
 			</table>
 

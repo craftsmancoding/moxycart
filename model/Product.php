@@ -643,51 +643,7 @@ class Product extends BaseModel {
     
     }
 
-    /**
-     * Data format should be ??? saveComplete
-     *
-     
-     'title' => 'myproduct',
-     'price' => 14.99
-     // ...etc...
-     
-     // Related Data: some can pass simple arrays, others need to pass more data
-     'Assets' => array(1,2,3),
-     // Important: field associations infer a value!
-     'Fields' => array(
-        array(
-            'field_id' => 4,
-            'value' => 'Something'
-        )
-     ),
-     'OptionTypes' => array(1,2,3),
-     'Relations' => array(
-        array(
-            'related_id' => 53,
-            'type' => 'related',
-            'seq' => 1
-        )
-     ),
-     'Taxonomies' => array(1,2,3),
-     'Terms' => array(1,2,3),
-     
-     @param array $data (e.g. from $_POST)
-     */
-    public function saveRelated($data) {
-        // Extra stuff is ignored
-        $this->fromArray($data);
-        if (!$this->save()) {
-            return false;
-        }
-        $product_id = $this->get('product_id');
-        if (isset($data['Assets'])) $this->dictateAssets($data['Assets']);
-        if (isset($data['Fields'])) $this->dictateFields($data['Fields']);
-        if (isset($data['OptionTypes'])) $this->dictateAssets($data['OptionTypes']);
-        if (isset($data['Relations'])) $this->dictateAssets($data['Relations']);
-        if (isset($data['Taxonomies'])) $this->dictateAssets($data['Taxonomies']);
-        if (isset($data['Terms'])) $this->dictateAssets($data['Terms']);
-        
-    }
+
     /** 
      * get all Fields and Values for this product
      * @param array $array of taxonomy page ids
@@ -862,9 +818,51 @@ class Product extends BaseModel {
 */
     
     
-    /** 
+    /**
+     * Data format should be ??? saveComplete
      *
+     
+     'title' => 'myproduct',
+     'price' => 14.99
+     // ...etc...
+     
+     // Related Data: some can pass simple arrays, others need to pass more data
+     'Assets' => array(1,2,3),
+     // Important: field associations infer a value!
+     'Fields' => array(
+        array(
+            'field_id' => 4,
+            'value' => 'Something'
+        )
+     ),
+     'OptionTypes' => array(1,2,3),
+     'Relations' => array(
+        array(
+            'related_id' => 53,
+            'type' => 'related',
+            'seq' => 1
+        )
+     ),
+     'Taxonomies' => array(1,2,3),
+     'Terms' => array(1,2,3),
+     
+     @param array $data (e.g. from $_POST)
      */
+    public function saveRelated($data) {
+        // Extra stuff is ignored
+        $this->fromArray($data);
+        if (!$this->save()) {
+            return false;
+        }
+        $product_id = $this->get('product_id');
+        if (isset($data['Assets'])) $this->dictateAssets($data['Assets']);
+        if (isset($data['Fields'])) $this->dictateFields($data['Fields']);
+        if (isset($data['OptionTypes'])) $this->dictateAssets($data['OptionTypes']);
+        if (isset($data['Relations'])) $this->dictateAssets($data['Relations']);
+        if (isset($data['Taxonomies'])) $this->dictateAssets($data['Taxonomies']);
+        if (isset($data['Terms'])) $this->dictateAssets($data['Terms']);
+        
+    }
     
     /**
      * Override here for special stuff

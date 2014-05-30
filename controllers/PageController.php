@@ -212,6 +212,12 @@ class PageController extends BaseController {
         // product_fields -- render form + value
         
         // assets
+        // product_fields
+        $c = $this->modx->newQuery('ProductField');
+        $c->where(array('ProductField.product_id' => $product_id));
+        $PF = $this->modx->getCollectionGraph('ProductField','{"Field":{}}',array('product_id'=> $product_id));
+        $this->setPlaceholder('product_fields',$PF);
+
         
         // fields (dropdown)
         $Fs = $this->modx->getCollection('Field'); 
@@ -233,14 +239,11 @@ class PageController extends BaseController {
         $c = $this->modx->newQuery('ProductRelation');
         $c->where(array('ProductRelation.product_id' => $product_id));
         $PR = $this->modx->getCollectionGraph('ProductRelation','{"Relation":{}}',array('product_id'=> $product_id));
-        //$PR = new ProductRelation($this->modx);
-        //$related_products = $PR->all(array('product_id'=> $product_id),true);
-        //print_r($related_products); exit;
         $this->setPlaceholder('related_products',$PR);
         $PR = new ProductRelation($this->modx);
         $this->setPlaceholder('relation_types',$PR->getTypes());
         
-        // categories (sic - taxonomies)
+        // categories (foxycart)
         $this->setPlaceholder('categories',json_decode($this->modx->getOption('moxycart.categories'),true));
         
         
