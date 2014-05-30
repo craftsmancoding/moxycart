@@ -19,7 +19,7 @@ function remove_relation(product_id) {
 </script>
 
 <div class="moxycart_canvas_inner clearfix">
-    <h2 class="moxycart_cmp_heading pull-left">Edit Product Title Here</h2>
+    <h2 class="moxycart_cmp_heading pull-left">Edit Product</h2>
 
         <div class="pull-right">
             <?php
@@ -27,7 +27,8 @@ function remove_relation(product_id) {
             ?>
                 <button class="btn" id="product_update">Save</button>
                 <a class="btn" href="<?php print static::page('products'); ?>" target="_blank">View</a>
-                <a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a>
+                <span class="button btn" onclick="javascript:paint('products');">&laquo; Back to Product List</span>
+                <!--a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a-->
             <?php    
             else:
             ?>
