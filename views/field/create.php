@@ -18,10 +18,7 @@
         ->text('group', $data['group'], array('label'=>'Group','description'=>'Fields with the same group value will appear together.','class'=>'input input-half'))
         ->html('<span class="btn moxycart-btn" onclick="javascript:submit_form(\'create_field\', \''.self::url('field','create').'\',\'fields\');">Save</span>')
         //->submit('','Save',array('class'=>'btn moxycart-btn'))
+        ->html('<span class="btn btn-cancel" onclick="javascript:paint(\'fields\');">Cancel</span>')
         ->close();
     ?>
-
-    <div>
-        <span class="btn btn-cancel" onclick="javascript:paint('fields');">Cancel</span>
-    </div>
 </div>

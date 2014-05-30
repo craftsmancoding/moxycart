@@ -14,12 +14,9 @@ print \Formbuilder\Form::open($data['baseurl'],array('id'=>'create_optiontype'))
     ->text('name', $data['name'], array('label'=>'Name','description'=>'Human readable name for this list.','class'=>'input input-half'))
     ->text('description', $data['description'], array('label'=>'Description', 'description'=>'A brief description of the field.','class'=>'input input-half'))
     ->html('<span class="btn moxycart-btn" onclick="javascript:submit_form(\'create_optiontype\', \''.self::url('optiontype','create').'\',\'options\');">Save</span>')
+    ->html('<span class="btn btn-cancel" onclick="javascript:paint(\'options\');">Cancel</span>')
     //->submit('','Save',array('class'=>'btn moxycart-btn'))
     ->close();
 ?>
-
-<div>
-    <span class="btn btn-cancel" onclick="javascript:paint('options');">Cancel</span>
-</div>
 
 </div>

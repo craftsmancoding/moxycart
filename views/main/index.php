@@ -29,7 +29,7 @@
 	            <span class="subline">Manage Custom Fields</span>
 	        </a>
 	    </li>
-	    <li class="product">
+	    <li class="product-option">
 	        <a href="<?php print self::page('options'); ?>" title="Manage Product Options">
 	            <span class="icon"></span>
 	            <span class="headline">Product Options</span>

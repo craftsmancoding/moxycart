@@ -18,12 +18,10 @@ print \Formbuilder\Form::open($data['baseurl'],array('id'=>'update_field'))
     ->textarea('config', $data['config'], array('label'=>'Configuration','description'=>'Some fields require special customization via a JSON array.'))
     ->html('<br>')
     ->text('group', $data['group'], array('label'=>'Group','description'=>'Fields with the same group value will appear together.','class'=>'input input-half'))
-    ->html('<span class="btn moxycart-btn" onclick="javascript:submit_form(\'update_field\', \''.self::url('field','edit').'\',\'fields\');">Save</span>')    
+    ->html('<span class="btn moxycart-btn" onclick="javascript:submit_form(\'update_field\', \''.self::url('field','edit').'\',\'fields\');">Save</span>')  
+    ->html('<span class="btn btn-cancel" onclick="javascript:paint(\'fields\');">Cancel</span>')  
 //    ->submit('','Save',array('class'=>'btn moxycart-btn'))
     ->close();
 ?>
-<div>
-    <span class="btn btn-cancel" onclick="javascript:paint('fields');">Cancel</span>
-</div>
 
 </div>

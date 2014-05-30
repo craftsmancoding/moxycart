@@ -154,6 +154,10 @@ h2.moxycart_cmp_heading {
     left: 15px;
 }
 
+.product-option .icon {
+    background: url(../images/product-option.png) no-repeat;
+}
+
 .setting .icon {
     background: url(../images/setting.png) no-repeat;
 }
@@ -237,6 +241,10 @@ h2.moxycart_cmp_heading {
   -webkit-font-smoothing: antialiased;
 }
 
+.btn-cancel {
+  margin-left: 10px;
+}
+
 select,
 textarea,
 input[type="text"],
@@ -290,7 +298,8 @@ input[type="text"],
     -moz-border-radius: 3px;
 }
 
-label {
+label,
+.textlabel {
     width: 150px;
     font-weight: bold;
     color: #707070;
@@ -320,6 +329,23 @@ table thead a {
 table thead a:hover {
     color: #fff;
     text-decoration: underline;
+}
+
+.unmodifier {
+  background: #5f5f5f;
+}
+
+.modifier {
+  color: #fff !important;
+  text-transform: uppercase;
+  font-weight: bold;
+  background: #888888;
+  text-align: center;
+  font-size: 12px !important;
+}
+
+.modifier-th {
+  background: #888888 !important;
 }
 
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.

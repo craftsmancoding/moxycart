@@ -209,7 +209,7 @@ function show_error(msg) {
  * Show a success message, then fade it out and clear it so we can reuse the div.
  */
 function show_success(msg) {
-    jQuery('#moxycart_msg').html('<div class="alert alert-success">'+msg+'</div>')
+    jQuery('#moxycart_msg').html('<div class="success">'+msg+'</div>')
     .delay(3000).fadeOut(function() {
         jQuery(this).html('');
         jQuery(this).show(); 

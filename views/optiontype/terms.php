@@ -46,21 +46,23 @@ print \Formbuilder\Form::open($data['baseurl'])
     <input type="hidden" name="otype_id" value="<?php print $data['otype_id']; ?>" />
     <table id="option_terms" class="classy">
         <thead>
-<!--             <tr>
-    <td colspan="2">&nbsp;</td>
-    <td colspan="4">Modfiers</td>
-</tr> -->
+            <tr>
+                <td class="unmodifier" colspan="2">&nbsp;</td>
+                <td class="modifier" colspan="4">Modfiers</td>
+                <td class="unmodifier">&nbsp;</td>
+            </tr>
             <tr>
                 <th>Slug</th>
                 <th>Name</th>
-                <th>Price</th>
-                <th>Weight</th>
-                <th>Code</th>
-                <th>Category</th>
+                <th class="modifier-th">Price</th>
+                <th class="modifier-th">Weight</th>
+                <th class="modifier-th">Code</th>
+                <th class="modifier-th">Category</th>
                 <th>&nbsp;</th>
             </tr>
         </thead>
         <tbody>
+
             <?php if(!empty($data['terms'])) : ?>
                 <?php foreach ($data['terms'] as $t): ?>
                     <tr>
@@ -72,10 +74,10 @@ print \Formbuilder\Form::open($data['baseurl'])
                             <input type="text" name="name[]" placeholder="Name" value="<?php print htmlentities($t->name); ?>" />
                         </td>
                         <td>
-                            <input type="text" name="mod_price[]" placeholder="0" value="<?php print htmlentities($t->mod_price); ?>" />
+                            <input type="text" name="mod_price[]"  class="input-half" placeholder="0" value="<?php print htmlentities($t->mod_price); ?>" />
                         </td>
                         <td>
-                            <input type="text" name="mod_weight[]" placeholder="0" value="<?php print htmlentities($t->mod_weight); ?>" />
+                            <input type="text" name="mod_weight[]" class="input-half"  placeholder="0" value="<?php print htmlentities($t->mod_weight); ?>" />
                         </td>    
                         <td>
                             <input type="text" name="mod_code[]" placeholder="SKU" value="<?php print htmlentities($t->mod_code); ?>" />
@@ -84,7 +86,7 @@ print \Formbuilder\Form::open($data['baseurl'])
                             <input type="text" name="mod_category[]" placeholder="Default" value="<?php print htmlentities($t->mod_category); ?>" />
                         </td>        
                         <td>
-                            <span class="btn" onclick="javascript:remove_term.call(this,event);">Remove</span>
+                            <span class="btn" onclick="javascript:remove_term.call(this,event);">x</span>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -117,10 +119,10 @@ requests to get it.
         <input type="text" name="name[]" placeholder="Name" value="" />
     </td>
     <td>
-        <input type="text" name="mod_price[]" placeholder="0" value="" />
+        <input type="text" name="mod_price[]" class="input-half" placeholder="0" value="" />
     </td>
     <td>
-        <input type="text" name="mod_weight[]" placeholder="0" value="" />
+        <input type="text" name="mod_weight[]" class="input-half" placeholder="0" value="" />
     </td>    
     <td>
         <input type="text" name="mod_code[]" placeholder="SKU" value="" />
@@ -129,7 +131,7 @@ requests to get it.
         <input type="text" name="mod_category[]" placeholder="Default" value="" />
     </td>        
     <td>
-        <span class="btn" onclick="javascript:remove_term.call(this,event);">Remove</span>
+        <span class="btn" onclick="javascript:remove_term.call(this,event);">x</span>
     </td>
 </tr>
 </textarea>
