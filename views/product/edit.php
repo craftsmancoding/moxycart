@@ -1,8 +1,18 @@
 <script>
-function parse_tpl(tpl,data) {
+/**
+ * @param string src of a handlebars id :<script id="entry-template" type="text/x-handlebars-template"> 
+ * @param object data key/value pairs
+ */
+function parse_tpl(src,data) {
+/*
+    var tpl = jQuery('#related_product_template').val();
     tpl = tpl.replace(/\[\[\+product_id\]\]/g, data.id );
     tpl = tpl.replace(/\[\[\+name\]\]/g, data.value );
     return tpl;
+*/
+    var source   = jQuery('#'+src).html();
+    var template = Handlebars.compile(source);
+    return template(data);    
 }
 
 function remove_relation(product_id) {
@@ -10,6 +20,7 @@ function remove_relation(product_id) {
     jQuery('#product_'+product_id+ ' span').show();
     jQuery('#product_'+product_id+' strong').css("color","black");    
 }
+
 /**
  * Auto-complete
  */
@@ -42,15 +53,61 @@ jQuery(function() {
         select: function(event, ui) {
             //console.log(ui.item);
             // Append to #product_relations
-            var tpl = jQuery('#related_product_template').val();
-            tpl = parse_tpl(tpl,ui.item)
-            jQuery('#product_relations').append(tpl);
+            //var tpl = jQuery('#related_product_template').val();
+            var content = parse_tpl('related_product_template',ui.item)
+            jQuery('#product_relations').append(content);
             jQuery('#search_products').val('');
             event.preventDefault(); // clear out text
         }
     });        
 });
 
+function get_field_instance() {
+    var field_id = jQuery('#field_selector').val();
+    console.log(field_id);
+    var url = controller_url('field','row');    
+    jQuery.get(url, {field_id:field_id}, function( response ) {
+        jQuery('#no_specs_msg').hide();
+        jQuery('#fields').append(response);
+    });
+}
+
+</script>
+
+<?php
+//------------------------------------------------------------------------------
+// ! Handlebar templates
+//------------------------------------------------------------------------------
+?>
+<script id="related_product_template" type="text/x-handlebars-template">
+<tr>
+    <td>
+        <input type="hidden" name="Relations[related_id][]" value="{{id}}"/>
+        <a href="<?php print static::page('productedit',array('product_id'=>'')); ?>{{id}}">{{value}}</a>
+    </td>
+    <td>
+    <?php 
+    print \Formbuilder\Form::dropdown('Relations[type][]', $data['relation_types']); 
+    ?>
+    </td>
+    <td>
+        <span class="btn" onclick="javascript:remove_me.call(this,event,'tr');">Remove</span>
+    </td>
+</tr>
+</script>
+
+<script id="product_field_template" type="text/x-handlebars-template">
+<tr>
+    <td>{{label}} ({{slug}})</td>
+    <td>
+        <input type="hidden" name="Fields[field_id][]" value="{{field_id}}" />
+    <?php
+        print \Formbuilder\Form::text('Fields[value][]');
+    ?>
+    </td>
+    <td>{{description}}</td>
+    <td><span class="btn" onclick="javascript:remove_me.call(this,event,'tr');">Remove</span></td>
+</tr>
 </script>
 
 <div class="moxycart_canvas_inner clearfix">
@@ -296,10 +353,10 @@ jQuery(function() {
 			</table>
 
         <?php
-		print \Formbuilder\Form::dropdown('', $data['fields']);
+		print \Formbuilder\Form::dropdown('', $data['fields'],'',array('id'=>'field_selector'));
 		?>
 
-		<button class="btn" onclick="javascript:get_spec(jQuery('#spec_id').val()); return false;">Attach Field</button>
+		<button class="btn" onclick="javascript:get_field_instance(); return false;">Attach Field</button>
 		<a class="btn btn-custom" href="<?php print self::page('fieldcreate');  ?>">Add New Field</a>
 
 	</div>
@@ -351,21 +408,6 @@ jQuery(function() {
                 </td>
             </tr>
         </table>
-
-<textarea id="related_product_template" style="display:none;"><tr>
-    <td>
-        <input type="hidden" name="Relations[related_id][]" value="[[+product_id]]"/>
-        <a href="<?php print static::page('productedit',array('product_id'=>'')); ?>[[+product_id]]">[[+name]]</a>
-    </td>
-    <td>
-    <?php 
-    print \Formbuilder\Form::dropdown('Relations[type][]', $data['relation_types'], $pr->get('type')); 
-    ?>
-    </td>
-    <td>
-        <span class="btn" onclick="javascript:remove_me.call(this,event,'tr');">Remove</span>
-    </td>
-</tr></textarea>
 
 	</div>
 

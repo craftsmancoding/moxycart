@@ -167,6 +167,7 @@ class PageController extends BaseController {
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.$result->toJson().';            
             var use_editor = "'.$this->modx->getOption('use_editor').'";
@@ -346,8 +347,7 @@ class PageController extends BaseController {
         $this->setPlaceholders($result->toArray());
         $this->setPlaceholder('result',$result);
         return $this->fetchTemplate('field/edit.php');
-    }
-    
+    }    
     
     /**
      * 

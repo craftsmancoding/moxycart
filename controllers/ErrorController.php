@@ -16,7 +16,8 @@ class ErrorController extends BaseController {
      */
     public function get404(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
-        $this->addStandardLayout($scriptProperties);
+        //$this->addStandardLayout($scriptProperties);
+                $this->scriptProperties['_nolayout'] = true;
         $this->setPlaceholders($scriptProperties);    
         return $this->fetchTemplate('error/404.php');
     }

@@ -343,10 +343,11 @@ class BaseController extends \modExtraManagerController {
      */
     public function sendError($msg='Error') {
         $this->modx->log(\modX::LOG_LEVEL_ERROR,'[moxycart] Invalid function name '.$name);
-        $this->addStandardLayout(); // For some reason we have to do this here (?)
+        //$this->addStandardLayout(); // For some reason we have to do this here (?)
         $class = '\\Moxycart\\ErrorController';
         $Error = new $class($this->modx,$config);
         $this->setPlaceholder('msg',$msg);
+        $this->scriptProperties['_nolayout'] = true;
         $args=array();
         $args['msg'] = $this->fetchTemplate('error.php');   
         return $Error->get404($args);
