@@ -29,6 +29,7 @@ class PageController extends BaseController {
         $this->client_config = array(
             'controller_url' => $this->config['controller_url']
         );
+        $this->modx->regClientCSS($this->config['assets_url'].'css/moxycart.css');
         $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/app.js');

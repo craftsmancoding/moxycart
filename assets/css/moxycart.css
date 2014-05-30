@@ -13,31 +13,6 @@ a:hover {
 color: #77963d;
 }
 
-/* Spans etc. that need to look like links */
-.linklike {
-    color: #727272;
-    text-decoration: none;
-    cursor: pointer;
-}
-.linklike:hover {
-    color: #77963d;
-} 
- 
-.icon-store .x-tree-node-icon {
-    background-image: url(../images/cart-icon.png) !important;
-}
-.icon-taxonomy .x-tree-node-icon {
-    background-image: url(../images/taxonomy-icon.png) !important;
-}
-.icon-term .x-tree-node-icon {
-    background-image: url(../images/term-icon.png) !important;
-}
-
-.custom-close-btn {
-	left: 540px !important;
-	top: -13px !important;
-}
-
 /**
  * CMPs
  */
