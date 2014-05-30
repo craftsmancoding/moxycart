@@ -70,6 +70,7 @@ class APIController extends \modExtraManagerController {
      * 
      */
     public function postCreate(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         $classname = '\\Moxycart\\'.$this->model;
         $Model = new $classname($this->modx);    
         $Model->fromArray($scriptProperties);
@@ -85,6 +86,7 @@ class APIController extends \modExtraManagerController {
      * 
      */
     public function postDelete(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         $classname = '\\Moxycart\\'.$this->model;
         $Model = new $classname($this->modx);    
         $id = (int) $this->modx->getOption($Model->getPK(),$scriptProperties);
@@ -105,6 +107,7 @@ class APIController extends \modExtraManagerController {
      *
      */
     public function postEdit(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         // This doesn't work unless you add the namespace.
         // Oddly, if you write it out (w/o a var), it works. wtf?
         $classname = '\\Moxycart\\'.$this->model;
@@ -134,7 +137,6 @@ class APIController extends \modExtraManagerController {
      *     "results":[{"id":"1","value":"2","label":"My Product"},...]
      */
     public function postSearch(array $scriptProperties = array()) {
-//        $this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         // This doesn't work unless you add the namespace.
         // Oddly, if you write it out (w/o a var), it works. wtf?
@@ -157,7 +159,6 @@ class APIController extends \modExtraManagerController {
                 'label' => strip_tags(sprintf('%s (%s)',$r->get('name'),$r->get('sku')))
             );
         }
-//        return json_encode($data);
         return $this->sendSuccess(array('results' => $data));
     }
 

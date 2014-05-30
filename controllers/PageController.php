@@ -173,7 +173,7 @@ class PageController extends BaseController {
             var assets_url = "'.$this->config['assets_url'].'"; 
     
             jQuery(document).ready(function() {
-                    var myDropzone = new Dropzone("div#image_upload", {url: moxycart.controller_url+"&class=asset&method=upload&product_id='.$product_id.'"});
+                    var myDropzone = new Dropzone("div#image_upload", {url: moxycart.controller_url+"&class=asset&method=create&product_id='.$product_id.'"});
                     
                     // Refresh the list on success (append new tile to end)
                     myDropzone.on("success", function(file,response) {
@@ -209,9 +209,9 @@ class PageController extends BaseController {
         
         // thumbnail
         
-        // product_fields -- render form + value
         
         // assets
+        
         // product_fields
         $c = $this->modx->newQuery('ProductField');
         $c->where(array('ProductField.product_id' => $product_id));

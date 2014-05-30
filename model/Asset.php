@@ -285,10 +285,10 @@ class Asset extends BaseModel {
         $this->preparePath($target_dir);
         $candidate = rtrim($target_dir,'/').'/'.$name;
         $dst = $this->getUniqueFilename($candidate);
-        if (move_uploaded_file($tmp_name, $dst)) {
+        if (@move_uploaded_file($tmp_name, $dst)) {
             return $dst; // success
         }
-        throw new \Exception('Unable to move uploaded file');
+        throw new \Exception('Unable to move uploaded file '.$tmp_name.' to '.$dst);
     }
     
     /** 
@@ -360,7 +360,7 @@ class Asset extends BaseModel {
 //print $target_dir; exit;        
         $dst = $this->getUniqueFilename($target_dir.$basename);
         if(!rename($src,$dst)) {
-            throw new \Exception('Could not move file');
+            throw new \Exception('Could not move file from '.$src.' to '.$dst);
         }
 
         $this->modelObj->set('path', $this->getRelPath($dst, $storage_basedir));
