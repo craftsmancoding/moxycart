@@ -95,6 +95,12 @@ function remove_relation(product_id) {
                                 
                             </td>
                             <td style="width:30%;vertical-align: top;">
+                            
+								<label for="thumbnail">Thumbnail</label>
+								<div id="thumbnail" style="border:1px dotted grey; height:200px;width:200px;" onclick="javascript:alert('image upload');">
+								    <img src="" />
+								</div>
+								                            
                             	<label for="category">In Menu</label>
                                 <select name="in_menu" id="in_menu">
                                    <option value="1">Yes</option>
@@ -115,6 +121,8 @@ function remove_relation(product_id) {
 								<?php
 								print \Formbuilder\Form::dropdown('template_id', $data['templates'], $data['template_id']);
 								?>
+
+								
                             </td>
                         </tr>
                         <tr>
@@ -152,6 +160,15 @@ function remove_relation(product_id) {
 								print \Formbuilder\Form::dropdown('type', $data['types'], $data['type']);
 								?>
 				
+								<label for="weight">Weight</label>
+								<input type="weight" style="width:94%;" id="weight" name="weight" value=""/>
+
+                                <h3>Product Options</h3>
+                                <?php
+								print \Formbuilder\Form::multicheck('OptionTypes', $data['OptionTypes'], $data['otype_ids']);
+								?>
+    
+								
                             </td>
                             <td style="width:30%;;vertical-align: top;">
                             	<label for="sku_vendor">Vendor SKU</label>

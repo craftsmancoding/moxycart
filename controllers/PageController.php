@@ -206,7 +206,10 @@ class PageController extends BaseController {
         
         $P = new Product($this->modx);
         
+        // thumbnail
+        
         // product_fields -- render form + value
+        
         // assets
         
         // fields (dropdown)
@@ -240,6 +243,13 @@ class PageController extends BaseController {
         $this->setPlaceholder('templates',$templates);
         
         // option_types
+        //otype_ids
+        $OTs = $this->modx->getCollection('OptionType');
+        $OptionTypes = array();
+        foreach ($OTs as $o) {
+            $OptionTypes[$o->get('id')] = sprintf('%s (%s)',$o->get('name'),$o->get('slug'));
+        }
+        $this->setPlaceholder('OptionTypes',$OptionTypes);
         
         // types (dropdown -- product types)
         $this->setPlaceholder('types',$P->getTypes());

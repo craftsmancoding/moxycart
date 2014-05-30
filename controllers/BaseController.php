@@ -82,15 +82,7 @@ class BaseController extends \modExtraManagerController {
         header('HTTP/1.0 404 Not Found');
         return $Error->get404($args);
     }
-
-    
-    private function _send401() {
-        header('HTTP/1.0 401 Unauthorized');
-        print 'Unauthorized';
-        exit;
-    }
   
-
     /** 
      * For iterative parsing of the Taxonomy/Terms properties
      * 
