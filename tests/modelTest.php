@@ -312,7 +312,8 @@ class modelTest extends \PHPUnit_Framework_TestCase {
      *
      */
     public function testIndexedToRecordset() {
-        $P = new Product(self::$modx); // arbitrary
+        $M = new Product(self::$modx); 
+        // Regular multi stuff
         $index = array(
             'first_name' => array('Bob','Chucky','Dudley'),
             'last_name' => array('Barker','Cheese','Doolittle'),
@@ -324,8 +325,26 @@ class modelTest extends \PHPUnit_Framework_TestCase {
             array('first_name'=>'Dudley','last_name'=>'Doolittle','number'=>'444-4444'),            
         );
         
-        $actual = $P->indexedToRecordset($index);
+        $actual = $M::indexedToRecordset($index);
         $this->assertEquals($actual,$expected);
+        
+        // single version
+        $index = array(
+            'first_name' => 'Stan',
+            'last_name' => 'Marsh',
+            'number' => '555-5555'
+        );
+        $expected = array(
+            array(
+            'first_name' => 'Stan',
+            'last_name' => 'Marsh',
+            'number' => '555-5555'
+            )
+        );
+        $actual = $M::indexedToRecordset($index);
+        $this->assertEquals($actual,$expected); 
+
+
     }
     
     

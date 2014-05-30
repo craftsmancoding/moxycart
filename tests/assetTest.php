@@ -174,33 +174,83 @@ class assetTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Invalid data type.
+     */
+    public function testExceptionsfromFile() {
+        $A = new Asset(self::$modx);
+        $file = 'Dud';
+        $A->fromFile($file,'/tmp');
+    }
+
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Invalid data type.
+     */
+    public function testExceptionsfromFile2() {
+        $A = new Asset(self::$modx);
+        $file = array('tmp_name'=>'','name'=>'');
+        $A->fromFile($file,array('fail'));
+    }
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Missing required keys in FILE array
+     */
+    public function testExceptionsfromFile3() {
+        $A = new Asset(self::$modx);
+        $file = array('not_tmp_name'=>'','not_name'=>'');
+        $A->fromFile($file,'/somewhere');
+    }
+    /**
+     * @expectedException        \Exception
+     * @expectedExceptionMessage Invalid data type for path
+     */
+    public function testExceptionsfromFile4() {
+        $A = new Asset(self::$modx);
+        $file = array('tmp_name'=> array('boned'),'name'=>'');
+        $A->fromFile($file,'/somewhere');
+    }
+
+    /**
      * Tests the fromFile method, verifying that it creates a new object record
      */
     public function testFromFile() {
-        $filename = dirname(__FILE__).'/assets/support.jpg'; 
-        copy($filename, dirname(__FILE__).'/assets/support2.jpg');
-        $filename = dirname(__FILE__).'/assets/support2.jpg'; 
-        $tmp_dir = dirname(__FILE__).'/asset_library/tmp';
-        $asset_dir = dirname(__FILE__).'/asset_library';
-
-        $dir = MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
+        self::$modx->setLogLevel(4);
+        self::$modx->setLogTarget('ECHO');
         $A = new Asset(self::$modx);
+
+        $orig_filename = dirname(__FILE__).'/assets/support.jpg'; 
+        $result = copy($orig_filename, dirname(__FILE__).'/assets/support2.jpg');
+        $this->assertTrue($result, 'Failed to copy test image.');
+        // Our disposable testing file:
+        $filename = dirname(__FILE__).'/assets/support2.jpg';
+        $FILE = array(
+            'tmp_name' => $filename,
+            'name' =>'support2.jpg'
+        );
         
-        $A2 = $A->fromFile($filename,'support2.jpg',$tmp_dir);
+        // In prod: MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
+        $storage_basedir = dirname(__FILE__).'/asset_library/';        
+                
+        $A2 = $A->fromFile($FILE,$storage_basedir);
         
         $this->assertFalse(empty($A2));
-        $this->assertEquals(md5_file($filename), $A2->get('sig'));
-
-        // Try actually SAVING the file
-        $result = $A2->saveTo($asset_dir);        
+        
+        
+        
+        $this->assertTrue(file_exists($storage_basedir.date('Y/m/d/')), 'Directory does not exist: '.$storage_basedir.date('Y/m/d/'));
+        $this->assertTrue(file_exists($storage_basedir.date('Y/m/d/').'support2.jpg'), 'File does not exist: '.$storage_basedir.date('Y/m/d/').'support2.jpg');
+        $this->assertEquals(md5_file($orig_filename), $A2->get('sig'),'File signature does not match.');
+        $this->assertEquals(date('Y/m/d/').'support2.jpg', $A2->get('path'),'Asset path incorrect');
+        $this->assertEquals(date('Y/m/d/').'support2.jpg', $A2->get('url'),'Asset path incorrect');
+        
+        $result = $A2->remove($storage_basedir);
         $this->assertTrue($result);
-        $this->assertTrue(file_exists($asset_dir.'/'.date('Y/m/d/')));
-        $this->assertTrue(file_exists($asset_dir.'/'.date('Y/m/d/').'support2.jpg'));
-
-        $A2->remove();
-        unlink($tmp_dir.'/support2.jpg');
+        $this->assertFalse(file_exists($storage_basedir.date('Y/m/d/').'support2.jpg'), 'File does not exist: '.$storage_basedir.date('Y/m/d/').'support2.jpg');
+        
+        unlink($filename);
         // Can't delete directories unless they're empty
-        Asset::rrmdir($asset_dir.'/'.date('Y/'));
+        Asset::rrmdir($storage_basedir.date('Y/'));
     }
     
     /**

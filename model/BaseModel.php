@@ -36,7 +36,7 @@ class BaseModel {
     private $previous_vals = array();
     
     // Used for new/save ops
-    public $modelObj; 
+    public $modelObj = 'xPDOObject'; 
     
     //public static $xclass; // The classname for xPDO when referencing objects of this class
     //public static $default_sort_col;
@@ -234,14 +234,16 @@ class BaseModel {
      *          array('x'=>'C', 'y' => 'D'),
      *     )
      *
-     * This function converts the format.
+     * This function converts the format.  It also handles simple hashes: in that case,
+     * the simple hash is "wrapped" in array, thus returning a "record-set" with 1 record.
      *
      * @param array $indexed array
      * @return array record set
      */
-    public function indexedToRecordset(array $indexed) {
+    public static function indexedToRecordset(array $indexed) {
         $out = array();
         foreach($indexed as $k => $v) {
+            $v = (array) $v;
             foreach ($v as $i => $v2) {
                 $out[$i][$k] = $v[$i];
             }

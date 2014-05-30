@@ -61,9 +61,9 @@ class Asset extends BaseModel {
     
     /**
      *
-     *
+     * @param string $filepath
      */
-    public function makeThumbnail() {
+    public function makeThumbnail($filepath) {
         return '';
         //Image::thumbnail($fullpath,$thumbnail_path,$thumb_w);
     }
@@ -86,38 +86,57 @@ class Asset extends BaseModel {
     }
 
     /**
-     * Create a new asset object from a given file. This does not SAVE the object yet!
+     * Create a new asset object and upload the file into an organized directory structure.
+     * This was built to handle form submissions and the $_FILES array. Use indexedToRecordset()
+     * to process the array for iterating over this function.
+     *
+     * $FILE = Array
+     *           (
+     *               [name] => madness.jpg                                (required) 
+     *               [type] => image/jpeg
+     *               [tmp_name] => /Applications/MAMP/tmp/php/phpNpESmV   (required)
+     *               [error] => 0
+     *               [size] => 81367                                      (optional: calc'd if ommitted)
+     *           )
+     *   
      * This needs to handle both uploaded files and existing files (e.g. manually uploaded).
      * If the file has just been uploaded, we move it to a temporary directory $tmpdir.
      *
-     * Keep in mind that certain tasks are postponed until saving, including calculating 
-     * the thumbnail and moving the file into position.
-     * We have 2 parameters here for $src and $basename because the PHP upload functionality
-     * ref's separate attributes in the $_FILES array: tmp_name and name.
      *
-     * @param string $src file
-     * @param string $basename string (optional, but when we use 
-     * @param string $tmpdir temporary where uploaded assets are moved.
+     * @param array $FILES structure mimics part of the $_FILES array, see above.
+     * @param string $storage_basedir for our asset management: dir where files will be moved.
      *
      * @return object instance representing new or existing asset
      */
-    public function fromFile($src,$basename=null,$tmpdir=null) {
-        $this->_validFile($src);
-        $obj = $this->modx->newObject($this->xclass);
-        
-        if (!$basename) $basename = basename($src);
-        if (is_uploaded_file($src)) {
-            $this->preparePath($tmpdir);
-            $src = $this->uploadTmp($src,$basename,$tmpdir);
+    public function fromFile($FILE,$storage_basedir) {
+        if (!is_array($FILE) || !is_scalar($storage_basedir)) {
+            throw new \Exception('Invalid data type.');
         }
-        // These properties are not persisted, but we need them during saveTo()
-        $obj->set('src_file',$src);
-        $obj->set('src_basename',$basename);
+        if (!isset($FILE['tmp_name']) || !isset($FILE['name'])) {
+            throw new \Exception('Missing required keys in FILE array.');        
+        }
+        $src = $FILE['tmp_name']; // source file
+        $this->_validFile($src);
         
-        $obj->set('sig', md5_file($src));
-        $obj->set('size', filesize($src));
+        $storage_basedir = rtrim($storage_basedir,'/').'/';
+        $target_dir = $this->preparePath($storage_basedir.$this->getCalculatedSubdir());
+        
+        $basename = $FILE['name'];
+        $dst = $this->getUniqueFilename($target_dir.$basename);
+
+        if(!rename($src,$dst)) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Failed to move asset file from '.$src.' to '.$dst,'',__CLASS__,__FILE__,__LINE__);
+            throw new \Exception('Could not move file from '.$src.' to '.$dst);
+        }
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Moved file from '.$src.' to '.$dst,'',__CLASS__,__FILE__,__LINE__);
+    
+        $obj = $this->modx->newObject($this->xclass); // new Asset()        
+        
+        $size = (isset($FILE['size'])) ? $FILE['size'] : filesize($dst);
+        $obj->set('sig', md5_file($dst));
+        $obj->set('size', $size);
            
-        if ($info = $this->getImageInfo($src)) {
+        if ($info = $this->getImageInfo($dst)) {
             $obj->set('is_image', 1);
             $obj->set('width', $info['width']);
             $obj->set('height', $info['height']);
@@ -127,8 +146,15 @@ class Asset extends BaseModel {
             $obj->set('is_image', 0);
         }
 
-        $obj->set('content_type_id', $this->getContentType($src));
+        $obj->set('content_type_id', $this->getContentType($dst));
+        $obj->set('path', $this->getRelPath($dst, $storage_basedir));
+        $obj->set('url', $this->getRelPath($dst, $storage_basedir));
+        $obj->set('thumbnail_url',$this->makeThumbnail($dst, $storage_basedir));
         
+        if(!$obj->save()) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Failed to save Asset. Errors: '.print_r($obj->errors,true),'',__CLASS__,__FILE__,__LINE__);
+            throw new \Exception('Error saving to database.');
+        }
         $classname = '\\Moxycart\\'.$this->xclass;
         return new $classname($this->modx, $obj); 
     }
@@ -161,11 +187,12 @@ class Asset extends BaseModel {
     }
     
     /**
-     * Creates the assets path if is is not already there
-     *
+     * Returns the $path with trailing slash, creating it if it does not exist 
+     * and verifying write permissions.
+     * 
      * @param string $path full
      * @param string $umask default 0777
-     * @return boolean path name on success (w trailing slash), Exception on fail
+     * @return mixed : string path name on success (w trailing slash), Exception on fail
      */
     public function preparePath($path,$umask=0777) {
 
@@ -173,19 +200,31 @@ class Asset extends BaseModel {
             throw new \Exception('Invalid data type for path');
         }
         if (file_exists($path)) {
-            if (is_dir($path)) {
-                return rtrim($path,'/').'/'; // already done!
-            }
-            else {
+            $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Path exists: '.$path,'',__CLASS__,__FILE__,__LINE__);            
+            if (!is_dir($path)) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Target directory must be a directory. File found instead: '.$path,'',__CLASS__,__FILE__,__LINE__);
                 throw new \Exception('Path must be a directory. File found instead.');
             }
         }
-        
-        if (!mkdir($path,$umask,true)) {
-            throw new \Exception('Failed to create directory '.$path);
+        else {
+            $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Creating directory '.$path,'',__CLASS__,__FILE__,__LINE__);
+            if (!mkdir($path,$umask,true)) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Failed to recursively create directory '.$path.' with umask '.$umask,'',__CLASS__,__FILE__,__LINE__);
+                throw new \Exception('Failed to create directory '.$path);
+            }        
         }
-
-        return rtrim($path,'/').'/';
+        
+        $path = rtrim($path,'/').'/';
+        
+        // Try to write to the directory        
+        $tmpfile = $path.'.tmp.'.time();
+        if (!touch($tmpfile)) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Failed to write file to directory: '.$path,'',__CLASS__,__FILE__,__LINE__);
+            throw new \Exception('Could not write to directory '.$path);    
+        }
+        unlink($tmpfile);
+        
+        return $path;
     }
 
     /**
@@ -223,6 +262,7 @@ class Asset extends BaseModel {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             if ($mime_type = finfo_file($finfo, $filename)) {
                 if ($C = $this->modx->getObject('modContentType', array('mime_type'=>$mime_type))) {
+                    $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Content Type Found for mime-type '.$mime_type.': '.$C->get('id'),'',__CLASS__,__FILE__,__LINE__);
                     return $C->get('id');
                 }
             }
@@ -233,6 +273,7 @@ class Asset extends BaseModel {
             throw new \Exception('Extension not found '.$filename);
         }
         if ($C = $this->modx->getObject('modContentType', array('file_extensions'=>'.'.$ext))) {
+            $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Content Type Found for extension .'.$ext.': '.$C->get('id'),'',__CLASS__,__FILE__,__LINE__);        
             return $C->get('id');
         }
         
@@ -295,15 +336,22 @@ class Asset extends BaseModel {
      * Override parent so we can clean out the asset files
      *
      */
-    public function remove($prefix=null) {
-        if (!$prefix) {
-            $prefix = $this->modx->getOption('assets_path').$this->modx->getOption('moxycart.upload_dir');
+    public function remove($storage_basedir=null) {
+
+        if (!$storage_basedir) {
+            $storage_basedir = $this->modx->getOption('assets_path').$this->modx->getOption('moxycart.upload_dir');
         }
-        $file = $prefix.$this->modelObj->get('path');
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Removing Asset '.$this->getPrimaryKey().' with assets in storage_basedir '.$storage_basedir,'',__CLASS__,__FILE__,__LINE__);
+        
+        $file = $storage_basedir.$this->modelObj->get('path');
         if (file_exists($file)) {
             if (!unlink($file)) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Failed to remove file asset for Asset '.$this->getPrimaryKey(). ': '.$file,'',__CLASS__,__FILE__,__LINE__);
                 throw new \Exception('Failed to delete asset file.');
             }
+        }
+        else {
+            $this->modx->log(\modX::LOG_LEVEL_INFO, 'File does not exist for Asset '.$this->getPrimaryKey().': '.$dir.' This could be because the file was manually deleted or because you did not pass the $storage_basedir parameter.','',__CLASS__,__FILE__,__LINE__);
         }
         // remove thumbnail
 /*
