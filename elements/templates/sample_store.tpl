@@ -15,19 +15,19 @@
   <title>[[*pagetitle]] - Moxycart Sample Store</title>
 
 <link rel="stylesheet" href="//cdn.foxycart.com/static/scripts/colorbox/1.3.23/style1_fc/colorbox.css?ver=1" type="text/css" media="screen" charset="utf-8" />
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]components/moxycart/css/templates/flexslider.css">
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]components/moxycart/css/templates/chosen.css">
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]components/moxycart/css/templates/jquery-ui-1.10.3.custom.min.css">
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]components/moxycart/css/templates/prettyPhoto.css">
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]components/moxycart/css/templates/font-awesome.css">
+  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/flexslider.css">
+  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/chosen.css">
+  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/jquery-ui-1.10.3.custom.min.css">
+  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/prettyPhoto.css">
+  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/font-awesome.css">
 
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]components/moxycart/css/templates/bootstrap.css">
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]components/moxycart/css/templates/style.css">
+  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/style.css">
 
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
-  <script src="[[++moxycart.assets_url]]components/moxycart/js/templates/bootstrap/js/html5shiv.js"></script>
-  <script src="[[++moxycart.assets_url]]components/moxycart/js/templates/bootstrap/js/respond.min.js"></script>
+  <script src="[[++moxycart.assets_url]]js/templates/bootstrap/js/html5shiv.js"></script>
+  <script src="[[++moxycart.assets_url]]js/templates/bootstrap/js/respond.min.js"></script>
   <![endif]-->
 
 </head>
@@ -54,7 +54,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index.html"><img src="[[++moxycart.assets_url]]components/moxycart/images/templates/images/logo.png" alt=" "></a>
+          <a class="navbar-brand" href="index.html"><img src="[[++moxycart.assets_url]]images/templates/images/logo.png" alt=" "></a>
         </div>
 
         <div class="navbar-collapse navbar-main-collapse" role="navigation">
@@ -324,27 +324,27 @@
 
 <!-- SCRIPTS -->
 <!-- core -->
-<script src="[[++moxycart.assets_url]]components/moxycart/js/jquery-2.0.3.min.js"></script>
-<script src="[[++moxycart.assets_url]]components/moxycart/js/templates/bootstrap/js/bootstrap.min.js"></script>
+<script src="[[++moxycart.assets_url]]js/jquery-2.0.3.min.js"></script>
+<script src="[[++moxycart.assets_url]]js/templates/bootstrap/js/bootstrap.min.js"></script>
 
 <!-- !core -->
 
 <!-- plugins -->
-<script src="[[++moxycart.assets_url]]components/moxycart/js/templates/jquery.flexslider-min.js"></script>
+<script src="[[++moxycart.assets_url]]js/templates/jquery.flexslider-min.js"></script>
 
-<script src="[[++moxycart.assets_url]]components/moxycart/js/templates/jquery.isotope.min.js"></script>
-<script src="[[++moxycart.assets_url]]components/moxycart/js/templates/jquery.ba-bbq.min.js"></script>
+<script src="[[++moxycart.assets_url]]js/templates/jquery.isotope.min.js"></script>
+<script src="[[++moxycart.assets_url]]js/templates/jquery.ba-bbq.min.js"></script>
 
-<script src="[[++moxycart.assets_url]]components/moxycart/js/templates/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="[[++moxycart.assets_url]]js/templates/jquery-ui-1.10.3.custom.min.js"></script>
 
-<script src="[[++moxycart.assets_url]]components/moxycart/js/templates/jquery.raty.min.js"></script>
+<script src="[[++moxycart.assets_url]]js/templates/jquery.raty.min.js"></script>
 
-<script src="[[++moxycart.assets_url]]components/moxycart/js/templates/jquery.prettyPhoto.js"></script>
+<script src="[[++moxycart.assets_url]]js/templates/jquery.prettyPhoto.js"></script>
 
-<script src="[[++moxycart.assets_url]]components/moxycart/js/templates/chosen.jquery.min.js"></script>
+<script src="[[++moxycart.assets_url]]js/templates/chosen.jquery.min.js"></script>
 <!-- !plugins -->
 
-<script src="[[++moxycart.assets_url]]components/moxycart/js/templates/main.js"></script>
+<script src="[[++moxycart.assets_url]]js/templates/main.js"></script>
 <script src="//cdn.foxycart.com/fireproofsocks/foxycart.colorbox.js?ver=2" type="text/javascript" charset="utf-8"></script>
 
 </body>

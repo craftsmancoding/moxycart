@@ -994,6 +994,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($raw,$data);
     }
     
+/*
     public function testLoadFromCache() {
         $P = new Product(self::$modx);
         $One = $P->one(array(
@@ -1004,12 +1005,13 @@ class productTest extends \PHPUnit_Framework_TestCase {
         
         $cache_dir = 'moxycart';
         $core_path = self::$modx->getOption('core_path');
-        $file = $core_path.'cache/'.$cache_dir.'/'.$uri;
+        $file = $core_path.'cache/'.$cache_dir.'/'.$uri.'.cache.php';
         if (file_exists($file)) {
-        
+            unlink($file);
         }
-        
+        $data = $P->request($uri);
     }
+*/
 
     /**
      * Makin' sure our calculated fields are legit

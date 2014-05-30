@@ -47,6 +47,7 @@ class Product extends BaseModel {
     public function request($uri,$force_fresh=false,$cache_dir='moxycart') {
     
         $cache_opts = array(\xPDO::OPT_CACHE_KEY => $cache_dir); 
+        // $this->modx->request->parameters['GET']  ???
         $fingerprint = 'product/'.$uri;
 
         $product_attributes = $this->modx->cacheManager->get($fingerprint, $cache_opts);
