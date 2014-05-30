@@ -366,16 +366,11 @@ function remove_relation(product_id) {
     
 	<div id="assets_tab" class="content">	
         <div class="dropzone-wrap" id="image_upload">
-            <div class="featured-img">
-                <img src="<?php print $this->config['assets_url']; ?>images/featured-img.png" alt=""  title="Primary Thumbnail">
-            </div>
         	<ul class="clearfix" id="product_images">
                 <?php print isset($data['images']) ? $data['images'] : ''; ?>
                 
             </ul>
 
-           
-            <div class="clear"></div>
 
         	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
 

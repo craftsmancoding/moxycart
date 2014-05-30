@@ -24,11 +24,11 @@ color: #77963d;
     background: #fff;
     border: 1px solid #999999;
     margin: 0px 10px 0px;
-    padding-top: 
+    padding-bottom: 20px; 
 }
 
 .moxycart_canvas_inner {
-    padding: 20px;
+    padding: 20px 20px 0 20px;
 }
 
 h2.moxycart_cmp_heading {
