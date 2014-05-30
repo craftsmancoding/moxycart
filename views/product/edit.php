@@ -18,33 +18,31 @@ function remove_relation(product_id) {
 }
 </script>
 
-<div class="moxycart_canvas_inner">
-    <h2 class="moxycart_cmp_heading">Edit Product Title Here</h2>
+<div class="moxycart_canvas_inner clearfix">
+    <h2 class="moxycart_cmp_heading pull-left">Edit Product Title Here</h2>
+
+        <div class="pull-right">
+            <?php
+            if ($data['product_form_action'] == 'product_update'):
+            ?>
+                <button class="btn" id="product_update">Save</button>
+                <a class="btn" href="<?php print static::page('products'); ?>" target="_blank">View</a>
+                <a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a>
+            <?php    
+            else:
+            ?>
+                <button class="btn" id="product_create">Save</button>
+            <?php
+            endif;
+            ?>
+            <a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a>
+        </div>
+
 </div>
 
 <form method="post" id="<?php print $data['product_form_action']; ?>" action="#">
 
-    <div class="moxy-header clearfix">
 
-        <div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder">
-            <div class="pull-right">
-                <?php
-                if ($data['product_form_action'] == 'product_update'):
-                ?>
-                    <button class="btn" id="product_update">Save</button>
-                    <a class="btn" href="<?php print static::page('products'); ?>" target="_blank">View</a>
-                    <a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a>
-                <?php    
-                else:
-                ?>
-                    <button class="btn" id="product_create">Save</button>
-                <?php
-                endif;
-                ?>
-                <a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a>
-            </div>
-        </div>
-    </div>
 
 <div class="moxycart_canvas_inner">
 
