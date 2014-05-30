@@ -222,7 +222,7 @@ class PageController extends BaseController {
         $this->setPlaceholder('fields',$fields);
         
         // stores (dropdown)
-        $Ss = $this->modx->getCollection('Store');
+        $Ss = $this->modx->getCollection('Store',array('class_key'=>'Store'));
         $stores = array();
         foreach ($Ss as $s) {
             $stores[ $s->get('id') ] = sprintf('%s (%s)',$s->get('pagetitle'),$s->get('id'));

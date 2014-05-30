@@ -10,37 +10,37 @@ Valid pagename can be any function in the PageController (minus the get/post pre
 <div id="moxycart_header" class="clearfix">
     <ul id="moxycart_nav">
         <li class="moxycart_nav_item moxycart_nav_home">
-            <span class="linklike" onclick="javascript:paint('index');">Home</span>
-            <!--a href="<?php print self::page('index'); ?>">Home</a-->
+            <!--span class="linklike" onclick="javascript:paint('index');">Home</span-->
+            <a href="<?php print self::page('index'); ?>">Home</a>
         </li>
         <li class="moxycart_nav_item">
-            <span class="linklike" onclick="javascript:paint('products');">Products</span>
-            <!--a href="<?php print self::page('products'); ?>">Products</a-->
+            <!--span class="linklike" onclick="javascript:paint('products');">Products</span-->
+            <a href="<?php print self::page('products'); ?>">Products</a>
         
         </li>
         <li class="moxycart_nav_item">
-            <span class="linklike" onclick="javascript:paint('assets');">Assets</span>
-            <!--a href="<?php print self::page('assets'); ?>">Assets</a-->
+            <!--span class="linklike" onclick="javascript:paint('assets');">Assets</span-->
+            <a href="<?php print self::page('assets'); ?>">Assets</a>
         </li>
         <li class="moxycart_nav_item">
-            <span class="linklike" onclick="javascript:paint('fields');">Custom Fields</span>
-            <!--a href="<?php print self::page('fields'); ?>">Custom Fields</a-->
+            <!--span class="linklike" onclick="javascript:paint('fields');">Custom Fields</span-->
+            <a href="<?php print self::page('fields'); ?>">Custom Fields</a>
         </li>
         <li class="moxycart_nav_item">
-            <span class="linklike" onclick="javascript:paint('options');">Options</span>
-            <!--a href="<?php print self::page('options'); ?>">Options</a-->
+            <!--span class="linklike" onclick="javascript:paint('options');">Options</span-->
+            <a href="<?php print self::page('options'); ?>">Options</a>
         </li>
         <li class="moxycart_nav_item">
-            <span class="linklike" onclick="javascript:paint('reviews');">Reviews</span>
-            <!--a href="<?php print self::page('reviews'); ?>">Reviews</a-->
+            <!--span class="linklike" onclick="javascript:paint('reviews');">Reviews</span-->
+            <a href="<?php print self::page('reviews'); ?>">Reviews</a>
         </li>
         <li class="moxycart_nav_item">
-            <span class="linklike" onclick="javascript:paint('reports');">Reports</span>
-            <!--a href="<?php print self::page('reports'); ?>">Reports</a-->
+            <!--span class="linklike" onclick="javascript:paint('reports');">Reports</span-->
+            <a href="<?php print self::page('reports'); ?>">Reports</a>
         </li>
         <li class="moxycart_nav_item">
-            <span class="linklike" onclick="javascript:paint('settings');">Settings</span>
-            <!--a href="<?php print self::page('settings'); ?>">Settings</a-->
+            <!--span class="linklike" onclick="javascript:paint('settings');">Settings</span-->
+            <a href="<?php print self::page('settings'); ?>">Settings</a>
         </li>
     </ul>
 </div>

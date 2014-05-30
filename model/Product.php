@@ -40,12 +40,13 @@ class Product extends BaseModel {
      * Load a product AND its fields from a given $url
      *
      * @param string $uri relative to MODX_BASE_URL e.g. "mystore/myproduct"
-     * @param boolean $force_fresh if true, result will not be served from cache
+     * @param boolean $force_fresh bypass cache if true. (default: false)
+     * @param string $cache_dir sub-dir inside of core/cache/ (default: moxycart)
      * @return mixed array of product attributes or false on not found
      */
-    public function request($uri,$force_fresh=false) {
+    public function request($uri,$force_fresh=false,$cache_dir='moxycart') {
     
-        $cache_opts = array(xPDO::OPT_CACHE_KEY => $cache_dir); 
+        $cache_opts = array(\xPDO::OPT_CACHE_KEY => $cache_dir); 
         $fingerprint = 'product/'.$uri;
 
         $product_attributes = $this->modx->cacheManager->get($fingerprint, $cache_opts);
