@@ -1,3 +1,4 @@
+
 </div><!-- /moxycart_canvas -->
 
 <div id="moxycart_footer">
