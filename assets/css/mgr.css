@@ -4252,6 +4252,10 @@ padding: 5px 20px;
 
 
 }
+
+.menu li.active a {
+  border-bottom: 1px solid #fff;
+}
 .menu li a:hover {
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#769e30", endColorstr="#4b7109");
