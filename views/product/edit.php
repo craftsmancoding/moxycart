@@ -1,14 +1,8 @@
 <script>
-function add_relation(product_id,name,sku) {
-    var tpl = <?php print json_encode($data['related_products.tpl']); ?>;
-    tpl = tpl.replace(/\[\[\+related_id\]\]/g, product_id );
-    tpl = tpl.replace(/\[\[\+name\]\]/g, name );
-    tpl = tpl.replace(/\[\[\+sku\]\]/g, sku );
-    jQuery('#product_relations').append(tpl);
-    // Grey out original
-    jQuery('#product_'+product_id+ ' span').hide();
-    jQuery('#product_'+product_id+' strong').css("color","gray");
-    jQuery('#related_products_msg').hide();
+function parse_tpl(tpl,data) {
+    tpl = tpl.replace(/\[\[\+product_id\]\]/g, data.id );
+    tpl = tpl.replace(/\[\[\+name\]\]/g, data.value );
+    return tpl;
 }
 
 function remove_relation(product_id) {
@@ -16,10 +10,51 @@ function remove_relation(product_id) {
     jQuery('#product_'+product_id+ ' span').show();
     jQuery('#product_'+product_id+' strong').css("color","black");    
 }
+/**
+ * Auto-complete
+ */
+jQuery(function() {
+    jQuery('#search_products').autocomplete({
+        source: (function() {
+            var xhr;
+            var url = controller_url("product","search");
+            return function(request, response) {
+                if (xhr) {
+                    xhr.abort();
+                }
+                xhr = jQuery.ajax({
+                    url: url,
+                    data: {
+                        "name:like": request.term
+                    },
+                    type: 'post',
+                    dataType: 'json',
+                    success: function(data) {
+                        // Tricky because our data structure contains {"data":{"results":[{}]}}
+                        response(data.data.results);
+                    },
+                    error: function() {
+                        response([]);
+                    }
+                });
+            }
+        })(),
+        select: function(event, ui) {
+            //console.log(ui.item);
+            // Append to #product_relations
+            var tpl = jQuery('#related_product_template').val();
+            tpl = parse_tpl(tpl,ui.item)
+            jQuery('#product_relations').append(tpl);
+            jQuery('#search_products').val('');
+            event.preventDefault(); // clear out text
+        }
+    });        
+});
+
 </script>
 
 <div class="moxycart_canvas_inner clearfix">
-    <h2 class="moxycart_cmp_heading pull-left">Edit Product</h2>
+    <h2 class="moxycart_cmp_heading pull-left">Edit Product: <?php print htmlentities($data['name']); ?></h2>
 
         <div class="pull-right">
             <?php
@@ -262,58 +297,65 @@ function remove_relation(product_id) {
         <table class="table no-top-border">
             <tr>
                 <td style="vertical-align:top;">
-                    <legend>Related Products</legend>
+                    <legend>Related Products  <input placeholder="Add related products..." id="search_products" value=""/></legend>
+                    
                     <?php /* scrollable div here ... */ ?>
                     <div>
-       
-                        <table class="table table-striped sortable">
+                        <table class="table table-striped">
                             <thead>
                               <tr>
                                 <th>Product</th>
-                                <th>Option</th>
+                                <th>Type</th>
                                 <th>Action</th>
                               </tr>
                             </thead>
                             <tbody id="product_relations">
                                 <?php if (!$data['related_products']): ?>
                                 <tr id="related_products_msg"><td class="alert alert-danger" colspan="3"> <strong>Heads up!</strong> You have not defined any related products.</td></tr>
-                                <?php endif; ?>      
-                                    
-                                <?php print $data['related_products']; ?>
+                                <?php else: 
+                                    foreach($data['related_products'] as $pr):
+                                ?>      
+                                <tr>
+                                    <td>
+                                        <input type="hidden" name="Relations[related_id][]" value="<?php print $pr->Relation->get('product_id'); ?>"/>
+                                        <a href="<?php print static::page('productedit',array('product_id'=>$pr->Relation->get('product_id'))); ?>"><?php print $pr->Relation->get('name'); ?></a>
+                                    </td>
+                                    <td>
+                                        <?php 
+                                        print \Formbuilder\Form::dropdown('Relations[type][]', $data['relation_types'], $pr->get('type')); 
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <span class="btn" onclick="javascript:remove_me.call(this,event,'tr');">Remove</span>
+                                    </td>
+                                </tr>                                
+                                <?php
+                                    endforeach; 
+                                endif; ?>
                             </tbody>
                           </table>
 
 
                     </div>
                 </td>
-                <td style="vertical-align:top;width:400px;">
-                    <legend>Find Products</legend>
-
-                  
-                    <table class="table table-striped sortable">
-                            <thead>
-                              <tr>
-                                <th>Product</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (!isset($data['products']['total']) || !$data['products']['total'] ): ?>
-                                    <tr><td class="alert alert-danger" colspan="3"> There are no other products defined.</td></tr>
-                                <?php else : ?>
-                                    <?php foreach ($data['products']['results'] as $p): ?>
-                                        <tr id="product_<?php print $p['product_id']; ?>">
-                                            <td><strong><?php print $p['name']; ?></strong> <?php print !empty($p['sku']) ? '('.$p['sku'].')' : ''; ?></td>
-                                            <td><span class="btn" style="height:10px;" onclick="javascript:add_relation(<?php print $p['product_id']; ?>,'<?php print $p['name']; ?>', '<?php print $p['sku']; ?>');">Add</span></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                <?php endif; ?> 
-                            </tbody>
-                          </table>
-                </td>
             </tr>
         </table>
-        
+
+<textarea id="related_product_template" style="display:none;"><tr>
+    <td>
+        <input type="hidden" name="Relations[related_id][]" value="[[+product_id]]"/>
+        <a href="<?php print static::page('productedit',array('product_id'=>'')); ?>[[+product_id]]">[[+name]]</a>
+    </td>
+    <td>
+    <?php 
+    print \Formbuilder\Form::dropdown('Relations[type][]', $data['relation_types'], $pr->get('type')); 
+    ?>
+    </td>
+    <td>
+        <span class="btn" onclick="javascript:remove_me.call(this,event,'tr');">Remove</span>
+    </td>
+</tr></textarea>
+
 	</div>
 
     <?php if($this->modx->getOption('moxycart.enable_reviews')):?>

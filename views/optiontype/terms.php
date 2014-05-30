@@ -16,8 +16,11 @@ function remove_term(event) {
 
 </script>
 
-<div class="moxycart_canvas_inner">
-    <h2 class="moxycart_cmp_heading">Manage Terms: <?php print $data['slug']; ?></h2>
+<div class="moxycart_canvas_inner clearfix">
+    <h2 class="moxycart_cmp_heading pull-left">Manage Terms: <?php print $data['slug']; ?></h2>
+    <div class="pull-right">
+        <span class="btn btn-cancel" onclick="javascript:paint('options');">&laquo; Back to Options</span>
+    </div>
 </div>
 
 <div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Define which terms should appear in your option list.  Optionally, you can trigger modifications to the price, weight, SKU code, or Foxycart category when a specific term is selected.</p></div>

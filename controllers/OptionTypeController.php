@@ -17,13 +17,13 @@ class OptionTypeController extends APIController {
         $OT = $OT->find($otype_id);
     
         if (!$OT = $OT->find($otype_id)) {
-            return $this->fail(array('msg'=>'Parent Option Type not found'));
+            return $this->sendFail(array('msg'=>'Parent Option Type not found'));
         }
         
         $records = $OT->indexedToRecordset($scriptProperties);
         $OT->dictateTerms($records);
 
-        return $this->success(array(
+        return $this->sendSuccess(array(
             'msg' => 'Terms updated successfully'
         ));
         

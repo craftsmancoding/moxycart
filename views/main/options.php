@@ -7,7 +7,7 @@ print $this->getMsg();
     <h2 class="moxycart_cmp_heading">Manage Product Options</h2>
 </div>
 
-<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Here you can Manage you product Options</p></div>
+<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Product Options are types of variations in your product such as "size" or "color".  They will show up on the front-end of your site so your visitors can make a selection about which particular version of the product they want to buy.</p></div>
 
 <div class="moxycart_canvas_inner">
 

@@ -32,7 +32,7 @@ class APIController extends \modExtraManagerController {
      * Send JSON Success response
      * @param mixed $data you want to return, e.g. a record or recordset
      */
-    public function success($data) {
+    public function sendSuccess($data) {
         $out = array(
             'status' => 'success',
             'data' => $data,
@@ -44,7 +44,7 @@ class APIController extends \modExtraManagerController {
      * Send JSON fail response
      * @param mixed $data you want to return, e.g. a record or recordset
      */    
-    public function fail($data) {
+    public function sendFail($data) {
         $out = array(
             'status' => 'fail',
             'data' => $data,
@@ -56,7 +56,7 @@ class APIController extends \modExtraManagerController {
      * Send JSON error response. More serious than a fail, e.g. 
      * When an exception is throw.
      */
-    public function error($message,$code=null, $data=null) {
+    public function sendError($message,$code=null, $data=null) {
         $out = array(
             'status' => 'error',
             'message' => $message,
@@ -74,9 +74,9 @@ class APIController extends \modExtraManagerController {
         $Model = new $classname($this->modx);    
         $Model->fromArray($scriptProperties);
         if (!$Model->save()) {
-            return $this->fail(array('errors'=> $Model->errors));
+            return $this->sendFail(array('errors'=> $Model->errors));
         }
-        return $this->success(array(
+        return $this->sendSuccess(array(
             'msg' => sprintf('%s created successfully.',$this->model)
         ));
     }
@@ -90,13 +90,13 @@ class APIController extends \modExtraManagerController {
         $id = (int) $this->modx->getOption($Model->getPK(),$scriptProperties);
 
         if (!$Obj = $Model->find($id)) {
-            return $this->fail(array('msg'=>sprintf('%s not found', $this->model)));
+            return $this->sendFail(array('msg'=>sprintf('%s not found', $this->model)));
         }
 
         if (!$Obj->remove()) {
-            return $this->fail(array('errors'=> $Model->errors));
+            return $this->sendFail(array('errors'=> $Model->errors));
         }
-        return $this->success(array(
+        return $this->sendSuccess(array(
             'msg' => sprintf('%s deleted successfully.',$this->model)
         ));
     }
@@ -113,15 +113,52 @@ class APIController extends \modExtraManagerController {
         $id = (int) $this->modx->getOption($Model->getPK(),$scriptProperties);
 
         if (!$Obj = $Model->find($id)) {
-            return $this->fail(array('msg'=>sprintf('%s not found', $this->model)));
+            return $this->sendFail(array('msg'=>sprintf('%s not found', $this->model)));
         }
         $Obj->fromArray($scriptProperties);
         if (!$Obj->save()) {
             return $this->fail(array('errors'=> $Obj->errors));
         }
-        return $this->success(array(
+        return $this->sendSuccess(array(
             'msg' => sprintf('%s updated successfully.',$this->model)
         ));
+    }
+
+    /**
+     * Used by autocomplete. Default limit is 25 terms
+     * http://www.pontikis.net/blog/jquery-ui-autocomplete-step-by-step
+     *
+     * results should be an array with id, value, label keys
+     *
+     * data will look like this:
+     *     "results":[{"id":"1","value":"2","label":"My Product"},...]
+     */
+    public function postSearch(array $scriptProperties = array()) {
+//        $this->modx->setLogLevel(4);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
+        // This doesn't work unless you add the namespace.
+        // Oddly, if you write it out (w/o a var), it works. wtf?
+        $classname = '\\Moxycart\\'.$this->model;
+        $Model = new $classname($this->modx);    
+
+        $scriptProperties['limit'] = $this->modx->getOption('limit',$scriptProperties,25);
+        //$results = $Model->all(array('name:like'=>'shirt','limit'=>25));
+        if (!$results = $Model->all($scriptProperties)) {
+            return $this->sendFail(array(
+                'msg'=>sprintf('%s not found', $this->model),
+                'params' => print_r($scriptProperties,true)
+            ));
+        }
+        $data = array();
+        foreach ($results as $r) {
+            $data[] = array(
+                'id' => $r->getPrimaryKey(),
+                'value' => $r->get('name'),
+                'label' => strip_tags(sprintf('%s (%s)',$r->get('name'),$r->get('sku')))
+            );
+        }
+//        return json_encode($data);
+        return $this->sendSuccess(array('results' => $data));
     }
 
 

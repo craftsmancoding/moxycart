@@ -394,7 +394,7 @@ class BaseModel {
      */
     public function quoteSort($str) {
         if (!is_scalar($str)) {
-            throw new \Exception('prepareSort expects string');
+            throw new \Exception('quoteSort expects string');
         }
         $parts = explode('.',$str);
         $parts = array_map(function($v){ return '`'.trim($v,'`').'`'; }, $parts);

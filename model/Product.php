@@ -202,7 +202,6 @@ class Product extends BaseModel {
      *   array(
      *       'related_id' => 53,
      *       'type' => 'related',
-     *       'seq' => 1
      *   )
      * )
      * @param array $data

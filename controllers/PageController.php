@@ -230,6 +230,15 @@ class PageController extends BaseController {
         $this->setPlaceholder('stores',$stores);
         
         // related_products (multicheck)
+        $c = $this->modx->newQuery('ProductRelation');
+        $c->where(array('ProductRelation.product_id' => $product_id));
+        $PR = $this->modx->getCollectionGraph('ProductRelation','{"Relation":{}}',array('product_id'=> $product_id));
+        //$PR = new ProductRelation($this->modx);
+        //$related_products = $PR->all(array('product_id'=> $product_id),true);
+        //print_r($related_products); exit;
+        $this->setPlaceholder('related_products',$PR);
+        $PR = new ProductRelation($this->modx);
+        $this->setPlaceholder('relation_types',$PR->getTypes());
         
         // categories (sic - taxonomies)
         $this->setPlaceholder('categories',json_decode($this->modx->getOption('moxycart.categories'),true));

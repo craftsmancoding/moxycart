@@ -15,7 +15,7 @@ class Asset extends BaseModel {
     
     /**
      * We house our exceptional tantrums here.
-     *
+     * Use isNew()  getPK() -- gets the name  getPrimaryKey() -- gets the value
      */
     private function _validFile($src) {
         if (!is_scalar($src)) {
