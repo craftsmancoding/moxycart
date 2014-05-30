@@ -971,20 +971,44 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $One = $P->one(array(
             'store_id' => self::$Store->get('id'),
             'sku' => 'SOUTHPARK-TSHIRT'));
-                    
-        $fields = array();
-        $fields[] = self::$Field['one']->get('field_id');
-        $fields[] = self::$Field['two']->get('field_id');
-        $fields[] = self::$Field['three']->get('field_id');
+        $this->assertFalse(empty($One));          
+        $fields = array(
+            array('field_id' => self::$Field['one']->get('field_id'), 'value' => 'Uno'),
+            array('field_id' => self::$Field['two']->get('field_id'), 'value' => 'Dos'),
+            array('field_id' => self::$Field['three']->get('field_id'), 'value' => 'Tres'),            
+        );
         
         $One->dictateFields($fields);
 
-        $url = $One->get('url');
+        $uri = $One->get('uri');
 
-        $this->assertEquals('test-store/south-park-tshirt',$url);
+        $this->assertEquals('test-store/south-park-tshirt',$uri);
 
-        $data = $P->request($url);
+        $data = $P->request($uri);
+
+        $raw = $One->toArray();
+        $raw['one'] = 'Uno';
+        $raw['two'] = 'Dos';
+        $raw['three'] = 'Tres';
+        
+        $this->assertEquals($raw,$data);
+    }
     
+    public function testLoadFromCache() {
+        $P = new Product(self::$modx);
+        $One = $P->one(array(
+            'store_id' => self::$Store->get('id'),
+            'sku' => 'SOUTHPARK-TSHIRT'));
+        $this->assertFalse(empty($One));
+        $uri = $One->get('uri');
+        
+        $cache_dir = 'moxycart';
+        $core_path = self::$modx->getOption('core_path');
+        $file = $core_path.'cache/'.$cache_dir.'/'.$uri;
+        if (file_exists($file)) {
+        
+        }
+        
     }
 
     /**

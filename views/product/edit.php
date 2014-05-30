@@ -201,9 +201,6 @@ function remove_relation(product_id) {
                                 <input type="text" style="width:90%;" name="back_order_cap" id="back_order_cap" value="">
 
                                 <label for="store_id">Product Container</label>
-								<select style="width:90%;" name="store_id" id="store_id">
-									<?php print $data['stores']; ?>
-								</select>
 								<?php
 								print \Formbuilder\Form::dropdown('store_id', $data['stores'], $data['store_id']);
 								?>
