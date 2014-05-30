@@ -54,10 +54,11 @@ class PageController extends BaseController {
 
         $tinyPath =  $this->modx->getOption('core_path').'components/tinymce/';
         $tinyUrl =  $this->modx->getOption('assets_url').'components/tinymce/';
-        
+
+
         $tinyproperties = $plugin->getProperties();
-        require_once $tinyPath.'tinymce.class.php';
-        $tiny = new TinyMCE( $this->modx, $tinyproperties);
+        require_once $tinyPath.'/tinymce.class.php';
+        $tiny = new \TinyMCE( $this->modx, $tinyproperties);
 
         //$tinyproperties['language'] =  $modx->getOption('fe_editor_lang',array(),$language);
         $tinyproperties['frontend'] = true;
@@ -130,7 +131,7 @@ class PageController extends BaseController {
         $this->setPlaceholder('results', $results);
         $this->setPlaceholder('count', $count);
         $this->setPlaceholder('offset', $offset);
-
+        
         return $this->fetchTemplate('main/products.php');
     }
  
