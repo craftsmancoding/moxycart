@@ -142,17 +142,107 @@ class PageController extends BaseController {
     }    
 
     public function getProductEdit(array $scriptProperties = array()) {
-        
+
         $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
         $Obj = new Product($this->modx);    
         if (!$result = $Obj->find($product_id)) {
             return $this->sendError('Page not found.');
         }
 
-//return $result->toArray();
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($result->toArray());
         $this->setPlaceholder('result',$result);
+
+
+        $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
+        $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
+        $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
+        $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');
+    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+    		var product = '.$result->toJson().';            
+            var use_editor = "'.$this->modx->getOption('use_editor').'";
+            var assets_url = "'.$this->config['assets_url'].'"; 
+    
+            jQuery(document).ready(function() {
+                    var myDropzone = new Dropzone("div#image_upload", {url: moxycart.controller_url+"&class=asset&method=upload&product_id='.$product_id.'"});
+                    
+                    // Refresh the list on success (append new tile to end)
+                    myDropzone.on("success", function(file,response) {
+    
+                        console.log(response);
+                        response = jQuery.parseJSON(response);
+                        console.log(response);
+                        if (response.success) {
+                           
+                            var url = moxycart.controller_url + "&class=asset&method=view&asset_id=" + response.asset_id;
+                            jQuery.post( url, function(data){
+                                jQuery("#product_images").append(data);
+                                jQuery(".dz-preview").remove();
+                            });
+                       } 
+                       // TODO: better formatting
+                       else {                           
+                            $(".dz-success-mark").hide();
+                            $(".dz-error-mark").show();
+                            $(".moxy-msg").show();
+                            $("#moxy-result").html("Failed");
+                            $("#moxy-result-msg").html(response.msg);
+                            $(".moxy-msg").delay(3200).fadeOut(400);
+                       }
+                    });
+            });
+    		</script>');
+        if ($this->modx->getOption('use_editor')) {
+            $this->_load_tinyMCE();
+        }
+        
+        $P = new Product($this->modx);
+        
+        // product_fields -- render form + value
+        // assets
+        
+        // fields (dropdown)
+        $Fs = $this->modx->getCollection('Field'); 
+        $fields = array();
+        foreach ($Fs as $f) {
+            $fields[ $f->get('field_id') ] = sprintf('%s (%s)',$f->get('label'),$f->get('slug'));
+        }
+        $this->setPlaceholder('fields',$fields);
+        
+        // stores (dropdown)
+        $Ss = $this->modx->getCollection('Store');
+        $stores = array();
+        foreach ($Ss as $s) {
+            $stores[ $s->get('id') ] = sprintf('%s (%s)',$s->get('pagetitle'),$s->get('id'));
+        }
+        $this->setPlaceholder('stores',$stores);
+        
+        // related_products (multicheck)
+        
+        // categories (sic - taxonomies)
+        $this->setPlaceholder('categories',json_decode($this->modx->getOption('moxycart.categories'),true));
+        
+        
+        // templates
+        $Ts = $this->modx->getCollection('modTemplate');
+        $templates = array();
+        foreach ($Ts as $t) {
+            $templates[$t->get('id')] = sprintf('%s (%s)',$t->get('templatename'),$t->get('id'));
+        }
+        $this->setPlaceholder('templates',$templates);
+        
+        // option_types
+        
+        // types (dropdown -- product types)
+        $this->setPlaceholder('types',$P->getTypes());
+        
         return $this->fetchTemplate('product/edit.php');
     }
 

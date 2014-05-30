@@ -10,7 +10,7 @@ $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'compon
 include_once $core_path .'vendor/autoload.php';
 $cache_dir = 'moxycart';
 //$modx->setLogLevel(4);
-$modx->log(modX::LOG_LEVEL_DEBUG,'Bang: '.$modx->event->name);
+//$modx->log(modX::LOG_LEVEL_DEBUG,'Bang: '.$modx->event->name);
 switch ($modx->event->name) {
 
     //------------------------------------------------------------------------------

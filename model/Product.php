@@ -195,26 +195,33 @@ class Product extends BaseModel {
     /**
      * Add relations to the current product.
      * Exeptions are thrown if the product ids do not exist.
-     * Had trouble getting this to work with addMany.
-     * @param array of related_id's
-     * @param string $type name of the type of relation, used for grouping.
+     * 
+     * array(
+     *   array(
+     *       'related_id' => 53,
+     *       'type' => 'related',
+     *       'seq' => 1
+     *   )
+     * )
+     * @param array $data
      */
-    public function addRelations(array $array, $type='related') {
+    public function addRelations(array $array) {
         $this_product_id = $this->_verifyExisting();
 
-        foreach ($array as $id) {
-            $props = array(
-                'product_id'=> $this_product_id, 
-                'related_id'=> $id,
-                'type' => $type
-            );
-            if (!$PR = $this->modx->getObject('ProductRelation', $props)) {
-                if (!$P = $this->modx->getObject('Product', $id)) {
-                    throw new \Exception('Invalid relation ID '.$id);    
+        foreach ($array as $r) {
+            if (!isset($r['related_id'])) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Missing related_id','',__CLASS__,__FUNCTION__,__LINE__); 
+                continue;
+            }
+
+            if (!$PR = $this->modx->getObject('ProductRelation', $r)) {
+                if (!$P = $this->modx->getObject('Product', $r['related_id'])) {
+                    throw new \Exception('Invalid related ID '.$id);    
                 }
                 $PR = $this->modx->newObject('ProductRelation', $props);
-                $PR->save();
             }
+            if (isset($r['type'])) $PR->set('type', $r['type']);
+            $PR->save();
         }
         
         return true;    
@@ -255,23 +262,58 @@ class Product extends BaseModel {
      * it will order the relations based on the incoming $array order (seq will be set).
      * Exeptions are thrown if the product ids do not exist.
      *
-     * @param array $dictate'd related_id's
+     * @param array $data
      * @param string $type name of the type of relation, used for grouping.          
      */
-    public function dictateRelations(array $dictate, $type='related') {
+    public function dictateRelations(array $dictate) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating relations: '.implode(',',$dictate),'',__CLASS__,__FILE__,__LINE__);
         $this_product_id = $this->_verifyExisting();
         
         $props = array(
             'product_id'=> $this_product_id, 
-            'type' => $type
         );
         
-        // Array of related_id's that are already defined
+        // Get the existing relations
         $existing = array();
-        if($ExistingColl = $this->modx->getObject('ProductRelation', $props)) {
-            $existing[] = $ExistingColl->get('related_id');   
+        if($Col = $this->modx->getIterator('ProductRelation', $props)) {
+            foreach ($Col as $c) {
+                 $k = $c->get('related_id').':'.$c->get('type');   
+                 $existing[$k] = $c->get('id');
+             }
         }
+        
+        $i = 0;
+        foreach ($data as $r) {
+            if (!isset($r['related_id']) || !isset($r['type'])) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'related_id and type are required','',__CLASS__,__FUNCTION__,__LINE__); 
+                continue;
+            }
+            $r['product_id'] = $this_product_id;
+            $k = $r['related_id'] .':'. $r['type'];
+            if (!isset($existing[$k])) {
+                // Create it
+                $PR = $this->modx->newObject('ProductRelation', $r);
+                $PR->set('seq', $i);
+                $PR->save();
+            }
+            else {
+                if ($PR = $this->modx->getObject('ProductRelation', $r)) {
+                    $PR->set('seq', $i);
+                    $PR->save();
+                }
+                unset($existing[$k]);
+            }
+            $i++;
+        }
+        
+        foreach ($existing as $k => $id) {
+            $PR = $this->modx->getObject('ProductRelation', $id);
+            $PR->remove();
+        }
+/*
+        
+        
+        
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Existing relations for product_id '.$this_product_id.': '.implode(',',$existing),'',__CLASS__,__FILE__,__LINE__);        
         $to_remove = array_diff($existing,$dictate);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Product relations to be removed from product_id '.$this_product_id.': '.implode(',',$to_remove),'',__CLASS__,__FILE__,__LINE__);
@@ -281,6 +323,7 @@ class Product extends BaseModel {
         $this->addRelations($to_add,$type);
         $this->save();
         $this->orderRelations($dictate);
+*/
         
         return true;
     }
@@ -513,7 +556,7 @@ class Product extends BaseModel {
 
         foreach ($data as $r) {
             if (!isset($r['field_id'])) {
-                $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Missing field_id','',__CLASS__,__FUNCTION__,__LINE__); 
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Missing field_id','',__CLASS__,__FUNCTION__,__LINE__); 
                 continue;
             }
             if (!$F = $this->modx->getObject('Field', $r['field_id'])) {
@@ -607,27 +650,16 @@ class Product extends BaseModel {
      'price' => 14.99
      // ...etc...
      
-     // Related Data
-     'Assets' => array(
-        array(
-            'asset_id' => 123,
-            'group' => 'MyGroup',
-            'seq' => 1
-        )
-     ),
-     // Names come from alias in the schema
+     // Related Data: some can pass simple arrays, others need to pass more data
+     'Assets' => array(1,2,3),
+     // Important: field associations infer a value!
      'Fields' => array(
         array(
             'field_id' => 4,
             'value' => 'Something'
         )
      ),
-     'OptionTypes' => array(
-        array(
-            'otype_id' => 5,
-            'seq' => 0
-        )
-     ),
+     'OptionTypes' => array(1,2,3),
      'Relations' => array(
         array(
             'related_id' => 53,
@@ -635,18 +667,8 @@ class Product extends BaseModel {
             'seq' => 1
         )
      ),
-     'Taxonomies' => array(
-        array(
-            'taxonomy_id' => 53,
-            'seq' => 0,
-        )
-     ),
-     'Terms' => array(
-        array(
-            'term_id' => 53,
-            'seq' => 1,
-        )
-     ),
+     'Taxonomies' => array(1,2,3),
+     'Terms' => array(1,2,3),
      
      @param array $data (e.g. from $_POST)
      */
@@ -657,25 +679,12 @@ class Product extends BaseModel {
             return false;
         }
         $product_id = $this->get('product_id');
-        if (isset($data['Assets'])) {
-        
-        }
-        if (isset($data['Fields'])) {
-        
-        }
-        if (isset($data['OptionTypes'])) {
-        
-        }
-        if (isset($data['Relations'])) {
-        
-        }
-        if (isset($data['Taxonomies'])) {
-        
-        }
-        
-        if (isset($data['Terms'])) {
-        
-        }
+        if (isset($data['Assets'])) $this->dictateAssets($data['Assets']);
+        if (isset($data['Fields'])) $this->dictateFields($data['Fields']);
+        if (isset($data['OptionTypes'])) $this->dictateAssets($data['OptionTypes']);
+        if (isset($data['Relations'])) $this->dictateAssets($data['Relations']);
+        if (isset($data['Taxonomies'])) $this->dictateAssets($data['Taxonomies']);
+        if (isset($data['Terms'])) $this->dictateAssets($data['Terms']);
         
     }
     /** 
@@ -809,6 +818,18 @@ class Product extends BaseModel {
             $this->modx->log(\modX::LOG_LEVEL_ERROR, 'store_id does not exist',__CLASS__);
         } 
         
+    }
+    
+    /**
+     * What types of products do we currently support?
+     */
+    function getTypes() {
+        return array(
+            'regular'=>'Regular'
+            // FUTURE:
+            //'subscription' => 'Subscription',
+            //'download' => 'Download',
+        );
     }
     
     /**

@@ -1,68 +1,3 @@
-<?php
-    /**
-     * Load up your guns
-     *
-     */
-        $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
-        $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
-        $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
-        $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
-
-    
-    $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');
-	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-		var product = '.$data['result']->toJson().';            
-		var controller_url = "'.$this->config['controller_url'].'";
-        var use_editor = "'.$this->modx->getOption('use_editor').'";
-        var assets_url = "'.$this->config['assets_url'].'";    		
-        var variation_url = "'.$this->config['controller_url'].'&parent_id='.$data['result']->product_id.'";
-
-        jQuery(document).ready(function() {
-                var myDropzone = new Dropzone("div#image_upload", {url: controller_url+"&class=asset&method=upload&product_id='.$data['result']->product_id.'"});
-                
-                // Refresh the list on success (append new tile to end)
-                myDropzone.on("success", function(file,response) {
-
-                    console.log(response);
-                    response = jQuery.parseJSON(response);
-                    console.log(response);
-                    if (response.success) {
-                       
-                        var url = controller_url + "&class=asset&method=view&asset_id=" + response.asset_id;
-                        jQuery.post( url, function(data){
-                            jQuery("#product_images").append(data);
-                            jQuery(".dz-preview").remove();
-                        });
-                   } 
-                   // TODO: better formatting
-                   else {                           
-                        $(".dz-success-mark").hide();
-                        $(".dz-error-mark").show();
-                        $(".moxy-msg").show();
-                        $("#moxy-result").html("Failed");
-                        $("#moxy-result-msg").html(response.msg);
-                        $(".moxy-msg").delay(3200).fadeOut(400);
-                   }
-                });
-        });
-
-		Ext.onReady(function() {   		
-			// renderProductVariationProductsGrid();
-		});
-		</script>
-	');
-    if ($this->modx->getOption('use_editor')) {
-        //$this->_load_tinyMCE();
-    }
-?>
-
 <script>
 function add_relation(product_id,name,sku) {
     var tpl = <?php print json_encode($data['related_products.tpl']); ?>;
@@ -82,6 +17,7 @@ function remove_relation(product_id) {
     jQuery('#product_'+product_id+' strong').css("color","black");    
 }
 </script>
+<div class="moxycart_canvas_inner">
 
 <div class="moxy-msg">
 	<div id="moxy-result"></div>
@@ -96,12 +32,13 @@ function remove_relation(product_id) {
 			<h2><?php print $data['pagetitle']; ?></h2>
 		</div>
 			
-		<div class="moxy-buttons-wrapper">
+		<div class="moxy-buttons-wrapper______">
             <?php
             if ($data['product_form_action'] == 'product_update'):
             ?>
                 <button class="btn" id="product_update">Save</button>
-                <a class="btn" href="<?php print MODX_SITE_URL. $data['uri']; ?>" target="_blank">View</a>
+                <a class="btn" href="<?php print static::page('products'); ?>" target="_blank">View</a>
+                <a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a>
             <?php    
             else:
             ?>
@@ -109,7 +46,7 @@ function remove_relation(product_id) {
             <?php
             endif;
             ?>
-			<a class="btn" href="<?php print MODX_MANAGER_URL.'?a=30&id='.$data['store_id']; ?>">Back to Product List</a>
+            <a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a>
 		</div>
 	</div>
 	
@@ -117,18 +54,18 @@ function remove_relation(product_id) {
 	<ul id="moxytab" class="menu">
 		<li class="product-link active"><a href="#product">Product</a></li>
 		<li class="settings-link" ><a href="#settings_tab">Product Settings</a></li>
-		<?php // if($this->modx->getOption('moxycart.enable_variations')):?>
+		<?php if($this->modx->getOption('moxycart.enable_variations')):?>
     		<li class="variations-link" ><a href="#variations_tab">Variations</a></li>
-		<?php // endif; ?>
+		<?php endif; ?>
 		<li class="fields-link" ><a href="#fields_tab">Custom Fields</a></li>
 		<li class="related-link" ><a href="#related_tab">Related</a></li>
-		<?php // if($this->modx->getOption('moxycart.enable_reviews')):?>
+		<?php if($this->modx->getOption('moxycart.enable_reviews')):?>
             <li class="reviews-link" ><a href="#reviews_tab">Reviews</a></li>
-        <?php // endif; ?>
+        <?php endif; ?>
 		<li class="assets-link" ><a href="#assets_tab">Assets</a></li>
-		<?php //if($this->modx->getOption('moxycart.enable_taxonomies')):?>
+		<?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
     		<li class="taxonomies-link" ><a href="#taxonomies_tab">Taxonomies</a></li>
-		<?php //endif; ?>
+		<?php endif; ?>
 		<li class="orders-link" ><a href="#orders_tab">View Orders</a></li>
 	</ul>
 
@@ -159,25 +96,25 @@ function remove_relation(product_id) {
                             </td>
                             <td style="width:30%;vertical-align: top;">
                             	<label for="category">In Menu</label>
-                                <select style="width:90%;" name="in_menu" id="in_menu">
+                                <select name="in_menu" id="in_menu">
                                    <option value="1">Yes</option>
                                     <option value="0">No</option>
                                 </select>
 
                             	<label for="category">Category</label>
-                                <select style="width:90%;" name="category" id="category">
-                                	<?php print $data['categories']; ?>
-								</select>
-
+                                <?php
+								print \Formbuilder\Form::dropdown('category', $data['categories'], $data['category']);
+								?>
+								
                             	<label for="is_active">Active</label>
-                               	<select style="width:90%;" name="is_active" id="is_active">
+                               	<select name="is_active" id="is_active">
 									<option value="1">Yes</option>
 									<option value="0">No</option>
 								</select>
 								<label for="template_id">Template</label>
-                                <select style="width:90%;" name="template_id" id="template_id">
-                                    <?php print $data['templates']; ?>
-				                </select> 
+								<?php
+								print \Formbuilder\Form::dropdown('template_id', $data['templates'], $data['template_id']);
+								?>
                             </td>
                         </tr>
                         <tr>
@@ -210,10 +147,11 @@ function remove_relation(product_id) {
 								</select>
 
 								<label for="type">Product Type</label>
-								<select style="width:40%;" name="type" id="type">
-	                                <?php print $data['types']; ?>
-								</select>
-
+								
+								<?php
+								print \Formbuilder\Form::dropdown('type', $data['types'], $data['type']);
+								?>
+				
                             </td>
                             <td style="width:30%;;vertical-align: top;">
                             	<label for="sku_vendor">Vendor SKU</label>
@@ -249,6 +187,9 @@ function remove_relation(product_id) {
 								<select style="width:90%;" name="store_id" id="store_id">
 									<?php print $data['stores']; ?>
 								</select>
+								<?php
+								print \Formbuilder\Form::dropdown('store_id', $data['stores'], $data['store_id']);
+								?>
                             	
                             </td>
                         </tr>
@@ -257,13 +198,15 @@ function remove_relation(product_id) {
                 </table>
 	</div>
 
-	<div id="variations_tab" class="content"><br>
-		<?php if(isset($data['product_id'])) : ?>
-			<a id="manage_inventory" class="btn" href="<?php print self::url('product', 'inventory',array('product_id'=>$data['product_id'])); ?>">Manage Variation Inventory</a>
-		<?php endif; ?>
-		<div id="product_variations" style="padding-top:10px;">
-		</div>
-    </div>
+    <?php if ($this->modx->getOption('moxycart.enable_variations')): ?>
+    	<div id="variations_tab" class="content"><br>
+    		<?php if(isset($data['product_id'])) : ?>
+    			<a id="manage_inventory" class="btn" href="<?php print self::url('product', 'inventory',array('product_id'=>$data['product_id'])); ?>">Manage Variation Inventory</a>
+    		<?php endif; ?>
+    		<div id="product_variations" style="padding-top:10px;">
+    		</div>
+        </div>
+	<?php endif; //moxycart.enable_variations ?>
 	
 	<div id="fields_tab" class="content">
 			<table class="table table-bordered" id="product_specs">
@@ -276,22 +219,22 @@ function remove_relation(product_id) {
 				</thead>
 				<tbody id="specs">
 	                <?php
-	                	if ($data['product_specs']) {
-	                    	print $data['product_specs'];
+	                	if ($data['product_fields']) {
+	                    	print $data['product_fieldss'];
 		                }
 		                else {
-						    print '<tr id="no_specs_msg"><td colspan="3">No Specs Found</td></tr>';
+						    print '<tr id="no_specs_msg"><td colspan="3">No Custom Fields Found</td></tr>';
 						}
 					?>
 				</tbody>
 			</table>
 
-		<select id="spec_id">
-            <?php print $data['specs']; ?>
-		</select>
+        <?php
+		print \Formbuilder\Form::dropdown('', $data['fields']);
+		?>
 
-		<button class="btn" onclick="javascript:get_spec(jQuery('#spec_id').val()); return false;">Attach Spec</button>
-		<a class="btn btn-custom" href="<?php print self::url('field','create');  ?>">Add New Spec</a>
+		<button class="btn" onclick="javascript:get_spec(jQuery('#spec_id').val()); return false;">Attach Field</button>
+		<a class="btn btn-custom" href="<?php print self::page('fieldcreate');  ?>">Add New Field</a>
 
 	</div>
 	
@@ -353,6 +296,7 @@ function remove_relation(product_id) {
         
 	</div>
 
+    <?php if($this->modx->getOption('moxycart.enable_reviews')):?>
     <div id="reviews_tab" class="content">
             <div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder" id="ext-gen68">
                 <p>Here you can Published/Unpublished Reviews.</p>
@@ -397,7 +341,8 @@ function remove_relation(product_id) {
                     </tbody>
                   </table>
     </div>
-
+    <?php endif; // moxycart.enable_reviews ?>
+    
 	<div id="assets_tab" class="content">	
         <div class="dropzone-wrap" id="image_upload">
             <div class="featured-img">
@@ -441,23 +386,25 @@ function remove_relation(product_id) {
         
 
 	</div>
-	<div id="taxonomies_tab" class="content"><br>
-		<legend>Taxonomy List</legend>
-        <div id="taxonomy_list">
-            <?php print $data['taxonomies']; ?>
-        </div>
-        <legend>Term List</legend>
-        <div id="taxonomy_terms">
-            <?php print $data['product_taxonomies']; ?>
-        </div>
 
-	</div>
+    <?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
+    	<div id="taxonomies_tab" class="content"><br>
+    		<legend>Taxonomy List</legend>
+            <div id="taxonomy_list">
+                <?php print $data['taxonomies']; ?>
+            </div>
+            <legend>Term List</legend>
+            <div id="taxonomy_terms">
+                <?php print $data['product_taxonomies']; ?>
+            </div>    
+    	</div>
+    <?php endif; // moxycart.enable_taxonomies ?>
 
     <div id="orders_tab" class="content">
     
     </div>    
 </div>
 
-
 </form>
 
+</div>

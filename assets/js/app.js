@@ -14,6 +14,16 @@ else {
 }
 
 /**
+ * In its own function in case anything changes with
+ * routing.
+ * @param c string classname
+ * @param m string methodname
+ */
+function controller_url(c,m) {
+    return moxycart.controller_url+'&class='+c+'&method='+m;
+}
+
+/**
  * Update HTML on the page
  */
 function replace_me(target,data) {
@@ -71,14 +81,28 @@ function paint(page,data,target) {
         return show_error('Get request failed: '+url);
     });
 }
+
 /**
- * In its own function in case anything changes with
- * routing.
- * @param c string classname
- * @param m string methodname
+ * Given JSON, populate a form with it.  IDs of form fields should correspond
+ * to the keys of the JSON data.
+ *
+ * @param object data
  */
-function controller_url(c,m) {
-    return moxycart.controller_url+'&class='+c+'&method='+m;
+function populate_form(data) {
+	$.each(data, function(name, val){
+        var $el = $('#'+name),
+            type = $el.attr('type');	    
+        switch(type){
+            case "checkbox":
+                $el.attr("checked", "checked");
+                break;
+            case "radio":
+                $el.filter('[value="'+val+'"]').attr("checked", "checked");
+                break;
+            default:
+                $el.val(val);
+        }
+    });
 }
 
 /**
