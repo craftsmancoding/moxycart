@@ -1,5 +1,8 @@
-<div class="moxycart_canvas_inner">
-    <h2 class="moxycart_cmp_heading">Create New Field</h2>
+<div class="moxycart_canvas_inner clearfix">
+    <h2 class="moxycart_cmp_heading pull-left">Create New Field</h2>
+    <div class="pull-right">
+        <a href="<?php print static::page('fields'); ?>" class="button btn">&laquo; Back to Field List</a>
+    </div>
 </div>
 
 <div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Here you can Create New Custom Field.</p></div>

@@ -27,8 +27,6 @@ function remove_relation(product_id) {
             ?>
                 <button class="btn" id="product_update">Save</button>
                 <a class="btn" href="<?php print static::page('products'); ?>" target="_blank">View</a>
-                <span class="button btn" onclick="javascript:paint('products');">&laquo; Back to Product List</span>
-                <!--a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a-->
             <?php    
             else:
             ?>
@@ -36,7 +34,8 @@ function remove_relation(product_id) {
             <?php
             endif;
             ?>
-            <a href="<?php print static::page('products'); ?>" class="button btn">Back to Product List</a>
+            <!--span class="button btn" onclick="javascript:paint('products');">&laquo; Back to Product List</span-->
+            <a href="<?php print static::page('products'); ?>" class="button btn">&laquo; Back to Product List</a>
         </div>
 
 </div>

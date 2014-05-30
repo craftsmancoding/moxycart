@@ -1,5 +1,8 @@
-<div class="moxycart_canvas_inner">
-    <h2 class="moxycart_cmp_heading">Create New Option Type</h2>
+<div class="moxycart_canvas_inner clearfix">
+    <h2 class="moxycart_cmp_heading pull-left">Create New Option Type</h2>
+    <div class="pull-right">
+        <a href="<?php print static::page('options'); ?>" class="button btn">&laquo; Back to Option List</a>
+    </div>
 </div>
 
 <div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Here you can Create New Option Types.</p></div>

@@ -1,5 +1,8 @@
-<div class="moxycart_canvas_inner">
-    <h2 class="moxycart_cmp_heading">Edit Review</h2>
+<div class="moxycart_canvas_inner clearfix">
+    <h2 class="moxycart_cmp_heading pull-left">Edit Review</h2>
+    <div class="pull-right">
+        <a href="<?php print static::page('reviews'); ?>" class="button btn">&laquo; Back to Review List</a>
+    </div>    
 </div>
 
 <div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p></p></div>
