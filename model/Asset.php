@@ -58,14 +58,50 @@ class Asset extends BaseModel {
         }
         return $filename;
     }
+
+    /**
+     * Enforces our naming convention for thumbnail images (or any resized images).
+     * Desired behavior is like this:
+     *
+     *  Original image: /path/to/image/foo.jpg
+     *  Thumb1:         /path/to/image/thumbs/foo.250x100.jpg
+     *  Thumb1:         /path/to/image/thumbs/foo.100x50.jpg
+     *  ...etc...
+     *
+     * @param string $orig full path to the original image
+     * @param string $subdir to define resized images will be written
+     * @param integer $w
+     * @param integer $h
+     * @return string
+     */
+    public function getThumbFilename($orig,$subdir,$w,$h) {
+        $subdir = trim($subdir,'/');
+        // dirname : omits trailing slash
+        // basename : same as basename()
+        // extension : omits period
+        // filename : w/o extension
+        $p = pathinfo($orig);
+        return sprintf('%s/%s/%s.%sx%s.%s',$p['dirname'],$subdir,$p['filename'],$w,$h,$p['extension']);
+    }
     
     /**
+     * Create the thumbnail and return its full path
      *
-     * @param string $filepath
+     *         $subdir = $this->modx->getOption('moxycart.thumbnail_dir');
+     * Warning: placehold.it is available ONLY as http.
+     * http://placehold.it/350x150&text=PDF
+     *
+     * @param string $filepath full path to original image
+     * @param string $subdir inside $filepath's dir where thumbnail will be created.
+     *          In prod:  $subdir = $this->modx->getOption('moxycart.thumbnail_dir');
+     * @param integer $w
+     * @param integer $h (todo)
+     * @return string relative URL to thumbnail, rel to $storage_basedir
      */
-    public function makeThumbnail($filepath) {
-        return '';
-        //Image::thumbnail($fullpath,$thumbnail_path,$thumb_w);
+    public function getThumbnail($filepath,$subdir,$w,$h) {
+        $this->_validFile($filepath);
+        $thumbnail_path = $this->getThumbFilename($filepath, $subdir,$w,$h);
+        return Image::scale($filepath,$thumbnail_path,$w);
     }
     
     /**
@@ -115,6 +151,10 @@ class Asset extends BaseModel {
         if (!isset($FILE['tmp_name']) || !isset($FILE['name'])) {
             throw new \Exception('Missing required keys in FILE array.');        
         }
+        // For Thumbnails
+        $w = $this->modx->getOption('moxycart.thumbnail_width');
+        $h = $this->modx->getOption('moxycart.thumbnail_height');
+        
         $src = $FILE['tmp_name']; // source file
         $this->_validFile($src);
         
@@ -135,21 +175,24 @@ class Asset extends BaseModel {
         $size = (isset($FILE['size'])) ? $FILE['size'] : filesize($dst);
         $obj->set('sig', md5_file($dst));
         $obj->set('size', $size);
-           
+        
+        $C = $this->getContentType($dst);        
+        $obj->set('content_type_id', $C->get('id'));
+        $obj->set('path', $this->getRelPath($dst, $storage_basedir));
+        $obj->set('url', $this->getRelPath($dst, $storage_basedir));   
         if ($info = $this->getImageInfo($dst)) {
             $obj->set('is_image', 1);
             $obj->set('width', $info['width']);
             $obj->set('height', $info['height']);
             $obj->set('duration', $info['duration']);
+            $obj->set('thumbnail_url',$this->getThumbnail($dst,$storage_basedir,$w,$h));
         }
         else {
             $obj->set('is_image', 0);
         }
 
-        $obj->set('content_type_id', $this->getContentType($dst));
-        $obj->set('path', $this->getRelPath($dst, $storage_basedir));
-        $obj->set('url', $this->getRelPath($dst, $storage_basedir));
-        $obj->set('thumbnail_url',$this->makeThumbnail($dst, $storage_basedir));
+        
+        
         
         if(!$obj->save()) {
             $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Failed to save Asset. Errors: '.print_r($obj->errors,true),'',__CLASS__,__FILE__,__LINE__);
@@ -169,16 +212,16 @@ class Asset extends BaseModel {
      * @param string $fullpath
      * @param mixed $prefix to remove. Leave null to use MODX settings
      */
-    public function getRelPath($fullpath, $prefix=null) {
+    public function getRelPath($fullpath, $storage_basedir=null) {
         if (!is_scalar($fullpath)) {
             throw new \Exception('Invalid data type for path');
         }
-        if (!$prefix) {
-            $prefix = $this->modx->getOption('assets_path').$this->modx->getOption('moxycart.upload_dir');
+        if (!$storage_basedir) {
+            $storage_basedir = $this->modx->getOption('assets_path').$this->modx->getOption('moxycart.upload_dir');
         }
         
-        if (substr($fullpath, 0, strlen($prefix)) == $prefix) {
-            return ltrim(substr($fullpath, strlen($prefix)),'/');
+        if (substr($fullpath, 0, strlen($storage_basedir)) == $storage_basedir) {
+            return ltrim(substr($fullpath, strlen($storage_basedir)),'/');
         }
         else {
             // either the path was to some other place, or it has already been made relative??
@@ -250,7 +293,7 @@ class Asset extends BaseModel {
      * Find a MODX content type based on a filename
      *
      * @param string $filename
-     * @return integer primary key from modx_content_types or die
+     * @return object modContentType
      */
     public function getContentType($filename) {
         if (!file_exists($filename)) {
@@ -263,7 +306,7 @@ class Asset extends BaseModel {
             if ($mime_type = finfo_file($finfo, $filename)) {
                 if ($C = $this->modx->getObject('modContentType', array('mime_type'=>$mime_type))) {
                     $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Content Type Found for mime-type '.$mime_type.': '.$C->get('id'),'',__CLASS__,__FILE__,__LINE__);
-                    return $C->get('id');
+                    return $C;
                 }
             }
         }
@@ -274,7 +317,7 @@ class Asset extends BaseModel {
         }
         if ($C = $this->modx->getObject('modContentType', array('file_extensions'=>'.'.$ext))) {
             $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Content Type Found for extension .'.$ext.': '.$C->get('id'),'',__CLASS__,__FILE__,__LINE__);        
-            return $C->get('id');
+            return $C;
         }
         
         throw new \Exception('Content type not defined.');
@@ -413,7 +456,7 @@ class Asset extends BaseModel {
 
         $this->modelObj->set('path', $this->getRelPath($dst, $storage_basedir));
         $this->modelObj->set('url', $this->getRelPath($dst, $storage_basedir));
-        $this->modelObj->set('thumbnail_url',$this->makeThumbnail());
+        $this->modelObj->set('thumbnail_url',$this->getThumbnail($dst, $storage_basedir));
         
         return $this->save();
     }
@@ -425,7 +468,7 @@ class Asset extends BaseModel {
     public function save() {
         // move to 
         // calculate thumbnail?
-        // $result = Image::thumbnail($fullpath,$thumbnail_path,$thumb_w);
+        // $result = Image::scale($fullpath,$thumbnail_path,$thumb_w);
         //$this->preparePath($this->modelObj->get('target_dir'));
         return parent::save();
     }

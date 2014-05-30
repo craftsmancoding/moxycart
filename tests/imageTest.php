@@ -70,7 +70,7 @@ class imageTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertFalse(file_exists($dst));
               
-        $result = Image::thumbnail($src,$dst,112);
+        $result = Image::scale($src,$dst,112);
         
         $this->assertTrue(file_exists($dst));
         $this->assertEquals($result,$dst);
@@ -97,7 +97,7 @@ class imageTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertFalse(file_exists($dst));
               
-        $result = Image::thumbnail($src,$dst,100);
+        $result = Image::scale($src,$dst,100);
         
         $this->assertTrue(file_exists($dst));
         $this->assertEquals($result,$dst);
@@ -125,7 +125,7 @@ class imageTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertFalse(file_exists($dst));
               
-        $result = Image::thumbnail($src,$dst,222);
+        $result = Image::scale($src,$dst,222);
         
         $this->assertTrue(file_exists($dst));
         $this->assertEquals($result,$dst);

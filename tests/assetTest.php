@@ -124,8 +124,8 @@ class assetTest extends \PHPUnit_Framework_TestCase {
         $filename = dirname(__FILE__).'/assets/macbook_pro.jpg';
         $C = self::$modx->getObject('modContentType', array('name'=>'JPG'));
         $this->assertFalse(empty($C));
-        $id = $A->getContentType($filename);    
-        $this->assertEquals($id,$C->get('id'));
+        $C2 = $A->getContentType($filename);    
+        $this->assertEquals($C->get('id'),$C2->get('id'));
     }
 
     /**
@@ -215,8 +215,8 @@ class assetTest extends \PHPUnit_Framework_TestCase {
      * Tests the fromFile method, verifying that it creates a new object record
      */
     public function testFromFile() {
-        self::$modx->setLogLevel(4);
-        self::$modx->setLogTarget('ECHO');
+        //self::$modx->setLogLevel(4);
+        //self::$modx->setLogTarget('ECHO');
         $A = new Asset(self::$modx);
 
         $orig_filename = dirname(__FILE__).'/assets/support.jpg'; 
@@ -244,12 +244,19 @@ class assetTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(date('Y/m/d/').'support2.jpg', $A2->get('path'),'Asset path incorrect');
         $this->assertEquals(date('Y/m/d/').'support2.jpg', $A2->get('url'),'Asset path incorrect');
         
+/*
+        // TODO: test the thumbnail
+        $path = $A2->get('path');
+        $thumbnail = dirname($path).'/'. $this->modx->getOption('moxycart.thumbnail_dir'). moxycart.thumbnail_width
+        $A2->get('thumbnail_url');
+*/
+        
         $result = $A2->remove($storage_basedir);
         $this->assertTrue($result);
         $this->assertFalse(file_exists($storage_basedir.date('Y/m/d/').'support2.jpg'), 'File does not exist: '.$storage_basedir.date('Y/m/d/').'support2.jpg');
         
         unlink($filename);
-        // Can't delete directories unless they're empty
+        
         Asset::rrmdir($storage_basedir.date('Y/'));
     }
     
@@ -275,8 +282,9 @@ class assetTest extends \PHPUnit_Framework_TestCase {
         $A = new Asset(self::$modx);
         $file = dirname(__FILE__).'/assets/support.jpg';
         $Asset = self::$modx->newObject('Asset');
+        $C = $A->getContentType($file);
         $Asset->fromArray(array(
-            'content_type_id' => $A->getContentType($file),
+            'content_type_id' => $C->get('id'),
             'title' => 'Delete me',
             'alt' => 'Delete me',
             'url' => 'tmp/path/only/'.basename($file),
@@ -307,15 +315,24 @@ class assetTest extends \PHPUnit_Framework_TestCase {
         touch($filename);
         $Asset->uploadTmp($filename, 'moxycart.dick','/tmp/does/not/matter');
     }
-
     
+    public function testGetThumbFilename() {
+        $A = new Asset(self::$modx);
+        $orig = dirname(__FILE__).'/assets/support.jpg';
+        $dir = $A->getThumbFilename($orig,'thumbs/',200,100);
+        $this->assertEquals(dirname(__FILE__).'/assets/thumbs/support.200x100.jpg',$dir);
+    }
+
     /**
-     * Test removing of saved file.
      *
      */
-/*
-    public function testRemove() {
-        print date('Y/m/d/');
-    }
-*/
+    public function testThumbnail() {
+        $A = new Asset(self::$modx);
+        $orig = dirname(__FILE__).'/assets/support.jpg';
+        Asset::rrmdir(dirname($orig).'/t2/');
+        $A->getThumbnail($orig,'t2','50','45');
+        $this->assertTrue(file_exists(dirname($orig).'/t2/support.50x45.jpg'));
+        Asset::rrmdir(dirname($orig).'/t2/');
+    }    
+
 }

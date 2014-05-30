@@ -105,16 +105,20 @@ class Image {
     }
 
     /**
-     * Generate a thumbnail from an image at a $src path and writes
-     * it to the $dst filename. Specify the width of the thumbnail; 
-     * the aspect ration remains the same as the original image.
+     * Scale an image to a new width maintaining aspect ratio.
+     * Processes image at $src path and writes it to the $dst filename,
+     * changing the image type according to the extensions detected.
+     * This will attemp to create the destination directory if it 
+     * does not exist. 
+     *
      * Throws tantrums if things don't work out its way.
      *
-     * @param string $src path
-     * @param string $target path
-     * @param integer $thumb_w in pixels
+     * @param string $src full path to source image
+     * @param string $dst full name of image including path
+     * @param integer $new_w new width in pixels
+     * @return string $dst on success. Throws exception on fail.
      */
-    public static function thumbnail($src,$dst,$thumb_w) {
+    public static function scale($src,$dst,$new_w) {
         // Careful!
         // is it an image?
         if (!in_array(strtolower(substr($dst, -4)), array('.jpg','jpeg','.gif','.png'))) {
@@ -148,11 +152,11 @@ class Image {
             throw new \Exception('Failed to create image');
         }
         
-        // src (i.e. old) dimensions
+        // old XY (from src) to new XY
         $ox = imagesx($src_img);
         $oy = imagesy($src_img);
         
-        $nx = ( $ox >= $thumb_w ) ? $thumb_w : $ox;
+        $nx = ( $ox >= $new_w ) ? $new_w : $ox;
         $ny = floor($oy * ($nx / $ox));
         
         $dst_img = imagecreatetruecolor($nx, $ny);
@@ -177,8 +181,24 @@ class Image {
         
         imagecopyresized($dst_img, $src_img, 0,0,0,0,$nx,$ny,$ox,$oy);
         
-        if(!imagejpeg($dst_img, $dst)) {
-            throw new \Exception('Failed to create thumbnail image at '.$dst);
+        $ext = strtolower(substr($dst, -4));
+        switch ($ext) {
+            case '.jpg':
+            case 'jpeg':
+                if(!imagejpeg($dst_img, $dst,100)) {
+                    throw new \Exception('Failed to create thumbnail image at '.$dst);
+                }
+                break;
+            case '.gif':
+                if(!imagegif($dst_img, $dst)) {
+                    throw new \Exception('Failed to create thumbnail image at '.$dst);
+                }
+                break;
+            case '.png':
+                if(!imagepng($dst_img, $dst,0)) {
+                    throw new \Exception('Failed to create thumbnail image at '.$dst);
+                }
+                break;
         }
         
         return $dst;

@@ -70,8 +70,8 @@ return array(
 		'namespace' => 'moxycart',
 		'area' => 'moxycart:default'
     ),
-    // Relative to MODX_ASSETS_PATH / MODX_ASSETS_URL
-    // This is where all downloadable product assets will be stored. 
+
+    // Resized images are stored alongside the originals in a special sub-dir
     array(
         'key'  =>     'moxycart.thumbnail_dir',
 		'value'=>     'thumbs/',
