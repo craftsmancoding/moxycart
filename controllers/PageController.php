@@ -150,11 +150,11 @@ class PageController extends BaseController {
         if (!$result = $Obj->find($product_id)) {
             return $this->sendError('Page not found.');
         }
-
+        
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($result->toArray());
         $this->setPlaceholder('result',$result);
-
+        $this->setPlaceholder('product_form_action', 'product_update');
 
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
@@ -188,7 +188,6 @@ class PageController extends BaseController {
                             jQuery("#product_images").append(data);
                             jQuery(".dz-preview").remove();
                        } 
-                       // TODO: better formatting
                        else {                           
                             $(".dz-success-mark").hide();
                             $(".dz-error-mark").show();
@@ -213,7 +212,7 @@ class PageController extends BaseController {
         $c = $this->modx->newQuery('ProductAsset');
         $c->where(array('ProductAsset.product_id' => $product_id));
         $PA = $this->modx->getCollectionGraph('ProductAsset','{"Asset":{}}',array('product_id'=> $product_id));
-        $this->setPlaceholder('product_assets',$PA);
+        $this->modx->setPlaceholder('product_assets',$PA);
         
         // product_fields
         $c = $this->modx->newQuery('ProductField');
@@ -258,12 +257,19 @@ class PageController extends BaseController {
         }
         $this->setPlaceholder('templates',$templates);
         
-        // option_types
-        //otype_ids
+        // product_option_types
+        $product_option_types = array();
+        $POTs = $this->modx->getCollection('ProductOptionType', array('product_id'=>$product_id));
+        foreach ($POTs as $p) {
+            $product_option_types[] = $p->get('otype_id');
+        }
+        $this->setPlaceholder('product_option_types',$product_option_types);
+        
+        //OptionType
         $OTs = $this->modx->getCollection('OptionType');
         $OptionTypes = array();
         foreach ($OTs as $o) {
-            $OptionTypes[$o->get('id')] = sprintf('%s (%s)',$o->get('name'),$o->get('slug'));
+            $OptionTypes[$o->get('otype_id')] = sprintf('%s (%s)',$o->get('name'),$o->get('slug'));
         }
         $this->setPlaceholder('OptionTypes',$OptionTypes);
         

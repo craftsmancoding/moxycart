@@ -200,8 +200,8 @@ class Product extends BaseModel {
      * 
      * array(
      *   array(
-     *       'related_id' => 53,
-     *       'type' => 'related',
+     *       'related_id' => 53,    (required)
+     *       'type' => 'related',   (optional)
      *   )
      * )
      * @param array $data
@@ -214,15 +214,20 @@ class Product extends BaseModel {
                 $this->modx->log(\modX::LOG_LEVEL_ERROR,'Missing related_id','',__CLASS__,__FUNCTION__,__LINE__); 
                 continue;
             }
-
+            $r['product_id'] = $this_product_id;
+            
             if (!$PR = $this->modx->getObject('ProductRelation', $r)) {
+                $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Existing ProductRelation not found: '.print_r($r,true) ,'',__CLASS__,__FUNCTION__,__LINE__); 
+                // Make sure related product exists
                 if (!$P = $this->modx->getObject('Product', $r['related_id'])) {
                     throw new \Exception('Invalid related ID '.$id);    
                 }
-                $PR = $this->modx->newObject('ProductRelation', $props);
+                $PR = $this->modx->newObject('ProductRelation');
+                $PR->fromArray($r);
+                if(!$PR->save()) {
+                    $this->modx->log(\modX::LOG_LEVEL_ERROR,'Error saving ProductRelation','',__CLASS__,__FUNCTION__,__LINE__); 
+                }
             }
-            if (isset($r['type'])) $PR->set('type', $r['type']);
-            $PR->save();
         }
         
         return true;    
@@ -266,8 +271,8 @@ class Product extends BaseModel {
      * @param array $data
      * @param string $type name of the type of relation, used for grouping.          
      */
-    public function dictateRelations(array $dictate) {
-        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating relations: '.implode(',',$dictate),'',__CLASS__,__FILE__,__LINE__);
+    public function dictateRelations(array $data) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating relations: '.implode(',',$data),'',__CLASS__,__FILE__,__LINE__);
         $this_product_id = $this->_verifyExisting();
         
         $props = array(
@@ -862,6 +867,7 @@ class Product extends BaseModel {
         if (isset($data['Taxonomies'])) $this->dictateAssets($data['Taxonomies']);
         if (isset($data['Terms'])) $this->dictateAssets($data['Terms']);
         
+        return true;
     }
     
     /**

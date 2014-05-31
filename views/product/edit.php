@@ -68,6 +68,16 @@ function get_field_instance() {
     });
 }
 
+function save_product() {
+
+    console.log('product_update');
+
+    var values = jQuery('#product_form').serialize();
+
+    mapi('product','edit',values);
+
+}
+
 </script>
 
 <?php
@@ -126,7 +136,7 @@ function get_field_instance() {
             <?php
             if ($data['product_form_action'] == 'product_update'):
             ?>
-                <button class="btn" id="product_update">Save</button>
+                <button class="btn" id="product_update" onclick="javascript:save_product(); return false;">Save</button>
                 <a class="btn" href="<?php print static::page('products'); ?>" target="_blank">View</a>
             <?php    
             else:
@@ -141,7 +151,7 @@ function get_field_instance() {
 
 </div>
 
-<form method="post" id="<?php print $data['product_form_action']; ?>" action="#">
+<form method="post" id="product_form" action="#">
 
 
 
@@ -268,8 +278,10 @@ function get_field_instance() {
                                 
                                 <div class="product-option-wrap">
                                      <h2>Product Options</h2>
+                                     <p>Allow your visitors to select variations in your product.</p>
                                     <?php
-                                    print \Formbuilder\Form::multicheck('OptionTypes', $data['OptionTypes'], $data['otype_ids']);
+                                    print \Formbuilder\Form::multicheck('OptionTypes', $data['OptionTypes'], $data['product_option_types'],array(),'[+error+]
+            <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> <label for="">[+option+]</label><br/>');
                                     ?>
                                 </div>
                                

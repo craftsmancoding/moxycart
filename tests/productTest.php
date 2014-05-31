@@ -597,8 +597,8 @@ class productTest extends \PHPUnit_Framework_TestCase {
      *
      */
     public function testRelations() {
-//        self::$modx->setLogTarget('ECHO');
-//        self::$modx->setLogLevel(4);    
+        //self::$modx->setLogTarget('ECHO');
+        //self::$modx->setLogLevel(4);    
         $P = new Product(self::$modx);
         
         $One = $P->one(array(
@@ -620,10 +620,10 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse(empty($product_id));
         
         $related = array();
-        $related_copy = array();
+        $related_ids = array();
         foreach ($Others as $o) {
-            $related[] = $o->get('product_id');
-            $related_copy[] = $o->get('product_id');;
+            $related[] = array('related_id'=>$o->get('product_id'),'type'=>'related');
+            $related_ids[] = $o->get('product_id');
         }
 
         $One->addRelations($related);
@@ -632,10 +632,10 @@ class productTest extends \PHPUnit_Framework_TestCase {
 
         // Verify they all exist:
         $Collection = self::$modx->getCollection('ProductRelation', array('product_id'=>$product_id));
-        $this->assertFalse(empty($Collection),'Product Relations were not added to product '.$product_id.'!');
+        $this->assertFalse(empty($Collection),'Product Relations '.implode(',',$related_ids).' were not added to product '.$product_id.'!');
         $cnt = self::$modx->getCount('ProductRelation', array('product_id'=>$product_id));
         $this->assertEquals(count($related), $cnt);
-        foreach ($related as $related_id) {
+        foreach ($related_ids as $related_id) {
             $PR = self::$modx->getObject('ProductRelation', array('product_id'=>$product_id,'related_id'=>$related_id));
             $this->assertFalse(empty($PR));
         }
@@ -646,13 +646,14 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(count($related), $cnt2);
         
         // Remove all but one
-        $odd_man_out = array_pop($related);
-        $One->removeRelations($related);
+        $odd_man_out = array_pop($related_ids);
+        $One->removeRelations($related_ids);
         $cnt3 = self::$modx->getCount('ProductRelation', array('product_id'=>$One->get('product_id')));
         $this->assertEquals($cnt3, 1); // should be only one left
 
         // Remove all
-        $One->removeRelations($related_copy);
+        array_push($related_ids, $odd_man_out);
+        $One->removeRelations($related_ids);
         $cnt3 = self::$modx->getCount('ProductRelation', array('product_id'=>$One->get('product_id')));
         $this->assertEquals($cnt3, 0); // Remove all
 
@@ -662,14 +663,12 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($cnt4, count($related)); 
         
         // Verify the order
-        $c = self::$modx->newQuery('ProductRelation');
-        $c->where(array('product_id'=>$product_id));
-        $c->sortby('seq','ASC');
-        $PR = self::$modx->getCollection('ProductRelation',$c);
         $i = 0;
-        foreach ($PR as $p) {
-            $this->assertEquals($i, $p->get('seq'));
-            $this->assertEquals($related[$i], $p->get('related_id'));
+        foreach ($related as $r) {
+            $r['product_id'] = $One->get('product_id');
+            $PR = self::$modx->getObject('ProductRelation',$r);
+            $this->assertFalse(empty($PR));
+            $this->assertEquals($i, $PR->get('seq'));
             $i++;
         }
     }    

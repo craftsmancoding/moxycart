@@ -23,9 +23,9 @@ class APIController extends \modExtraManagerController {
      * Catch all for bad function requests -- our 404
      */
     public function __call($name,$args) {
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'[moxycart] Invalid function name '.$name);
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'[moxycart] Invalid function name '.$name. ' '.print_r($args,true),'',__CLASS__);
         header('HTTP/1.0 404 Not Found');
-        return $this->error('Invalid API method: '.$name);
+        return $this->sendError('Invalid API method: '.$name);
     }
         
     /** 

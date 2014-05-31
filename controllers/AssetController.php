@@ -50,10 +50,12 @@ class AssetController extends APIController {
             if (!$Asset->save()) {
                 return $this->sendFail(array('errors'=> $Model->errors));
             }
+/*
             if ($product_id) {
                 $PA = $this->modx->newObject('ProductAsset',array('product_id'=>$product_id,'asset_id'=>$Asset->getPrimaryKey()));
                 $PA->save();
             }
+*/
             
             return $this->sendSuccess(array(
                 'msg' => sprintf('%s created successfully.',$this->model),

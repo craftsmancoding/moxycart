@@ -29,6 +29,7 @@ return array(
     'Moxycart\\OptionType' => $baseDir . '/model/OptionType.php',
     'Moxycart\\Product' => $baseDir . '/model/Product.php',
     'Moxycart\\ProductField' => $baseDir . '/model/ProductField.php',
+    'Moxycart\\ProductRelation' => $baseDir . '/model/ProductRelation.php',
     'Moxycart\\Review' => $baseDir . '/model/Review.php',
     'Moxycart\\Snippet' => $baseDir . '/model/Snippet.php',
     'Moxycart\\Variation' => $baseDir . '/model/Variation.php',

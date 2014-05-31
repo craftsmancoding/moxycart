@@ -16,6 +16,7 @@ class Product extends xPDOObject {
     public function get($k, $format = null, $formatTemplate= null) {
         // Return the sale price if the product is on sale
         if ($k=='calculated_price') {
+            $this->xpdo->log(modX::LOG_LEVEL_DEBUG, 'Calculating virtual field: calculated_price','',__CLASS__);
             $now = strtotime(date('Y-m-d H:i:s'));
             $sale_start = strtotime($this->get('sale_start'));
             $sale_end = strtotime($this->get('sale_end'));
@@ -31,6 +32,7 @@ class Product extends xPDOObject {
         }
         // Termines how long we can cache this for
         elseif($k=='cache_lifetime') {
+            $this->xpdo->log(modX::LOG_LEVEL_DEBUG, 'Calculating virtual field: cache_lifetime','',__CLASS__);
             $now = strtotime(date('Y-m-d H:i:s'));
             $sale_end = strtotime($this->get('sale_end'));
         
@@ -57,7 +59,7 @@ class Product extends xPDOObject {
         }
         else {
             // TODO: fire off an xpdo validator error
-            $this->xpdo->log(modX::LOG_LEVEL_ERROR, 'Invalid Store ID',__CLASS__);
+            $this->xpdo->log(modX::LOG_LEVEL_ERROR, 'Invalid Store ID','',__CLASS__);
             return false;
             //$this->xpdo->error->failure('Invalid Store ID');
         }

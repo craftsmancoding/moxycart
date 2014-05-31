@@ -1,48 +1,5 @@
 [
     {
-        "name": "craftsmancoding/formbuilder",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/craftsmancoding/formbuilder.git",
-            "reference": "b38514277cbad72c990a6cd1de42daa475646525"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/craftsmancoding/formbuilder/zipball/b38514277cbad72c990a6cd1de42daa475646525",
-            "reference": "b38514277cbad72c990a6cd1de42daa475646525",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.0"
-        },
-        "time": "2014-05-28 04:38:20",
-        "type": "library",
-        "installation-source": "source",
-        "autoload": {
-            "psr-4": {
-                "Formbuilder\\": "src/"
-            }
-        },
-        "authors": [
-            {
-                "name": "Everett Griffiths",
-                "email": "everett@craftsmancoding.com"
-            }
-        ],
-        "description": "Generate form elements for forms everywhere.",
-        "keywords": [
-            "elements",
-            "forms",
-            "html"
-        ],
-        "support": {
-            "source": "https://github.com/craftsmancoding/formbuilder/tree/master",
-            "issues": "https://github.com/craftsmancoding/formbuilder/issues"
-        }
-    },
-    {
         "name": "craftsmancoding/pagination",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
@@ -129,5 +86,48 @@
         "keywords": [
             "html"
         ]
+    },
+    {
+        "name": "craftsmancoding/formbuilder",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/craftsmancoding/formbuilder.git",
+            "reference": "f2407856e6c35c243cba3513ee0c1d9205d073be"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/craftsmancoding/formbuilder/zipball/f2407856e6c35c243cba3513ee0c1d9205d073be",
+            "reference": "f2407856e6c35c243cba3513ee0c1d9205d073be",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2014-05-31 04:56:13",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "Formbuilder\\": "src/"
+            }
+        },
+        "authors": [
+            {
+                "name": "Everett Griffiths",
+                "email": "everett@craftsmancoding.com"
+            }
+        ],
+        "description": "Generate form elements for forms everywhere.",
+        "keywords": [
+            "elements",
+            "forms",
+            "html"
+        ],
+        "support": {
+            "source": "https://github.com/craftsmancoding/formbuilder/tree/master",
+            "issues": "https://github.com/craftsmancoding/formbuilder/issues"
+        }
     }
 ]

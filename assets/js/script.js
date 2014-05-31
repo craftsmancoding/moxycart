@@ -1,5 +1,6 @@
 INIT = {
 
+/*
 	update_review: function(){
 		$('select#state').on('change',function(e){
 			var review_id = $(this).data('review_id'),
@@ -21,6 +22,7 @@ INIT = {
 		    e.preventDefault();
 	    })
 	},
+*/
 
 	fill_form_fields : function() {
         // var product is def'd in the productcontainer.js
@@ -152,7 +154,7 @@ INIT = {
 }
 
 jQuery(function() {
-	INIT.update_review();
+	// INIT.update_review();
 	INIT.fill_form_fields();
 	INIT.edit_image_modal();
 	INIT.drag_drop_delete();
@@ -167,11 +169,12 @@ jQuery(function() {
         }).disableSelection();
     });  
 
-	$(document).on('submit','#product_update',function(){     
+/*
+	jQuery(document).on('submit','#product_update',function(){     
+	        console.log('product_update');
 
 	        var values = $(this).serialize();
 	        var rand = Math.random()*10000000000000000;
-	        console.log('product_update');
 		    $.post( controller_url + '&class=product&method=edit&rand='+rand, values, function(data){
 		    	$('.moxy-msg').show();
 		    	data = $.parseJSON(data);
@@ -187,6 +190,7 @@ jQuery(function() {
 		    return false;
 
 	});
+*/
 
 	$(document).on('submit','#product_create', function(){
         console.log('product_create');
