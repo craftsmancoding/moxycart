@@ -33,7 +33,9 @@ class Asset extends BaseModel {
      * Helps check for filename conflicts: given the desired name for the file,
      * this will see if the file already exists, and if so, it will generate a 
      * unique filename for the file while preserving the extension and the basename
-     * of the file. E.g. if "x.txt" exists, then this returns "x 1.txt"
+     * of the file. E.g. if "x.txt" exists, then this returns "x 1.txt". If "x 1.txt" 
+     * exists, this returns "x 2.txt"
+     *
      *
      * @param string $dst full path candidate filename.
      * @param string $space_char (optional) to define the character that appears after 
@@ -171,7 +173,7 @@ class Asset extends BaseModel {
             throw new \Exception('Could not move file from '.$src.' to '.$dst);
         }
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Moved file from '.$src.' to '.$dst,'',__CLASS__,__FILE__,__LINE__);
-    
+        chmod($dst, 0666); // <-- config?
         $obj = $this->modx->newObject($this->xclass); // new Asset()        
         
         $size = (isset($FILE['size'])) ? $FILE['size'] : filesize($dst);

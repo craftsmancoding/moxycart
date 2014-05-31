@@ -1,3 +1,27 @@
+<style>
+/* http://jsfiddle.net/thirtydot/NTKK3/ */
+.asset_thumbnail_container {
+    height: 190px;
+    width: 480px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+.asset_thumbnail_item {
+    border: 1px solid #E5E5E5;
+    height: 190px;
+    padding: 5px;
+    width: 250px;
+    
+    display: inline-block;
+    /* for ie7 */
+    *display: inline;
+    zoom: 1;
+}
+</style>
+
+
 <script>
 /**
  * Handlebars Parsing
@@ -18,9 +42,9 @@ function remove_relation(product_id) {
 }
 
 /**
- * jQuery(document).ready(function()
+ * We can't put any jQuery(document).ready stuff in the open here.
  */
-function edit_init() {
+function product_init() {
     populate_form(product);
 	jQuery('#moxytab').tabify();
 	jQuery('.datepicker').datepicker();
@@ -30,6 +54,28 @@ function edit_init() {
         connectWith: ".connectedSortable",
     }).disableSelection();
 
+
+    // Dropzone for Assets 
+    var myDropzone = new Dropzone("div#image_upload", {url: controller_url("asset","create")});    
+    // Refresh the list on success (append new tile to end)
+    myDropzone.on("success", function(file,response) {
+
+        response = jQuery.parseJSON(response);
+        console.log(response);
+        if (response.status == "success") {
+            var data = parse_tpl("product_image",response.data.fields);
+            jQuery("#product_images").append(data);
+            jQuery(".dz-preview").remove();
+       } 
+       else {                           
+            $(".dz-success-mark").hide();
+            $(".dz-error-mark").show();
+            $(".moxy-msg").show();
+            $("#moxy-result").html("Failed");
+            $("#moxy-result-msg").html(response.data.msg);
+            $(".moxy-msg").delay(3200).fadeOut(400);
+       }
+    });
 
     // ProductRelation Autocomplete
     // customizations here for compatibility 
@@ -78,21 +124,32 @@ function edit_init() {
 		},
 	    drop: function( event, ui ) {
 	      	var id = jQuery(ui.draggable).attr('id');
-	      	console.log(ui);
 
 	      	//var url = connector_url + 'image_save';
-	      	var asset_id = $(ui.draggable).find('a').data('asset_id');
-	      	console.log(asset_id);
-	      	
+	      	var asset_id = $(ui.draggable).find('a').data('asset_id');	      	
 	      	if (confirm("Are you Sure you want to Delete this Image?")) {
 	      		jQuery(this).removeClass('over-trash');
 	      		mapi('asset','delete',{"asset_id":asset_id});
+	      		$('#product-asset-'+asset_id).remove();
 		    }
 		    jQuery(this).removeClass('over-trash');
 
 		    return false;
 	    }
     });
+    
+    // Thumbnail Selection Modal
+    jQuery( "#thumbnail_form" ).dialog({
+        autoOpen: false,
+        height: 330,
+        width: 500,
+        modal: true,
+        buttons: {
+            "Done": function() {
+                $( this ).dialog( "close" );
+            }
+        }   
+    });    
            
 };
 
@@ -115,6 +172,12 @@ function save_product() {
     mapi('product','edit',values);
 }
 
+function select_thumb(asset_id,url) {
+    console.log('[select_thumb] asset_id: %s thumb url: %s',asset_id,url);
+    jQuery('#asset_id').val(asset_id);
+    jQuery('#thumbnail_img').attr('src', url);
+    jQuery( "#thumbnail_form" ).dialog("close"); 
+}
 // Asset Trash can
 //function drag_drop_delete() {
 
@@ -160,7 +223,7 @@ function save_product() {
 </script>
 
 <script id="product_image" type="text/x-handlebars-template">
-<li class="li_product_image" id="product-image-{{asset_id}}">
+<li class="li_product_image" id="product-asset-{{asset_id}}">
 	<div class="img-info-wrap">
 	    <a class="edit-img" href="#{{asset_id}}" data-asset_id="{{asset_id}}" data-toggle="modal" data-target="#update-image">
 		  <img src="{{thumbnail_url}}?rand=<?php print uniqid(); ?>" alt="{{alt}}" width="" />
@@ -253,9 +316,30 @@ function save_product() {
                             <td style="width:30%;vertical-align: top;">
                             
 								<label for="thumbnail">Thumbnail</label>
-								<div id="thumbnail" style="border:1px dotted grey; height:200px;width:200px;" onclick="javascript:alert('image upload');">
-								    <img src="" />
+
+								<div id="thumbnail" style="border:1px dotted grey;width:240px;height:180px;" onclick="javascript:jQuery('#thumbnail_form').dialog('open');">
+								    <input type="hidden" name="asset_id" id="asset_id" value=""/>
+								    <img id="thumbnail_img" 
+								        src="<?php print $data['thumbnail_url']; ?>" 
+								        width="<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>" 
+								        height="<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>"/>
 								</div>
+								<div id="thumbnail_form" title="Select Product Thumbnail">
+								    <div class="asset_thumbnail_container">
+								        <?php foreach ($data['product_assets'] as $a): ?>
+								            <div class="asset_thumbnail_item">
+    								            <img src="<?php print $a->Asset->get('thumbnail_url'); ?>" 
+    								                alt="<?php print $a->Asset->get('alt'); ?>" 
+    								                width="<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>" 
+    								                height="<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>"
+    								                onclick="javascript:select_thumb(<?php print $a->get('asset_id'); ?>,'<?php print $a->Asset->get('thumbnail_url'); ?>');"/>
+								            </div>
+								        <?php endforeach?>
+								    </div>
+
+								    
+								</div>
+								
 								                            
                             	<label for="category">In Menu</label>
                                 <select name="in_menu" id="in_menu">
@@ -529,7 +613,7 @@ function save_product() {
         	<ul class="clearfix" id="product_images">
                 <?php 
                 foreach ($data['product_assets'] as $a): ?>
-                    <li class="li_product_image" id="product-image-<?php print $a->get('asset_id'); ?>">
+                    <li class="li_product_image" id="product-asset-<?php print $a->get('asset_id'); ?>">
                     	<div class="img-info-wrap">
                     	    <a class="edit-img" href="#<?php print $a->get('asset_id'); ?>" data-asset_id="<?php print $a->get('asset_id'); ?>" data-toggle="modal" data-target="#update-image">
                     		  <img src="<?php print $a->Asset->get('thumbnail_url'); ?>?rand=<?php print uniqid(); ?>" alt="<?php print $a->Asset->get('alt'); ?>" width="" />

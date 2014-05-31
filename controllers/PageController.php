@@ -173,40 +173,20 @@ class PageController extends BaseController {
     		var product = '.$result->toJson().';            
             var use_editor = "'.$this->modx->getOption('use_editor').'";
             var assets_url = "'.$this->config['assets_url'].'"; 
-    
+            // Document read stuff has to be in here
             jQuery(document).ready(function() {
-                var myDropzone = new Dropzone("div#image_upload", {url: controller_url("asset","create")});
-                
-                // Refresh the list on success (append new tile to end)
-                myDropzone.on("success", function(file,response) {
-
-                    response = jQuery.parseJSON(response);
-                    console.log(response);
-                    if (response.status == "success") {
-                        var data = parse_tpl("product_image",response.data.fields);
-                        jQuery("#product_images").append(data);
-                        jQuery(".dz-preview").remove();
-                   } 
-                   else {                           
-                        $(".dz-success-mark").hide();
-                        $(".dz-error-mark").show();
-                        $(".moxy-msg").show();
-                        $("#moxy-result").html("Failed");
-                        $("#moxy-result-msg").html(response.data.msg);
-                        $(".moxy-msg").delay(3200).fadeOut(400);
-                   }
-                });
-                edit_init();
+                product_init();
             });
     		</script>');
         if ($this->modx->getOption('use_editor')) {
             $this->_load_tinyMCE();
         }
         
-        $P = new Product($this->modx);
         
         // thumbnail
-        
+        if($A = $this->modx->getObject('Asset', $result->asset_id)) {
+            $this->setPlaceholder('thumbnail_url',$A->get('thumbnail_url'));
+        }
         
         // assets
         $c = $this->modx->newQuery('ProductAsset');
@@ -281,7 +261,7 @@ class PageController extends BaseController {
         $this->setPlaceholder('OptionTypes',$OptionTypes);
         
         // types (dropdown -- product types)
-        $this->setPlaceholder('types',$P->getTypes());
+        $this->setPlaceholder('types',$result->getTypes());
 
         return $this->fetchTemplate('product/edit.php');
     }

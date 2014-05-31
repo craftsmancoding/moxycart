@@ -9,6 +9,15 @@ class Field extends BaseModel {
     public $xclass = 'Field';
     public $default_sort_col = 'slug';
 
+    public static function getTypes() {
+        return array(
+            'text'=>'Text',
+            'textarea'=>'Textarea',
+            //'checkbox'=>'Checkbox',
+            //'dropdown'=>'Dropdown',
+            //'multicheck'=>'Multi-Check'
+        );    
+    }
     /**
      * Must test for reserved Words!
      *
