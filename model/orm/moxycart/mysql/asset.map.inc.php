@@ -237,7 +237,7 @@ $xpdo_meta_map['Asset']= array (
   array (
     'Products' => 
     array (
-      'class' => 'ProductField',
+      'class' => 'ProductAsset',
       'local' => 'asset_id',
       'foreign' => 'asset_id',
       'cardinality' => 'many',

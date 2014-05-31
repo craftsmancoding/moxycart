@@ -2,7 +2,7 @@
     <h2 class="moxycart_cmp_heading" id="moxycart_pagetitle">Manage Custom Fields</h2>
 </div>
 
-<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Here you can Manage Custom Field.</p></div>
+<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Custom Field fields allow you to enter extra data about your product.  The values stored can be displayed to visitors via your product templates.</p></div>
 
 <div class="moxycart_canvas_inner">
 

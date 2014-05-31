@@ -2,17 +2,6 @@
 class Asset extends xPDOObject {
 
     /**
-     * Override to provide calculated fields
-     */
-/*
-    public function __construct(xPDO & $xpdo) { 
-        parent::__construct($xpdo);
-        $this->_fields['calculated_price'] = $this->get('calculated_price');
-        $this->_fields['cache_lifetime'] = $this->get('cache_lifetime');
-    }
-*/
-    
-    /**
      * Modifiers: 
      * 
      * Special behavior here for thumbnails.  If the asset is a remote asset 

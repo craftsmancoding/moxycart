@@ -39,10 +39,10 @@ $xpdo_meta_map['ProductAsset']= array (
     array (
       'dbtype' => 'tinyint',
       'precision' => '1',
-      'attributes' => 'unsigned',
-      'phptype' => 'boolean',
+      'phptype' => 'integer',
       'null' => false,
       'default' => 1,
+      'comment' => 'Used to disable/enable products',
     ),
     'seq' => 
     array (
