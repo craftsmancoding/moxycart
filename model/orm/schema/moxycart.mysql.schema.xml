@@ -612,6 +612,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="asset_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="group" dbtype="varchar" precision="32" phptype="string" null="true" />
+        <field key="is_active" dbtype="tinyint" precision="1" phptype="integer" null="false" default="1" comment="Used to disable/enable products"/>
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" length="" collation="A" null="false" />

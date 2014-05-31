@@ -31,7 +31,8 @@ class productTest extends \PHPUnit_Framework_TestCase {
     public static $Term;
     public static $Field;
     public static $OType;
-    public static $VTerm;
+    public static $OTerm;
+    public static $Asset;
         
     /**
      * Load up MODX for our tests.
@@ -328,9 +329,9 @@ class productTest extends \PHPUnit_Framework_TestCase {
             self::$OType['printing']->save();
         }        
         //!OptionTerm : Colors
-        if (!self::$VTerm['white'] = self::$modx->getObject('OptionTerm', array('slug'=>'white'))) {
-            self::$VTerm['white'] = self::$modx->newObject('OptionTerm');
-            self::$VTerm['white']->fromArray(array(
+        if (!self::$OTerm['white'] = self::$modx->getObject('OptionTerm', array('slug'=>'white'))) {
+            self::$OTerm['white'] = self::$modx->newObject('OptionTerm');
+            self::$OTerm['white']->fromArray(array(
                 'otype_id' => self::$OType['color']->get('otype_id'),
                 'slug' => 'white',
                 'name' => 'White',
@@ -338,11 +339,11 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'sku_suffix' => '-WHI',
                 'seq' => 0,
             ));
-            self::$VTerm['white']->save();
+            self::$OTerm['white']->save();
         }
-        if (!self::$VTerm['black'] = self::$modx->getObject('OptionTerm', array('slug'=>'black'))) {
-            self::$VTerm['black'] = self::$modx->newObject('OptionTerm');
-            self::$VTerm['black']->fromArray(array(
+        if (!self::$OTerm['black'] = self::$modx->getObject('OptionTerm', array('slug'=>'black'))) {
+            self::$OTerm['black'] = self::$modx->newObject('OptionTerm');
+            self::$OTerm['black']->fromArray(array(
                 'otype_id' => self::$OType['color']->get('otype_id'),
                 'slug' => 'black',
                 'name' => 'Black',
@@ -350,11 +351,11 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'sku_suffix' => '-BLA',
                 'seq' => 0,
             ));
-            self::$VTerm['black']->save();
+            self::$OTerm['black']->save();
         }
-        if (!self::$VTerm['red'] = self::$modx->getObject('OptionTerm', array('slug'=>'large'))) {
-            self::$VTerm['red'] = self::$modx->newObject('OptionTerm');
-            self::$VTerm['red']->fromArray(array(
+        if (!self::$OTerm['red'] = self::$modx->getObject('OptionTerm', array('slug'=>'large'))) {
+            self::$OTerm['red'] = self::$modx->newObject('OptionTerm');
+            self::$OTerm['red']->fromArray(array(
                 'otype_id' => self::$OType['color']->get('otype_id'),
                 'slug' => 'red',
                 'name' => 'Red',
@@ -362,13 +363,13 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'sku_suffix' => '-RED',
                 'seq' => 0,
             ));
-            self::$VTerm['red']->save();
+            self::$OTerm['red']->save();
         }
         
         //!OptionTerm : Sizes
-        if (!self::$VTerm['small'] = self::$modx->getObject('OptionTerm', array('slug'=>'small'))) {
-            self::$VTerm['small'] = self::$modx->newObject('OptionTerm');
-            self::$VTerm['small']->fromArray(array(
+        if (!self::$OTerm['small'] = self::$modx->getObject('OptionTerm', array('slug'=>'small'))) {
+            self::$OTerm['small'] = self::$modx->newObject('OptionTerm');
+            self::$OTerm['small']->fromArray(array(
                 'otype_id' => self::$OType['size']->get('otype_id'),
                 'slug' => 'small',
                 'name' => 'Small',
@@ -376,11 +377,11 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'sku_suffix' => '-S',
                 'seq' => 0,
             ));
-            self::$VTerm['small']->save();
+            self::$OTerm['small']->save();
         }
-        if (!self::$VTerm['med'] = self::$modx->getObject('OptionTerm', array('slug'=>'med'))) {
-            self::$VTerm['med'] = self::$modx->newObject('OptionTerm');
-            self::$VTerm['med']->fromArray(array(
+        if (!self::$OTerm['med'] = self::$modx->getObject('OptionTerm', array('slug'=>'med'))) {
+            self::$OTerm['med'] = self::$modx->newObject('OptionTerm');
+            self::$OTerm['med']->fromArray(array(
                 'otype_id' => self::$OType['size']->get('otype_id'),
                 'slug' => 'med',
                 'name' => 'Medium',
@@ -388,11 +389,11 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'sku_suffix' => '-M',
                 'seq' => 0,
             ));
-            self::$VTerm['med']->save();
+            self::$OTerm['med']->save();
         }
-        if (!self::$VTerm['large'] = self::$modx->getObject('OptionTerm', array('slug'=>'large'))) {
-            self::$VTerm['large'] = self::$modx->newObject('OptionTerm');
-            self::$VTerm['large']->fromArray(array(
+        if (!self::$OTerm['large'] = self::$modx->getObject('OptionTerm', array('slug'=>'large'))) {
+            self::$OTerm['large'] = self::$modx->newObject('OptionTerm');
+            self::$OTerm['large']->fromArray(array(
                 'otype_id' => self::$OType['size']->get('otype_id'),
                 'slug' => 'large',
                 'name' => 'Large',
@@ -400,13 +401,13 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'sku_suffix' => '-L',
                 'seq' => 0,
             ));
-            self::$VTerm['large']->save();
+            self::$OTerm['large']->save();
         }    
 
         //!OptionTerm : Materials
-        if (!self::$VTerm['cotton'] = self::$modx->getObject('OptionTerm', array('slug'=>'cotton'))) {
-            self::$VTerm['cotton'] = self::$modx->newObject('OptionTerm');
-            self::$VTerm['cotton']->fromArray(array(
+        if (!self::$OTerm['cotton'] = self::$modx->getObject('OptionTerm', array('slug'=>'cotton'))) {
+            self::$OTerm['cotton'] = self::$modx->newObject('OptionTerm');
+            self::$OTerm['cotton']->fromArray(array(
                 'otype_id' => self::$OType['material']->get('otype_id'),
                 'slug' => 'cotton',
                 'name' => 'Cotton',
@@ -414,11 +415,11 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'sku_suffix' => '-CTN',
                 'seq' => 0,
             ));
-            self::$VTerm['cotton']->save();
+            self::$OTerm['cotton']->save();
         }
-        if (!self::$VTerm['silk'] = self::$modx->getObject('OptionTerm', array('slug'=>'silk'))) {
-            self::$VTerm['silk'] = self::$modx->newObject('OptionTerm');
-            self::$VTerm['silk']->fromArray(array(
+        if (!self::$OTerm['silk'] = self::$modx->getObject('OptionTerm', array('slug'=>'silk'))) {
+            self::$OTerm['silk'] = self::$modx->newObject('OptionTerm');
+            self::$OTerm['silk']->fromArray(array(
                 'otype_id' => self::$OType['material']->get('otype_id'),
                 'slug' => 'silk',
                 'name' => 'Silk',
@@ -426,11 +427,11 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'sku_suffix' => '-SLK',
                 'seq' => 0,
             ));
-            self::$VTerm['silk']->save();
+            self::$OTerm['silk']->save();
         }
-        if (!self::$VTerm['wool'] = self::$modx->getObject('OptionTerm', array('slug'=>'wool'))) {
-            self::$VTerm['wool'] = self::$modx->newObject('OptionTerm');
-            self::$VTerm['wool']->fromArray(array(
+        if (!self::$OTerm['wool'] = self::$modx->getObject('OptionTerm', array('slug'=>'wool'))) {
+            self::$OTerm['wool'] = self::$modx->newObject('OptionTerm');
+            self::$OTerm['wool']->fromArray(array(
                 'otype_id' => self::$OType['material']->get('otype_id'),
                 'slug' => 'wool',
                 'name' => 'Wool',
@@ -438,13 +439,13 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'sku_suffix' => '-WOOL',
                 'seq' => 0,
             ));
-            self::$VTerm['wool']->save();
+            self::$OTerm['wool']->save();
         }
         
         //!OptionTerm : Printing
-        if (!self::$VTerm['silkscreen'] = self::$modx->getObject('OptionTerm', array('slug'=>'silkscreen'))) {
-            self::$VTerm['silkscreen'] = self::$modx->newObject('OptionTerm');
-            self::$VTerm['silkscreen']->fromArray(array(
+        if (!self::$OTerm['silkscreen'] = self::$modx->getObject('OptionTerm', array('slug'=>'silkscreen'))) {
+            self::$OTerm['silkscreen'] = self::$modx->newObject('OptionTerm');
+            self::$OTerm['silkscreen']->fromArray(array(
                 'otype_id' => self::$OType['printing']->get('otype_id'),
                 'slug' => 'silkscreen',
                 'name' => 'Silk Screen',
@@ -452,11 +453,11 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'sku_suffix' => '-SCR',
                 'seq' => 0,
             ));
-            self::$VTerm['silkscreen']->save();
+            self::$OTerm['silkscreen']->save();
         }
-        if (!self::$VTerm['embossed'] = self::$modx->getObject('OptionTerm', array('slug'=>'embossed'))) {
-            self::$VTerm['embossed'] = self::$modx->newObject('OptionTerm');
-            self::$VTerm['embossed']->fromArray(array(
+        if (!self::$OTerm['embossed'] = self::$modx->getObject('OptionTerm', array('slug'=>'embossed'))) {
+            self::$OTerm['embossed'] = self::$modx->newObject('OptionTerm');
+            self::$OTerm['embossed']->fromArray(array(
                 'otype_id' => self::$OType['printing']->get('otype_id'),
                 'slug' => 'embossed',
                 'name' => 'Embossed',
@@ -464,11 +465,11 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'sku_suffix' => '-EMB',
                 'seq' => 0,
             ));
-            self::$VTerm['embossed']->save();
+            self::$OTerm['embossed']->save();
         }
-        if (!self::$VTerm['gold'] = self::$modx->getObject('OptionTerm', array('slug'=>'gold'))) {
-            self::$VTerm['gold'] = self::$modx->newObject('OptionTerm');
-            self::$VTerm['gold']->fromArray(array(
+        if (!self::$OTerm['gold'] = self::$modx->getObject('OptionTerm', array('slug'=>'gold'))) {
+            self::$OTerm['gold'] = self::$modx->newObject('OptionTerm');
+            self::$OTerm['gold']->fromArray(array(
                 'otype_id' => self::$OType['printing']->get('otype_id'),
                 'slug' => 'gold',
                 'name' => 'gold',
@@ -476,7 +477,54 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'sku_suffix' => '-GLD',
                 'seq' => 0,
             ));
-            self::$VTerm['gold']->save();
+            self::$OTerm['gold']->save();
+        }
+
+        // !Assets (data only: no images)
+        if (!self::$Asset['a'] = self::$modx->getObject('Asset', array('path'=>'testing/only/a.jpg'))) {
+            self::$Asset['a'] = self::$modx->newObject('Asset');
+            self::$Asset['a']->fromArray(array(
+                'content_type_id' => 9,
+                'path' => 'testing/only/a.jpg',
+                'url' => 'testing/only/a.jpg',
+                'width' => '200',
+                'height' => '180',
+                'title' => 'Test Image',
+                'sig' => 'test',
+            ));
+            if(!self::$Asset['a']->save()) {
+                print 'Could not save asset!'; 
+            }
+        }
+        if (!self::$Asset['b'] = self::$modx->getObject('Asset', array('path'=>'testing/only/b.jpg'))) {
+            self::$Asset['b'] = self::$modx->newObject('Asset');
+            self::$Asset['b']->fromArray(array(
+                'content_type_id' => 9,
+                'path' => 'testing/only/b.jpg',
+                'url' => 'testing/only/b.jpg',
+                'width' => '200',
+                'height' => '180',
+                'title' => 'Test Image',
+                'sig' => 'test',                
+            ));
+            if(!self::$Asset['b']->save()) {
+                print 'Could not save asset!'; 
+            }
+        }
+        if (!self::$Asset['c'] = self::$modx->getObject('Asset', array('path'=>'testing/only/c.jpg'))) {
+            self::$Asset['c'] = self::$modx->newObject('Asset');
+            self::$Asset['c']->fromArray(array(
+                'content_type_id' => 9,
+                'path' => 'testing/only/c.jpg',
+                'url' => 'testing/only/c.jpg',
+                'width' => '200',
+                'height' => '180',
+                'title' => 'Test Image',
+                'sig' => 'test',                
+            ));
+            if(!self::$Asset['c']->save()) {
+                print 'Could not save asset!'; 
+            }
         }
 
         
@@ -504,19 +552,19 @@ class productTest extends \PHPUnit_Framework_TestCase {
         self::$OType['material']->remove();
         self::$OType['printing']->remove();
 
-        self::$VTerm['white']->remove();
-        self::$VTerm['black']->remove();
-        self::$VTerm['red']->remove();
+        self::$OTerm['white']->remove();
+        self::$OTerm['black']->remove();
+        self::$OTerm['red']->remove();
         
-        self::$VTerm['small']->remove();
-        self::$VTerm['med']->remove();
-        self::$VTerm['large']->remove();
-        self::$VTerm['cotton']->remove();
-        self::$VTerm['silk']->remove();
-        self::$VTerm['wool']->remove();
-        self::$VTerm['embossed']->remove();
-        self::$VTerm['silkscreen']->remove();
-        self::$VTerm['gold']->remove();
+        self::$OTerm['small']->remove();
+        self::$OTerm['med']->remove();
+        self::$OTerm['large']->remove();
+        self::$OTerm['cotton']->remove();
+        self::$OTerm['silk']->remove();
+        self::$OTerm['wool']->remove();
+        self::$OTerm['embossed']->remove();
+        self::$OTerm['silkscreen']->remove();
+        self::$OTerm['gold']->remove();
         
 */
 
@@ -609,16 +657,19 @@ class productTest extends \PHPUnit_Framework_TestCase {
             'store_id' => self::$Store->get('id'),
             'sku:!=' => 'SOUTHPARK-TSHIRT')
         );
-
+        
+        $product_id = $One->get('product_id');
+        $this->assertFalse(empty($product_id));
+        
         // Prep: Remove all relations
         if($Collection = self::$modx->getCollection('ProductRelation', array('product_id'=>$One->get('product_id')))) {
             foreach ($Collection as $C) {
                 $C->remove();
             }
         }
-        $product_id = $One->get('product_id');
-        $this->assertFalse(empty($product_id));
+
         
+/*
         $related = array();
         $related_ids = array();
         foreach ($Others as $o) {
@@ -671,6 +722,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals($i, $PR->get('seq'));
             $i++;
         }
+*/
     }    
 
     /**
@@ -1055,6 +1107,85 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $P = new Product(self::$modx);
         $this->assertEquals(0, $P->cache_lifetime);
     }
+
+
+    /**
+     * 
+     *
+     */
+    public function testAssets() {
+        //self::$modx->setLogTarget('ECHO');
+        //self::$modx->setLogLevel(4);    
+        $P = new Product(self::$modx);
+        
+        $One = $P->one(array(
+            'store_id' => self::$Store->get('id'),
+            'sku' => 'SOUTHPARK-TSHIRT'));
+
+        $product_id = $One->get('product_id');
+        $this->assertFalse(empty($product_id));
+            
+        // Prep: Remove all assets
+        if($Collection = self::$modx->getCollection('ProductAsset', array('product_id'=>$One->get('product_id')))) {
+            foreach ($Collection as $C) {
+                $C->remove();
+            }
+        }
+        $Assets = self::$modx->getCollection('Asset', array('sig'=>'test'));
+        $this->assertTrue(!empty($Assets));
+        
+        $assets = array();
+        $asset_ids = array();
+        foreach ($Assets as $a) {
+            $assets[] = array('asset_id'=>$a->get('asset_id'));
+            $asset_ids[] = $a->get('asset_id');
+        }
+
+        $One->addAssets($assets);
+        $result = $One->save();
+        $this->assertTrue($result);
+
+        // Verify they all exist:
+        foreach ($asset_ids as $id) {
+            $PA = self::$modx->getObject('ProductAsset', array('product_id'=>$product_id,'asset_id'=>$id));
+            $this->assertTrue(!empty($PA));
+        }
+        
+        // Add duplicates, verify that nothing new was created.
+        $before_cnt = self::$modx->getCount('ProductAsset', array('product_id'=>$product_id));
+        $One->addAssets($assets);
+        $after_cnt = self::$modx->getCount('ProductAsset', array('product_id'=>$product_id));
+        $this->assertEquals($before_cnt, $after_cnt);
+        
+        // Remove all but one
+        $odd_man_out = array_pop($asset_ids);
+        $One->removeAssets($asset_ids);
+        $cnt3 = self::$modx->getCount('ProductAsset', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt3, 1); // should be only one left
+
+        // Remove all
+        array_push($asset_ids, $odd_man_out);
+        $One->removeAssets($asset_ids);
+        $cnt3 = self::$modx->getCount('ProductAsset', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals($cnt3, 0); // Remove all
+
+        // Now, dictate the relations: this should add and remove
+        rsort($assets);
+        $One->dictateAssets($assets);
+        $cnt4 = self::$modx->getCount('ProductAsset', array('product_id'=>$One->get('product_id')));
+        $this->assertEquals(3, $cnt4); 
+        
+        // Verify the order
+        $i = 0;
+        foreach ($assets as $r) {
+            $r['product_id'] = $One->get('product_id');
+            $PA = self::$modx->getObject('ProductAsset',$r);
+            $this->assertFalse(empty($PA));
+            $this->assertEquals($i, $PA->get('seq'));
+            $i++;
+        }
+    }    
+
     
     /**
      *

@@ -104,15 +104,15 @@ Array
         if (!$Obj = $Model->find($id)) {
             return $this->sendFail(array('msg'=>sprintf('%s not found', $this->model)));
         }
-/*
-        $Obj->fromArray($scriptProperties);
-        if (!$Obj->save()) {
-            return $this->fail(array('errors'=> $Obj->errors));
-        }
-*/
-        
-        // Add Related Data: stuff that has one to many relationships 
-        $related_indices = array('Assets','Fields','OptionTypes','Relations','Taxonomies','Terms');
+
+        // Add Related w meta-data: one to many relationships including data about the relation 
+        // (i.e. it's not just simple relations w only an array of ids and an implied seq)
+        // Simple relations are: 'OptionTypes', 'Terms','Taxonomies'
+        // Meta Data:
+        //  Assets: has is_active
+        //  Fields: has a value
+        //  Relations: has a type
+        $related_indices = array('Assets','Fields','Relations');
         foreach($related_indices as $k) {
             if (isset($scriptProperties[$k])) $scriptProperties[$k] = $Obj->indexedToRecordset($scriptProperties[$k]);
         }

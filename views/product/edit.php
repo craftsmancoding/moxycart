@@ -18,9 +18,21 @@ function remove_relation(product_id) {
 }
 
 /**
- * Auto-complete
+ * jQuery(document).ready(function()
  */
-jQuery(function() {
+function edit_init() {
+    populate_form(product);
+	jQuery('#moxytab').tabify();
+	jQuery('.datepicker').datepicker();
+	jQuery("#product_images").sortable();
+    jQuery("#product_images").disableSelection();
+    jQuery(".sortable").sortable({
+        connectWith: ".connectedSortable",
+    }).disableSelection();
+
+
+    // ProductRelation Autocomplete
+    // customizations here for compatibility 
     jQuery('#search_products').autocomplete({
         source: (function() {
             var xhr;
@@ -47,20 +59,49 @@ jQuery(function() {
             }
         })(),
         select: function(event, ui) {
-            //console.log(ui.item);
-            // Append to #product_relations
-            //var tpl = jQuery('#related_product_template').val();
             var content = parse_tpl('related_product_template',ui.item)
             jQuery('#product_relations').append(content);
             jQuery('#search_products').val('');
             event.preventDefault(); // clear out text
         }
-    });        
-});
+    }); 
 
+    // Trash Can
+	jQuery( "#trash-can" ).droppable({
+		
+		over: function( event, ui ) {
+			$(this).addClass('over-trash');
+		},
+		out: function(event, ui) {
+			var id = $(ui.draggable).attr('id');
+			$(this).removeClass('over-trash');
+		},
+	    drop: function( event, ui ) {
+	      	var id = jQuery(ui.draggable).attr('id');
+	      	console.log(ui);
+
+	      	//var url = connector_url + 'image_save';
+	      	var asset_id = $(ui.draggable).find('a').data('asset_id');
+	      	console.log(asset_id);
+	      	
+	      	if (confirm("Are you Sure you want to Delete this Image?")) {
+	      		jQuery(this).removeClass('over-trash');
+	      		mapi('asset','delete',{"asset_id":asset_id});
+		    }
+		    jQuery(this).removeClass('over-trash');
+
+		    return false;
+	    }
+    });
+           
+};
+
+/**
+ * TODO: update API to get field form
+ */
 function get_field_instance() {
     var field_id = jQuery('#field_selector').val();
-    console.log(field_id);
+    console.debug('[get_field_instance] field_id %s',field_id);
     var url = controller_url('field','row');    
     jQuery.get(url, {field_id:field_id}, function( response ) {
         jQuery('#no_specs_msg').hide();
@@ -69,14 +110,16 @@ function get_field_instance() {
 }
 
 function save_product() {
-
     console.log('product_update');
-
     var values = jQuery('#product_form').serialize();
-
     mapi('product','edit',values);
-
 }
+
+// Asset Trash can
+//function drag_drop_delete() {
+
+//}
+
 
 </script>
 
@@ -119,7 +162,7 @@ function save_product() {
 <script id="product_image" type="text/x-handlebars-template">
 <li class="li_product_image" id="product-image-{{asset_id}}">
 	<div class="img-info-wrap">
-	    <a class="edit-img" href="#{{asset_id}}" data-image_id="{{asset_id}}" data-toggle="modal" data-target="#update-image">
+	    <a class="edit-img" href="#{{asset_id}}" data-asset_id="{{asset_id}}" data-toggle="modal" data-target="#update-image">
 		  <img src="{{thumbnail_url}}?rand=<?php print uniqid(); ?>" alt="{{alt}}" width="" />
 		</a>
 	    <input type="hidden" name="Assets[asset_id][]" value="{{asset_id}}" />
@@ -281,7 +324,7 @@ function save_product() {
                                      <p>Allow your visitors to select variations in your product.</p>
                                     <?php
                                     print \Formbuilder\Form::multicheck('OptionTypes', $data['OptionTypes'], $data['product_option_types'],array(),'[+error+]
-            <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> <label for="">[+option+]</label><br/>');
+            <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> [+option+]<br/>');
                                     ?>
                                 </div>
                                
@@ -360,7 +403,8 @@ function save_product() {
                                     <input type="hidden" name="Fields[field_id][]" value="<?php print $f->get('field_id'); ?>" />
                                 <?php
                                     $type = $f->Field->get('type');
-                                    print \Formbuilder\Form::$type('Fields[value][]');
+                                    $value = $f->get('value'); 
+                                    print \Formbuilder\Form::$type('Fields[value][]',$value);
                                 ?>
                                 </td>
                                 <td><?php print $f->Field->get('description'); ?></td>
@@ -481,11 +525,13 @@ function save_product() {
     
 	<div id="assets_tab" class="content">	
         <div class="dropzone-wrap" id="image_upload">
+
         	<ul class="clearfix" id="product_images">
-                <?php foreach ($data['product_assets'] as $a): ?>
+                <?php 
+                foreach ($data['product_assets'] as $a): ?>
                     <li class="li_product_image" id="product-image-<?php print $a->get('asset_id'); ?>">
                     	<div class="img-info-wrap">
-                    	    <a class="edit-img" href="#<?php print $a->get('asset_id'); ?>" data-image_id="<?php print $a->get('asset_id'); ?>" data-toggle="modal" data-target="#update-image">
+                    	    <a class="edit-img" href="#<?php print $a->get('asset_id'); ?>" data-asset_id="<?php print $a->get('asset_id'); ?>" data-toggle="modal" data-target="#update-image">
                     		  <img src="<?php print $a->Asset->get('thumbnail_url'); ?>?rand=<?php print uniqid(); ?>" alt="<?php print $a->Asset->get('alt'); ?>" width="" />
                     		</a>
                     	    <input type="hidden" name="Assets[asset_id][]" value="<?php print $a->get('asset_id'); ?>" />

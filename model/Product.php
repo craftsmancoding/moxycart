@@ -90,25 +90,32 @@ class Product extends BaseModel {
     //! Assets
     //------------------------------------------------------------------------------
     /**
-     * Add assets to the current product.
-     * Exeptions are thrown if the product ids do not exist.
+     * Add/update assets to the current product.
+     * Exeptions are thrown if the product ids or asset_ids do not exist.
      *
-     * @param array of asset_id's
+     * Array(
+     *      Array('asset_id' => 123, 'group'=>'Something','is_active'=>1),
+     * )
+     *
+     * @param array of ProductAsset records (w/o the product_id b/c it's inferred)
      */
     public function addAssets(array $array) {
         $this_product_id = $this->_verifyExisting();
-        foreach ($array as $id) {
-            $props = array(
-                'product_id'=> $this_product_id, 
-                'asset_id'=> $id
-            );
-            if (!$PA = $this->modx->getObject('ProductAsset', $props)) {
-                if (!$A = $this->modx->getObject('Asset', $id)) {
-                    throw new \Exception('Invalid asset ID '.$id);    
+        $i = 0;
+        foreach ($array as $r) {
+            if (!$PA = $this->modx->getObject('ProductAsset', array('product_id'=>$this_product_id,'asset_id'=>$r['asset_id']))) {
+                if (!$A = $this->modx->getObject('Asset', $r['asset_id'])) {
+                    throw new \Exception('Invalid asset ID '.$r['asset_id']);    
                 }
-                $PA = $this->modx->newObject('ProductAsset', $props);
-                $PA->save();
+                $PA = $this->modx->newObject('ProductAsset');
+                $PA->set('product_id', $this_product_id);
             }
+            $PA->fromArray($r);
+            $PA->set('seq',$i);
+            if (!$PA->save()) {
+                $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Error Saving ProductAsset product_id:'.$this_product_id .' asset_id:'.$r['asset_id'],'',__CLASS__,__FUNCTION__,__LINE__); 
+            }
+            $i++;
         }
         return true;
     }
@@ -142,50 +149,41 @@ class Product extends BaseModel {
      *
      * @param array $dictate'd asset_id's
      */
-    public function dictateAssets(array $dictate) {
+    public function dictateAssets(array $data) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating assets: '.print_r($data,true),'',__CLASS__,__FILE__,__LINE__);
         $this_product_id = $this->_verifyExisting();
         
-        $props = array(
-            'product_id'=> $this_product_id, 
-            'type' => $type
-        );
-        
-        // Array of asset_id's that are already defined
-        $existing = array();
-        if($ExistingColl = $this->modx->getObject('ProductAsset', $props)) {
-            $existing[] = $ExistingColl->get('asset_id');   
+        // Get the ids of the ones we are dictating
+        $dictate = array();
+        foreach ($data as $r) {
+            if (!isset($r['asset_id'])) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Missing asset_id','',__FUNCTION__,__FILE__,__LINE__);
+                return false;
+            }
+            $dictate[] = $r['asset_id'];
         }
+        
+        // Get the existing assets
+        $existing = array();
+        if($Col = $this->modx->getIterator('ProductAsset', array('product_id'=>$this_product_id))) {
+            foreach ($Col as $c) {
+                 $existing[] = $c->get('asset_id');
+             }
+        }        
         
         $to_remove = array_diff($existing,$dictate);
         $to_add = array_diff($dictate,$existing);
 
-        $this->removeAssets($to_remove,$type);
-        $this->addAssets($to_add,$type);
-        $this->orderAssets($dictate);
-        
-        return true;
-    }
-    /**
-     * Adjust the seq into ascending order for the given asset_ids
-     *
-     * @param array $dictate'd asset_id's
-     * @param string $type name of the type of relation, used for grouping.          
-     */    
-    public function orderAssets(array $array) {
-        $this_product_id = $this->_verifyExisting();
-        
-        $seq = 0;
-        foreach ($array as $asset_id) {
-            $props = array(
-                'product_id'=> $this_product_id, 
-                'asset_id'=> $asset_id,
-            );
-            if ($PR = $this->modx->getObject('ProductAsset', $props)) {
-                $PR->set('seq',$seq);
-                $PR->save();
-                $seq++;
-            }
+        // Get dictate data
+        $add_data = array();
+        foreach ($data as $r) {
+            if (!in_array($r['asset_id'], $to_remove)) {
+                $add_data[] = $r;
+            } 
         }
+
+        $this->removeAssets($to_remove);
+        $this->addAssets($add_data); // also updates
         
         return true;
     }
@@ -204,7 +202,7 @@ class Product extends BaseModel {
      *       'type' => 'related',   (optional)
      *   )
      * )
-     * @param array $data
+     * @param array $data array of ProductRelation records (minus the product_id b/c it's inferred)
      */
     public function addRelations(array $array) {
         $this_product_id = $this->_verifyExisting();
@@ -272,7 +270,7 @@ class Product extends BaseModel {
      * @param string $type name of the type of relation, used for grouping.          
      */
     public function dictateRelations(array $data) {
-        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating relations: '.implode(',',$data),'',__CLASS__,__FILE__,__LINE__);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating relations: '.print_r($data,true),'',__CLASS__,__FILE__,__LINE__);
         $this_product_id = $this->_verifyExisting();
         
         $props = array(
@@ -316,21 +314,6 @@ class Product extends BaseModel {
             $PR = $this->modx->getObject('ProductRelation', $id);
             $PR->remove();
         }
-/*
-        
-        
-        
-        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Existing relations for product_id '.$this_product_id.': '.implode(',',$existing),'',__CLASS__,__FILE__,__LINE__);        
-        $to_remove = array_diff($existing,$dictate);
-        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Product relations to be removed from product_id '.$this_product_id.': '.implode(',',$to_remove),'',__CLASS__,__FILE__,__LINE__);
-        $to_add = array_diff($dictate,$existing);
-        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Product relations to be added to product_id '.$this_product_id.': '.implode(',',$to_add),'',__CLASS__,__FILE__,__LINE__);
-        $this->removeRelations($to_remove,$type);
-        $this->addRelations($to_add,$type);
-        $this->save();
-        $this->orderRelations($dictate);
-*/
-        
         return true;
     }
     /**
@@ -862,10 +845,10 @@ class Product extends BaseModel {
         $product_id = $this->get('product_id');
         if (isset($data['Assets'])) $this->dictateAssets($data['Assets']);
         if (isset($data['Fields'])) $this->dictateFields($data['Fields']);
-        if (isset($data['OptionTypes'])) $this->dictateAssets($data['OptionTypes']);
-        if (isset($data['Relations'])) $this->dictateAssets($data['Relations']);
-        if (isset($data['Taxonomies'])) $this->dictateAssets($data['Taxonomies']);
-        if (isset($data['Terms'])) $this->dictateAssets($data['Terms']);
+        if (isset($data['OptionTypes'])) $this->dictateOptionTypes($data['OptionTypes']);
+        if (isset($data['Relations'])) $this->dictateRelations($data['Relations']);
+        if (isset($data['Taxonomies'])) $this->dictateTaxnomies($data['Taxonomies']);
+        if (isset($data['Terms'])) $this->dictateTerms($data['Terms']);
         
         return true;
     }

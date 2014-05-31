@@ -106,7 +106,7 @@ INIT = {
 		})
 	},
 
-	drag_drop_delete: function() {
+//	drag_drop_delete: function() {
 
 	/*	$( "#product_images" ).sortable({
 		  activate: function( event, ui ) {
@@ -116,6 +116,7 @@ INIT = {
 		  	$('#trash-can').hide();
 		  }
 		});*/
+/*
 		$( "#trash-can" ).droppable({
 			
 			over: function( event, ui ) {
@@ -148,16 +149,18 @@ INIT = {
 		    }
 
 	    });
-	}
+*/
+//	}
 
     
 }
 
 jQuery(function() {
 	// INIT.update_review();
-	INIT.fill_form_fields();
+	//INIT.fill_form_fields();
 	INIT.edit_image_modal();
-	INIT.drag_drop_delete();
+	//INIT.drag_drop_delete();
+/*
 	jQuery('#moxytab').tabify();
 	jQuery('.datepicker').datepicker();
 	jQuery("#product_images").sortable();
@@ -168,6 +171,7 @@ jQuery(function() {
             connectWith: ".connectedSortable",
         }).disableSelection();
     });  
+*/
 
 /*
 	jQuery(document).on('submit','#product_update',function(){     

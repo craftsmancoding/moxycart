@@ -166,7 +166,8 @@ class PageController extends BaseController {
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');
+
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.$result->toJson().';            
@@ -174,29 +175,28 @@ class PageController extends BaseController {
             var assets_url = "'.$this->config['assets_url'].'"; 
     
             jQuery(document).ready(function() {
-                    var myDropzone = new Dropzone("div#image_upload", {url: moxycart.controller_url+"&class=asset&method=create&product_id='.$product_id.'"});
-                    
-                    // Refresh the list on success (append new tile to end)
-                    myDropzone.on("success", function(file,response) {
-    
-                        console.log(response);
-                        response = jQuery.parseJSON(response);
-                        console.log(response);
-                        if (response.status == "success") {
-                        
-                            var data = parse_tpl("product_image",response.data.fields);
-                            jQuery("#product_images").append(data);
-                            jQuery(".dz-preview").remove();
-                       } 
-                       else {                           
-                            $(".dz-success-mark").hide();
-                            $(".dz-error-mark").show();
-                            $(".moxy-msg").show();
-                            $("#moxy-result").html("Failed");
-                            $("#moxy-result-msg").html(response.msg);
-                            $(".moxy-msg").delay(3200).fadeOut(400);
-                       }
-                    });
+                var myDropzone = new Dropzone("div#image_upload", {url: controller_url("asset","create")});
+                
+                // Refresh the list on success (append new tile to end)
+                myDropzone.on("success", function(file,response) {
+
+                    response = jQuery.parseJSON(response);
+                    console.log(response);
+                    if (response.status == "success") {
+                        var data = parse_tpl("product_image",response.data.fields);
+                        jQuery("#product_images").append(data);
+                        jQuery(".dz-preview").remove();
+                   } 
+                   else {                           
+                        $(".dz-success-mark").hide();
+                        $(".dz-error-mark").show();
+                        $(".moxy-msg").show();
+                        $("#moxy-result").html("Failed");
+                        $("#moxy-result-msg").html(response.data.msg);
+                        $(".moxy-msg").delay(3200).fadeOut(400);
+                   }
+                });
+                edit_init();
             });
     		</script>');
         if ($this->modx->getOption('use_editor')) {
@@ -211,17 +211,20 @@ class PageController extends BaseController {
         // assets
         $c = $this->modx->newQuery('ProductAsset');
         $c->where(array('ProductAsset.product_id' => $product_id));
-        $PA = $this->modx->getCollectionGraph('ProductAsset','{"Asset":{}}',array('product_id'=> $product_id));
-        $this->modx->setPlaceholder('product_assets',$PA);
+        $c->sortby('ProductAsset.seq','ASC');
+        $PA = $this->modx->getCollectionGraph('ProductAsset','{"Asset":{}}',$c);
+        $this->setPlaceholder('product_assets',$PA);
         
         // product_fields
         $c = $this->modx->newQuery('ProductField');
         $c->where(array('ProductField.product_id' => $product_id));
-        $PF = $this->modx->getCollectionGraph('ProductField','{"Field":{}}',array('product_id'=> $product_id));
+        $PF = $this->modx->getCollectionGraph('ProductField','{"Field":{}}',$c);
         $this->setPlaceholder('product_fields',$PF);
 
         
         // fields (dropdown)
+        $c = $this->modx->newQuery('Field');
+        $c->sortby('seq','ASC');
         $Fs = $this->modx->getCollection('Field'); 
         $fields = array();
         foreach ($Fs as $f) {
@@ -237,9 +240,10 @@ class PageController extends BaseController {
         }
         $this->setPlaceholder('stores',$stores);
         
-        // related_products (multicheck)
+        // related_products
         $c = $this->modx->newQuery('ProductRelation');
         $c->where(array('ProductRelation.product_id' => $product_id));
+        $c->sortby('ProductRelation.seq','ASC');
         $PR = $this->modx->getCollectionGraph('ProductRelation','{"Relation":{}}',array('product_id'=> $product_id));
         $this->setPlaceholder('related_products',$PR);
         $PR = new ProductRelation($this->modx);
@@ -259,7 +263,10 @@ class PageController extends BaseController {
         
         // product_option_types
         $product_option_types = array();
-        $POTs = $this->modx->getCollection('ProductOptionType', array('product_id'=>$product_id));
+        $c = $this->modx->newQuery('ProductOptionType');
+        $c->where(array('product_id' => $product_id));
+        $c->sortby('seq','ASC');        
+        $POTs = $this->modx->getCollection('ProductOptionType', $c);
         foreach ($POTs as $p) {
             $product_option_types[] = $p->get('otype_id');
         }
@@ -275,7 +282,7 @@ class PageController extends BaseController {
         
         // types (dropdown -- product types)
         $this->setPlaceholder('types',$P->getTypes());
-        
+
         return $this->fetchTemplate('product/edit.php');
     }
 

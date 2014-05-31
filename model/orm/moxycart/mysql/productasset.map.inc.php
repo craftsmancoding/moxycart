@@ -9,6 +9,7 @@ $xpdo_meta_map['ProductAsset']= array (
     'product_id' => NULL,
     'asset_id' => NULL,
     'group' => NULL,
+    'is_active' => 1,
     'seq' => NULL,
   ),
   'fieldMeta' => 
@@ -33,6 +34,15 @@ $xpdo_meta_map['ProductAsset']= array (
       'precision' => '32',
       'phptype' => 'string',
       'null' => true,
+    ),
+    'is_active' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'attributes' => 'unsigned',
+      'phptype' => 'boolean',
+      'null' => false,
+      'default' => 1,
     ),
     'seq' => 
     array (
