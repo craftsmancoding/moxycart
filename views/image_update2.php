@@ -94,6 +94,7 @@
 	     * Callback function ref'd by jcrop
 	     * this sets values in hidden form fields
 	     * so we know how to handle the cropping action.
+	     * See crop() and jQuery('#image_update_form').serialize()
 	     */
 	    function set_coords(c) {
 	    	jQuery('#x').val(c.x);

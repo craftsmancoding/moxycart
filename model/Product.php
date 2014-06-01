@@ -115,6 +115,7 @@ class Product extends BaseModel {
             if (!$PA->save()) {
                 $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Error Saving ProductAsset product_id:'.$this_product_id .' asset_id:'.$r['asset_id'],'',__CLASS__,__FUNCTION__,__LINE__); 
             }
+            $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Added asset: '.print_r($PA->toArray(),true),'',__CLASS__,__FILE__,__LINE__);
             $i++;
         }
         return true;
@@ -716,8 +717,8 @@ class Product extends BaseModel {
         $to_remove = array_diff($existing,$dictate);
         $to_add = array_diff($dictate,$existing);
 
-        $this->removeOptionTypes($to_remove,$type);
-        $this->addOptionTypes($to_add,$type);
+        $this->removeOptionTypes($to_remove);
+        $this->addOptionTypes($to_add);
         
         return true;
     

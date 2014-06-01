@@ -1,7 +1,24 @@
 <?php
 /**
  * Image
- * For image manipulation
+ * Basic functions for image manipulation with a simple PHP install (no Imagemagik required).
+ * 
+ * Thumbnail calc:
+ *      Original  W:H ratio = x
+ *      Thumbnail W:H ratio = y
+ *      if (x > y) scale to height and crop the width
+ *      if (x < y) scale to width and crop the height
+ *      if (x = y) scale only
+ *
+ * TODO:
+ *      scale2h : scale image to desired height, preserving aspect ratio.
+ *      scale2w : scale image to desired width, preserving aspect ratio.
+ *      rotateCW : rotate an image clockwise in 90-degree increments.
+ *      rotateCCW : rotate an imagae counter-clockwise in 90-degree increments.
+ *      flipH : flip an image horizontally so left becomes right, right becomes left
+ *      flipV : flip an image vertically so top becomes bottom, bottom becomes top
+ *      watermark : adds a watermark image to an image
+ *      textmark : adds text to an image as a watermark
  */
 namespace Moxycart;
 class Image {

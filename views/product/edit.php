@@ -1,5 +1,7 @@
 <?php
 /*
+// WTF? Stuff doesn't load correctly if I load it here (?!?)
+
 $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
 $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
 $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
@@ -79,6 +81,8 @@ function remove_relation(product_id) {
 function product_init() {
     populate_form(product);
 	jQuery('#moxytab').tabify();
+	// jQuery('.datepicker').datepicker("setValue", new Date()); // <-- always writes current date
+    // jQuery('.datepicker').datepicker(); // <-- shows "-001-11-30 00:00:00" for the default date
 	jQuery('.datepicker').datepicker();
 	jQuery("#product_images").sortable();
     jQuery("#product_images").disableSelection();
@@ -158,7 +162,8 @@ function product_init() {
 	      	var id = jQuery(ui.draggable).attr('id');
 
 	      	//var url = connector_url + 'image_save';
-	      	var asset_id = $(ui.draggable).find('a').data('asset_id');	      	
+	      	//var asset_id = $(ui.draggable).find('a').data('asset_id');	      	
+	      	var asset_id = jQuery(ui.draggable).find('input.asset_asset_id').val();	      
 	      	if (confirm("Are you Sure you want to Delete this Image?")) {
 	      		jQuery(this).removeClass('over-trash');
 	      		mapi('asset','delete',{"asset_id":asset_id});
@@ -193,7 +198,39 @@ function product_init() {
             "Add New Field": function() {
                 $( this ).dialog( "close" );
             },
-            "Attach": function() {
+            "Attach Selected": function() {
+                //Fields[field_id][]
+                var field_ids = [];
+                jQuery('#custom_fields_form input:checked').each(function() {
+                    field_ids.push(jQuery(this).attr('value'));
+                });
+                jQuery('#product_fields').html(''); // Blank it out
+                console.debug('Attaching field ids: ', field_ids);
+                var field_ids_cnt = field_ids.length;
+                for (var i = 0; i < field_ids_cnt; i++) {
+                    var field_id = field_ids[i];
+                    // Had to customize mapi...
+                    //mapi('field','generate',{"field_id":field_id,"name":"Fields[field_id][]"});
+                    var url = controller_url('field','generate');    
+                    jQuery.post(url, {"field_id":field_id,"name":"Fields[field_id][]"}, function( response ) {
+                        console.debug(response);
+                        if(response.status == 'fail') {
+                            console.log(response.data.errors);
+                            var msg = 'Error:<br/>';
+                            for(var fieldname in response.data.errors) {
+                                msg = msg + response.data.errors[fieldname] + '<br/>';
+                            }
+                            return show_error(msg); 
+                        }
+                        else if (response.status == 'success') {
+                           jQuery('#product_fields').append(response.data); 
+                        }
+                    },'json')
+                    .fail(function() {
+                        console.error('[mapi] post to %s failed', url);
+                    });
+                }
+                
                 $( this ).dialog( "close" );
             },
             "Done": function() {
@@ -209,18 +246,39 @@ function product_init() {
         width: 800,
         modal: true,
         open: function(event, ui) {
+            // Sent the asset_id when the link is clicked, e.g. via
+            // onclick="javascript:jQuery('#asset_edit_form').data('asset_id', 123).dialog('open');"
             var asset_id = $("#asset_edit_form").data('asset_id')
             //console.log('opened...'+ asset_id);
             console.debug(product.RelData.Asset[asset_id]);
-            
-            jQuery('#asset_title').val(product.RelData.Asset[asset_id].title);
-            jQuery('#asset_alt').val(product.RelData.Asset[asset_id].alt);
+            // Write all values temporarily to the modal
+            jQuery('#modal_asset_title').val(product.RelData.Asset[asset_id].title);
+            jQuery('#modal_asset_alt').val(product.RelData.Asset[asset_id].alt);
+            jQuery('#modal_asset_width').text(product.RelData.Asset[asset_id].width);
+            jQuery('#modal_asset_height').text(product.RelData.Asset[asset_id].height);
+            jQuery('#modal_asset_img').html('<img src="'+product.RelData.Asset[asset_id].url+'" />');
             if (product.RelData.Asset[asset_id].is_active == 1) {  
-                jQuery('#asset_is_active').prop('checked', true);
+                jQuery('#modal_asset_is_active').prop('checked', true);
             }
         },
         buttons: {
             "Save": function() {
+                // For meta-data specific to the *relation* (i.e. ProductAsset), write the values back to the form (ugh)
+                // For data specific to the *asset*, we have to fire off an Ajax request
+                var asset_id = $("#asset_edit_form").data('asset_id');
+                var title = jQuery('#modal_asset_title').val();
+                var alt = jQuery('#modal_asset_alt').val();
+                var is_active = jQuery('#modal_asset_is_active').val();
+                
+                // And back to the JSON (double-ouch)
+                product.RelData.Asset[asset_id].title = title;
+                product.RelData.Asset[asset_id].alt = alt;
+                product.RelData.Asset[asset_id].is_active = is_active;
+                jQuery('#asset_is_active_'+asset_id).val(is_active);
+
+                // This data here is specific to the Asset
+                mapi('asset','edit',{"asset_id":asset_id,"title":title,"alt":alt});
+                
                 $( this ).dialog( "close" );
             },
             "Cancel": function() {
@@ -285,33 +343,16 @@ function select_thumb(asset_id,url) {
 </tr>
 </script>
 
-<script id="product_field_template" type="text/x-handlebars-template">
-<tr>
-    <td>{{label}} ({{slug}})</td>
-    <td>
-        <input type="hidden" name="Fields[field_id][]" value="{{field_id}}" />
-    <?php
-        print \Formbuilder\Form::text('Fields[value][]');
-    ?>
-    </td>
-    <td>{{description}}</td>
-    <td><span class="btn" onclick="javascript:remove_me.call(this,event,'tr');">Remove</span></td>
-</tr>
-</script>
-
 <script id="product_image" type="text/x-handlebars-template">
 <li class="li_product_image" id="product-asset-{{asset_id}}">
-	<div class="img-info-wrap">
-	    <a class="edit-img" href="#{{asset_id}}" data-asset_id="{{asset_id}}" data-toggle="modal" data-target="#update-image">
-		  <img src="{{thumbnail_url}}?rand=<?php print uniqid(); ?>" alt="{{alt}}" width="" />
-		</a>
-	    <input type="hidden" name="Assets[asset_id][]" value="{{asset_id}}" />
-	    <!-- Button trigger modal -->
-		
-		<!-- Modal-->
+	<div class="img-info-wrap">  
+        <img src="{{thumbnail_url}}?rand=<?php print uniqid(); ?>" alt="{{alt}}" width="" />
+	    <input type="hidden" name="Assets[asset_id][]" value="{{asset_id}}" onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').dialog('open');" style="cursor:pointer;"/>
+        <input type="hidden" id="asset_asset_id_{{asset_id}}" name="Assets[asset_id][]" class="asset_asset_id" value="{{asset_id}}" />
 	</div>
 </li>
 </script>
+
 <div class="moxycart_canvas_inner clearfix">
     <h2 class="moxycart_cmp_heading pull-left">Edit Product: <?php print htmlentities($data['name']); ?></h2>
 
@@ -574,7 +615,7 @@ function select_thumb(asset_id,url) {
             foreach ($data['product_fields'] as $f) {
                 $field_ids[] = $f->get('field_id');
             }
-    		print \Formbuilder\Form::multicheck('Fields[field_id][]', $data['fields'],$field_ids);
+    		print \Formbuilder\Form::multicheck('', $data['fields'],$field_ids,array('id'=>'field_id'));
     		?>
 		</div>		
 
@@ -688,7 +729,7 @@ function select_thumb(asset_id,url) {
                     	    <!--a class="edit-img" href="#<?php print $a->get('asset_id'); ?>" data-asset_id="<?php print $a->get('asset_id'); ?>" data-toggle="modal" data-target="#update-image"-->
                     		  <img src="<?php print $a->Asset->get('thumbnail_url'); ?>?rand=<?php print uniqid(); ?>" alt="<?php print $a->Asset->get('alt'); ?>" width="" onclick="javascript:jQuery('#asset_edit_form').data('asset_id', <?php print $a->get('asset_id'); ?>).dialog('open');" style="cursor:pointer;"/>
                     		<!--/a-->
-                    	    <input type="hidden" name="Assets[asset_id][]" value="<?php print $a->get('asset_id'); ?>" />
+                    	    <input type="hidden" id="asset_asset_id_<?php print $a->get('asset_id'); ?>" class="asset_asset_id" name="Assets[asset_id][]" value="<?php print $a->get('asset_id'); ?>" />
                     	    <!-- Button trigger modal -->
                     		
                     		<!-- Modal-->
@@ -709,16 +750,17 @@ function select_thumb(asset_id,url) {
 
         <?php // <span class="btn btn-custom" onclick="javascript:jQuery('#asset_edit_form').dialog('open');">Show / Hide Fields</span> ?>
         
-		<?php /* ======== MODAL DIALOG BOX ======*/ ?>
+		<?php /* ======== ASSET MODAL DIALOG BOX ======*/ ?>
 		<div id="asset_edit_form" title="Edit Asset">
             <div id="asset_being_edited"></div>
-            <label for="asset_title">Title</label>
-            <input type="text" name="Assets[title][]" id="asset_title" value="" />
-            <label for="asset_alt">Alt</label>
-            <input type="text" name="Assets[alt][]" id="asset_alt" value="" />
-            <label for="asset_is_active">Is Active?</label>
-            <input type="hidden" name="Assets[is_active][]" value="0" />
-            <input type="checkbox" name="Assets[is_active][]" id="asset_is_active" value="1" /> Is Active?
+            <label for="modal_asset_title">Title</label>
+            <input type="text" id="modal_asset_title" value="" />
+            <label for="modal_asset_alt">Alt</label>
+            <input type="text" id="modal_asset_alt" value="" />
+            <label for="modal_asset_is_active">Is Active?</label>
+            <input type="checkbox" id="modal_asset_is_active" value="1" /> Is Active?
+            <p>Dimensions: <span id="modal_asset_width"></span> x <span id="modal_asset_height"></span></p>
+            <span id="modal_asset_img"></span>
 		</div>		
 
 

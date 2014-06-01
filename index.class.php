@@ -18,8 +18,29 @@
  *
  * See http://stackoverflow.com/questions/10941249/separate-rest-json-api-server-and-client 
  *
+ * FUTURE:
+ * Static pages. A manager page gets a JSON variable generated for it (from an API request)
+ * containing all the data it needs: e.g. a record (e.g. a Field record) or for a product, 
+ * it would include all related data in whatever detail the request requires. 
+ * 
+ * JSON data should be formatted in *exactly* the format that it should be 
+ * submitted in (garbage in, garbage out: no sleight of hand or restructuring of the JSON or twerking 
+ * by the indexedToRecordset() function after submission).
+ *
+ * The HTML page should include the appropriate Javascript to populate the form and format any records
+ * (e.g. using Handlebars). Dynamic editing of any parts of the data should not be concerned about 
+ * the _names_ of the HTML field elements: instead all manipulations should change the source JSON 
+ * directly, e.g. 
+ *      moxycart.product.asset[asset_id].title = "new title" 
+ *      instead of:
+ *      jQuery('#arbitrary_label_'+asset_id).val("new title")
+ *
+ * The trickiest part about this is handling the custom fields and the fact that they trigger a form element to 
+ * be generated.  It's like a snake eating its own tail...
+ *
  * JSON REST API
- * http://labs.omniti.com/labs/jsend
+ * 
+ * Responses follow jSend guidelines: http://labs.omniti.com/labs/jsend
  *
  * ROUTING:
  *
