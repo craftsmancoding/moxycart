@@ -46,6 +46,7 @@ INIT = {
 	edit_image_modal: function() {
 
 		$( document ).on( "click", "a.edit-img", function() {
+		  console.debug('edit_image_modal...');
 			var url_img_update = $(this).attr('href');
 			 $.ajax({
                     type: "GET",
@@ -67,6 +68,7 @@ INIT = {
 	},
 
 	multi_select_drag: function() {
+		console.debug('multi_select_drag...');
 		var selectedClass = 'selected',
         	clickDelay = 600,
 	        // click time (milliseconds)

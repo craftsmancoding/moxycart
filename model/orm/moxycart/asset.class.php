@@ -12,9 +12,15 @@ class Asset extends xPDOObject {
      *
      */
     public function get($k, $format = null, $formatTemplate= null) {
-        // Return the sale price if the product is on sale
-        if ($k=='thumbnail_url') {
-            $raw  = parent::get($k, $format, $formatTemplate);
+        $raw  = parent::get($k, $format, $formatTemplate);
+        if ($k=='url') {
+            return MODX_ASSETS_URL . $this->xpdo->getOption('moxycart.upload_dir').$raw;
+        }
+        elseif ($k=='path') {
+            return MODX_ASSETS_PATH . $this->xpdo->getOption('moxycart.upload_dir').$raw;    
+        }
+        elseif ($k=='thumbnail_url') {
+            
             // Fallback to placehold.it e.g. http://placehold.it/350x150&text=PDF
             if (empty($raw)) {
                 $ext = strtolower(strrchr($this->get('url'), '.'));
@@ -28,11 +34,10 @@ class Asset extends xPDOObject {
             }
 
             return MODX_ASSETS_URL . $this->xpdo->getOption('moxycart.upload_dir').$raw;
-            
         }
-        else {
-            return parent::get($k, $format, $formatTemplate);
-        }
+
+        return $raw;
+
     }
 
 }

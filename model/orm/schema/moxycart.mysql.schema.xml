@@ -121,7 +121,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <!-- parent is the main product: children represent variants in all permutations -->
         <composite alias="Parent" class="Product" local="parent_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Variant" class="Product" local="product_id" foreign="parent_id" cardinality="many" owner="local" />
-		<composite alias="OptionType" class="ProductOptionType" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+		<composite alias="OptionTypes" class="ProductOptionType" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Assets" class="ProductAsset" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Terms" class="ProductTerm" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Taxonomies" class="ProductTaxonomy" local="product_id" foreign="product_id" cardinality="many" owner="local" />

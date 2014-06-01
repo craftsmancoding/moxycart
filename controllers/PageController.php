@@ -146,16 +146,20 @@ class PageController extends BaseController {
     public function getProductEdit(array $scriptProperties = array()) {
 
         $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
-        $Obj = new Product($this->modx);    
+        $Obj = new Product($this->modx);
+//        $P = $this->modx->getObjectGraph('Product','{"Assets":{"Asset":{}},"OptionTypes":{"Type":{}},"Relations":{"Relation":{}}}',$product_id);  
         if (!$result = $Obj->find($product_id)) {
             return $this->sendError('Page not found.');
         }
+        $C = new ProductController($this->modx);
+        $full_product_data = $C->postView(array('product_id'=>$product_id),true);
         
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($result->toArray());
         $this->setPlaceholder('result',$result);
         $this->setPlaceholder('product_form_action', 'product_update');
 
+       
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
         $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
@@ -167,10 +171,10 @@ class PageController extends BaseController {
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
 
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
+        //$this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-    		var product = '.$result->toJson().';            
+    		var product = '.json_encode($full_product_data).';            
             var use_editor = "'.$this->modx->getOption('use_editor').'";
             var assets_url = "'.$this->config['assets_url'].'"; 
             // Document read stuff has to be in here
@@ -181,6 +185,7 @@ class PageController extends BaseController {
         if ($this->modx->getOption('use_editor')) {
             $this->_load_tinyMCE();
         }
+
         
         
         // thumbnail

@@ -148,6 +148,26 @@ class BaseController extends \modExtraManagerController {
         return true; // TODO
     }
 
+/*
+    // This seems to fail.  
+    public function loadCustomCssJs() {
+        $this->addCss($this->config['assets_url'] . 'css/mgr.css');
+        $this->addCss($this->config['assets_url'] . 'css/dropzone.css');
+        $this->addCss($this->config['assets_url'].'css/datepicker.css');
+        //$this->addCss('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css'); // doubleslash doesn't work for addCSS() ?
+        $this->addJavascript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
+        $this->addJavascript($this->config['assets_url'].'js/jquery-ui.js');
+        $this->addJavascript($this->config['assets_url'].'js/jquery.tabify.js');  
+        $this->addJavascript($this->config['assets_url'].'js/dropzone.js');
+        $this->addJavascript($this->config['assets_url'].'js/bootstrap.js');
+        $this->addJavascript($this->config['assets_url'].'js/multisortable.js');
+
+        $this->addJavascript($this->config['assets_url'].'js/script.js');        
+        $this->addJavascript($this->config['assets_url'].'js/handlebars.js');
+          
+    }
+*/
+
     /**
      * Override parent function. 
      * Override Smarty. I don't wants it. But BEWARE: the loadHeader and loadFooter bits require 
@@ -163,15 +183,19 @@ class BaseController extends \modExtraManagerController {
         if (substr($file,-4) == '.tpl') {
             return parent::fetchTemplate($file);
         }
-        
-//        $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
+        // WTF?  using regClientCSS here fails ONLY if you also use it in your view file. 
+        // Otherwise it works. W.T.F.?
+        //print $this->config['assets_url']; exit;
+/*
+        $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
         $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
         $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
-//        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.form.min.js');
+*/
+
 /*
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');

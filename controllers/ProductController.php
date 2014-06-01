@@ -8,7 +8,29 @@ namespace Moxycart;
 class ProductController extends APIController {
     public $model = 'Product';     
 
+    public function postView(array $scriptProperties = array(),$raw=false) {
+        $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
+        $Obj = new Product($this->modx);
+        if (!$P = $this->modx->getObjectGraph('Product','{"Assets":{"Asset":{}},"OptionTypes":{"Type":{}},"Relations":{"Relation":{}}}',$product_id)) {
+            return $this->sendFail('Product not found');
+        }
 
+        // Reindexing doesn't work in all cases (e.g. Relations reuse the keys)
+        // so we push related records onto the 'RelData' index, keyed off their primary key, e.g.
+        // $P['RelData']['Asset'][123]  stores record data for asset_id 123
+        $P1 = $P->toArray('',false,false,true);
+        foreach ($P1['Assets'] as $k => $v) {
+            $P1['RelData']['Asset'][ $v['Asset']['asset_id'] ] = $v['Asset'];
+        }
+        foreach ($P1['OptionTypes'] as $k => $v) {
+            $P1['RelData']['OptionType'][ $v['Type']['otype_id'] ] = $v['Type'];
+        }
+        foreach ($P1['Relations'] as $k => $v) {
+            $P1['RelData']['Relation'][ $v['Relation']['product_id'] ] = $v['Relation'];
+        }
+        if ($raw) return $P1;
+        return $this->sendSuccess($P1);
+    }
     /**
      *
 When submitted via a form, the format is something like this:

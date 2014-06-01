@@ -1,3 +1,35 @@
+<?php
+/*
+$this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
+$this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
+$this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
+$this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
+
+$this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
+$this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
+$this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
+
+$this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
+$this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
+$this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
+
+$this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
+$this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
+
+$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+	var product = '.$data['result']->toJson().';            
+    var use_editor = "'.$this->modx->getOption('use_editor').'";
+    var assets_url = "'.$this->config['assets_url'].'"; 
+    // Document read stuff has to be in here
+    jQuery(document).ready(function() {
+        product_init();
+    });
+	</script>');
+if ($this->modx->getOption('use_editor')) {
+    $this->_load_tinyMCE();
+}
+*/
+?>
 <style>
 /* http://jsfiddle.net/thirtydot/NTKK3/ */
 .asset_thumbnail_container {
@@ -149,8 +181,53 @@ function product_init() {
                 $( this ).dialog( "close" );
             }
         }   
-    });    
-           
+    });
+    
+    // Custom Field Selection Modal
+    jQuery( "#custom_fields_form" ).dialog({
+        autoOpen: false,
+        height: 330,
+        width: 500,
+        modal: true,
+        buttons: {
+            "Add New Field": function() {
+                $( this ).dialog( "close" );
+            },
+            "Attach": function() {
+                $( this ).dialog( "close" );
+            },
+            "Done": function() {
+                $( this ).dialog( "close" );
+            }
+        }   
+    });
+    
+    // Edit Asset Form
+    jQuery( "#asset_edit_form" ).dialog({
+        autoOpen: false,
+        height: 500,
+        width: 800,
+        modal: true,
+        open: function(event, ui) {
+            var asset_id = $("#asset_edit_form").data('asset_id')
+            //console.log('opened...'+ asset_id);
+            console.debug(product.RelData.Asset[asset_id]);
+            
+            jQuery('#asset_title').val(product.RelData.Asset[asset_id].title);
+            jQuery('#asset_alt').val(product.RelData.Asset[asset_id].alt);
+            if (product.RelData.Asset[asset_id].is_active == 1) {  
+                jQuery('#asset_is_active').prop('checked', true);
+            }
+        },
+        buttons: {
+            "Save": function() {
+                $( this ).dialog( "close" );
+            },
+            "Cancel": function() {
+                $( this ).dialog( "close" );
+            }
+        }   
+    });
 };
 
 /**
@@ -324,6 +401,7 @@ function select_thumb(asset_id,url) {
 								        width="<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>" 
 								        height="<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>"/>
 								</div>
+								<?php /* ======== MODAL DIALOG BOX ======*/ ?>
 								<div id="thumbnail_form" title="Select Product Thumbnail">
 								    <div class="asset_thumbnail_container">
 								        <?php foreach ($data['product_assets'] as $a): ?>
@@ -332,11 +410,11 @@ function select_thumb(asset_id,url) {
     								                alt="<?php print $a->Asset->get('alt'); ?>" 
     								                width="<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>" 
     								                height="<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>"
-    								                onclick="javascript:select_thumb(<?php print $a->get('asset_id'); ?>,'<?php print $a->Asset->get('thumbnail_url'); ?>');"/>
+    								                onclick="javascript:select_thumb(<?php print $a->get('asset_id'); ?>,'<?php print htmlentities($a->Asset->get('thumbnail_url')); ?>');"/>
 								            </div>
 								        <?php endforeach?>
 								    </div>
-
+                                    <!--span>URL: <?php print htmlentities($a->Asset->get('thumbnail_url')); ?></span-->
 								    
 								</div>
 								
@@ -469,44 +547,36 @@ function select_thumb(asset_id,url) {
 	<?php endif; //moxycart.enable_variations ?>
 	
 	<div id="fields_tab" class="content">
-			<table class="table table-bordered" id="product_specs">
-				<thead>
-					<tr>
-						<th>Field</th>
-						<th>Value</th>
-						<th>Description</th>
-						<th>&nbsp;</th>
-					</tr>
-				</thead>
-				<tbody id="fields">
-	                <?php if ($data['product_fields']) : ?>
-                        <?php foreach ($data['product_fields'] as $f):?>
-                            <tr>
-                                <td><?php printf ('%s (%s)',$f->Field->get('label'),$f->Field->get('slug')); ?></td>
-                                <td>
-                                    <input type="hidden" name="Fields[field_id][]" value="<?php print $f->get('field_id'); ?>" />
-                                <?php
-                                    $type = $f->Field->get('type');
-                                    $value = $f->get('value'); 
-                                    print \Formbuilder\Form::$type('Fields[value][]',$value);
-                                ?>
-                                </td>
-                                <td><?php print $f->Field->get('description'); ?></td>
-                                <td><span class="btn" onclick="javascript:remove_me.call(this,event,'tr');">Remove</span></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-				        <tr id="no_specs_msg"><td colspan="3">No Custom Fields Found</td></tr>
-					<?php endif; ?>
-				</tbody>
-			</table>
+			<div id="product_fields">
+	                <?php if (!$data['product_fields']) : ?>
+				        <span id="no_specs_msg">No Custom Fields Found</span>	                
+	                <?php endif; ?>
+	                
+                    <?php foreach ($data['product_fields'] as $f):?>
 
-        <?php
-		print \Formbuilder\Form::dropdown('', $data['fields'],'',array('id'=>'field_selector'));
-		?>
+                    <?php
+                        $type = $f->Field->get('type');
+                        $value = $f->get('value');
+                        $label = $f->Field->get('label');
+                        $description = $f->Field->get('description');
+                        print \Formbuilder\Form::$type('Fields[value][]',$value, array('label'=>$label,'description'=>$description));
+                    ?>
 
-		<button class="btn" onclick="javascript:get_field_instance(); return false;">Attach Field</button>
-		<a class="btn btn-custom" href="<?php print self::page('fieldcreate');  ?>">Add New Field</a>
+                    <?php endforeach; ?>
+            </div>
+            
+        <span class="btn btn-custom" onclick="javascript:jQuery('#custom_fields_form').dialog('open');">Show / Hide Fields</span>
+        
+		<?php /* ======== MODAL DIALOG BOX ======*/ ?>
+		<div id="custom_fields_form" title="Select Custom Fields">
+            <?php
+            $field_ids = array();
+            foreach ($data['product_fields'] as $f) {
+                $field_ids[] = $f->get('field_id');
+            }
+    		print \Formbuilder\Form::multicheck('Fields[field_id][]', $data['fields'],$field_ids);
+    		?>
+		</div>		
 
 	</div>
 	
@@ -528,7 +598,7 @@ function select_thumb(asset_id,url) {
                             </thead>
                             <tbody id="product_relations">
                                 <?php if (!$data['related_products']): ?>
-                                <tr id="related_products_msg"><td class="alert alert-danger" colspan="3"> <strong>Heads up!</strong> You have not defined any related products.</td></tr>
+                                <tr id="related_products_msg"><td class="alert alert-danger" colspan="3">You have not defined any related products yet.</td></tr>
                                 <?php else: 
                                     foreach($data['related_products'] as $pr):
                                 ?>      
@@ -615,9 +685,9 @@ function select_thumb(asset_id,url) {
                 foreach ($data['product_assets'] as $a): ?>
                     <li class="li_product_image" id="product-asset-<?php print $a->get('asset_id'); ?>">
                     	<div class="img-info-wrap">
-                    	    <a class="edit-img" href="#<?php print $a->get('asset_id'); ?>" data-asset_id="<?php print $a->get('asset_id'); ?>" data-toggle="modal" data-target="#update-image">
-                    		  <img src="<?php print $a->Asset->get('thumbnail_url'); ?>?rand=<?php print uniqid(); ?>" alt="<?php print $a->Asset->get('alt'); ?>" width="" />
-                    		</a>
+                    	    <!--a class="edit-img" href="#<?php print $a->get('asset_id'); ?>" data-asset_id="<?php print $a->get('asset_id'); ?>" data-toggle="modal" data-target="#update-image"-->
+                    		  <img src="<?php print $a->Asset->get('thumbnail_url'); ?>?rand=<?php print uniqid(); ?>" alt="<?php print $a->Asset->get('alt'); ?>" width="" onclick="javascript:jQuery('#asset_edit_form').data('asset_id', <?php print $a->get('asset_id'); ?>).dialog('open');" style="cursor:pointer;"/>
+                    		<!--/a-->
                     	    <input type="hidden" name="Assets[asset_id][]" value="<?php print $a->get('asset_id'); ?>" />
                     	    <!-- Button trigger modal -->
                     		
@@ -637,6 +707,21 @@ function select_thumb(asset_id,url) {
 
         </div>
 
+        <?php // <span class="btn btn-custom" onclick="javascript:jQuery('#asset_edit_form').dialog('open');">Show / Hide Fields</span> ?>
+        
+		<?php /* ======== MODAL DIALOG BOX ======*/ ?>
+		<div id="asset_edit_form" title="Edit Asset">
+            <div id="asset_being_edited"></div>
+            <label for="asset_title">Title</label>
+            <input type="text" name="Assets[title][]" id="asset_title" value="" />
+            <label for="asset_alt">Alt</label>
+            <input type="text" name="Assets[alt][]" id="asset_alt" value="" />
+            <label for="asset_is_active">Is Active?</label>
+            <input type="hidden" name="Assets[is_active][]" value="0" />
+            <input type="checkbox" name="Assets[is_active][]" id="asset_is_active" value="1" /> Is Active?
+		</div>		
+
+
 		<div class="modal fade" id="update-image">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -644,6 +729,9 @@ function select_thumb(asset_id,url) {
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title" id="myModalLabel">Update Image</h4>
 
+                    <?php
+                    // This spinner image shows while the image is being loaded from ajax.
+                    ?>
                     <div class="loader-ajax">
                         <img src="<?php print $this->config['assets_url']; ?>images/gif-load.gif" alt="">
                     </div>
