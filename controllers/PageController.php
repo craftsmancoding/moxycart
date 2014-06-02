@@ -665,6 +665,12 @@ class PageController extends BaseController {
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('main/storeproducts.php');
     }
+
+    public function getStoreCreate(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+        $this->scriptProperties['_nolayout'] = true;
+        return $this->fetchTemplate('main/storecreate.php');
+    }
     
     
     
