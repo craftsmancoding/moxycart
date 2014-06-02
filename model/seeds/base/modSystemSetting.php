@@ -96,7 +96,7 @@ return array(
     // For quick edit
     array(
         'key'  =>     'moxycart.product_columns',
-		'value'=>     '',
+		'value'=>     '{"name":"Name","sku":"SKU","category":"Foxycart Category"}',
 		'xtype'=>     'textfield',
 		'namespace' => 'moxycart',
 		'area' => 'moxycart:default'

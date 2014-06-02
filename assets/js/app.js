@@ -89,8 +89,8 @@ function paint(page,data,target) {
  * @param object data
  */
 function populate_form(data) {
-	$.each(data, function(name, val){
-        var $el = $('#'+name),
+	jQuery.each(data, function(name, val){
+        var $el = jQuery('#'+name),
             type = $el.attr('type');	    
         switch(type){
             case "checkbox":

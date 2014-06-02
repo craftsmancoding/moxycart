@@ -742,28 +742,31 @@ class Product extends BaseModel {
     
     /**
      * Inherit values from the parent store and set them onto the $this->modelObj object
-     * @param integer $store_id
+     * @param integer $store_id (optional)
      */
-    public function inheritFromStore($store_id) {
+    public function getDefaultValues($store_id=null) {
+        $this->template_id = $this->modx->getOption('default_template');
 
-        // Set defaults from the parent Store
-        if ($Store = $this->modx->getObject('Store', $store_id)) {
-            if ($properties = $Store->get('properties')) {
-                $this->template_id = (isset($properties['moxycart']['product_template'])) ? $properties['moxycart']['product_template'] : $this->modx->getOption('default_template');
-                $this->type = (isset($properties['moxycart']['product_type'])) ? $properties['moxycart']['product_type'] : 'regular';
-                // This is not persisted...wtf
-                $this->sort_order = (isset($properties['moxycart']['sort_order'])) ? $properties['moxycart']['sort_order'] : 'name';
-                $this->qty_alert = (isset($properties['moxycart']['qty_alert'])) ? $properties['moxycart']['qty_alert'] : 0;
-                $this->track_inventory = (isset($properties['moxycart']['track_inventory'])) ? $properties['moxycart']['track_inventory'] : 0;
-                // addOne
-                //$this->fields = (isset($properties['moxycart']['specs'])) ? $properties['moxycart']['specs'] : array();
-                //$this->taxonomies = (isset($properties['moxycart']['taxonomies'])) ? $properties['moxycart']['taxonomies'] : array();
+        // Inherit defaults from the parent Store
+        if ($store_id) {
+            $this->store_id = $store_id;
+            if ($Store = $this->modx->getObject('Store', $store_id)) {
+                if ($properties = $Store->get('properties')) {
+                    $this->template_id = (isset($properties['moxycart']['product_template'])) ? $properties['moxycart']['product_template'] : $this->modx->getOption('default_template');
+                    $this->type = (isset($properties['moxycart']['product_type'])) ? $properties['moxycart']['product_type'] : 'regular';
+                    // This is not persisted...wtf
+                    $this->sort_order = (isset($properties['moxycart']['sort_order'])) ? $properties['moxycart']['sort_order'] : 'name';
+                    $this->qty_alert = (isset($properties['moxycart']['qty_alert'])) ? $properties['moxycart']['qty_alert'] : 0;
+                    $this->track_inventory = (isset($properties['moxycart']['track_inventory'])) ? $properties['moxycart']['track_inventory'] : 0;
+                    // addOne
+                    //$this->fields = (isset($properties['moxycart']['specs'])) ? $properties['moxycart']['specs'] : array();
+                    //$this->taxonomies = (isset($properties['moxycart']['taxonomies'])) ? $properties['moxycart']['taxonomies'] : array();
+                }
             }
+            else {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR, 'store_id does not exist',__CLASS__);
+            } 
         }
-        else {
-            $this->modx->log(\modX::LOG_LEVEL_ERROR, 'store_id does not exist',__CLASS__);
-        } 
-        
     }
     
     /**

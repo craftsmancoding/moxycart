@@ -78,6 +78,19 @@ class PageController extends BaseController {
     }
 
     /**
+     *
+     *
+     */
+    private function _setProductColumns() {
+        $cols = $this->modx->getOption('moxycart.product_columns');
+        $cols = json_decode($columns,true);
+        if (empty($cols) || !is_array($cols)) {
+            $cols = array('name'=>'Name','sku'=>'SKU','category'=>'Foxycart Category');
+        }
+        $this->setPlaceholder('columns', $cols);    
+    }
+    
+    /**
      * This is the data that is needed just to make the forms work
      *
      */
@@ -182,11 +195,13 @@ class PageController extends BaseController {
         $Obj = new Product($this->modx);
         $results = $Obj->all($scriptProperties);
         $count = $Obj->count($scriptProperties);
-        $offset = (int) $this->modx->getOption($scriptProperties,'offset',0);
+        $offset = (int) $this->modx->getOption('offset',$scriptProperties,0);
+        $this->_setProductColumns();
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholder('results', $results);
         $this->setPlaceholder('count', $count);
         $this->setPlaceholder('offset', $offset);
+        $this->setPlaceholder('baseurl', $this->page('products'));
         
         return $this->fetchTemplate('main/products.php');
     }
@@ -208,9 +223,9 @@ class PageController extends BaseController {
         $this->setPlaceholder('product_form_action', 'product_create');
         $this->setPlaceholder('pagetitle', 'Create New Product');
         
-        if($store_id = (int) $this->modx->getOption('store_id',$scriptProperties)) {
-            $result->inheritFromStore($store_id);
-        }
+        $store_id = (int) $this->modx->getOption('store_id',$scriptProperties);
+        $result->getDefaultValues($store_id);
+
 
         // TODO:
         //$C = new ProductController($this->modx);
@@ -249,7 +264,7 @@ class PageController extends BaseController {
             var assets_url = "'.$this->config['assets_url'].'"; 
             // Document read stuff has to be in here
             jQuery(document).ready(function() {
-                console.log("wtf");
+                console.log("ready to init product.");
                 product_init();
             });
     		</script>');
@@ -398,7 +413,7 @@ class PageController extends BaseController {
         $scriptProperties['limit'] = 0;
         $results = $Obj->all($scriptProperties);
         $count = $Obj->count($scriptProperties);
-        $offset = (int) $this->modx->getOption($scriptProperties,'offset',0);
+        $offset = (int) $this->modx->getOption('offset',$scriptProperties,0);
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholder('results', $results);
         $this->setPlaceholder('count', $count);
@@ -631,15 +646,21 @@ class PageController extends BaseController {
     //! Store
     //------------------------------------------------------------------------------
     /**
-     * Called from the Store CRC 
+     * Called from the Store CRC: controllers/store/update.class.php and create.class.php 
      *
      * @param array $scriptProperties
      */
     public function getStoreProducts(array $scriptProperties = array()) {
+        $store_id = (int) $this->modx->getOption('store_id', $scriptProperties);
+        $this->setPlaceholder('store_id', $store_id);
         $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $this->scriptProperties['_nolayout'] = true;
         $Obj = new Product($this->modx);
         $results = $Obj->all($scriptProperties);
+        $count = $Obj->count($scriptProperties);
+        $offset = (int) $this->modx->getOption('offset',$scriptProperties,0);
+        $this->_setProductColumns();
+
         $this->setPlaceholder('results', $results);
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('main/storeproducts.php');

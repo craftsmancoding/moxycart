@@ -374,7 +374,11 @@ function select_thumb(asset_id,url) {
             endif;
             ?>
             <!--span class="button btn" onclick="javascript:paint('products');">&laquo; Back to Product List</span-->
-            <a href="<?php print static::page('products'); ?>" class="button btn">&laquo; Back to Product List</a>
+            <?php if ($data['store_id']) : ?>
+                <a href="<?php print MODX_MANAGER_URL .'?a=30&id='.$data['store_id']; ?>" class="button btn">&laquo; Back to Product List</a>            
+            <?php else: ?>
+                <a href="<?php print static::page('products'); ?>" class="button btn">&laquo; Back to Product List</a>
+            <?php endif; ?>
         </div>
 
 </div>

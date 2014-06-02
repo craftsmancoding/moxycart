@@ -1,29 +1,34 @@
 <div>
-    <a class="btn" href="<?php print static::url('product','create',array('store_id'=>$data['store_id'])); ?>">Add Product</a> 
-    <a class="btn" href="<?php print static::url('product','inventory',array('store_id'=>$data['store_id'])); ?>">Manage Inventory</a>
+    <a class="btn" href="<?php print static::url('page','productcreate',array('store_id'=>$data['store_id'])); ?>">Add Product</a> 
+    <!--a class="btn" href="<?php print static::url('page','inventory',array('store_id'=>$data['store_id'])); ?>">Manage Inventory</a-->
         
-    <form action="<?php print $data['baseurl']; ?>">
+    <!--form action="<?php print $data['baseurl']; ?>">
         <input type="text" name="name:LIKE" placeholder="Search..." />    
         <input type="submit" value="Filter"/>
-    </form>
+    </form-->
 </div>
 <?php if ($data['results']): ?>
 <table>
     <thead>
         <tr>
-            <th>Name</th>
-            <th>SKU</th>
-            <th>Foxycart Category</th>
+            <?php 
+            // Configurable columns
+            foreach($data['columns'] as $k => $v): ?>
+                <th><?php print $v; ?></th>
+            <?php endforeach; ?>
             <th>Action</th>
         </tr>
     </thead>
     <tbody>
 <?php foreach ($data['results'] as $r) :?>
     <tr>
-        <td><?php print $r->get('name'); ?></td>
-        <td><?php print $r->get('sku'); ?></td>
-        <td><?php print $r->get('category'); ?></td>
-        <td><a href="<?php print static::url('product','edit',array('product_id'=>$r->get('product_id'))); ?>" class="btn">Edit</a> <a href="<?php print static::url('product','preview',array('product_id'=>$r->get('product_id'))); ?>" class="btn">Preview</a></td>
+        <?php 
+        // Configurable columns
+        foreach($data['columns'] as $k => $v): ?>
+            <td><?php print $r->get($k); ?></td>
+        <?php endforeach; ?>
+        
+        <td><a href="<?php print static::url('page','productedit',array('product_id'=>$r->get('product_id'))); ?>" class="btn">Edit</a> <a href="<?php print static::url('page','productpreview',array('product_id'=>$r->get('product_id'))); ?>" class="btn">Preview</a></td>
     </tr>
 <?php endforeach; ?>
     </tbody>

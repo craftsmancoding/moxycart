@@ -79,7 +79,7 @@ function remove_relation(product_id) {
  * We can't put any jQuery(document).ready stuff in the open here.
  */
 function product_init() {
-    console.log('[init]');
+    console.log('[product_init]');
 
     populate_form(product);
 	jQuery('#moxytab').tabify();
@@ -308,6 +308,9 @@ function save_product(method) {
     console.log('[save_product] '+method);
     var values = jQuery('#product_form').serialize();
     mapi('product',method,values);
+    if (method == 'create') {
+    
+    }
 }
 
 function select_thumb(asset_id,url) {
@@ -374,7 +377,11 @@ function select_thumb(asset_id,url) {
             endif;
             ?>
             <!--span class="button btn" onclick="javascript:paint('products');">&laquo; Back to Product List</span-->
-            <a href="<?php print static::page('products'); ?>" class="button btn">&laquo; Back to Product List</a>
+            <?php if ($data['store_id']) : ?>
+                <a href="<?php print MODX_MANAGER_URL .'?a=30&id='.$data['store_id']; ?>" class="button btn">&laquo; Back to Product List</a>            
+            <?php else: ?>
+                <a href="<?php print static::page('products'); ?>" class="button btn">&laquo; Back to Product List</a>
+            <?php endif; ?>
         </div>
 
 </div>
@@ -481,6 +488,7 @@ function select_thumb(asset_id,url) {
 								</select>
 								<label for="template_id">Template</label>
 								<?php
+								print 'Template: '.$data['template_id']; 
 								print \Formbuilder\Form::dropdown('template_id', $data['templates'], $data['template_id']);
 								?>
 
