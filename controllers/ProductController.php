@@ -8,6 +8,10 @@ namespace Moxycart;
 class ProductController extends APIController {
     public $model = 'Product';     
 
+    /**
+     * FULL-on data for this object, including all relations.
+     * FUTURE: build this so it returns the same format needed to submit a new field.
+     */
     public function postView(array $scriptProperties = array(),$raw=false) {
         $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
         $Obj = new Product($this->modx);
@@ -115,7 +119,6 @@ Array
 
      */
     public function postEdit(array $scriptProperties = array()) {
-        $this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         // This doesn't work unless you add the namespace.
         // Oddly, if you write it out (w/o a var), it works. wtf?

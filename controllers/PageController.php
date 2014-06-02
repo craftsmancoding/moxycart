@@ -77,6 +77,58 @@ class PageController extends BaseController {
         </script>');
     }
 
+    /**
+     * This is the data that is needed just to make the forms work
+     *
+     */
+    private function _setUIdata() {
+        // UI DATA ------------------------------------------
+        // relation_types
+        $PR = new ProductRelation($this->modx);
+        $this->setPlaceholder('relation_types',$PR->getTypes());
+        // stores (dropdown)
+        $Ss = $this->modx->getCollection('Store',array('class_key'=>'Store'));
+        $stores = array();
+        foreach ($Ss as $s) {
+            $stores[ $s->get('id') ] = sprintf('%s (%s)',$s->get('pagetitle'),$s->get('id'));
+        }
+        $this->setPlaceholder('stores',$stores);
+        
+        // fields (dropdown)
+        $c = $this->modx->newQuery('Field');
+        $c->sortby('seq','ASC');
+        $Fs = $this->modx->getCollection('Field'); 
+        $fields = array();
+        foreach ($Fs as $f) {
+            $fields[ $f->get('field_id') ] = sprintf('%s (%s)',$f->get('label'),$f->get('slug'));
+        }
+        $this->setPlaceholder('fields',$fields);
+
+        // templates
+        $Ts = $this->modx->getCollection('modTemplate');
+        $templates = array();
+        foreach ($Ts as $t) {
+            $templates[$t->get('id')] = sprintf('%s (%s)',$t->get('templatename'),$t->get('id'));
+        }
+        $this->setPlaceholder('templates',$templates);
+        
+        
+        //OptionType
+        $OTs = $this->modx->getCollection('OptionType');
+        $OptionTypes = array();
+        foreach ($OTs as $o) {
+            $OptionTypes[$o->get('otype_id')] = sprintf('%s (%s)',$o->get('name'),$o->get('slug'));
+        }
+        $this->setPlaceholder('OptionTypes',$OptionTypes);
+
+        // categories (foxycart)
+        $this->setPlaceholder('categories',json_decode($this->modx->getOption('moxycart.categories'),true));
+
+        // types (dropdown -- product types)
+        $P = new Product($this->modx);
+        $this->setPlaceholder('types',$P->getTypes());        
+    
+    }
     
     //------------------------------------------------------------------------------
     //! Assets
@@ -87,6 +139,7 @@ class PageController extends BaseController {
      * @param array $scriptProperties
      */
     public function getAssets(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new Asset($this->modx);
         $results = $Obj->all($scriptProperties);
 //        return $results; exit;
@@ -96,6 +149,7 @@ class PageController extends BaseController {
     }
  
      public function getAssetCreate(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new Asset($this->modx);
         $results = $Obj->all($scriptProperties);
         $this->setPlaceholder('results', $results);
@@ -104,6 +158,7 @@ class PageController extends BaseController {
     }    
 
     public function getAssetEdit(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $asset_id = (int) $this->modx->getOption('asset_id',$scriptProperties);
         $Obj = new Asset($this->modx);    
         if (!$result = $Obj->find($asset_id)) {
@@ -123,6 +178,7 @@ class PageController extends BaseController {
      * @param array $scriptProperties
      */
     public function getProducts(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new Product($this->modx);
         $results = $Obj->all($scriptProperties);
         $count = $Obj->count($scriptProperties);
@@ -135,31 +191,96 @@ class PageController extends BaseController {
         return $this->fetchTemplate('main/products.php');
     }
  
-     public function getProductCreate(array $scriptProperties = array()) {
-        $Obj = new Product($this->modx);
-        $results = $Obj->all($scriptProperties);
-        $this->setPlaceholder('results', $results);
+    /**
+     * Evil copy of the product edit controller.
+     *
+     * UI Data:
+     *      templates
+     *      categories (foxycart)
+     *      Fields
+     *      OptionTypes
+     *      Types (product types)
+     */
+    public function getProductCreate(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+
+        $result = new Product($this->modx);
+        $this->setPlaceholder('product_form_action', 'product_create');
+        $this->setPlaceholder('pagetitle', 'Create New Product');
+        
+        if($store_id = (int) $this->modx->getOption('store_id',$scriptProperties)) {
+            $result->inheritFromStore($store_id);
+        }
+
+        // TODO:
+        //$C = new ProductController($this->modx);
+        //$full_product_data = $C->postView(array('product_id'=>$product_id),true);
+        $full_product_data = $result->toArray();
+
+        // Related Data
+        $this->setPlaceholder('thumbnail_url','');
+        $this->setPlaceholder('product_option_types',array());
+        $this->setPlaceholder('product_assets',array());
+        $this->setPlaceholder('product_fields',array());        
+        $this->setPlaceholder('related_products',array());
+        
+        $this->_setUIdata();
+        
         $this->setPlaceholders($scriptProperties);
-        return $this->fetchTemplate('product/create.php');
+        $this->setPlaceholders($result->toArray());
+        $this->setPlaceholder('result',$result);
+
+        $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
+        $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
+        $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
+        $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
+
+        //$this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
+    	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+    		var product = '.json_encode($full_product_data).';            
+            var use_editor = "'.$this->modx->getOption('use_editor').'";
+            var assets_url = "'.$this->config['assets_url'].'"; 
+            // Document read stuff has to be in here
+            jQuery(document).ready(function() {
+                console.log("wtf");
+                product_init();
+            });
+    		</script>');
+        if ($this->modx->getOption('use_editor')) {
+            $this->_load_tinyMCE();
+        }
+
+        return $this->fetchTemplate('product/edit.php');
+
     }    
 
+    /**
+     * HUGE.  Thin controller FAIL.  (hangs head in shame).
+     */
     public function getProductEdit(array $scriptProperties = array()) {
-
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
+        $this->setPlaceholder('product_form_action', 'product_update');
+
         $Obj = new Product($this->modx);
-//        $P = $this->modx->getObjectGraph('Product','{"Assets":{"Asset":{}},"OptionTypes":{"Type":{}},"Relations":{"Relation":{}}}',$product_id);  
         if (!$result = $Obj->find($product_id)) {
             return $this->sendError('Page not found.');
         }
+        $this->setPlaceholder('pagetitle', 'Edit Product: '.$result->get('name'));
         $C = new ProductController($this->modx);
         $full_product_data = $C->postView(array('product_id'=>$product_id),true);
         
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($result->toArray());
         $this->setPlaceholder('result',$result);
-        $this->setPlaceholder('product_form_action', 'product_update');
-
-       
+        
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
         $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
@@ -272,6 +393,7 @@ class PageController extends BaseController {
     }
 
      public function getProductInventory(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new Product($this->modx);
         $scriptProperties['limit'] = 0;
         $results = $Obj->all($scriptProperties);
@@ -290,6 +412,7 @@ class PageController extends BaseController {
      *
      */
     public function getProductPreview(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $product_id = (int) $this->modx->getOption('product_id', $scriptProperties);
         $Obj = new Product($this->modx);    
         if (!$result = $Obj->find($product_id)) {
@@ -308,6 +431,7 @@ class PageController extends BaseController {
      * @param array $scriptProperties
      */
     public function getFields(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new Field($this->modx);
         $results = $Obj->all($scriptProperties);
         //$debug = $Obj->all($scriptProperties,true);
@@ -322,6 +446,7 @@ class PageController extends BaseController {
     }
     
     public function getFieldCreate(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new Field($this->modx);
         $results = $Obj->all($scriptProperties);
         // We need these for pagination
@@ -337,6 +462,7 @@ class PageController extends BaseController {
      *
      */
     public function getFieldEdit(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $field_id = (int) $this->modx->getOption('field_id',$scriptProperties);
         $Obj = new Field($this->modx);    
         if (!$result = $Obj->find($field_id)) {
@@ -354,6 +480,7 @@ class PageController extends BaseController {
      * @param array $scriptProperties
      */
     public function getIndex(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         return $this->fetchTemplate('main/index.php');
     }
 
@@ -365,6 +492,7 @@ class PageController extends BaseController {
      * @param array $scriptProperties
      */
     public function getOptions(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new OptionType($this->modx);
         $results = $Obj->all($scriptProperties);
         // We need these for pagination
@@ -376,6 +504,7 @@ class PageController extends BaseController {
     }
 
     public function getOptionCreate(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new OptionType($this->modx);    
 
         $scriptProperties['baseurl'] = self::url('optiontype','create');
@@ -388,7 +517,8 @@ class PageController extends BaseController {
     /**
      * 
      */
-    public function getOptionEdit(array $scriptProperties = array()) {    
+    public function getOptionEdit(array $scriptProperties = array()) {   
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__); 
         $otype_id = (int) $this->modx->getOption('otype_id',$scriptProperties);
         $Obj = new OptionType($this->modx);    
         if (!$result = $Obj->find($otype_id)) {
@@ -405,6 +535,7 @@ class PageController extends BaseController {
      * 
      */
     public function getOptionTerms(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $otype_id = (int) $this->modx->getOption('otype_id',$scriptProperties);
         $Obj = new OptionType($this->modx);    
         if (!$result = $Obj->find($otype_id)) {
@@ -429,6 +560,7 @@ class PageController extends BaseController {
      * @param array $scriptProperties
      */
     public function getReports(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('main/reports.php');
     }
@@ -441,7 +573,7 @@ class PageController extends BaseController {
      * @param array $scriptProperties
      */
     public function getReviews(array $scriptProperties = array()) {
-
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new Review($this->modx);
         $results = $Obj->all($scriptProperties);
         // We need these for pagination
@@ -456,6 +588,7 @@ class PageController extends BaseController {
      *
      */
     public function getReviewEdit(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $review_id = (int) $this->modx->getOption('review_id',$scriptProperties);
         $Obj = new Review($this->modx);    
         if (!$result = $Obj->find($review_id)) {
@@ -472,6 +605,7 @@ class PageController extends BaseController {
      * 
      */
     public function getReviewCreate(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new Review($this->modx);    
         //$scriptProperties['baseurl'] = self::url('review','create');
         $this->setPlaceholders($scriptProperties);
@@ -488,7 +622,7 @@ class PageController extends BaseController {
      * @param array $scriptProperties
      */
     public function getSettings(array $scriptProperties = array()) {
-
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         return $this->fetchTemplate('main/settings.php');
      
     }
@@ -502,6 +636,7 @@ class PageController extends BaseController {
      * @param array $scriptProperties
      */
     public function getStoreProducts(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $this->scriptProperties['_nolayout'] = true;
         $Obj = new Product($this->modx);
         $results = $Obj->all($scriptProperties);
@@ -513,6 +648,7 @@ class PageController extends BaseController {
     
     
     public function getTest(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         return $this->fetchTemplate('main/test.php');
     }
     

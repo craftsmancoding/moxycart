@@ -183,6 +183,7 @@ class BaseController extends \modExtraManagerController {
         if (substr($file,-4) == '.tpl') {
             return parent::fetchTemplate($file);
         }
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, 'File: '.$file,'','BaseController::'.__FUNCTION__);
         // WTF?  using regClientCSS here fails ONLY if you also use it in your view file. 
         // Otherwise it works. W.T.F.?
         //print $this->config['assets_url']; exit;
@@ -213,28 +214,26 @@ class BaseController extends \modExtraManagerController {
         $path = $this->modx->getOption('moxycart.core_path','', MODX_CORE_PATH.'components/moxycart/').'views/';
 
         $data =& $this->getPlaceholders();
-        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'View: ' .$file.' data: '.print_r($data,true), __FUNCTION__,__LINE__);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'View: ' .$file.' data: '.print_r($data,true),'','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
 		if (!is_file($path.$file)) {
-    		$this->modx->log(\modX::LOG_LEVEL_ERROR, 'View file does not exist: ' .$path.$file, __FUNCTION__,__LINE__);
+    		$this->modx->log(\modX::LOG_LEVEL_ERROR, 'View file does not exist: '. $file, '','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
     		return $this->modx->lexicon('view_not_found', array('file'=> 'views/'.$file));		
 		}
-		// Load up our page
-        $content = '';
-        if (!isset($this->scriptProperties['_nolayout'])) {
-			ob_start();
-			include $path.'header.php';
-			$content .= ob_get_clean();        
-        }
-
+		
+		// Load up our page [header] + content + [footer]
 		ob_start();
-		include $path.$file;
-		$content .= ob_get_clean();
-
         if (!isset($this->scriptProperties['_nolayout'])) {
-			ob_start();
-			include $path.'footer.php';
-			$content .= ob_get_clean();        
+            $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Including header.php', '','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
+			include $path.'header.php';
         }
+		include $path.$file;
+        if (!isset($this->scriptProperties['_nolayout'])) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Including footer.php', '','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
+			include $path.'footer.php';
+        }
+
+		$content = ob_get_clean();
+
         return $content;		
     }
         

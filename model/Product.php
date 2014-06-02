@@ -838,6 +838,7 @@ class Product extends BaseModel {
      @param array $data (e.g. from $_POST)
      */
     public function saveRelated($data) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Save related data: '.print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);
         // Extra stuff is ignored
         $this->fromArray($data);
         if (!$this->save()) {

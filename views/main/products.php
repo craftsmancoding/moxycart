@@ -5,8 +5,8 @@
 <div class="moxycart_canvas_inner">
 
 <div>
-    <span class="button btn moxycart-btn" onclick="javascript:paint('productcreate');">Add Product</span>
-    <span class="btn" onclick="javascript:paint('productinventory');">Manage Inventory</span>
+    <a href="<?php print static::page('productcreate'); ?>" class="button btn moxycart-btn">Add Product</a>
+    <!--span class="btn" onclick="javascript:paint('productinventory');">Manage Inventory</span-->
             
     <!--form action="<?php print $data['baseurl']; ?>">
         <input type="text" name="name:LIKE" placeholder="Search..." />    

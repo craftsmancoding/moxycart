@@ -42,6 +42,18 @@ class Product extends xPDOObject {
                         
             return 0;        
         }
+        elseif($k=='sale_start') {
+            $v = parent::get($k, $format, $formatTemplate);
+            if ($v == '0000-00-00 00:00:00') {
+                return '';
+            }
+        }
+        elseif($k=='sale_end') {
+            $v = parent::get($k, $format, $formatTemplate);
+            if ($v == '0000-00-00 00:00:00') {
+                return '';
+            }
+        }
         else {
             return parent::get($k, $format, $formatTemplate);
         }
