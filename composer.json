@@ -79,20 +79,10 @@
             }
         ],
         "build_attributes":{
-            "Currency": {
-                "preserve_keys":true,
-                "update_object":true,
-                "unique_key":true
-            },
             "Product": {
                 "preserve_keys": true,
                 "update_object": true, 
                 "unique_key": "sku"
-            },
-            "Image": {
-                "preserve_keys": true,
-                "update_object": true, 
-                "unique_key": "url"
             },
             "Field": {
                 "preserve_keys": true,
