@@ -33,9 +33,9 @@ class Product extends xPDOObject {
         // Termines how long we can cache this for
         elseif($k=='cache_lifetime') {
             $this->xpdo->log(modX::LOG_LEVEL_DEBUG, 'Calculating virtual field: cache_lifetime','',__CLASS__);
-            $now = strtotime(date('Y-m-d H:i:s'));
+            $now = time();
             $sale_end = strtotime($this->get('sale_end'));
-        
+//            print 'Sale end:'.$this->get('sale_end'); exit;
             if ($sale_end && $sale_end >= $now) {
                 return $sale_end - $now;                
             }
@@ -47,12 +47,14 @@ class Product extends xPDOObject {
             if ($v == '0000-00-00 00:00:00') {
                 return '';
             }
+            return $v;
         }
         elseif($k=='sale_end') {
             $v = parent::get($k, $format, $formatTemplate);
             if ($v == '0000-00-00 00:00:00') {
                 return '';
             }
+            return $v;
         }
         else {
             return parent::get($k, $format, $formatTemplate);

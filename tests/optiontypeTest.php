@@ -42,8 +42,8 @@ class optiontypeTest extends \PHPUnit_Framework_TestCase {
         self::$modx->addPackage('foxycart',"{$core_path}model/orm/",'foxy_');
 
         // !OptionType
-        if (!self::$OType['color_test'] = self::$modx->getObject('ObjectType', array('slug'=>'color_test'))) {
-            self::$OType['color_test'] = self::$modx->newObject('ObjectType');
+        if (!self::$OType['color_test'] = self::$modx->getObject('OptionType', array('slug'=>'color_test'))) {
+            self::$OType['color_test'] = self::$modx->newObject('OptionType');
             self::$OType['color_test']->fromArray(array(
                 'slug' => 'color_test',
                 'name' => 'Test One',
@@ -53,9 +53,9 @@ class optiontypeTest extends \PHPUnit_Framework_TestCase {
                 print 'Could not save option type!'; 
             }
         }
-        if (!self::$OTerm['red_test'] = self::$modx->getObject('ObjectTerm', array('slug'=>'red_test'))) {
-            self::$OType['red_test'] = self::$modx->newObject('ObjectTerm');
-            self::$OType['red_test']->fromArray(array(
+        if (!self::$OTerm['red_test'] = self::$modx->getObject('OptionTerm', array('slug'=>'red_test'))) {
+            self::$OTerm['red_test'] = self::$modx->newObject('OptionTerm');
+            self::$OTerm['red_test']->fromArray(array(
                 'otype_id' => self::$OType['color_test']->get('otype_id'),
                 'slug' => 'red_test',
                 'name' => 'Test Red'
