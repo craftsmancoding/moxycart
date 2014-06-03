@@ -13,8 +13,8 @@ class Field extends BaseModel {
         return array(
             'text'=>'Text',
             'textarea'=>'Textarea',
-            //'checkbox'=>'Checkbox',
-            //'dropdown'=>'Dropdown',
+            'checkbox'=>'Checkbox',
+            'dropdown'=>'Dropdown',
             //'multicheck'=>'Multi-Check'
         );    
     }

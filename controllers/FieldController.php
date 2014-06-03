@@ -28,8 +28,23 @@ class FieldController extends APIController {
         $value = ''; // todo: read default value from config?
         $label = $F->get('label');
         $description = $F->get('description');
+        $config = $F->get('config');
+        $args = json_decode($config,true);
 
-        $out = \Formbuilder\Form::$type($name,$value, array('label'=>$label,'description'=>$description));
+        if ($type=='dropdown') {
+            $out = \Formbuilder\Form::dropdown($name,$args,$value, array('label'=>$label,'description'=>$description));
+        } 
+        elseif ($type=='checkbox') {
+            $args['label'] = $label;
+            $args['description'] = $description;
+            $out = \Formbuilder\Form::checkbox($name,$value, $args);
+        }
+        else {
+            $args['label'] = $label;
+            $args['description'] = $description;
+            $out = \Formbuilder\Form::$type($name,$value,$args);
+        }
+        
 
         // Double-quoting here is REQUIRED to trigger the __toString on the Formbuilder object.
         // Otherwise an empty object reference is sent.
