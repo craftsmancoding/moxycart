@@ -105,7 +105,7 @@ class IndexManagerController extends \Moxycart\BaseController {
         }
         // Classnames are not case-sensitive, but since it triggers the autoloader,
         // we need to manipulate it because some environments are case-sensitive.
-        $class = '\\Moxycart\\'.strtolower($class).'Controller';
+        $class = '\\Moxycart\\'.ucfirst(strtolower($class)).'Controller';
 
         // Override on error
         if (!class_exists($class)) {
