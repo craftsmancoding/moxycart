@@ -135,6 +135,7 @@ class Store extends modResource {
                 );
         	}",
         );
+/*
         $menu[] = array(
             'text' => $this->xpdo->lexicon('download_create_here'),
             'handler' => "function(itm,e) { 
@@ -175,6 +176,7 @@ class Store extends modResource {
                 );
         	}",
         );
+*/
         
         $menu[] = '-'; // equiv. to <hr/>
         

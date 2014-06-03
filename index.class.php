@@ -95,6 +95,7 @@ class IndexManagerController extends \Moxycart\BaseController {
 
         // If you don't do this, the $_POST array will seem to be populated even during normal GET requests.
         unset($_POST['HTTP_MODAUTH']);
+        // Function names are not case sensitive
         if ($_FILES || !empty($_POST)) {
             unset($_POST['_moxycart']);
             $config['method'] = 'post'.ucfirst($config['method']);
@@ -102,16 +103,18 @@ class IndexManagerController extends \Moxycart\BaseController {
         else {
             $config['method'] = 'get'.ucfirst($config['method']);
         }
-        
-        $class = '\\Moxycart\\'.$class.'Controller';
+        // Classnames are not case-sensitive, but since it triggers the autoloader,
+        // we need to manipulate it because some environments are case-sensitive.
+        $class = '\\Moxycart\\'.strtolower($class).'Controller';
 
         // Override on error
         if (!class_exists($class)) {
+            $modx->log(\modX::LOG_LEVEL_ERROR,'[moxycart] class not found: '.$class,'',__FUNCTION__,__FILE__,__LINE__);            
             $class = '\\Moxycart\\ErrorController';
             $config['method'] = 'get404';
         }
 
-        $modx->log(\modX::LOG_LEVEL_DEBUG,'[moxycart] Instantiating '.$class.' with config '.print_r($config,true),'',__FUNCTION__,__FILE__,__LINE__);
+        $modx->log(\modX::LOG_LEVEL_INFO,'[moxycart] Instantiating '.$class.' with config '.print_r($config,true),'',__FUNCTION__,__FILE__,__LINE__);
         
         // See Base::render() for how requests get handled.  
         return new $class($modx,$config);
