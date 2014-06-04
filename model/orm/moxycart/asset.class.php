@@ -14,10 +14,10 @@ class Asset extends xPDOObject {
     public function get($k, $format = null, $formatTemplate= null) {
         $raw  = parent::get($k, $format, $formatTemplate);
         if ($k=='url') {
-            return MODX_ASSETS_URL . $this->xpdo->getOption('moxycart.upload_dir').$raw;
+            return $this->xpdo->getOption('assets_url') . $this->xpdo->getOption('moxycart.upload_dir').$raw;
         }
         elseif ($k=='path') {
-            return MODX_ASSETS_PATH . $this->xpdo->getOption('moxycart.upload_dir').$raw;    
+            return $this->xpdo->getOption('assets_path') . $this->xpdo->getOption('moxycart.upload_dir').$raw;    
         }
         elseif ($k=='thumbnail_url') {
             

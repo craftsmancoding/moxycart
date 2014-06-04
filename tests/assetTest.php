@@ -102,7 +102,7 @@ class assetTest extends \PHPUnit_Framework_TestCase {
     {
         $Asset = new Asset(self::$modx);
         $file = '/does/not/exist';
-        $Asset->getContentType($dir);
+        $Asset->getContentType($file);
     }
 
     /**
@@ -180,18 +180,19 @@ class assetTest extends \PHPUnit_Framework_TestCase {
     public function testExceptionsfromFile() {
         $A = new Asset(self::$modx);
         $file = 'Dud';
-        $A->fromFile($file,'/tmp');
+        $A->fromFile($file);
     }
 
     /**
      * @expectedException        \Exception
-     * @expectedExceptionMessage Invalid data type.
+     * @expectedExceptionMessage File not found
      */
     public function testExceptionsfromFile2() {
         $A = new Asset(self::$modx);
-        $file = array('tmp_name'=>'','name'=>'');
-        $A->fromFile($file,array('fail'));
+        $file = array('tmp_name'=> 'does-not % exist','name'=>'dud');
+        $A->fromFile($file);
     }
+    
     /**
      * @expectedException        \Exception
      * @expectedExceptionMessage Missing required keys in FILE array
@@ -199,7 +200,7 @@ class assetTest extends \PHPUnit_Framework_TestCase {
     public function testExceptionsfromFile3() {
         $A = new Asset(self::$modx);
         $file = array('not_tmp_name'=>'','not_name'=>'');
-        $A->fromFile($file,'/somewhere');
+        $A->fromFile($file);
     }
     /**
      * @expectedException        \Exception
@@ -208,17 +209,14 @@ class assetTest extends \PHPUnit_Framework_TestCase {
     public function testExceptionsfromFile4() {
         $A = new Asset(self::$modx);
         $file = array('tmp_name'=> array('boned'),'name'=>'');
-        $A->fromFile($file,'/somewhere');
+        $A->fromFile($file);
     }
 
-    /**
-     * Tests the fromFile method, verifying that it creates a new object record
-     */
-    public function testFromFile() {
-        //self::$modx->setLogLevel(4);
-        //self::$modx->setLogTarget('ECHO');
-        $A = new Asset(self::$modx);
 
+    /**
+     * @return array
+     */
+    private function _copyFileForMoving() {
         $orig_filename = dirname(__FILE__).'/assets/support.jpg'; 
         $result = copy($orig_filename, dirname(__FILE__).'/assets/support2.jpg');
         $this->assertTrue($result, 'Failed to copy test image.');
@@ -226,36 +224,64 @@ class assetTest extends \PHPUnit_Framework_TestCase {
         $filename = dirname(__FILE__).'/assets/support2.jpg';
         $FILE = array(
             'tmp_name' => $filename,
-            'name' =>'support2.jpg'
+            'name' =>'support2.jpg',
+            'sig' => md5_file($orig_filename)
         );
+        return $FILE;
+    }
+    
+    /**
+     * Tests the fromFile method, verifying that it creates a new object record
+     */
+    public function testFromFile() {
+        //self::$modx->setLogLevel(4);
+        //self::$modx->setLogTarget('ECHO');
+        $A = new Asset(self::$modx);
+        $FILE = $this->_copyFileForMoving();
         
         // In prod: MODX_ASSETS_PATH . self::$modx->getOption('moxycart.upload_dir');
-        $storage_basedir = dirname(__FILE__).'/asset_library/';        
-                
-        $A2 = $A->fromFile($FILE,$storage_basedir);
+        // Override for testing
+        $upload_dir = 'asset_library/';        
+        self::$modx->setOption('moxycart.upload_dir', $upload_dir);
+        self::$modx->setOption('assets_url', '/');
+        self::$modx->setOption('assets_path', dirname(__FILE__).'/');
+        $storage_basedir = dirname(__FILE__).'/asset_library/';
+        
+        $A2 = $A->fromFile($FILE);
         
         $this->assertFalse(empty($A2));
         
-        
-        
         $this->assertTrue(file_exists($storage_basedir.date('Y/m/d/')), 'Directory does not exist: '.$storage_basedir.date('Y/m/d/'));
         $this->assertTrue(file_exists($storage_basedir.date('Y/m/d/').'support2.jpg'), 'File does not exist: '.$storage_basedir.date('Y/m/d/').'support2.jpg');
-        $this->assertEquals(md5_file($orig_filename), $A2->get('sig'),'File signature does not match.');
-        $this->assertEquals(date('Y/m/d/').'support2.jpg', $A2->get('path'),'Asset path incorrect');
-        $this->assertEquals(date('Y/m/d/').'support2.jpg', $A2->get('url'),'Asset path incorrect');
-        
+        $this->assertEquals($FILE['sig'], $A2->get('sig'),'File signature does not match.');
+        $this->assertEquals($storage_basedir.date('Y/m/d/').'support2.jpg', $A2->get('path'),'Asset path incorrect');
+        $this->assertEquals('/asset_library/'.date('Y/m/d/').'support2.jpg', $A2->get('url'),'Asset path incorrect');
+    
 /*
         // TODO: test the thumbnail
         $path = $A2->get('path');
         $thumbnail = dirname($path).'/'. $this->modx->getOption('moxycart.thumbnail_dir'). moxycart.thumbnail_width
         $A2->get('thumbnail_url');
 */
+    
+        // Test duplication: with force_create false (default), $A3 should equal $A2
+        $FILE = $this->_copyFileForMoving();
+        $A3 = $A->fromFile($FILE);
+        $this->assertEquals($A2->get('asset_id'), $A3->get('asset_id'),'A new asset should not have been created.');        
+
+        // Force a copy
+        $FILE = $this->_copyFileForMoving();
+        $A4 = $A->fromFile($FILE,true);
+        $this->assertNotEquals($A2->get('asset_id'), $A4->get('asset_id'),'A new asset should have been created.');        
+        $A4->remove();
         
-        $result = $A2->remove($storage_basedir);
+        $img_fullpath = $A2->get('path');
+        $result = $A2->remove();
         $this->assertTrue($result);
-        $this->assertFalse(file_exists($storage_basedir.date('Y/m/d/').'support2.jpg'), 'File does not exist: '.$storage_basedir.date('Y/m/d/').'support2.jpg');
+        $this->assertFalse(file_exists($img_fullpath), 'File should have been removed: '.$img_fullpath);
+
         
-        unlink($filename);
+        @unlink($img_fullpath);
         
         Asset::rrmdir($storage_basedir.date('Y/'));
     }

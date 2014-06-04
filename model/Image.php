@@ -141,8 +141,8 @@ class Image {
         if (!in_array(strtolower(substr($dst, -4)), array('.jpg','jpeg','.gif','.png'))) {
             throw new \Exception('Destination file must be an image: '.$dst);
         }        
-        if(file_exists($target)) {
-            if (!unlink($target)) {
+        if(file_exists($dst)) {
+            if (!unlink($dst)) {
                 throw new \Exception('Unable to overwrite destination file '.$dst);
             }
         }

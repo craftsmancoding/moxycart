@@ -239,7 +239,9 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="review_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="author_id" dbtype="int" precision="11" phptype="integer" null="true" comment="null ok: user may not be logged in"/>
-        <field key="name" dbtype="varchar" precision="100" phptype="string" null="false" />
+        <field key="ip" dbtype="varchar" precision="16" phptype="string" null="false" comment="Visitor's IP Address"/>
+        <field key="name" dbtype="varchar" precision="100" phptype="string" null="false" comment="Name of Reviewer"/>
+        <field key="title" dbtype="varchar" precision="100" phptype="string" null="false" comment="Title of Review"/>
         <field key="email" dbtype="varchar" precision="64" phptype="string" null="false" />
         <field key="rating" dbtype="int" precision="3" phptype="integer" null="false"/>
         <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />

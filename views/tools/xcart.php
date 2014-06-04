@@ -1,3 +1,22 @@
+<?php
+/**
+ * Import an xCart install into Moxycart
+ *
+ * TODO:
+ * memberships
+ * features
+ * offers
+ * orders (?? foxycart??)
+ * pages (to regular MODX page?)
+ * partner_*  (ads?)
+ * pricing / variants 
+ * reviews
+ * taxes (foxycart?)
+ * votes (reviews?)
+ * translations (???)
+ * referrers
+ */
+?>
 <h3>xCart Database Credentials</h3>
 <style>
 .textlabel {
@@ -6,14 +25,23 @@
 </style>
 <?php
 print \Formbuilder\Form::open()
+    ->html('<h4>Database Credentials</h4>')
     ->text('host','localhost',array('label'=>'Host Name'))
     ->text('database','',array('label'=>'Database Name'))
     ->text('user','',array('label'=>'Database User'))
     ->text('password','',array('label'=>'Database Password'))
+    ->html('<h4>Product Defaults</h4>')
     ->dropdown('store_id',array())
+    ->dropdown('template_id',array())    
+//    ->dropdown('user_group_id',array())    
+    ->html('<h4>Assets</h4>')
+    ->text('image_path','',array('label'=>'Image Path','description'=>'Full path to where you have copied your xCart image folder. This folder should contain sub-directories C, D, G, etc. This directory must be readable by PHP.'))
     ->close();
-
+$template_id = null;
 $store_id = 234;
+$image_path = '/Users/everett2/Sites/revo8/html/xcart-images';
+
+$image_path = rtrim($image_path,'/').'/';
 
 // Criteria for foreign Database
 $host = 'localhost';
@@ -25,15 +53,18 @@ $charset = 'utf8';
  
 $dsn = "mysql:host=$host;dbname=$dbname;port=$port;charset=$charset";
 $xpdo = new \xPDO($dsn, $username, $password);
-//print_r($xpdo); 
+
+$this->modx->setLogLevel(3);
+$this->modx->setLogTarget('HTML');
+
 // Test your connection
 $o = ($xpdo->connect()) ? true : false;
 
 if (!$o) {
-    print 'Not connected to database.';
+    $this->modx->log(\modX::LOG_LEVEL_ERROR,'Could not connect to database.','','xcart',__LINE__);  
     return;
 }
-$this->modx->setLogLevel(3);
+
 // Issue queries against the foreign database:
 
 // Pre-requisite Custom Fields
@@ -55,7 +86,8 @@ if (!$MF = $this->modx->getObject('Field', array('slug'=>'manufacturer'))) {
     $MF->save();
 }
 */
-// as a taxonomy
+//! Manufacturers (taxonomy)
+$this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import: Manufacturer Taxonomy =============','','xcart',__LINE__);  
 if (!$M = $this->modx->getObject('Taxonomy', array('pagetitle'=>'Manufacturer','class_key'=>'Taxonomy'))) {
     $M = $this->modx->newObject('Taxonomy', array(
         'pagetitle'=>'Manufacturer',
@@ -64,9 +96,15 @@ if (!$M = $this->modx->getObject('Taxonomy', array('pagetitle'=>'Manufacturer','
         'published' => true
     ));
     if(!$M->save()) {
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving Manufacturer taxonomy','','xcart'); 
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving Manufacturer taxonomy','','xcart',__LINE__);  
     }
 }
+else {
+    $this->modx->log(\modX::LOG_LEVEL_INFO,'Existing "Manufacturer" Taxonomy detected: '.$M->get('id'),'','xcart',__LINE__);  
+}
+
+//! Manufacturers (Terms)
+$this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import: Manufacturer Terms =============','','xcart',__LINE__);  
 $manfs = $xpdo->query("SELECT * FROM xcart_manufacturers ORDER BY orderby"); 
 $vals = array();
 $map['xcart_manufacturers'] = array();
@@ -84,15 +122,68 @@ foreach($manfs as $m) {
         'published' => true
     ));
     if (!$Term->save()) {
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving manufacturer Term:'.$m['manufacturer'],'','xcart'); 
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving manufacturer Term:'.$m['manufacturer'],'','xcart',__LINE__);  
+    }
+    else {
+        $this->modx->log(\modX::LOG_LEVEL_INFO,'Taxonomy Term Created/Updated for "'.$m['manufacturer'].'": '.$Term->get('id'),'','xcart',__LINE__);  
     }
     
     $map['xcart_manufacturers'][ $m['manufacturerid'] ] = $Term->get('id');    
 }
 
+//! Category (taxonomy)
+$this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import: Categories Taxonomy =============','','xcart',__LINE__);  
+if (!$Category = $this->modx->getObject('Taxonomy', array('pagetitle'=>'Categories','class_key'=>'Taxonomy'))) {
+    $Category = $this->modx->newObject('Taxonomy', array(
+        'pagetitle'=>'Categories',
+        'class_key'=>'Taxonomy',
+        'alias' => 'categories',
+        'published' => true
+    ));
+    if(!$Category->save()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving Categories taxonomy','','xcart',__LINE__);  
+    }
+}
+else {
+    $this->modx->log(\modX::LOG_LEVEL_INFO,'Existing "Categoreis" Taxonomy detected: '.$Category->get('id'),'','xcart',__LINE__);  
+}
 
+
+//! Categories (Terms)
+// xcart_categories
+//$map['xcart_categories'] = array();
+$this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import: Categories Terms =============','','xcart',__LINE__);  
+$cats = $xpdo->query("SELECT * FROM xcart_categories ORDER BY order_by"); 
+$map['xcart_categories'] = array();
+foreach($cats as $c) {
+    $key = strtolower(str_replace(' ', '_', $c['category']));    
+    if (!$Term = $this->modx->getObject('Term', array('pagetitle'=>$c['category'],'class_key'=>'Term','parent'=>$Category->get('id')))) {
+        $Term = $this->modx->newObject('Term');
+    }
+    $Term->fromArray(array(
+        'parent'=> $Category->get('id'),
+        'pagetitle'=>$c['category'],
+        'description' => $c['meta_description'],
+        'introtext' => $c['description'],
+        'class_key'=>'Term',
+        'alias' => $key,
+        'published' => true
+    ));
+    if (!$Term->save()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving category Term:'.$c['category'],'','xcart',__LINE__);  
+    }
+    else {
+        $this->modx->log(\modX::LOG_LEVEL_INFO,'Taxonomy Term Created/Updated for "'.$c['category'].'": '.$Term->get('id'),'','xcart',__LINE__);  
+    }
+    
+    $map['xcart_categories'][ $c['categoryid'] ] = $Term->get('id');    
+}
+
+
+//! Extra Fields
 // xcart_extra_fields
 // xcart-id --> modx id
+$this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import: Extra Fields =============','','xcart',__LINE__);  
 $map['xcart_extra_fields'] = array();
 $extrafields = $xpdo->query("SELECT * FROM xcart_extra_fields ORDER BY orderby"); 
 $seq = 0;
@@ -111,7 +202,10 @@ foreach($extrafields as $x) {
     }
     $EF->set('seq', $seq);
     if(!$EF->save()) {
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving Field for :'.$x['service_name'],'','xcart'); 
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving Field for :'.$x['service_name'],'','xcart',__LINE__);  
+    }
+    else {
+        $this->modx->log(\modX::LOG_LEVEL_INFO,'Custom Field Created/Updated for "'.$x['service_name'].'" --> Moxycart field_id: '.$EF->get('field_id'),'','xcart',__LINE__);      
     }
     $seq++;
 
@@ -119,6 +213,11 @@ foreach($extrafields as $x) {
 }
 
 
+
+
+//! Products
+$this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import Products =============','','xcart',__LINE__);  
+$map['xcart_products'] = array();
 $products = $xpdo->query("SELECT * FROM xcart_products"); 
 //$recordCount = $results->rowCount();
 //print $recordCount;
@@ -130,6 +229,8 @@ foreach ($products as $r) {
     }
 
     $P->set('store_id', $store_id);
+    $P->set('template_id', $template_id);    
+    
     $P->set('name', $r['product']);
     $P->set('sku', $r['productcode']);
     $P->set('weight', $r['weight']);
@@ -156,27 +257,38 @@ foreach ($products as $r) {
     $P->set('title', $r['title_tag']);
     
     if (!$P->save()) {
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving product!','','xcart');  
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving product '.$P->get('name'),'','xcart',__LINE__);   
         continue;
     }
+    else {
+        $this->modx->log(\modX::LOG_LEVEL_INFO,'Product Created/Updated "'.$P->get('name').'" --> Moxycart product_id: '.$P->get('product_id'),'','xcart',__LINE__);   
+    }
     $product_id = $P->getPrimaryKey();
-
+    $map['xcart_products'][ $r['productid'] ] = $product_id;
+    
     // Manufacturer
+    $this->modx->log(\modX::LOG_LEVEL_INFO,'**** Starting Manufacturer lookup...','','xcart',__LINE__);           
     if ($r['manufacturerid']) {
-
         $term_id = (isset($map['xcart_manufacturers'][ $r['manufacturerid'] ])) ? $map['xcart_manufacturers'][ $r['manufacturerid'] ] : false;
         if ($term_id) {        
             if (!$PT = $this->modx->getObject('ProductTerm', array('product_id'=>$product_id,'term_id'=>$term_id))) {
-                $PT = $this->modx->newObject('ProductTerm', array('product_id'=>$product_id,'term_id'=>$term_id));
-                if (!$PT->save()) {
-                    $this->modx->log(\modX::LOG_LEVEL_ERROR,'Error saving manufacturer ProductTerm','','xcart');          
-                }
+                $PT = $this->modx->newObject('ProductTerm', array('product_id'=>$product_id,'term_id'=>$term_id));            
             }
+            if (!$PT->save()) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Error saving manufacturer ProductTerm','','xcart',__LINE__);           
+            }
+            else {
+                $this->modx->log(\modX::LOG_LEVEL_INFO,'ProductTerm (Manufacturer) Created/Updated "'.$P->get('name').'" --> term_id: '.$term_id,'','xcart',__LINE__);  
+            }
+        }
+        else {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'No mapping for xcart_manufacturers: '.$r['manufacturerid'],'','xcart',__LINE__);           
         }
   
     }
 
     // xcart_extra_field_values 
+    $this->modx->log(\modX::LOG_LEVEL_INFO,'****  Starting Extra Fields lookup...','','xcart',__LINE__);               
     $extra_field_values = $xpdo->query("SELECT * FROM xcart_extra_field_values WHERE productid={$r['productid']}");         
     foreach($extra_field_values as $xfv) {
         if (isset($map['xcart_extra_fields'][ $xfv['fieldid'] ])) {
@@ -186,33 +298,105 @@ foreach ($products as $r) {
             }
             $PF->set('value', $xfv['value']);
             if (!$PF->save()) {
-                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving ProductField','','xcart');          
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving ProductField','','xcart',__LINE__);           
+            }
+            else {
+                $this->modx->log(\modX::LOG_LEVEL_INFO,'ProductField Created/Updated field_id: '.$PF->get('field_id').' value: '.$PF->get('value'),'','xcart',__LINE__);  
             }
         }
         else {
-            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Could not look up extra field value','','xcart');          
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'No mapping for xcart_extra_fields: '. $xfv['fieldid'],'','xcart',__LINE__);           
         }
     }
     
-    // Tags?
+    // Categories
+    // xcart_products_categories
+    $this->modx->log(\modX::LOG_LEVEL_INFO,'Starting Categories lookup...','','xcart',__LINE__);           
+    $products_categories = $xpdo->query("SELECT * FROM xcart_products_categories WHERE productid={$r['productid']}");         
+    foreach($products_categories as $pc) {
+        if (isset($map['xcart_categories'][ $pc['categoryid'] ])) {
+            $term_id = $map['xcart_categories'][ $pc['categoryid'] ];
+            if ($term_id) {        
+                if (!$PT = $this->modx->getObject('ProductTerm', array('product_id'=>$product_id,'term_id'=>$term_id))) {
+                    $PT = $this->modx->newObject('ProductTerm', array('product_id'=>$product_id,'term_id'=>$term_id));            
+                }
+                if (!$PT->save()) {
+                    $this->modx->log(\modX::LOG_LEVEL_ERROR,'Error saving Category ProductTerm','','xcart',__LINE__);           
+                }
+                else {
+                    $this->modx->log(\modX::LOG_LEVEL_INFO,'ProductTerm (Category) Created/Updated "'.$P->get('name').'" --> term_id: '.$term_id,'','xcart',__LINE__);  
+                }
+            }
+            else {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'No mapping for xcart_manufacturers: '.$r['manufacturerid'],'','xcart',__LINE__);           
+            }
+        }
+        else {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'No mapping for xcart_categories: '.$pc['categoryid'],'','xcart',__LINE__);           
+        }
+    }
+
     
-    // Assets
-    
+}
+
+//------------------------------------------------------------------------------
+//! Assets
+//------------------------------------------------------------------------------
+$this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Image Migration =============','','xcart',__LINE__);  
+$image_tables = array('xcart_images_B','xcart_images_C','xcart_images_D','xcart_images_F','xcart_images_G','xcart_images_L',
+    'xcart_images_M','xcart_images_P','xcart_images_S','xcart_images_T','xcart_images_W','xcart_images_Z');
+$this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import: Images =============','','xcart',__LINE__);  
+$prefix = './images/';
+foreach ($image_tables as $tbl) {
+    $imgs = $xpdo->query("SELECT * FROM {$tbl} ORDER BY id, orderby");         
+    foreach ($imgs as $i) {
+        $xcart_productid = $i['id'];
+        if (!isset($map['xcart_products'][$xcart_productid])) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'No mapping for xcart_products: '.$xcart_productid. ' Skipping image.','','xcart',__LINE__);           
+            continue;
+        }
+        $src = $image_path. substr($i['image_path'], strlen($prefix));
+        if (!file_exists($src)) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Image file not found: '.$src . '(table: $tbl imageid: '.$i['imageid'].')','','xcart',__LINE__);           
+            continue;        
+        }
+        
+        $FILE = array(
+            'tmp_name' => $src,
+            'name' => $i['filename'],
+            'alt' => $i['alt'],
+            'title' => $i['alt'],
+            'is_active' => ($i['avail'] == 'Y') ? true : false, 
+        );
+        
+        $Asset = new \Moxycart\Asset($this->modx);
+        
+        try {        
+            $Asset = $Asset->fromFile($FILE);
+            $this->modx->log(\modX::LOG_LEVEL_INFO,'Asset Created/Updated: '.$Asset->get('asset_id'),'','xcart',__LINE__);  
+        }
+        catch (\Exception $e) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Could not create Asset from file: '.$e->getMessage(),'','xcart',__LINE__);             
+        }
+        
+        
+    }
 }
 
 
 //------------------------------------------------------------------------------
 //! Users
 //------------------------------------------------------------------------------
+
 // Create a user group just for the imported records
 if (!$UG = $this->modx->getObject('modUserGroup', array('name'=>'Customer'))) {
     $UG = $this->modx->newObject('modUserGroup', array('name'=>'Customer'));
     $UG->set('description', 'Imported from xCart');
     if(!$UG->save()) {
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving modUserGroup "Customer"!','','xcart');  
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving modUserGroup "Customer"!','','xcart',__LINE__);   
     }
 }
-$this->modx->log(\modX::LOG_LEVEL_INFO,'Customer modUserGroup: '.$UG->get('id'),'','xcart');  
+$this->modx->log(\modX::LOG_LEVEL_INFO,'Customer modUserGroup: '.$UG->get('id'),'','xcart',__LINE__);   
 
 // Get a role
 if(!$Role = $this->modx->getObject('modUserGroupRole',array('name'=>'Member'))) {
@@ -221,12 +405,14 @@ if(!$Role = $this->modx->getObject('modUserGroupRole',array('name'=>'Member'))) 
     $Role->set('description', 'Created for xCart import');
     $Role->set('authority',9999);
     if(!$Role->save()) {
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving role (modUserGroupRole) "Member"!','','xcart'); 
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving role (modUserGroupRole) "Member"!','','xcart',__LINE__);  
     }
 }
-$this->modx->log(\modX::LOG_LEVEL_INFO,'Customer modUserGroupRole: '.$Role->get('id'),'','xcart');  
+$this->modx->log(\modX::LOG_LEVEL_INFO,'Customer modUserGroupRole: '.$Role->get('id'),'','xcart',__LINE__);   
 
+//! Customers
 // xcart_customers
+$this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import: Customers =============','','xcart',__LINE__);  
 $customers = $xpdo->query("SELECT * FROM xcart_customers"); 
 //$customers = $xpdo->query("SELECT * FROM xcart_address_book"); 
 foreach ($customers as $c) {
@@ -238,7 +424,7 @@ foreach ($customers as $c) {
         $Profile->set('fullname', $c['firstname'].' '.$c['lastname']);
         $U->addOne($Profile);        
         if (!$U->save()) {
-            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving User: '.$c['username'],'','xcart'); 
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving User: '.$c['username'],'','xcart',__LINE__);  
         }
     }
 
@@ -249,11 +435,12 @@ foreach ($customers as $c) {
         $UGM->set('member', $U->get('id'));
         $U->addMany($UGM);
         if(!$UGM->save()) {
-            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem adding User '.$c['username'] .' to Group','','xcart'); 
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem adding User '.$c['username'] .' to Group','','xcart',__LINE__);  
         }
     }
 
 }
 
+$this->modx->log(\modX::LOG_LEVEL_INFO,'=========== XCART IMPORT COMPLETE =============','','xcart',__LINE__);  
 
 ?>

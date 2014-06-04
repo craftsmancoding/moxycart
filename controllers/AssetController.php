@@ -40,11 +40,10 @@ class AssetController extends APIController {
         if (!empty($_FILES[$fieldname]['error'])) {
             return $this->sendFail(array('errors'=> 'Error uploading file: '.$_FILES[$filename]['error']));
         }        
-        $storage_basedir = MODX_ASSETS_PATH . $this->modx->getOption('moxycart.upload_dir');
         
 //        try {
             $Model = new Asset($this->modx);    
-            $Asset = $Model->fromFile($_FILES[$fieldname],$storage_basedir);
+            $Asset = $Model->fromFile($_FILES[$fieldname]);
     
             if (!$Asset->save()) {
                 return $this->sendFail(array('errors'=> $Model->errors));
