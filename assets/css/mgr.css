@@ -4496,6 +4496,11 @@ label {
   padding: 5px;
   font-size: 15px;
 }
+
+#taxonomy_list label,
+#taxonomy_terms label {
+  display: inline !important;
+}
 /* #product_images .first {
   clear: left !important;
    border: 1px solid yellow !important;
