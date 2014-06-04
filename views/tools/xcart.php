@@ -32,15 +32,15 @@
 }
 </style>
 <?php
-\Formbuilder\Form::setValues($scriptProperties);
+\Formbuilder\Form::setValues($data);
 \Formbuilder\Form::setTpl('description','<p class="description-txt">[+description+]</p>');
 print \Formbuilder\Form::open(self::page('xcart'))
     ->html('<h4>Database Credentials</h4>')
     ->text('host','localhost',array('label'=>'Host Name','class'=>'input input-half'))
-    ->text('database','',array('label'=>'Database Name','class'=>'input input-half'))
-    ->text('user','',array('label'=>'Database User','class'=>'input input-half'))
+    ->text('database','',array('label'=>'Database Name','class'=>'input input-half','placeholder'=>'db_name'))
+    ->text('user','',array('label'=>'Database User','class'=>'input input-half','placeholder'=>'db_user'))
+    ->text('password','',array('label'=>'Database Password','class'=>'input input-half','placeholder'=>'password'))
     ->text('port',3306,array('label'=>'Port','class'=>'input input-half'))
-    ->text('password','',array('label'=>'Database Password','class'=>'input input-half'))
     ->html('<h4>Product Defaults</h4>')
     ->dropdown('store_id',$data['stores'],'',array('label'=>'Parent Store'))
     ->dropdown('template_id',$data['templates'],'',array('label'=>'Product Template'))    
@@ -61,16 +61,14 @@ if (empty($_POST)) {
     return;
 }
 
-$image_path = $this->modx->getOption('image_path', $scriptProperties);
-
-$image_path = rtrim($image_path,'/').'/';
+$image_path = rtrim($data['image_path'],'/').'/';
 
 // Criteria for foreign Database
-$host = $this->modx->getOption('host', $scriptProperties);
-$username = $this->modx->getOption('user', $scriptProperties);
-$password = $this->modx->getOption('password', $scriptProperties);
-$dbname = $this->modx->getOption('database', $scriptProperties);
-$port = $this->modx->getOption('port', $scriptProperties);
+$host = $data['host'];
+$username = $data['user'];
+$password = $data['password'];
+$dbname = $data['database'];
+$port = $data['port'];
 $charset = 'utf8';
  
 $dsn = "mysql:host=$host;dbname=$dbname;port=$port;charset=$charset";
@@ -84,6 +82,12 @@ $o = ($xpdo->connect()) ? true : false;
 
 if (!$o) {
     $this->modx->log(\modX::LOG_LEVEL_ERROR,'Could not connect to database.','','xcart',__LINE__);  
+    $this->modx->log(\modX::LOG_LEVEL_ERROR,"credentials\n"
+        .'host: '.$host."\n"
+        .'username: '.$username."\n"
+        .'database: '.$password."\n"
+        .'port: '.$port
+    ,'','xcart',__LINE__);      
     return;
 }
 
