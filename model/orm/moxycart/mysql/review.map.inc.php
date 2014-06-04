@@ -9,7 +9,9 @@ $xpdo_meta_map['Review']= array (
     'review_id' => NULL,
     'product_id' => NULL,
     'author_id' => NULL,
+    'ip' => NULL,
     'name' => NULL,
+    'title' => NULL,
     'email' => NULL,
     'rating' => NULL,
     'content' => '',
@@ -43,12 +45,29 @@ $xpdo_meta_map['Review']= array (
       'null' => true,
       'comment' => 'null ok: user may not be logged in',
     ),
+    'ip' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '16',
+      'phptype' => 'string',
+      'null' => false,
+      'comment' => 'Visitor\'s IP Address',
+    ),
     'name' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '100',
       'phptype' => 'string',
       'null' => false,
+      'comment' => 'Name of Reviewer',
+    ),
+    'title' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '100',
+      'phptype' => 'string',
+      'null' => false,
+      'comment' => 'Title of Review',
     ),
     'email' => 
     array (
