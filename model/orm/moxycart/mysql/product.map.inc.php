@@ -13,6 +13,7 @@ $xpdo_meta_map['Product']= array (
     'asset_id' => NULL,
     'name' => NULL,
     'title' => NULL,
+    'meta_keywords' => '',
     'description' => '',
     'content' => '',
     'type' => 'regular',
@@ -102,6 +103,15 @@ $xpdo_meta_map['Product']= array (
       'phptype' => 'string',
       'null' => false,
       'comment' => 'For the webpage',
+    ),
+    'meta_keywords' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+      'comment' => 'For plugging search terms',
     ),
     'description' => 
     array (

@@ -31,6 +31,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="asset_id" dbtype="int" precision="11" phptype="integer" null="true" comment="Primary thumbnail image"/>
         <field key="name" dbtype="varchar" precision="60" phptype="string" null="false" />
         <field key="title" dbtype="varchar" precision="60" phptype="string" null="false" comment="For the webpage"/>
+        <field key="meta_keywords" dbtype="varchar" precision="255" phptype="string" null="false" default="" comment="For plugging search terms"/>
         <field key="description" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />
         <field key="type" dbtype="enum" precision="'regular','subscription','download'" phptype="string" null="false" default="regular"/>
@@ -174,6 +175,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
 		<field key="group" dbtype="varchar" precision="32" phptype="string" null="true" />
 		<field key="type" dbtype="varchar" precision="32" phptype="string" null="false" default="text" comment="Formbuilder argument"/>
+		<field key="is_active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />		
 		<field key="timestamp_created" dbtype="timestamp" phptype="timestamp" null="true" default="CURRENT_TIMESTAMP" />
 		<field key="timestamp_modified" dbtype="timestamp" phptype="timestamp" null="true" />		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
