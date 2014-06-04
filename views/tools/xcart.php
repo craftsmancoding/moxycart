@@ -1,3 +1,11 @@
+<div class="moxycart_canvas_inner">
+    <h2 class="moxycart_cmp_heading" id="moxycart_pagetitle">Migrate xCart to Moxycart</h2>
+</div>
+
+<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Custom Field fields allow you to enter extra data about your product.  The values stored can be displayed to visitors via your product templates.</p></div>
+
+<div class="moxycart_canvas_inner">
+
 <?php
 /**
  * Import an xCart install into Moxycart
@@ -17,38 +25,52 @@
  * referrers
  */
 ?>
-<h3>xCart Database Credentials</h3>
+
 <style>
 .textlabel {
     display: block;
 }
 </style>
 <?php
-print \Formbuilder\Form::open()
+\Formbuilder\Form::setValues($scriptProperties);
+\Formbuilder\Form::setTpl('description','<p class="description-txt">[+description+]</p>');
+print \Formbuilder\Form::open(self::page('xcart'))
     ->html('<h4>Database Credentials</h4>')
-    ->text('host','localhost',array('label'=>'Host Name'))
-    ->text('database','',array('label'=>'Database Name'))
-    ->text('user','',array('label'=>'Database User'))
-    ->text('password','',array('label'=>'Database Password'))
+    ->text('host','localhost',array('label'=>'Host Name','class'=>'input input-half'))
+    ->text('database','',array('label'=>'Database Name','class'=>'input input-half'))
+    ->text('user','',array('label'=>'Database User','class'=>'input input-half'))
+    ->text('port',3306,array('label'=>'Port','class'=>'input input-half'))
+    ->text('password','',array('label'=>'Database Password','class'=>'input input-half'))
     ->html('<h4>Product Defaults</h4>')
-    ->dropdown('store_id',array())
-    ->dropdown('template_id',array())    
+    ->dropdown('store_id',$data['stores'],'',array('label'=>'Parent Store'))
+    ->dropdown('template_id',$data['templates'],'',array('label'=>'Product Template'))    
 //    ->dropdown('user_group_id',array())    
     ->html('<h4>Assets</h4>')
-    ->text('image_path','',array('label'=>'Image Path','description'=>'Full path to where you have copied your xCart image folder. This folder should contain sub-directories C, D, G, etc. This directory must be readable by PHP.'))
+    ->text('image_path',MODX_BASE_PATH,array('label'=>'Image Path',
+        'description'=>'Full path to where you have copied your xCart image folder. This folder should contain sub-directories C, D, G, etc. This directory must be readable by PHP.',
+        'style'=>'width:300px;',
+        'class'=>'input input-half'
+    ),'[+label+]
+        [+error+]
+        <input type="text" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" placeholder="[+placeholder+]" size="250" [+extra+]/>
+        [+description+]')
+    ->submit('', 'Migrate',array('class'=>'btn'))
     ->close();
-$template_id = null;
-$store_id = 234;
-$image_path = '/Users/everett2/Sites/revo8/html/xcart-images';
+    
+if (empty($_POST)) {
+    return;
+}
+
+$image_path = $this->modx->getOption('image_path', $scriptProperties);
 
 $image_path = rtrim($image_path,'/').'/';
 
 // Criteria for foreign Database
-$host = 'localhost';
-$username = 'root';
-$password = 'root';
-$dbname = 'cannonlewis';
-$port = 3306;
+$host = $this->modx->getOption('host', $scriptProperties);
+$username = $this->modx->getOption('user', $scriptProperties);
+$password = $this->modx->getOption('password', $scriptProperties);
+$dbname = $this->modx->getOption('database', $scriptProperties);
+$port = $this->modx->getOption('port', $scriptProperties);
 $charset = 'utf8';
  
 $dsn = "mysql:host=$host;dbname=$dbname;port=$port;charset=$charset";
@@ -444,3 +466,4 @@ foreach ($customers as $c) {
 $this->modx->log(\modX::LOG_LEVEL_INFO,'=========== XCART IMPORT COMPLETE =============','','xcart',__LINE__);  
 
 ?>
+</div>

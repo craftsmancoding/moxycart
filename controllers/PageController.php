@@ -713,12 +713,13 @@ class PageController extends BaseController {
 
     public function getXcart(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+        $this->_setUIdata();
         return $this->fetchTemplate('tools/xcart.php');
     }
 
-    public function postTools(array $scriptProperties = array()) {
+    public function postXcart(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
-        return $this->fetchTemplate('main/tools.php');
+        return $this->fetchTemplate('tools/xcart.php');
     }
         
 }
