@@ -276,6 +276,9 @@ foreach ($products as $r) {
         $P->set('is_active', true);
         $P->set('in_menu', false);    
     }
+    $alias = strtolower($r['productcode']);
+    $alias = str_replace(array('/',' '), '-', $alias);
+    $P->set('alias', $alias);
     $P->set('description', $r['descr']);
     $P->set('meta_keywords', $r['meta_keywords']);
     $P->set('content', $r['fulldescr']);
@@ -383,6 +386,8 @@ foreach ($image_tables as $tbl) {
             $this->modx->log(\modX::LOG_LEVEL_ERROR,'No mapping for xcart_products: '.$xcart_productid. ' Skipping image.','','xcart',__LINE__);           
             continue;
         }
+        $product_id = $map['xcart_products'][$xcart_productid];
+        
         $src = $image_path. substr($i['image_path'], strlen($prefix));
         if (!file_exists($src)) {
             $this->modx->log(\modX::LOG_LEVEL_ERROR,'Image file not found: '.$src . '(table: $tbl imageid: '.$i['imageid'].')','','xcart',__LINE__);           
@@ -404,9 +409,20 @@ foreach ($image_tables as $tbl) {
             $this->modx->log(\modX::LOG_LEVEL_INFO,'Asset Created/Updated: '.$Asset->get('asset_id'),'','xcart',__LINE__);  
         }
         catch (\Exception $e) {
-            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Could not create Asset from file: '.$e->getMessage(),'','xcart',__LINE__);             
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Could not create Asset from file: '.$e->getMessage(),'','xcart',__LINE__); 
+            continue;            
         }
         
+        if (!$PA = $this->modx->getObject('ProductAsset',array('product_id'=> $product_id,'asset_id'=> $Asset->get('asset_id')))) {
+            $PA = $this->modx->newObject('ProductAsset',array('product_id'=> $product_id,'asset_id'=> $Asset->get('asset_id')));
+        }
+        $PA->set('is_active',true);
+        if(!$PA->save()) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving ProductAsset','','xcart',__LINE__);  
+        }
+        else {
+            $this->modx->log(\modX::LOG_LEVEL_INFO,'ProductAsset created/updated: '.$PA->get('id'),'','xcart',__LINE__);   
+        }
         
     }
 }
@@ -453,6 +469,9 @@ foreach ($customers as $c) {
         $U->addOne($Profile);        
         if (!$U->save()) {
             $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving User: '.$c['username'],'','xcart',__LINE__);  
+        }
+        else {
+            $this->modx->log(\modX::LOG_LEVEL_INFO,'User Created/Updated '.$U->get('id'),'','xcart',__LINE__);           
         }
     }
 
