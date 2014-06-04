@@ -75,6 +75,7 @@ class APIController extends \modExtraManagerController {
         $Model = new $classname($this->modx);    
         $Model->fromArray($scriptProperties);
         if (!$Model->save()) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'API: failed to create '.$this->model.' due to errors: '.print_r($Model->errors,true),'',__CLASS__,__FUNCTION__,__LINE__);
             return $this->sendFail(array('errors'=> $Model->errors));
         }
         return $this->sendSuccess(array(

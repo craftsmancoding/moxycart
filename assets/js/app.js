@@ -117,7 +117,7 @@ function populate_form(data) {
  * @param string methodname 
  * @param hash data any additional data to be included in the request to the controller 
  */
-function mapi(classname,methodname,data,redirect) {
+function mapi(classname,methodname,data,callback) {
     data = typeof data !== 'undefined' ? data : {}; // default
     
     console.debug('[mapi]',classname,methodname,data);
@@ -138,8 +138,8 @@ function mapi(classname,methodname,data,redirect) {
         }
         else if (response.status == 'success') {
             show_success(response.data.msg);
-            if (redirect) {
-                paint(redirect);
+            if (callback) {
+                callback(response);
             }
         }
     },'json')

@@ -307,9 +307,16 @@ function get_field_instance() {
 function save_product(method) {
     console.log('[save_product] '+method);
     var values = jQuery('#product_form').serialize();
-    mapi('product',method,values);
-    if (method == 'create') {
     
+    if (method == 'create') {
+        mapi('product','create',values, function(response){
+            console.debug('Redirecting after successful create.');
+            window.location.href = controller_url('page','productedit')+'&product_id='+response.data.id;    
+        });
+
+    }
+    else {
+        mapi('product',method,values);
     }
 }
 
@@ -488,7 +495,6 @@ function select_thumb(asset_id,url) {
 								</select>
 								<label for="template_id">Template</label>
 								<?php
-								print 'Template: '.$data['template_id']; 
 								print \Formbuilder\Form::dropdown('template_id', $data['templates'], $data['template_id']);
 								?>
 

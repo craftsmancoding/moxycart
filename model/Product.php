@@ -842,12 +842,12 @@ class Product extends BaseModel {
      */
     public function saveRelated($data) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Save related data: '.print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);
-        // Extra stuff is ignored
+        // Extra stuff is ignored... it doesn't matter here whether we're creating or updating an object
         $this->fromArray($data);
         if (!$this->save()) {
             return false;
         }
-        $product_id = $this->get('product_id');
+        $product_id = $this->getPrimaryKey(); // $this->get('product_id');
         if (isset($data['Assets'])) $this->dictateAssets($data['Assets']);
         if (isset($data['Fields'])) $this->dictateFields($data['Fields']);
         if (isset($data['OptionTypes'])) $this->dictateOptionTypes($data['OptionTypes']);
@@ -855,7 +855,7 @@ class Product extends BaseModel {
         if (isset($data['Taxonomies'])) $this->dictateTaxonomies($data['Taxonomies']);
         if (isset($data['Terms'])) $this->dictateTerms($data['Terms']);
         
-        return true;
+        return $product_id;
     }
     
     /**

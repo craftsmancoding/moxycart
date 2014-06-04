@@ -183,7 +183,7 @@ class BaseController extends \modExtraManagerController {
         if (substr($file,-4) == '.tpl') {
             return parent::fetchTemplate($file);
         }
-        $this->modx->log(\modX::LOG_LEVEL_ERROR, 'File: '.$file,'','BaseController::'.__FUNCTION__);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'File: '.$file,'','BaseController::'.__FUNCTION__,__LINE__);
         // WTF?  using regClientCSS here fails ONLY if you also use it in your view file. 
         // Otherwise it works. W.T.F.?
         //print $this->config['assets_url']; exit;
@@ -223,12 +223,12 @@ class BaseController extends \modExtraManagerController {
 		// Load up our page [header] + content + [footer]
 		ob_start();
         if (!isset($this->scriptProperties['_nolayout'])) {
-            $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Including header.php', '','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
+            $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Including header.php', '','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
 			include $path.'header.php';
         }
 		include $path.$file;
         if (!isset($this->scriptProperties['_nolayout'])) {
-            $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Including footer.php', '','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
+            $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Including footer.php', '','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
 			include $path.'footer.php';
         }
 
