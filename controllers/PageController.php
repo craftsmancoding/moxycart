@@ -404,6 +404,43 @@ class PageController extends BaseController {
         // types (dropdown -- product types)
         $this->setPlaceholder('types',$result->getTypes());
 
+        // Taxonomies
+        $taxonomies = array();
+        $c = $this->modx->newQuery('Taxonomy');
+        $c->where(array('published' => true, 'class_key'=>'Taxonomy'));
+        $c->sortby('menuindex','ASC');
+        $c->select(array('id','pagetitle'));
+        if ($Taxes = $this->modx->getCollection('Taxonomy', $c)) {
+            foreach ($Taxes as $t) {
+                $taxonomies[ $t->get('id') ] = $t->get('pagetitle');
+            }
+        }
+        $this->setPlaceholder('taxonomies',$taxonomies);
+        
+        // ProductTaxonomy
+        $product_taxonomies = array();
+        if ($PTs = $this->modx->getCollection('ProductTaxonomy', array('product_id'=>$product_id))) {
+            foreach($PTs as $pt) {
+                $product_taxonomies[] = $pt->get('taxonomy_id');
+            }
+        }
+        $this->setPlaceholder('product_taxonomies',$product_taxonomies);        
+        
+        // Terms
+        $T = new \Taxonomies\Base($this->modx);
+        $terms = $T->getTaxonomiesAndTerms();
+        $this->setPlaceholder('terms',$terms);
+        
+        // ProductTerm
+        $product_terms = array();
+        if ($PTs = $this->modx->getCollection('ProductTerm', array('product_id'=>$product_id))) {
+            foreach($PTs as $pt) {
+                $product_terms[] = $pt->get('term_id');
+            }
+        }
+        $this->setPlaceholder('product_terms',$product_terms);        
+        
+        
         return $this->fetchTemplate('product/edit.php');
     }
 
@@ -679,6 +716,18 @@ class PageController extends BaseController {
         return $this->fetchTemplate('main/test.php');
     }
     
+    //------------------------------------------------------------------------------
+    //! Tools
+    //------------------------------------------------------------------------------
+    public function getTools(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+        return $this->fetchTemplate('main/tools.php');
+    }
+
+    public function postTools(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+        return $this->fetchTemplate('main/tools.php');
+    }
         
 }
 /*EOF*/

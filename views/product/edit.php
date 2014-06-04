@@ -803,13 +803,13 @@ function select_thumb(asset_id,url) {
 
     <?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
     	<div id="taxonomies_tab" class="content"><br>
-    		<legend>Taxonomy List</legend>
+    		<legend>Enable Taxonomies</legend>
             <div id="taxonomy_list">
-                <?php print $data['taxonomies']; ?>
+                <?php print \Formbuilder\Form::multicheck('Taxonomies',$data['taxonomies'],$data['product_taxonomies']); ?>
             </div>
-            <legend>Term List</legend>
+            <legend>Terms</legend>
             <div id="taxonomy_terms">
-                <?php print $data['product_taxonomies']; ?>
+                <?php print \Formbuilder\Form::multicheck('Terms',$data['terms'],$data['product_terms']); ?>
             </div>    
     	</div>
     <?php endif; // moxycart.enable_taxonomies ?>

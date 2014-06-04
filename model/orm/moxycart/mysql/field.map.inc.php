@@ -14,6 +14,7 @@ $xpdo_meta_map['Field']= array (
     'seq' => NULL,
     'group' => NULL,
     'type' => 'text',
+    'is_active' => 1,
     'timestamp_created' => 'CURRENT_TIMESTAMP',
     'timestamp_modified' => NULL,
   ),
@@ -81,6 +82,15 @@ $xpdo_meta_map['Field']= array (
       'null' => false,
       'default' => 'text',
       'comment' => 'Formbuilder argument',
+    ),
+    'is_active' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'attributes' => 'unsigned',
+      'phptype' => 'boolean',
+      'null' => false,
+      'default' => 1,
     ),
     'timestamp_created' => 
     array (

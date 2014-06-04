@@ -852,7 +852,7 @@ class Product extends BaseModel {
         if (isset($data['Fields'])) $this->dictateFields($data['Fields']);
         if (isset($data['OptionTypes'])) $this->dictateOptionTypes($data['OptionTypes']);
         if (isset($data['Relations'])) $this->dictateRelations($data['Relations']);
-        if (isset($data['Taxonomies'])) $this->dictateTaxnomies($data['Taxonomies']);
+        if (isset($data['Taxonomies'])) $this->dictateTaxonomies($data['Taxonomies']);
         if (isset($data['Terms'])) $this->dictateTerms($data['Terms']);
         
         return true;
