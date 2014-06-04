@@ -543,7 +543,7 @@ class Product extends BaseModel {
      */
     public function addFields(array $data) {
         $this_product_id = $this->_verifyExisting();
-
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Fields:'.print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);  
         foreach ($data as $r) {
             if (!isset($r['field_id'])) {
                 $this->modx->log(\modX::LOG_LEVEL_ERROR,'Missing field_id','',__CLASS__,__FUNCTION__,__LINE__); 
@@ -575,7 +575,7 @@ class Product extends BaseModel {
      */
     public function removeFields(array $array) {
         $this_product_id = $this->_verifyExisting();
-        
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Fields remove ids:'.implode(',',$array),'',__CLASS__,__FUNCTION__,__LINE__);          
         foreach ($array as $id) {
             $props = array(
                 'product_id'=> $this_product_id, 
@@ -600,7 +600,7 @@ class Product extends BaseModel {
      */
     public function dictateFields(array $data) {
         $this_product_id = $this->_verifyExisting();
-        
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Fields:'.print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);  
         $dictate = array();
         foreach($data as $r) {
             $dictate[] = $r['field_id'];
@@ -608,25 +608,26 @@ class Product extends BaseModel {
         $props = array(
             'product_id'=> $this_product_id,
         );
-        
-        // Array of related_id's that are already defined
-        $existing = array();
-        if($ExistingColl = $this->modx->getObject('ProductField', $props)) {
-            $existing[] = $ExistingColl->get('field_id');   
-        }
-        
-        $to_remove = array_diff($existing,$dictate);
-        $to_add = array_diff($dictate,$existing);
 
-        $newdata = array();
-        foreach ($data as $r) {
-            if (in_array($r['field_id'],$to_add)) {
-                $newdata[] = $r;
+        $dictate = array();
+        foreach ($data as $d) {
+            $props = array('product_id'=>$this_product_id,'field_id'=>$d['field_id']);
+            if(!$PF = $this->modx->getObject('ProductField', $props)) {
+                $PF = $this->modx->newObject('ProductField', $props);
+            }
+            if (isset($d['value'])) $PF->set('value', $d['value']);
+            $PF->save();
+            $dictate[] = $PF->get('field_id');    
+        }
+
+        // Remove
+        if($ExistingColl = $this->modx->getCollection('ProductField', array('product_id' => $this_product_id))) {
+            foreach ($ExistingColl as $PF) {
+                if (!in_array($PF->get('field_id'), $dictate)) {
+                    $PF->remove();
+                }
             }
         }
-
-        $this->removeFields($to_remove);
-        $this->addFields($newdata);
         
         return true;
     

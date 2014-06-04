@@ -138,7 +138,7 @@ function mapi(classname,methodname,data,callback) {
         }
         else if (response.status == 'success') {
             show_success(response.data.msg);
-            if (callback) {
+            if (callback != void 0) {
                 callback(response);
             }
         }

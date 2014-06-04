@@ -18,6 +18,51 @@ class Field extends BaseModel {
             //'multicheck'=>'Multi-Check'
         );    
     }
+    
+    /**
+     * Generate an HTML form for the field requested
+     * @param integer $field_id
+     * @param string $value the default 
+     * @param string $name for the element (= key in post)
+     * @return mixed HTML on success, boolen false on fail
+     */
+    public function generate($field_id,$value='',$name=null) {
+        if (!$F = $this->modx->getObject('Field', $field_id)) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Field id not found: '.$field_id,'',__CLASS__,__FUNCTION__,__LINE__);
+            return false;
+        }
+        $type = $F->get('type');
+        $attr = $F->toArray();
+        
+        if (!$name) {
+            $name = $attr['slug'];
+        }
+        $args = json_decode($attr['config'], true);
+        switch ($type) {
+            case 'dropdown':
+                $out = \Formbuilder\Form::dropdown($name,$args,$value, array('label'=>$attr['label'],'description'=>$attr['description']));
+                break;
+            
+            case 'checkbox':
+                $args['label'] = $attr['label'];
+                $args['description'] = $attr['description'];
+                $out = \Formbuilder\Form::checkbox($name,$value, $args);
+                break;
+            case 'text':
+            case 'textarea':
+                $args['label'] = $attr['label'];
+                $args['description'] = $attr['description'];
+                $out = \Formbuilder\Form::$type($name,$value,$args);
+                break;
+            default:
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Unsupported field type: '.$type,'',__CLASS__,__FUNCTION__,__LINE__);  
+                return false;
+        }
+        
+        return $out->__toString(); // <-- force to string!
+    
+    }
+    
     /**
      * Must test for reserved Words!
      *

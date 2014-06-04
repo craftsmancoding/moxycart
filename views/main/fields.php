@@ -47,7 +47,7 @@
         </td>
         <td>
             <span class="button btn" onclick="javascript:paint('fieldedit',{field_id:<?php print $r->get('field_id'); ?>});">Edit</span>
-            <span class="button btn" onclick="javascript:mapi('field','delete',{field_id:<?php print $r->get('field_id'); ?>},'fields');">Delete</span>
+            <span class="button btn" onclick="javascript:mapi('field','delete',{field_id:<?php print $r->get('field_id'); ?>},function(response){ paint('fields'); });">Delete</span>
         </td>
     </tr>
 <?php endforeach; ?>

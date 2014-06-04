@@ -28,12 +28,12 @@ class ProductController extends APIController {
                 $P1['RelData']['Asset'][ $v['Asset']['asset_id'] ] = $v['Asset'];
             }
         }
-        if (isset($P1['OptionTypes']) && is_array($P1['Assets'])) {        
+        if (isset($P1['OptionTypes']) && is_array($P1['OptionTypes'])) {        
             foreach ($P1['OptionTypes'] as $k => $v) {
                 $P1['RelData']['OptionType'][ $v['Type']['otype_id'] ] = $v['Type'];
             }
         }
-        if (isset($P1['Relations']) && is_array($P1['Assets'])) {
+        if (isset($P1['Relations']) && is_array($P1['Relations'])) {
             foreach ($P1['Relations'] as $k => $v) {
                 $P1['RelData']['Relation'][ $v['Relation']['product_id'] ] = $v['Relation'];
             }
@@ -125,7 +125,7 @@ Array
 
      */
     public function postEdit(array $scriptProperties = array()) {
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         // This doesn't work unless you add the namespace.
         // Oddly, if you write it out (w/o a var), it works. wtf?
         $classname = '\\Moxycart\\'.$this->model;
@@ -146,7 +146,7 @@ Array
         //  Relations: has a type
         $related_indices = array('Assets','Fields','Relations');
         foreach($related_indices as $k) {
-            if (isset($scriptProperties[$k])) $scriptProperties[$k] = $Obj->indexedToRecordset($scriptProperties[$k]);
+            if (isset($scriptProperties[$k])) $scriptProperties[$k] = $Product->indexedToRecordset($scriptProperties[$k]);
         }
         $product_id = $Product->saveRelated($scriptProperties);
         

@@ -47,7 +47,7 @@ print $this->getMsg();
         <td>
             <span class="button btn" onclick="javascript:paint('optionedit',{otype_id:<?php print $r->get('otype_id'); ?>});">Edit</span>
             <span class="button btn" onclick="javascript:paint('optionterms',{otype_id:<?php print $r->get('otype_id'); ?>});">Manage Terms</span>
-            <span class="button btn" onclick="javascript:mapi('optiontype','delete',{otype_id:<?php print $r->get('otype_id'); ?>},'options');">Delete</span>     
+            <span class="button btn" onclick="javascript:mapi('optiontype','delete',{otype_id:<?php print $r->get('otype_id'); ?>},function(response){ paint('options'); });">Delete</span>     
         </td>
     </tr>
 <?php endforeach; ?>

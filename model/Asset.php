@@ -140,45 +140,66 @@ class Asset extends BaseModel {
      * This needs to handle both uploaded files and existing files (e.g. manually uploaded).
      * If the file has just been uploaded, we move it to a temporary directory $tmpdir.
      *
+     * CONFIG (modx system setttings):
+     *
+     *      assets_path : full path to MODX's assets directory
+     *      moxycart.upload_dir : path relative to assets_path where Moxycart will store its images
+     *      moxycart.thumbnail_width
+     *      moxycart.thumbnail_height
+     *      moxycart.thumbnail_dir
      *
      * @param array $FILES structure mimics part of the $_FILES array, see above.
-     * @param string $storage_basedir for our asset management: dir where files will be moved.
-     *
+     * @param boolean $force_create if true, a duplicate asset will be created. False will trigger a search for existing asset.
      * @return object instance representing new or existing asset
      */
-    public function fromFile($FILE,$storage_basedir) {
-        if (!is_array($FILE) || !is_scalar($storage_basedir)) {
+    public function fromFile($FILE, $force_create=false) {
+        if (!is_array($FILE)) {
             throw new \Exception('Invalid data type.');
         }
         if (!isset($FILE['tmp_name']) || !isset($FILE['name'])) {
             throw new \Exception('Missing required keys in FILE array.');        
         }
-        // For Thumbnails (future: read from config)
+        
+        // From Config
+        $storage_basedir = $this->modx->getOption('assets_path').rtrim($this->modx->getOption('moxycart.upload_dir'),'/').'/';
         $w = $this->modx->getOption('moxycart.thumbnail_width');
         $h = $this->modx->getOption('moxycart.thumbnail_height');
         $subdir = $this->modx->getOption('moxycart.thumbnail_dir');
-        // $storage_basedir = from config!!
         
         $src = $FILE['tmp_name']; // source file
         $this->_validFile($src);
         
-        $storage_basedir = rtrim($storage_basedir,'/').'/';
+        $sig = md5_file($src);
+        
+        // Existing?
+        if (!$force_create) {
+            if ($existing = $this->modx->getObject('Asset', array('sig'=>$sig))) {
+                $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Existing Asset found with matching signature: '.$existing->get('asset_id'),'',__CLASS__,__FUNCTION__,__LINE__);        
+                $classname = '\\Moxycart\\'.$this->xclass;
+                return new $classname($this->modx, $existing); 
+            }
+        }
+                
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Creating Asset from File in Storage Directory: '.$storage_basedir,'',__CLASS__,__FUNCTION__,__LINE__);
         $target_dir = $this->preparePath($storage_basedir.$this->getCalculatedSubdir());
         
         $basename = $FILE['name'];
         $dst = $this->getUniqueFilename($target_dir.$basename);
 
-        if(!rename($src,$dst)) {
+        $obj = $this->modx->newObject($this->xclass); // new Asset()        
+        $obj->fromArray($FILE); // get any defaults
+        
+        $size = (isset($FILE['size'])) ? $FILE['size'] : filesize($src);
+        $obj->set('sig', $sig);
+        $obj->set('size', $size);
+        
+        if(!@rename($src,$dst)) {
             $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Failed to move asset file from '.$src.' to '.$dst,'',__CLASS__,__FILE__,__LINE__);
             throw new \Exception('Could not move file from '.$src.' to '.$dst);
         }
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Moved file from '.$src.' to '.$dst,'',__CLASS__,__FILE__,__LINE__);
-        chmod($dst, 0666); // <-- config?
-        $obj = $this->modx->newObject($this->xclass); // new Asset()        
-        
-        $size = (isset($FILE['size'])) ? $FILE['size'] : filesize($dst);
-        $obj->set('sig', md5_file($dst));
-        $obj->set('size', $size);
+        @chmod($dst, 0666); // <-- config?
+
         
         $C = $this->getContentType($dst);        
         $obj->set('content_type_id', $C->get('id'));
@@ -197,9 +218,6 @@ class Asset extends BaseModel {
             $obj->set('is_image', 0);
         }
 
-        
-        
-        
         if(!$obj->save()) {
             $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Failed to save Asset. Errors: '.print_r($obj->errors,true),'',__CLASS__,__FILE__,__LINE__);
             throw new \Exception('Error saving to database.');
@@ -257,7 +275,7 @@ class Asset extends BaseModel {
         }
         else {
             $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Creating directory '.$path,'',__CLASS__,__FILE__,__LINE__);
-            if (!mkdir($path,$umask,true)) {
+            if (!@mkdir($path,$umask,true)) {
                 $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Failed to recursively create directory '.$path.' with umask '.$umask,'',__CLASS__,__FILE__,__LINE__);
                 throw new \Exception('Failed to create directory '.$path);
             }        
@@ -336,7 +354,7 @@ class Asset extends BaseModel {
      * @return mixed array on success, false on fail
      */
     public function getImageInfo($filename) {
-        if($info = getimagesize($filename)) {
+        if($info = @getimagesize($filename)) {
             $output = array();
             $output['width'] = $info[0];
             $output['height'] = $info[1];
@@ -385,14 +403,12 @@ class Asset extends BaseModel {
      * Override parent so we can clean out the asset files
      *
      */
-    public function remove($storage_basedir=null) {
-
-        if (!$storage_basedir) {
-            $storage_basedir = $this->modx->getOption('assets_path').$this->modx->getOption('moxycart.upload_dir');
-        }
+    public function remove() {
+        $storage_basedir = $this->modx->getOption('assets_path').$this->modx->getOption('moxycart.upload_dir');
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Removing Asset '.$this->getPrimaryKey().' with assets in storage_basedir '.$storage_basedir,'',__CLASS__,__FILE__,__LINE__);
         
-        $file = $storage_basedir.$this->modelObj->get('path');
+        //$file = $storage_basedir.$this->modelObj->get('path');
+        $file = $this->modelObj->get('path');        
         if (file_exists($file)) {
             if (!unlink($file)) {
                 $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Failed to remove file asset for Asset '.$this->getPrimaryKey(). ': '.$file,'',__CLASS__,__FILE__,__LINE__);
@@ -400,9 +416,9 @@ class Asset extends BaseModel {
             }
         }
         else {
-            $this->modx->log(\modX::LOG_LEVEL_INFO, 'File does not exist for Asset '.$this->getPrimaryKey().': '.$dir.' This could be because the file was manually deleted or because you did not pass the $storage_basedir parameter.','',__CLASS__,__FILE__,__LINE__);
+            $this->modx->log(\modX::LOG_LEVEL_INFO, 'File does not exist for Asset '.$this->getPrimaryKey().': '.$file.' This could be because the file was manually deleted or because you did not pass the $storage_basedir parameter.','',__CLASS__,__FILE__,__LINE__);
         }
-        // remove thumbnail
+        // remove thumbnails
 /*
         $file = $prefix.$this->modelObj->get('thumbnail_url');
         if (file_exists($file)) {

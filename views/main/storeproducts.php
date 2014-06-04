@@ -2,7 +2,7 @@
     <a class="btn" href="<?php print static::url('page','productcreate',array('store_id'=>$data['store_id'])); ?>">Add Product</a> 
     <!--a class="btn" href="<?php print static::url('page','inventory',array('store_id'=>$data['store_id'])); ?>">Manage Inventory</a-->
         
-    <!--form action="<?php print $data['baseurl']; ?>">
+    <!--form action="">
         <input type="text" name="name:LIKE" placeholder="Search..." />    
         <input type="submit" value="Filter"/>
     </form-->
