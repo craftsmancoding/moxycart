@@ -28,12 +28,12 @@ class ProductController extends APIController {
                 $P1['RelData']['Asset'][ $v['Asset']['asset_id'] ] = $v['Asset'];
             }
         }
-        if (isset($P1['OptionTypes']) && is_array($P1['Assets'])) {        
+        if (isset($P1['OptionTypes']) && is_array($P1['OptionTypes'])) {        
             foreach ($P1['OptionTypes'] as $k => $v) {
                 $P1['RelData']['OptionType'][ $v['Type']['otype_id'] ] = $v['Type'];
             }
         }
-        if (isset($P1['Relations']) && is_array($P1['Assets'])) {
+        if (isset($P1['Relations']) && is_array($P1['Relations'])) {
             foreach ($P1['Relations'] as $k => $v) {
                 $P1['RelData']['Relation'][ $v['Relation']['product_id'] ] = $v['Relation'];
             }

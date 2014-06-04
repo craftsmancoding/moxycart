@@ -468,6 +468,8 @@ class PageController extends BaseController {
     public function getFields(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new Field($this->modx);
+        $scriptProperties['sort'] = 'seq';
+        $scriptProperties['dir'] = 'ASC';
         $results = $Obj->all($scriptProperties);
         //$debug = $Obj->all($scriptProperties,true);
         //print $debug; exit;
