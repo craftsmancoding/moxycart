@@ -46,7 +46,7 @@ function renderProductContainer(isProductContainerCreate, config){
 		items: [
             {
                 xtype: "box",
-                autoEl: {cn: '<div id="store_products"></div>'}
+                autoEl: {cn: '<div id="store_products"></div>'},
             }
 		]
 	};

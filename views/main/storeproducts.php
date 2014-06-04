@@ -8,7 +8,7 @@
     </form-->
 </div>
 <?php if ($data['results']): ?>
-<table>
+<table class="classy" style="width: 100%; margin-top: 10px;">
     <thead>
         <tr>
             <?php 
