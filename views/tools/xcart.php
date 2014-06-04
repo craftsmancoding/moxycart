@@ -62,6 +62,8 @@ if (empty($_POST)) {
 }
 
 $image_path = rtrim($data['image_path'],'/').'/';
+$store_id = $data['store_id'];
+$template_id = $data['template_id'];
 
 // Criteria for foreign Database
 $host = $data['host'];
