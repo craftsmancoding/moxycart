@@ -86,7 +86,7 @@ class Snippet {
         
         $out = '';
         foreach ($records as $r) {
-            if (is_object($r)) $r = $r->toArray(); // Handle xPDO objects
+            if (is_object($r)) $r = $r->toArray('',false,false,true); // Handle xPDO objects
             // Use a temporary Chunk when dealing with raw formatting strings
             if ($use_tmp_chunk) {
                 $uniqid = uniqid();
