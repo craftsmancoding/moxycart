@@ -18,7 +18,15 @@ class FieldController extends APIController {
     public function postGenerate(array $scriptProperties = array()) {
     
         $field_id = (int) $this->modx->getOption('field_id',$scriptProperties);
-        $name = $this->modx->getOption('name',$scriptProperties);
+        $name = (int) $this->modx->getOption('name',$scriptProperties);        
+        $Field = new Field($this->modx);
+        
+        $out = $Field->generate($field_id,'',$name);
+        if ($out === false) {
+            return $this->sendError('Field not found.');
+        }
+        /*
+$name = $this->modx->getOption('name',$scriptProperties);
         $Obj = new Field($this->modx);    
         if (!$F = $Obj->find($field_id)) {
             return $this->sendError('Page not found.');
@@ -44,6 +52,7 @@ class FieldController extends APIController {
             $args['description'] = $description;
             $out = \Formbuilder\Form::$type($name,$value,$args);
         }
+*/
         
 
         // Double-quoting here is REQUIRED to trigger the __toString on the Formbuilder object.

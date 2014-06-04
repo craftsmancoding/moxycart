@@ -83,6 +83,7 @@ function product_init() {
 
     populate_form(product);
 	jQuery('#moxytab').tabify();
+
 	// jQuery('.datepicker').datepicker("setValue", new Date()); // <-- always writes current date
     // jQuery('.datepicker').datepicker(); // <-- shows "-001-11-30 00:00:00" for the default date
 	jQuery('.datepicker').datepicker();
@@ -610,15 +611,9 @@ function select_thumb(asset_id,url) {
 				        <span id="no_specs_msg">No Custom Fields Found</span>	                
 	                <?php endif; ?>
 	                
-                    <?php foreach ($data['product_fields'] as $f):?>
-
-                    <?php
-                        $type = $f->Field->get('type');
-                        $value = $f->get('value');
-                        $label = $f->Field->get('label');
-                        $description = $f->Field->get('description');
-                        print \Formbuilder\Form::$type('Fields[value][]',$value, array('label'=>$label,'description'=>$description));
-                    ?>
+                    <?php foreach ($data['product_fields'] as $field_id => $f): ?>
+                        <input type="hidden" name="Fields[field_id][]" value="<?php print $field_id; ?>" />
+                        <?php print $f; ?>
 
                     <?php endforeach; ?>
             </div>
@@ -628,11 +623,7 @@ function select_thumb(asset_id,url) {
 		<?php /* ======== MODAL DIALOG BOX ======*/ ?>
 		<div id="custom_fields_form" title="Select Custom Fields">
             <?php
-            $field_ids = array();
-            foreach ($data['product_fields'] as $f) {
-                $field_ids[] = $f->get('field_id');
-            }
-    		print \Formbuilder\Form::multicheck('', $data['fields'],$field_ids,array('id'=>'field_id'));
+    		print \Formbuilder\Form::multicheck('', $data['fields'],array_keys($data['product_fields']),array('id'=>'field_id'));
     		?>
 		</div>		
 

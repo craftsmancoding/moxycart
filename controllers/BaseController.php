@@ -183,7 +183,7 @@ class BaseController extends \modExtraManagerController {
         if (substr($file,-4) == '.tpl') {
             return parent::fetchTemplate($file);
         }
-        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'File: '.$file,'','BaseController::'.__FUNCTION__,__LINE__);
+        $this->modx->log(\modX::LOG_LEVEL_INFO, 'File: '.$file,'','BaseController::'.__FUNCTION__,__LINE__);
         // WTF?  using regClientCSS here fails ONLY if you also use it in your view file. 
         // Otherwise it works. W.T.F.?
         //print $this->config['assets_url']; exit;
@@ -428,7 +428,7 @@ class BaseController extends \modExtraManagerController {
             $url .= '?a='.$Action->get('id');
             if ($class && $method) {
                 $url .= '&class='.$class.'&method='.$method;
-                if ($args) {
+                if (!empty($args)) {
                     foreach ($args as $k=>$v) {
                         $url.='&'.$k.'='.$v;
                     }

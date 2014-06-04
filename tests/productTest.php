@@ -1041,8 +1041,8 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $raw['one'] = 'Uno';
         $raw['two'] = 'Dos';
         $raw['three'] = 'Tres';
-        
-        $this->assertEquals($raw,$data);
+
+        $this->assertEquals(ksort($raw),ksort($data));
     }
     
 /*
