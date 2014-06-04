@@ -427,7 +427,7 @@ class PageController extends BaseController {
         $this->setPlaceholder('product_taxonomies',$product_taxonomies);        
         
         // Terms
-        $T = new \Taxonomies\Base($this->modx);
+        $T = new Taxonomy($this->modx);
         $terms = $T->getTaxonomiesAndTerms();
         $this->setPlaceholder('terms',$terms);
         
