@@ -116,5 +116,14 @@ class Snippet {
         }
         return $out;
     }
+    
+    /**
+     * Given a potentially deeply nested array, this demonstrates which placeholders are available
+     * for debugging purposes.
+     * @param array
+     */
+    public function revealPlaceholders($array) {
+    
+    }
 
 }

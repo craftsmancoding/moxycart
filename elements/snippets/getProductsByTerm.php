@@ -13,6 +13,7 @@
  *
  * @param int $limit Limit the result
  *
+
  * Variables
  * ---------
  * @var $modx modX
@@ -21,6 +22,10 @@
  * Usage
  * ------------------------------------------------------------
  * [[!getProductsByTerm? &outerTpl=`sometpl` &innerTpl=`othertpl`]]
+ *
+ *   [[!getProductsByTerm? 
+        &term_id=`447` 
+        &innerTpl=`<li><a href="[[+Product.uri]]">[[+Product.name]] ([[+Product.sku]])</a> Full sized: [[+Product.Thumbnail.url]] Thumbnail: [[+Product.Thumbnail.thumbnail_url]]</li>`]]
  *
  * @package taxonomies
  **/
@@ -38,14 +43,20 @@ $c->where(array(
     'Term.published'=>true,
     'ProductTerm.term_id'=>$term_id,
 ));
-$c->sortby('seq','ASC');
+$c->sortby('Product.seq','ASC');
 
+$Products = $modx->getCollectionGraph('ProductTerm', '{"Product":{"Thumbnail":{}},"Term":{}}',$c);
 
-if ($Products = $modx->getCollectionGraph('ProductTerm', '{"Product":{},"Term":{}}',$c)) {
+//return $c->toSQL();
+if ($Products) {
+/*
     foreach ($Products as $P) {
-//        return '<pre>'. print_r($P->toArray('',false,false,true),true).'</pre>';
+        if ($P->get('asset_id')) {
+            return '<pre>'. print_r($P->toArray('',false,false,true),true).'</pre>';
+        }
     }
+*/
     return $Snippet->format($Products,$innerTpl,$outerTpl);
 }
 
-return 'No Products found.';
+return 'No Products found for term_id '.$term_id;

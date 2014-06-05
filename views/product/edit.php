@@ -376,7 +376,7 @@ function select_thumb(asset_id,url) {
             if ($data['product_form_action'] == 'product_update'):
             ?>
                 <button class="btn" id="product_update" onclick="javascript:save_product('edit'); return false;">Save</button>
-                <a class="btn" href="<?php print static::page('products'); ?>" target="_blank">View</a>
+                <a class="btn" href="<?php print static::page('productpreview',array('product_id'=>$data['product_id'])); ?>" target="_blank">View</a>
             <?php    
             else:
             ?>

@@ -46,6 +46,7 @@ print \Formbuilder\Form::open(self::page('xcart'))
     ->dropdown('template_id',$data['templates'],'',array('label'=>'Product Template'))    
 //    ->dropdown('user_group_id',array())    
     ->html('<h4>Assets</h4>')
+    ->checkbox('migrate_assets',0,array('label'=>'Migrate Assets','description'=>'Copy your xCart images into the path indicated below and this script will import them into the Moxycart database.'))
     ->text('image_path',MODX_BASE_PATH,array('label'=>'Image Path',
         'description'=>'Full path to where you have copied your xCart image folder. This folder should contain sub-directories C, D, G, etc. This directory must be readable by PHP.',
         'style'=>'width:300px;',
@@ -365,14 +366,33 @@ foreach ($products as $r) {
         else {
             $this->modx->log(\modX::LOG_LEVEL_ERROR,'No mapping for xcart_categories: '.$pc['categoryid'],'','xcart',__LINE__);           
         }
-    }
+    }    
+}
 
-    
+//------------------------------------------------------------------------------
+//! Pricing
+//------------------------------------------------------------------------------
+foreach ($map['xcart_products'] as $xcart_id => $product_id) {
+    if (!$P = $this->modx->getObject('Product', $product_id)) {
+        continue;
+    }
+    $price = $P->get('price');
+    if (!$price) {
+        $prices = $xpdo->query("SELECT * FROM xcart_pricing WHERE productid={$xcart_id}");
+        foreach ($prices as $pr) {
+            $P->set('price', $pr['price']);
+            break;
+        }
+        $P->save();
+        $this->modx->log(\modX::LOG_LEVEL_INFO,'Pricing updated for product '.$product_id,'','xcart',__LINE__);          
+    }
 }
 
 //------------------------------------------------------------------------------
 //! Assets
 //------------------------------------------------------------------------------
+if ($data['migrate_assets']):
+
 $this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Image Migration =============','','xcart',__LINE__);  
 $image_tables = array('xcart_images_B','xcart_images_C','xcart_images_D','xcart_images_F','xcart_images_G','xcart_images_L',
     'xcart_images_M','xcart_images_P','xcart_images_S','xcart_images_T','xcart_images_W','xcart_images_Z');
@@ -423,9 +443,17 @@ foreach ($image_tables as $tbl) {
         else {
             $this->modx->log(\modX::LOG_LEVEL_INFO,'ProductAsset created/updated: '.$PA->get('id'),'','xcart',__LINE__);   
         }
+        // Set thumbnail
+        if ($P = $this->modx->getObject('Product', $product_id)) {
+            if (!$P->get('asset_id')) {
+                $P->set('asset_id', $Asset->get('asset_id'));
+                $P->save();
+            }
+        }
         
     }
 }
+endif; // $data['migrate_assets']
 
 
 //------------------------------------------------------------------------------

@@ -6,16 +6,24 @@
  * 
  * Available Placeholders
  * ---------------------------------------
- * images_id, product_id, title, alt, url, path, width, height, seq, is_active
- * use as [[+url]] on Template Parameters
+ * e.g. to format the large image: 
+ *      <img src="[[+Asset.url]]" width="[[+Asset.width]]" height="[[+Asset.height]]" alt="[[+Asset.alt]]" />
+ * Thumbnail:
+ *      <img src="[[+Asset.thumbnail_url]]" />
+ *
+ * If needed, include the System Settings (double ++) :
+ *      [[++moxycart.thumbnail_width]]
+ *      [[++moxycart.thumbnail_height]]
+ * e.g. <img src="[[+Asset.thumbnail_url]]" width="[[++moxycart.thumbnail_width]]" height="[[++moxycart.thumbnail_width]]" alt="[[+Asset.alt]]"/>
  * 
  * Parameters
  * -----------------------------
+ * @param integer $product_id of the product whose images you want. Defaults to the current product (if used in a product template)
  * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
  * @param boolean $is_active Get all active records only
  * @param int $limit Limit the records to be shown (if set to 0, all records will be pulled)
- * @param int $firstClass set class name on the first item (Optional)
+// * @param int $firstClass set CSS class name on the first item (Optional)
  *
  * Variables
  * ---------
@@ -36,11 +44,36 @@ require_once $core_path .'vendor/autoload.php';
 $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('getProductImages',$scriptProperties);
 
-return;
-/*
-$scriptProperties['innerTpl'] = $modx->getOption('innerTpl',$scriptProperties, 'ProductImage');
 
-$moxySnippet = new MoxycartSnippet($modx);
-$out = $moxySnippet->execute('json_images',$scriptProperties);
-return $out;
-*/
+// Formatting Arguments:
+$innerTpl = $modx->getOption('innerTpl', $scriptProperties, '<li><img src="[[+Asset.url]]" width="[[+Asset.width]]" height="[[+Asset.height]]" alt="[[+Asset.alt]]" /></li>');
+$outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</ul>');
+
+// Default Arguments:
+$scriptProperties['is_active'] = (bool) $modx->getOption('is_active',$scriptProperties, 1);
+$scriptProperties['limit'] = (int) $modx->getOption('limit',$scriptProperties, null);
+$product_id = (int) $modx->getOption('product_id',$scriptProperties, $modx->getPlaceholder('product_id'));
+
+if (!$product_id) {
+    return 'product_id is required.';
+}
+
+$c = $modx->newQuery('ProductAsset');
+$c->where(array(
+    'ProductAsset.product_id'=>$product_id,
+    'ProductAsset.is_active'=>true,
+    'Asset.is_image' => true,
+));
+$c->sortby('ProductAsset.seq','ASC');
+if ($scriptProperties['limit']) {
+    $c->limit($scriptProperties['limit']);
+}
+$ProductAssets = $modx->getCollectionGraph('ProductAsset','{"Asset":{}}', $c);
+
+if ($ProductAssets) {
+    return $Snippet->format($ProductAssets,$innerTpl,$outerTpl);    
+}
+
+$modx->log(\modX::LOG_LEVEL_DEBUG, "No results found",'','getProducts',__LINE__);
+
+return 'No images found.';
