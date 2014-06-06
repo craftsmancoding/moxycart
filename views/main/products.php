@@ -26,12 +26,26 @@
         </tr>
     </thead>
     <tbody>
-<?php foreach ($data['results'] as $r) :?>
+<?php foreach ($data['results'] as $r) :
+/*
+    $col = $r->toArray('',false,false,true);
+    $col = $r->flattenArray($col);
+//        $col = $this->modx->toPlaceholders($col);
+        if ($r->get('asset_id')) {
+        
+        print_r($col); exit;
+        }
+*/
+?>
     <tr>
         <?php 
         // Configurable columns
         foreach($data['columns'] as $k => $v): ?>
-            <td><?php print $r->get($k); ?></td>
+            <td><?php 
+                print $r[$k];
+                //print $r->get($k); 
+            
+            ?></td>
         <?php endforeach; ?>
 
         <td>

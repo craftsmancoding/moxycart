@@ -198,19 +198,19 @@ class modelTest extends \PHPUnit_Framework_TestCase {
     public function testDebug() {
         $F = new Field(self::$modx);
         $actual = $F->all(array('label:>'=>'D'),true);
-        $expected = "SELECT `Field`.`field_id` AS `Field_field_id`, `Field`.`slug` AS `Field_slug`, `Field`.`label` AS `Field_label`, `Field`.`description` AS `Field_description`, `Field`.`config` AS `Field_config`, `Field`.`seq` AS `Field_seq`, `Field`.`group` AS `Field_group`, `Field`.`type` AS `Field_type`, `Field`.`timestamp_created` AS `Field_timestamp_created`, `Field`.`timestamp_modified` AS `Field_timestamp_modified` FROM `moxy_fields` AS `Field` WHERE `Field`.`label` > 'D' ORDER BY slug LIMIT 20";
+        $expected = "SELECT `Field`.`field_id` AS `Field_field_id`, `Field`.`slug` AS `Field_slug`, `Field`.`label` AS `Field_label`, `Field`.`description` AS `Field_description`, `Field`.`config` AS `Field_config`, `Field`.`seq` AS `Field_seq`, `Field`.`group` AS `Field_group`, `Field`.`type` AS `Field_type`, `Field`.`is_active` AS `Field_is_active`, `Field`.`timestamp_created` AS `Field_timestamp_created`, `Field`.`timestamp_modified` AS `Field_timestamp_modified` FROM `moxy_fields` AS `Field` WHERE `Field`.`label` > 'D' ORDER BY `slug` LIMIT 20";
         $this->assertEquals(normalize_string($actual),normalize_string($expected));
 
         $actual = $F->all(array('slug:LIKE'=>'VC'),true);
-        $expected = "SELECT `Field`.`field_id` AS `Field_field_id`, `Field`.`slug` AS `Field_slug`, `Field`.`label` AS `Field_label`, `Field`.`description` AS `Field_description`, `Field`.`config` AS `Field_config`, `Field`.`seq` AS `Field_seq`, `Field`.`group` AS `Field_group`, `Field`.`type` AS `Field_type`, `Field`.`timestamp_created` AS `Field_timestamp_created`, `Field`.`timestamp_modified` AS `Field_timestamp_modified` FROM `moxy_fields` AS `Field` WHERE `Field`.`slug` LIKE '%VC%' ORDER BY slug LIMIT 20";
+        $expected = "SELECT `Field`.`field_id` AS `Field_field_id`, `Field`.`slug` AS `Field_slug`, `Field`.`label` AS `Field_label`, `Field`.`description` AS `Field_description`, `Field`.`config` AS `Field_config`, `Field`.`seq` AS `Field_seq`, `Field`.`group` AS `Field_group`, `Field`.`type` AS `Field_type`, `Field`.`is_active` AS `Field_is_active`, `Field`.`timestamp_created` AS `Field_timestamp_created`, `Field`.`timestamp_modified` AS `Field_timestamp_modified` FROM `moxy_fields` AS `Field` WHERE `Field`.`slug` LIKE '%VC%' ORDER BY `slug` LIMIT 20";
         $this->assertEquals(normalize_string($actual),normalize_string($expected));
 
         $actual = $F->all(array('slug:LIKE'=>'VC','limit'=>30),true);
-        $expected = "SELECT `Field`.`field_id` AS `Field_field_id`, `Field`.`slug` AS `Field_slug`, `Field`.`label` AS `Field_label`, `Field`.`description` AS `Field_description`, `Field`.`config` AS `Field_config`, `Field`.`seq` AS `Field_seq`, `Field`.`group` AS `Field_group`, `Field`.`type` AS `Field_type`, `Field`.`timestamp_created` AS `Field_timestamp_created`, `Field`.`timestamp_modified` AS `Field_timestamp_modified` FROM `moxy_fields` AS `Field` WHERE `Field`.`slug` LIKE '%VC%' ORDER BY slug LIMIT 30";
+        $expected = "SELECT `Field`.`field_id` AS `Field_field_id`, `Field`.`slug` AS `Field_slug`, `Field`.`label` AS `Field_label`, `Field`.`description` AS `Field_description`, `Field`.`config` AS `Field_config`, `Field`.`seq` AS `Field_seq`, `Field`.`group` AS `Field_group`, `Field`.`type` AS `Field_type`, `Field`.`is_active` AS `Field_is_active`, `Field`.`timestamp_created` AS `Field_timestamp_created`, `Field`.`timestamp_modified` AS `Field_timestamp_modified` FROM `moxy_fields` AS `Field` WHERE `Field`.`slug` LIKE '%VC%' ORDER BY `slug` LIMIT 30";
         $this->assertEquals(normalize_string($actual),normalize_string($expected));
                 
         $actual = $F->all(array('slug:STARTS WITH'=>'VC','limit'=>30),true);
-        $expected = "SELECT `Field`.`field_id` AS `Field_field_id`, `Field`.`slug` AS `Field_slug`, `Field`.`label` AS `Field_label`, `Field`.`description` AS `Field_description`, `Field`.`config` AS `Field_config`, `Field`.`seq` AS `Field_seq`, `Field`.`group` AS `Field_group`, `Field`.`type` AS `Field_type`, `Field`.`timestamp_created` AS `Field_timestamp_created`, `Field`.`timestamp_modified` AS `Field_timestamp_modified` FROM `moxy_fields` AS `Field` WHERE `Field`.`slug` LIKE 'VC%' ORDER BY slug LIMIT 30";
+        $expected = "SELECT `Field`.`field_id` AS `Field_field_id`, `Field`.`slug` AS `Field_slug`, `Field`.`label` AS `Field_label`, `Field`.`description` AS `Field_description`, `Field`.`config` AS `Field_config`, `Field`.`seq` AS `Field_seq`, `Field`.`group` AS `Field_group`, `Field`.`type` AS `Field_type`, `Field`.`is_active` AS `Field_is_active`, `Field`.`timestamp_created` AS `Field_timestamp_created`, `Field`.`timestamp_modified` AS `Field_timestamp_modified` FROM `moxy_fields` AS `Field` WHERE `Field`.`slug` LIKE 'VC%' ORDER BY `slug` LIMIT 30";
         $this->assertEquals(normalize_string($actual),normalize_string($expected));
     }
     
@@ -345,6 +345,40 @@ class modelTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($actual,$expected); 
 
 
+    }
+    
+    
+    public function testFlattenArray() {
+        $M = new Product(self::$modx); 
+        
+        $src = array(
+            'kit' => 'fox',
+            'baby' => 'boom'
+        );
+        $actual = $M->flattenArray($src);
+        $expected = array(
+            'kit' => 'fox',
+            'baby' => 'boom'
+        );
+        $this->assertEquals($actual,$expected);     
+
+        // Deeper
+        $src = array(
+            'kit' => 'fox',
+            'baby' => 'boom',
+            'gnarly' => array(
+                'surf' => 'is up'
+            )
+        );
+        $actual = $M->flattenArray($src);
+        $expected = array(
+            'kit' => 'fox',
+            'baby' => 'boom',
+            'gnarly.surf' => 'is up'
+        );
+        $this->assertEquals($actual,$expected);     
+
+    
     }
     
     

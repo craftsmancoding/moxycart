@@ -214,6 +214,24 @@ class BaseModel {
     }
     
     /**
+     * Given a possibly deeply nested array, this flattens it to simple key/value pairs
+     * @param array $array
+     * @param string $prefix (needed for recursion)
+     * @return array
+     */
+    public function flattenArray(array $array,$prefix='') {
+        $result = array();
+        foreach ($array as $key => $value)
+        {
+            if (is_array($value))
+                $result = array_merge($result, $this->flattenArray($value, $prefix . $key . '.'));
+            else
+                $result[$prefix . $key] = $value;
+        }   
+        return $result;
+    }
+    
+    /**
      * Convert data in an indexed structure to a recordset.
      * This is necessary when processing forms with multiple records of data:
      *
