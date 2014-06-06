@@ -209,6 +209,7 @@ class PageController extends BaseController {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new Product($this->modx);
         $results = $Obj->all($scriptProperties);
+//        print $results; exit;
         $count = $Obj->count($scriptProperties);
         $offset = (int) $this->modx->getOption('offset',$scriptProperties,0);
         $this->_setProductColumns();
@@ -219,6 +220,10 @@ class PageController extends BaseController {
         $this->setPlaceholder('baseurl', $this->page('products'));
         
         return $this->fetchTemplate('main/products.php');
+    }
+    
+    public function postProducts(array $scriptProperties = array()) {
+        return $this->getProducts($scriptProperties);
     }
  
     /**

@@ -8,10 +8,11 @@
     <a href="<?php print static::page('productcreate'); ?>" class="button btn moxycart-btn">Add Product</a>
     <!--span class="btn" onclick="javascript:paint('productinventory');">Manage Inventory</span-->
             
-    <!--form action="<?php print $data['baseurl']; ?>">
-        <input type="text" name="name:LIKE" placeholder="Search..." />    
-        <input type="submit" value="Filter"/>
-    </form-->
+    <form action="<?php print static::page('products'); ?>" method="post">
+        <input type="text" name="searchterm" placeholder="Search..." value="<?php print $data['searchterm']; ?>"/>    
+        <input type="submit" value="Search"/>
+    </form>
+    <a href="<?php print static::page('products'); ?>" class="btn">Show All</a>
 </div>
 <?php if ($data['results']): ?>
 <table class="classy">

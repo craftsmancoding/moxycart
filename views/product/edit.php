@@ -248,7 +248,7 @@ function product_init() {
     // Edit Asset Form
     jQuery( "#asset_edit_form" ).dialog({
         autoOpen: false,
-        height: 500,
+        height: 600,
         width: 800,
         modal: true,
         closeOnEscape: true,        
@@ -263,7 +263,7 @@ function product_init() {
             jQuery('#modal_asset_alt').val(product.RelData.Asset[asset_id].alt);
             jQuery('#modal_asset_width').text(product.RelData.Asset[asset_id].width);
             jQuery('#modal_asset_height').text(product.RelData.Asset[asset_id].height);
-            jQuery('#modal_asset_img').html('<img src="'+product.RelData.Asset[asset_id].url+'" />');
+            jQuery('#modal_asset_img').html('<img src="'+product.RelData.Asset[asset_id].url+'" style="max-width:770px; height:auto;"/>');
             if (product.RelData.Asset[asset_id].is_active == 1) {  
                 jQuery('#modal_asset_is_active').prop('checked', true);
             }
