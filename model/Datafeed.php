@@ -40,7 +40,8 @@ class Datafeed {
     /**
 	 * Decrypt posted data to XML string using rc4crypt class.
 	 *
-	 * @param string $data
+	 * @param string $data encrypted
+	 * @param string $api_key (used to decrypt the $data)
 	 * @return xml $xml
      */
     public function post2xml($data,$api_key) {
@@ -254,7 +255,10 @@ class Datafeed {
      *
      * @param string $event postback|transaction|product 
      * @param mixed any valid callback
-     * @param array any additional args to pass to the callback
+     * @param array any additional args to pass to the callback. These args will come *before* the 
+     *      data from the XML (e.g. before transation data).  This somewhat awkward construct was 
+     *      built specifically for the parseFoxycartDatafeed Snippet so it could call other Snippets
+     *      as callbacks.  See example above.
      */
     public function registerCallback($event, $callback, $args=array()) {
         if (!is_scalar($event)) {

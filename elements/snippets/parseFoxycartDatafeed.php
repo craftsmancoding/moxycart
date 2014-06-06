@@ -48,7 +48,7 @@ $modx->addPackage('foxycart',$core_path.'model/orm/','foxy_');
 $product_hooks_tmp = $modx->getOption('product_hooks',$scriptProperties);
 $transaction_hooks_tmp = $modx->getOption('transaction_hooks',$scriptProperties);
 $postback_hooks_tmp = $modx->getOption('postback_hooks',$scriptProperties);
-$api_key_name = $modx->getOption('api_key', $scriptProperties, 'moxycart.api_key');
+$api_key = $modx->getOption('api_key', $scriptProperties, $api_key = $modx->getOption('moxycart.api_key'));
 
 $log_level = $modx->getOption('log_level',$scriptProperties, $modx->getOption('log_level'));
 
@@ -76,9 +76,8 @@ $msg .= "postback_hooks: ".print_r($postback_hooks,true)."\n";
 
 $modx->log(modX::LOG_LEVEL_DEBUG, $msg, $log, 'parseFoxycartDatafeed',__FILE__,__LINE__);
 
-$api_key = $modx->getOption($api_key_name); // your foxy cart datafeed key
 if(empty($api_key)) {
-	$err_msg = $api_key_name.' is not set in your System Settings. Paste your Foxycart API key there before continuing.';
+	$err_msg = 'moxycart.api_key is not set in your System Settings. Paste your Foxycart API key there before continuing.';
     $modx->log(modX::LOG_LEVEL_ERROR,$err_msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
     return $err_msg;
 }
@@ -87,178 +86,26 @@ if(empty($api_key)) {
 
 // Check for the post back
 // Note: the subscription data feed sets this attribute: FoxySubscriptionData
-if($encrypted_data = (isset($_POST['FoxyData']))? $_POST['FoxyData']:null) {
-
-    $modx->log(modX::LOG_LEVEL_DEBUG,'FoxyData detected',$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-
-    // Decrypt the posted Data : Todo try/catch?
-    //$rc4crypt = new rc4crypt();
-	$FoxyData_decrypted = rc4crypt::decrypt($api_key,urldecode($encrypted_data));
-	$xml = new SimpleXMLElement($FoxyData_decrypted);
-	$dom = new DOMDocument('1.0');
-	$dom->preserveWhiteSpace = false;
-	$dom->formatOutput = true;
-	$dom->loadXML($xml->asXML());
-	$FoxyData_decrypted = $dom->saveXML();
-	
-	
-	// uniquely identifies the payload so we don't store the same thing twice
-    $md5 = md5($FoxyData_decrypted); 
-    $Foxydata = $modx->getObject('Foxydata', array('md5'=>$md5));
-    
-    if ($Foxydata) {
-        $msg = 'Existing FoxyData detected ('.$Foxydata->get('foxydata_id').'). Data will NOT be re-parsed.  
-        This condition might have been caused due to a fatal error in this script or any referenced hooks
-        before the "foxy" success message was returned. Reparsing data could create problems with your inventory.';
-        $modx->log(modX::LOG_LEVEL_ERROR,$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-        // If you're here, it means your transactions either failed to save
-        // or you DID save them and did not return the "foxy" success message.
-        // Either way it's a problem.  Reparsing could create problems with your inventory.
-        return $msg;
+if($encrypted_data = (isset($modx->request->parameters['POST']['FoxyData']))? $modx->request->parameters['POST']['FoxyData']:null) {
+    $Datafeed = new \Foxycart\Datafeed($modx, new \rc4crypt());
+    foreach ($postback_hooks as $hook) {
+        $Datafeed->registerCallback('postback',array($modx,'runSnippet'), array($hook));
+    }
+    foreach ($transaction_hooks as $hook) {
+        $Datafeed->registerCallback('transaction',array($modx,'runSnippet'), array($hook));
+    }
+    foreach ($product_hooks as $hook) {
+        $Datafeed->registerCallback('product',array($modx,'runSnippet'), array($hook));
     }
     
-    // We don't have this stored yet!  Create a copy of the  data.
-    
-    $modx->log(modX::LOG_LEVEL_DEBUG,'New data signature detected: '.$md5,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-        
-    // Start storing the data (maybe put this into the datafeed class?)
-    $Foxydata = $modx->newObject('Foxydata');
-    $Foxydata->set('md5', $md5);
-    $Foxydata->set('xml', $FoxyData_decrypted);
-    $Foxydata->set('type', 'FoxyData');
-    $Foxydata->set('api_key', $api_key);
-    
-    $transactions = array();
-    
-    $xml = simplexml_load_string($FoxyData_decrypted, null, LIBXML_NOCDATA);
-    
-    foreach($xml->transactions->transaction as $t) {
-        $Transaction  = $modx->newObject('Transaction');
-        $Transaction->fromArray((array)$t);
-        $Transaction->set('foxydata_id', $Foxydata->get('foxydata_id'));
-        
-        // See http://rtfm.modx.com/xpdo/2.x/class-reference/xpdoobject/related-object-accessors/addmany
-        // These all have a one-to-many relationship with transactions, e.g. one transation -> many discounts
-        $taxes = array();
-        $discounts = array();
-        $custom_fields = array();
-        $attributes = array();
-        $details = array();
-        $shipto_addresses = array();
-
-        if (isset($t->taxes->tax)) {
-            foreach($t->taxes->tax as $tax) {
-                $Tax = $modx->newObject('Tax');
-                $Tax->fromArray((array) $tax);
-                $taxes[] = $Tax;
-            }
-        }
-        $Transaction->addMany($taxes);
-
-        if (isset($t->discounts->discount)) {
-            foreach($t->discounts->discount as $discount) {
-                $Discount = $modx->newObject('Discount');
-                $Discount->fromArray((array) $discount);
-                $discounts[] = $Discount;
-            }
-        }
-        $Transaction->addMany($discounts);        
-        
-        if (isset($t->custom_fields->custom_field)) {
-            foreach($t->custom_fields->custom_field as $cf) {
-                $CustomField = $modx->newObject('CustomField');
-                $CustomField->fromArray((array) $cf);
-                $custom_fields[] = $CustomField;
-            }            
-        }
-        $Transaction->addMany($custom_fields);
-
-        if (isset($t->attributes->attribute)) {
-            foreach($t->attributes->attribute as $a) {
-                $Attribute = $modx->newObject('Attribute');
-                $Attribute->fromArray((array) $a);
-                $attributes[] = $Attribute;
-            }            
-        }
-        $Transaction->addMany($attributes);
-        
-        if (isset($t->shipto_addresses->shipto_address)) {
-            foreach($t->shipto_addresses->shipto_address as $sta) {
-                $ShiptoAddress = $modx->newObject('ShiptoAddress');
-                $ShiptoAddress->fromArray((array) $sta);
-                $shipto_addresses[] = $ShiptoAddress;
-            }            
-        }
-        $Transaction->addMany($shipto_addresses);
-        
-        // our products
-        foreach( $t->transaction_details->transaction_detail as $d) {
-            $TransactionDetail = $modx->newObject('TransactionDetail');
-            $TransactionDetail->fromArray((array) $d);
-            $options = array();
-            if (isset($d->transaction_detail_options->transaction_detail_option)) {
-                foreach($d->transaction_detail_options->transaction_detail_option as $o) {
-                    $TransactionDetailOption = $modx->newObject('TransactionDetailOption');
-                    $TransactionDetailOption->fromArray((array) $o);
-                    $options[] = $TransactionDetailOption;
-                }
-                $TransactionDetail->addMany($options);
-            }
-            $details[] = $TransactionDetail;
-
-        }
-        $Transaction->addMany($details);
-
-        $transactions[] = $Transaction;
-
-
-        //! Hooks (run only after successful save)
-        // Call per-product hooks
-        foreach ($details as $TD) {
-            foreach ($product_hooks as $hook) {
-                $modx->log(modX::LOG_LEVEL_DEBUG,'Calling product-hook '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-                if (!$msg = $modx->runSnippet(trim($hook),$TD->toArray())) {
-                    $modx->log(modX::LOG_LEVEL_ERROR,'product-hook failed to execute: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-                }
-                $modx->log(modX::LOG_LEVEL_DEBUG,'Completed product-hook '.$hook.' with result: '.$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-            }
-        }
-        // Call per-transaction hooks
-        foreach ($transaction_hooks as $hook) {
-            $modx->log(modX::LOG_LEVEL_DEBUG,'Calling transaction-hook '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-            if (!$msg = $modx->runSnippet(trim($hook),$Transaction->toArray())) {
-                $modx->log(modX::LOG_LEVEL_ERROR,'transaction-hook returned false indicating an error: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);            
-            }
-            $modx->log(modX::LOG_LEVEL_DEBUG,'Completed transaction-hook '.$hook.' with result: '.$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-        }
-
-        $modx->log(modX::LOG_LEVEL_DEBUG,'Transaction ('.$Transaction->getPrimaryKey().') saved successfully with all related data.',$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-    }
-
-    // Call per-postback hooks
-    foreach ($postback_hooks as $hook) {    
-        $modx->log(modX::LOG_LEVEL_DEBUG,'Calling postback-hook '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-        if (!$msg = $modx->runSnippet(trim($hook),$Foxydata->toArray())) {
-            $modx->log(modX::LOG_LEVEL_ERROR,'postback-hook returned false indicating an error: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);  
-        }
-        $modx->log(modX::LOG_LEVEL_DEBUG,'Completed postback-hook '.$hook.' with result: '.$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);    
-    }
-    
-    $Foxydata->addMany($transactions);
-
-    if (!$Foxydata->save()) {
-        $modx->log(modX::LOG_LEVEL_ERROR,'Foxydata failed to save!',$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-        return 'Failed to save Foxydata post!';
-    }    
-
-    $modx->log(modX::LOG_LEVEL_DEBUG,'Success. foxy.'.$Foxydata->get('id'),$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
-    
-    // Per Foxycart's rules
-    return 'foxy';
+    $xml = $Datafeed->post2xml($encrypted_data, $api_key);
+    return $Datafeed->saveFoxyData($xml,$api_key);
 }
 else {
-    $url = $modx->makeUrl($modx->resource->get('id'),'','','full');
-    return '<div style="margin:10px; padding:20px; border:1px solid green; background-color:#00CC66; border-radius: 5px; width:500px;">Welcome to <a href="https://github.com/craftsmancoding/moxycart/wiki/Datafeed">Moxycart</a>.  This page is contains the parseFoxycartDatafeed. In your 
+    // This won't be set during command-line testing
+    $url = ($modx->resource) ? $modx->makeUrl($modx->resource->get('id'),'','','full') : '#';
+    return '<!-- random string for testing: vmTsGsATTX6XrRfEwqpAnk8DHqjBhGPZD -->
+    <div style="margin:10px; padding:20px; border:1px solid green; background-color:#00CC66; border-radius: 5px; width:800px;">Welcome to <a href="https://github.com/craftsmancoding/moxycart/wiki/Datafeed">Moxycart</a>.  This page is contains the parseFoxycartDatafeed. In your 
     Foxycart dashboard, point the datafeed to this URL: <br/>
     <input type="text" value="'.$url.'" size="100"/></div>';
 }

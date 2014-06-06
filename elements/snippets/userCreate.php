@@ -134,16 +134,11 @@ $User->set('username', $modx->getOption('customer_email',$scriptProperties));
 
 // Make sure we have the correct hash type...
 if ($modx->getOption('customer_password_hash_type',$scriptProperties) == 'pbkdf2') {
-    // We gotta use fromArray to tie into the rawValues
+    // We gotta use fromArray to tie into the rawValues feature, otherwise plaintext gets hashed
     $User->fromArray(array(
         'password' => $modx->getOption('customer_password',$scriptProperties),
         'salt' => $modx->getOption('customer_password_salt',$scriptProperties)
     ),'',false,true);
-    // fromArray($fldarray, $keyPrefix= '', $setPrimaryKeys= false, $rawValues= false, $adhocValues= false) {
-
-    //$User->set('password', $modx->getOption('customer_password',$scriptProperties));
-    //$User->set('salt', $modx->getOption('customer_password_salt',$scriptProperties));    
-    // customer_password_hash_config ??
 }
 // Todo: roll with this?  We need mappings between Foxycart hash types and MODX classnames
 else {
@@ -153,9 +148,6 @@ else {
         . ' hash type for MODX Revolution.'
         ,$log,'userCreate Snippet',__FILE__,__LINE__);
 }
-
-
-
 
 // Secondary Fields (Profile)
 $fullname = trim($modx->getOption('customer_first_name',$scriptProperties) . ' '
