@@ -20,6 +20,20 @@
  *  php phpunit.phar path/to/moxycart/core/components/moxycart/tests
  *
  *
+ GOTCHAS:
+ 
+ 1. You need to set the $modx variable before using runSnippet:
+        global $modx;
+        $modx = self::$modx;
+ (using & won't work for some reason)
+
+ 2. You must run tests with the same permissions as the webserver, e.g. in MAMP
+    you must run tests as the admin user.
+
+ 3. runSnippet will not preserve datatypes on return, so you cannot rely on assertTrue 
+    or assertFalse to check the outputs.  E.g. returning false will return '', returning 
+    true from a Snippet returns a 1.
+    
  */
 namespace Moxycart;
 class snippetTest extends \PHPUnit_Framework_TestCase {
@@ -306,9 +320,9 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
     public function testSecure() {
         global $modx;
         $modx = self::$modx;
-        
+        //$modx->setLogTarget('ECHO');
         $props = array();
-        $props['options'] = 'sample-api-key';
+        $modx->setOption('moxycart.api_key','sample-api-key'); // temporary override
         $props['name'] = 'price';
         $props['input'] = '29.99';
         $actual = $modx->runSnippet('secure', $props);
@@ -356,7 +370,9 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * Test getTaxonomies
+     * How to test this when we don't know which taxonomies are in the db?
      */
+/*
     public function testGetTaxonomies() {
         global $modx;
         $modx = self::$modx;
@@ -367,10 +383,12 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         $expected = '<ul><li>Taxonomy A</li><li>Taxonomy B</li><li>Taxonomy C</li></ul>';
         $this->assertEquals(normalize_string($expected), normalize_string($actual));    
     }
+*/
 
     /**
      * Test SortTaxonomies
      */
+/*
     public function testSortTaxonomies() {
         global $modx;
         $modx = self::$modx;
@@ -383,5 +401,116 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         $expected = '<ul><li>Taxonomy C</li><li>Taxonomy B</li><li>Taxonomy A</li></ul>';
         $this->assertEquals(normalize_string($expected), normalize_string($actual));    
     }
+*/
     
+    
+    public function testCreateUser() {
+
+        global $modx;
+        $modx = self::$modx;
+        if ($User = $modx->getObject('modUser', array('username'=>'dude@dudeson.com'))) {
+            $User->remove();
+        }
+        
+/*
+        $User = $modx->newObject('modUser');
+        $User->fromArray(
+            'usernam
+        );
+*/
+        
+
+        $props = array();        
+        $modx->setOption('moxycart.user_group','DOES NOT EXIST');
+        $modx->setOption('moxycart.user_role', 1);
+        $modx->setOption('moxycart.user_activate',1);
+        $modx->setOption('moxycart.user_update',1);        
+        
+        $actual = $modx->runSnippet('userCreate', $props);  
+        $this->assertFalse((bool)$actual);
+
+        $user_group = $modx->getObject('modUserGroup', array('name'=>'Customer'));
+        $modx->setOption('moxycart.user_group',$user_group->get('id'));
+
+        $props['customer_email'] = 'Invalid Email';
+        $actual = $modx->runSnippet('userCreate', $props);  
+        $this->assertFalse((bool)$actual);
+        
+        $props['customer_first_name'] = 'Dude first_name';
+        $props['customer_last_name'] = 'Dude last_name';
+        $props['customer_company'] = 'Dude Company';
+        $props['customer_address1'] = 'Dude address1';
+        $props['customer_address2'] = 'Dude address2';
+        $props['customer_city'] = 'Dude City';
+        $props['customer_state'] = 'Dude State';
+        $props['customer_postal_code'] = '12345';
+        $props['customer_country'] = 'Dude Country';
+        $props['customer_phone'] = '111-222-3333';
+        $props['customer_email'] = 'dude@dudeson.com';
+        $props['customer_ip'] = '111.0.0.123';
+        
+        $props['customer_password'] = 'xxxxx';
+        $props['customer_password_salt'] = 'yyyyy';
+        $props['customer_password_hash_type'] = 'pbkdf2';
+        $props['customer_password_hash_config'] = '1000, 32, sha256';
+        
+        $props['shipping_first_name'] = 'Ship first_name';
+        $props['shipping_last_name'] = 'Ship last_name';
+        $props['shipping_company'] = 'Ship company';
+        $props['shipping_address1'] = 'Ship address1';
+        $props['shipping_address2'] = 'Ship address2';
+        $props['shipping_city'] = 'Ship city';
+        $props['shipping_state'] = 'Ship state';
+        $props['shipping_postal_code'] = '23456';
+        $props['shipping_country'] = 'Ship Country';
+        $props['shipping_phone'] = '444-555-6666';
+        
+        
+        $actual = $modx->runSnippet('userCreate', $props);  
+        
+        $this->assertTrue((bool) $actual);
+        
+        $User = $modx->getObject('modUser', array('username'=>'dude@dudeson.com'));
+        $this->assertTrue(!empty($User));
+        $this->assertTrue(!empty($User->Profile));
+        $this->assertTrue((bool) $User->get('active'));
+        $this->assertEquals($props['customer_email'], $User->Profile->get('email'));
+        $this->assertEquals('Dude first_name Dude last_name', $User->Profile->get('fullname'));
+        $this->assertEquals($props['customer_phone'], $User->Profile->get('phone'));
+        $this->assertEquals("Dude address1\nDude address2", $User->Profile->get('address'));
+        $this->assertEquals($props['customer_country'], $User->Profile->get('country'));
+        $this->assertEquals($props['customer_city'], $User->Profile->get('city'));
+        $this->assertEquals($props['customer_state'], $User->Profile->get('state'));
+        $this->assertEquals($props['customer_postal_code'], $User->Profile->get('zip'));
+
+        $this->assertEquals($props['customer_password'], $User->get('password'));
+        $this->assertEquals($props['customer_password_salt'], $User->get('salt'));
+                
+        // try changing stuff when it's disallowed
+        $props['customer_country'] = 'St. Other Country';
+        $props['customer_phone'] = '444-555-7777';
+        $modx->setOption('moxycart.user_update',false);
+        $actual = $modx->runSnippet('userCreate', $props);  
+        $User = $modx->getObject('modUser', array('username'=>'dude@dudeson.com'));
+        $this->assertTrue((bool) $actual);        
+        $this->assertNotEquals($props['customer_country'], $User->Profile->get('country'));        
+        $this->assertNotEquals($props['customer_phone'], $User->Profile->get('phone'));
+        // Now allow it 
+        $modx->setOption('moxycart.user_update',true);
+        $actual = $modx->runSnippet('userCreate', $props);  
+        $User = $modx->getObject('modUser', array('username'=>'dude@dudeson.com'));
+        $this->assertTrue((bool) $actual);
+        $this->assertEquals($props['customer_country'], $User->Profile->get('country'));        
+        $this->assertEquals($props['customer_phone'], $User->Profile->get('phone'));
+        
+        
+        
+        $User->remove();
+    
+    }
+    
+    
+    public function parseFoxycartDatafeed() {
+    
+    }
 }

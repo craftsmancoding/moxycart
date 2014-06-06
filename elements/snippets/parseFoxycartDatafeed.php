@@ -20,7 +20,7 @@
  *
  * USAGE
  *
- * [[!parseFoxycartDatafeed? &product_hooks=`UpdateInventory` &transaction_hooks=`CreateUser`]]
+ * [[!parseFoxycartDatafeed? &product_hooks=`UpdateInventory` &transaction_hooks=`createUser`]]
  *
  * PARAMS
  *
@@ -227,7 +227,7 @@ if($encrypted_data = (isset($_POST['FoxyData']))? $_POST['FoxyData']:null) {
         foreach ($transaction_hooks as $hook) {
             $modx->log(modX::LOG_LEVEL_DEBUG,'Calling transaction-hook '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
             if (!$msg = $modx->runSnippet(trim($hook),$Transaction->toArray())) {
-                $modx->log(modX::LOG_LEVEL_ERROR,'transaction-hook failed to execute: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);            
+                $modx->log(modX::LOG_LEVEL_ERROR,'transaction-hook returned false indicating an error: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);            
             }
             $modx->log(modX::LOG_LEVEL_DEBUG,'Completed transaction-hook '.$hook.' with result: '.$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
         }
@@ -239,7 +239,7 @@ if($encrypted_data = (isset($_POST['FoxyData']))? $_POST['FoxyData']:null) {
     foreach ($postback_hooks as $hook) {    
         $modx->log(modX::LOG_LEVEL_DEBUG,'Calling postback-hook '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);
         if (!$msg = $modx->runSnippet(trim($hook),$Foxydata->toArray())) {
-            $modx->log(modX::LOG_LEVEL_ERROR,'postback-hook failed to execute: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);  
+            $modx->log(modX::LOG_LEVEL_ERROR,'postback-hook returned false indicating an error: '.$hook,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);  
         }
         $modx->log(modX::LOG_LEVEL_DEBUG,'Completed postback-hook '.$hook.' with result: '.$msg,$log,'parseFoxycartDatafeed',__FILE__,__LINE__);    
     }
