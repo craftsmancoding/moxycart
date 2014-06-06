@@ -37,6 +37,77 @@ class Product extends BaseModel {
     }
 
     /**
+     * Retrive "all" records matching the filter $args.
+     *
+     * We use getIterator, but we have to work around the "feature" (bug?) that 
+     * it will not return an empty array if it has no results. See
+     * https://github.com/modxcms/revolution/issues/11373
+     *
+     * @param array $arguments (including filters)
+     * @param boolean $debug
+     * @return mixed xPDO iterator (i.e. a collection, but memory efficient) or SQL query string
+     */
+    public function all($args,$debug=false) {
+    
+        // If you get this error: "Call to a member function getOption() on a non-object", it could mean:
+        // 1) you tried to call this method statically, e.g. Product::all()
+        // 2) you forgot to initialize the class and pass a modx instance to the contructor (dependency injection!)
+        $limit = (int) $this->modx->getOption('limit',$args,$this->modx->getOption('moxycart.default_per_page','',$this->modx->getOption('default_per_page')));
+        $offset = (int) $this->modx->getOption('offset',$args,0);
+        $sort = $this->quoteSort($this->modx->getOption('sort',$args,$this->default_sort_col));
+        $dir = $this->modx->getOption('dir',$args,$this->default_sort_dir);
+        $select_cols = $this->modx->getOption('select',$args);
+        
+        // Clear out non-filter criteria
+        $args = self::getFilters($args); 
+            
+        $criteria = $this->modx->newQuery($this->xclass);
+
+        if ($args) {
+            $criteria->where($args);
+        }
+        
+        if ($limit) {
+            $criteria->limit($limit, $offset); 
+            $criteria->sortby($sort,$dir);
+        }
+    
+        if ($debug) {
+            $criteria->prepare();
+            return $criteria->toSQL();
+        }
+
+        // Both array and string input seem to work
+        if (!empty($select_cols)) {
+            $criteria->select($select_cols);
+        }
+
+        $out = array();
+        if ($Products = $this->modx->getCollectionGraph('Product','{"Thumbnail":{}}',$criteria)) {
+            foreach ($Products as $P) {
+                $att = $P->toArray('',false,false,true);
+                if ($P->Thumbnail) {
+                    $att['img'] = $P->Thumbnail->get('url');
+                    $att['thumb'] = $P->Thumbnail->get('thumbnail_url');
+                    $att['thumb_tag'] = sprintf('<img src="%s" alt="thumbnail for %s" />', $att['thumb'], $att['name']);
+                }
+                else {
+                    $w = $this->modx->getOption('moxycart.thumbnail_width');
+                    $h = $this->modx->getOption('moxycart.thumbnail_height');
+                    $att['img'] = '';
+                    $att['thumb'] = '';
+                    $att['thumb_tag'] = sprintf('<img src="%s" alt="thumbnail for %s" />', 
+                        sprintf('http://placehold.it/%sx%s&text=%s',$w,$h,$att['name']), 
+                        $att['name']);
+                }
+                $out[] = $this->flattenArray($att);   
+            }
+        }
+        //print_r($out); exit;
+        return $out;
+    }
+
+    /**
      * Load a product AND its fields from a given $url
      *
      * @param string $uri relative to MODX_BASE_URL e.g. "mystore/myproduct"
@@ -56,7 +127,7 @@ class Product extends BaseModel {
         if ($force_fresh || empty($product_attributes)) {
             $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Refresh requested or no cached data detected.','',__CLASS__,__FUNCTION__,__LINE__);
                
-            $Product = $this->modx->getObjectGraph('Product','{"Fields":{"Field":{}}}',array('uri'=>$uri));
+            $Product = $this->modx->getObjectGraph('Product','{"Thumbnail":{},"Fields":{"Field":{}}}',array('uri'=>$uri));
 
             if (!$Product) {
                 $this->modx->log(\modX::LOG_LEVEL_DEBUG,'No Product found for uri '.$uri,'',__CLASS__,__FUNCTION__,__LINE__);
@@ -67,6 +138,10 @@ class Product extends BaseModel {
 
             foreach ($Product->Fields as $F) {
                 $product_attributes[$F->Field->get('slug')] = $F->get('value');
+            }
+            if (isset($Product->Thumbnail)) {
+                $product_attributes['img'] = $Product->Thumbnail->get('url');
+                $product_attributes['thumb'] = $Product->Thumbnail->get('thumbnail_url');
             }
             
             $this->modx->cacheManager->set($fingerprint, $product_attributes, $Product->lifetime, $cache_opts);
