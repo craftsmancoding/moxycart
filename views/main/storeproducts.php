@@ -25,10 +25,10 @@
         <?php 
         // Configurable columns
         foreach($data['columns'] as $k => $v): ?>
-            <td><?php print $r->get($k); ?></td>
+            <td><?php print $r[$k]; ?></td>
         <?php endforeach; ?>
         
-        <td><a href="<?php print static::url('page','productedit',array('product_id'=>$r->get('product_id'))); ?>" class="btn">Edit</a> <a href="<?php print static::url('page','productpreview',array('product_id'=>$r->get('product_id'))); ?>" class="btn">Preview</a></td>
+        <td><a href="<?php print static::url('page','productedit',array('product_id'=>$r['product_id'])); ?>" class="btn">Edit</a> <a href="<?php print static::url('page','productpreview',array('product_id'=>$r['product_id'])); ?>" class="btn">Preview</a></td>
     </tr>
 <?php endforeach; ?>
     </tbody>
