@@ -1,16 +1,14 @@
 <?php
 /**
  * @name getProductsByTerm
- * @description Returns a list of products associated with the given term id
+ * @description Returns a list of products associated with the given Taxonomical Term ID (Requires the Taxonomies AddOn)
  * 
-
+ *
  * Parameters
  * -----------------------------
  * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
  * @param int $term_id (optional: defaults to the current page id)
-
- *
  * @param int $limit Limit the result
  *
 

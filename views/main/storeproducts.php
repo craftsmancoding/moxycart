@@ -60,8 +60,8 @@ print \Pagination\Pager::links($data['count'], $offset, $results_per_page)
                     span.linklike:hover { color:blue; text-decoration:underline; }
                 </style>
                 <div id="pagination">[+content+]<br/>
-    				Page [+current_page+] of [+page_count+]<br/>
-    				Displaying records [+first_record+] thru [+last_record+] of [+record_count+]
+    				<div class="page-count">Page [+current_page+] of [+page_count+]</div>
+    				<div class="displaying-page">Displaying records [+first_record+] thru [+last_record+] of [+record_count+]</div>
     			</div>',
     	)
     );
