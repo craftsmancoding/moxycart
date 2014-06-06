@@ -7,7 +7,7 @@ $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
 $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
 $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
 
-$this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
+$this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
 $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
 $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
 
@@ -184,6 +184,7 @@ function product_init() {
         height: 330,
         width: 500,
         modal: true,
+        closeOnEscape: true,        
         buttons: {
             "Done": function() {
                 $( this ).dialog( "close" );
@@ -197,6 +198,7 @@ function product_init() {
         height: 330,
         width: 500,
         modal: true,
+        closeOnEscape: true,
         buttons: {
             "Define New Field": function() {
                 $( this ).dialog( "close" );
@@ -249,6 +251,7 @@ function product_init() {
         height: 500,
         width: 800,
         modal: true,
+        closeOnEscape: true,        
         open: function(event, ui) {
             // Sent the asset_id when the link is clicked, e.g. via
             // onclick="javascript:jQuery('#asset_edit_form').data('asset_id', 123).dialog('open');"

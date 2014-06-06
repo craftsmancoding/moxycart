@@ -31,22 +31,24 @@
     display: block;
 }
 </style>
-
 <?php
+$data['taxonomies'][0] = '- create new -';
+
 \Formbuilder\Form::setValues($data);
 \Formbuilder\Form::setTpl('description','<p class="description-txt">[+description+]</p>');
 print \Formbuilder\Form::open(self::page('xcart'))
-
-    ->text('host','localhost',array('label'=>'Host Name','class'=>'input input-half','description'=>'&nbsp;'))
-    ->text('database','',array('label'=>'Database Name','class'=>'input input-half','placeholder'=>'db_name','description'=>'&nbsp;'))
-     ->text('user','',array('label'=>'Database User','class'=>'input input-half','placeholder'=>'db_user','description'=>'&nbsp;'))
-    ->text('password','',array('label'=>'Database Password','class'=>'input input-half','placeholder'=>'password','description'=>'&nbsp;'))
-    ->text('port',3306,array('label'=>'Port','class'=>'input input-half','description'=>'&nbsp;'))
-
-    ->dropdown('store_id',$data['stores'],'',array('label'=>'Parent Store','description'=>'&nbsp;'))
-    ->dropdown('template_id',$data['templates'],'',array('label'=>'Product Template','description'=>'&nbsp;'))    
+    ->html('<h4>Database Credentials</h4>')
+    ->text('host','localhost',array('label'=>'Host Name','class'=>'input input-half'))
+    ->text('database','',array('label'=>'Database Name','class'=>'input input-half','placeholder'=>'db_name'))
+    ->text('user','',array('label'=>'Database User','class'=>'input input-half','placeholder'=>'db_user'))
+    ->text('password','',array('label'=>'Database Password','class'=>'input input-half','placeholder'=>'password'))
+    ->text('port',3306,array('label'=>'Port','class'=>'input input-half'))
+    ->html('<h4>Product Defaults</h4>')
+    ->dropdown('manufacturer', $data['taxonomies'], $data['manufacturer'], array('label' => 'Manufacturer Taxonomy', 'description'=>'Select Existing Taxonomy to mark the Manufacturer. Leave blank to create a new taxonomy.'))
+    ->dropdown('store_id',$data['stores'],'',array('label'=>'Parent Store'))
+    ->dropdown('template_id',$data['templates'],'',array('label'=>'Product Template'))    
 //    ->dropdown('user_group_id',array())    
-
+    ->html('<h4>Assets</h4>')
     ->checkbox('migrate_assets',0,array('label'=>'Migrate Assets','description'=>'Copy your xCart images into the path indicated below and this script will import them into the Moxycart database.'))
     ->text('image_path',MODX_BASE_PATH,array('label'=>'Image Path',
         'description'=>'Full path to where you have copied your xCart image folder. This folder should contain sub-directories C, D, G, etc. This directory must be readable by PHP.',
@@ -117,21 +119,29 @@ if (!$MF = $this->modx->getObject('Field', array('slug'=>'manufacturer'))) {
 }
 */
 //! Manufacturers (taxonomy)
-$this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import: Manufacturer Taxonomy =============','','xcart',__LINE__);  
-if (!$M = $this->modx->getObject('Taxonomy', array('pagetitle'=>'Manufacturer','class_key'=>'Taxonomy'))) {
-    $M = $this->modx->newObject('Taxonomy', array(
-        'pagetitle'=>'Manufacturer',
-        'class_key'=>'Taxonomy',
-        'alias' => 'manufacturer',
-        'published' => true
-    ));
-    if(!$M->save()) {
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving Manufacturer taxonomy','','xcart',__LINE__);  
+if (empty($data['manufacturer'])):
+    $this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import: Manufacturer Taxonomy =============','','xcart',__LINE__);  
+    if (!$M = $this->modx->getObject('Taxonomy', array('pagetitle'=>'Manufacturer','class_key'=>'Taxonomy'))) {
+        $M = $this->modx->newObject('Taxonomy', array(
+            'pagetitle'=>'Manufacturer',
+            'class_key'=>'Taxonomy',
+            'alias' => 'manufacturer',
+            'published' => true
+        ));
+        if(!$M->save()) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving Manufacturer taxonomy','','xcart',__LINE__);  
+        }
     }
-}
-else {
-    $this->modx->log(\modX::LOG_LEVEL_INFO,'Existing "Manufacturer" Taxonomy detected: '.$M->get('id'),'','xcart',__LINE__);  
-}
+    else {
+        $this->modx->log(\modX::LOG_LEVEL_INFO,'Existing "Manufacturer" Taxonomy detected: '.$M->get('id'),'','xcart',__LINE__);  
+    }
+else:
+    $this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Using Existing Manufacturer Taxonomy ('.$data['manufacturer'].') =============','','xcart',__LINE__);  
+    if (!$M = $this->modx->getObject('Taxonomy', $data['manufacturer'])) {
+       $this->modx->log(\modX::LOG_LEVEL_ERROR,'Taxonomy not found for Manufacturer: '.$data['manufacturer'],'','xcart',__LINE__);  
+       exit;
+    }
+endif;
 
 //! Manufacturers (Terms)
 $this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import: Manufacturer Terms =============','','xcart',__LINE__);  
@@ -228,7 +238,7 @@ foreach($extrafields as $x) {
         else {
             $EF->set('is_active', false);
         }
-        $EF->set('description', 'Imported from xCart');
+        $EF->set('description', '');
     }
     $EF->set('seq', $seq);
     if(!$EF->save()) {

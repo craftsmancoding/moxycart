@@ -155,7 +155,7 @@ class BaseController extends \modExtraManagerController {
         $this->addCss($this->config['assets_url'] . 'css/dropzone.css');
         $this->addCss($this->config['assets_url'].'css/datepicker.css');
         //$this->addCss('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css'); // doubleslash doesn't work for addCSS() ?
-        $this->addJavascript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
+        $this->addJavascript($this->config['assets_url'].'js/jquery.min.js');
         $this->addJavascript($this->config['assets_url'].'js/jquery-ui.js');
         $this->addJavascript($this->config['assets_url'].'js/jquery.tabify.js');  
         $this->addJavascript($this->config['assets_url'].'js/dropzone.js');
@@ -183,7 +183,7 @@ class BaseController extends \modExtraManagerController {
         if (substr($file,-4) == '.tpl') {
             return parent::fetchTemplate($file);
         }
-        $this->modx->log(\modX::LOG_LEVEL_INFO, 'File: '.$file,'','BaseController::'.__FUNCTION__,__LINE__);
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, 'File: '.$file,'','BaseController::'.__FUNCTION__);
         // WTF?  using regClientCSS here fails ONLY if you also use it in your view file. 
         // Otherwise it works. W.T.F.?
         //print $this->config['assets_url']; exit;
@@ -192,7 +192,7 @@ class BaseController extends \modExtraManagerController {
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
         $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
         $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-2.0.3.min.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
 */
@@ -223,12 +223,12 @@ class BaseController extends \modExtraManagerController {
 		// Load up our page [header] + content + [footer]
 		ob_start();
         if (!isset($this->scriptProperties['_nolayout'])) {
-            $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Including header.php', '','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
+            $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Including header.php', '','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
 			include $path.'header.php';
         }
 		include $path.$file;
         if (!isset($this->scriptProperties['_nolayout'])) {
-            $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Including footer.php', '','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
+            $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Including footer.php', '','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
 			include $path.'footer.php';
         }
 
@@ -428,7 +428,7 @@ class BaseController extends \modExtraManagerController {
             $url .= '?a='.$Action->get('id');
             if ($class && $method) {
                 $url .= '&class='.$class.'&method='.$method;
-                if (!empty($args)) {
+                if ($args) {
                     foreach ($args as $k=>$v) {
                         $url.='&'.$k.'='.$v;
                     }
