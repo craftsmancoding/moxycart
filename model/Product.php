@@ -96,7 +96,9 @@ class Product extends BaseModel {
                     $h = $this->modx->getOption('moxycart.thumbnail_height');
                     $att['img'] = '';
                     $att['thumb'] = '';
-                    $att['thumb_tag'] = sprintf('http://placehold.it/%sx%s',$w,$h);
+                    $att['thumb_tag'] = sprintf('<img src="%s" alt="thumbnail for %s" />', 
+                        sprintf('http://placehold.it/%sx%s&text=%s',$w,$h,$att['name']), 
+                        $att['name']);
                 }
                 $out[] = $this->flattenArray($att);   
             }
