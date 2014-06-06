@@ -4,13 +4,14 @@
  * Basic functions for image manipulation with a simple PHP install (no Imagemagik required).
  * 
  * Thumbnail calc:
- *      Original  W:H ratio = x
- *      Thumbnail W:H ratio = y
+ *      x = Original  W:H ratio
+ *      y = Thumbnail W:H ratio
  *      if (x > y) scale to height and crop the width
  *      if (x < y) scale to width and crop the height
  *      if (x = y) scale only
  *
  * TODO:
+ *      limit : show an image of WxH in a potentially smaller space
  *      scale2h : scale image to desired height, preserving aspect ratio.
  *      scale2w : scale image to desired width, preserving aspect ratio.
  *      rotateCW : rotate an image clockwise in 90-degree increments.
@@ -135,6 +136,7 @@ class Image {
      * @param integer $new_w new width in pixels
      * @return string $dst on success. Throws exception on fail.
      */
+    // public static function scale2w($src,$dst,$new_w) { 
     public static function scale($src,$dst,$new_w) {
         // Careful!
         // is it an image?
@@ -221,6 +223,48 @@ class Image {
         return $dst;
     }
 
+
+    /** 
+     * See http://stackoverflow.com/questions/2076284/scaling-images-proportionally-in-css-with-max-width
+     * Calculate potentially smaller dimensions of an image of actual W x H 
+     * when given a maximum width or height.  This is useful when you need 
+     * to display a "full sized image", but you don't have the real-estate.
+     * This is a bit like putting lipstick on a pig: normally you don't want 
+     * your img tag to "lie" about the size of the image, but there are times
+     * when you might need to limit the apparent size without calculating a 
+     * new version.
+     *
+     * @param integer $actual_w - real width of the image
+     * @param integer $actual_h - real height of the image
+     * @param integer $max_w - avail width in your screen "real-estate"
+     * @param integer $max_h - avail height in your screen "real-estate"
+     * @return array (int apparent_w, int apparent_h, bool is_compressed)
+     */
+/*
+    public function limit($actual_w, $actual_h, $max_w, $max_h) {
+
+         *      x = Original  W:H ratio
+ *      y = Thumbnail W:H ratio
+ *      if (x > y) scale to height and crop the width
+ *      if (x < y) scale to width and crop the height
+ *      if (x = y) scale only
+
+
+        if ($actual_w <= $max_w && $actual_h <= $max_h) {
+            return array($actual_w,$actual_h,false);
+        }
+        if ($actual_w > $max_w && $actual_h > $max_h) {
+            $WxH = $actual_w/$actual_h;
+            
+        }
+              
+        if (!$actual_w || !$actual_h) {
+            throw new \Exception('Width and Height must not be zero.');
+        }
+        $nx = ( $ox >= $new_w ) ? $new_w : $ox;
+        $ny = floor($oy * ($nx / $ox));        
+    }
+*/
     /**
      * Get a single image tag for Ajax update
      *
