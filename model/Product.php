@@ -11,7 +11,9 @@ namespace Moxycart;
 class Product extends BaseModel {
 
     public $xclass = 'Product';
-    public $default_sort_col = 'name';  
+    public $default_sort_col = 'name'; 
+    // Searches in the manager using "searchterm" will trigger a LIKE search matching any of these columns
+    public $search_columns = array('name','title','meta_keywords','description','content','sku'); 
     private $product_id;
     
     /**
@@ -48,7 +50,7 @@ class Product extends BaseModel {
      * @return mixed xPDO iterator (i.e. a collection, but memory efficient) or SQL query string
      */
     public function all($args,$debug=false) {
-    
+
         // If you get this error: "Call to a member function getOption() on a non-object", it could mean:
         // 1) you tried to call this method statically, e.g. Product::all()
         // 2) you forgot to initialize the class and pass a modx instance to the contructor (dependency injection!)
@@ -64,7 +66,20 @@ class Product extends BaseModel {
         $criteria = $this->modx->newQuery($this->xclass);
 
         if ($args) {
-            $criteria->where($args);
+            if (isset($args['searchterm'])) {
+                $searchterm = $args['searchterm'];
+                unset($args['searchterm']);
+                $search_c = array();
+                $first = array_shift($this->search_columns);
+                $search_c[$first.':LIKE'] = '%'.$searchterm.'%';
+                foreach ($this->search_columns as $c) {
+                    $search_c['OR:'.$c.':LIKE'] = '%'.$searchterm.'%'; 
+                }
+                $criteria->where($search_c);
+            }
+            else {
+                $criteria->where($args);
+            }
         }
         
         if ($limit) {
