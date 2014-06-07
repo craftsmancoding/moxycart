@@ -6,14 +6,21 @@
 
 <div class="moxycart_canvas_inner">
 
-<div>
-    <span class="button btn moxycart-btn" onclick="javascript:paint('fieldcreate');">Add Custom Field</span>
-    <!--form id="searchform">
-        <input type="text" class="input input-half" name="label:LIKE" placeholder="Search..." />    
-        <span class="button btn" onclick="javascript:searchform('searchform','fields');">Filter</span>
-        <span class="button btn" onclick="javascript:paint('fields');">Show All</span>
-    </form-->
-</div>
+
+<div class="clearfix">
+
+    <span class="button btn moxycart-btn pull-left" onclick="javascript:paint('fieldcreate');">Add Custom Field</span>
+
+        <div class="pull-right">   
+            <form action="<?php print static::page('fields'); ?>" method="post">
+                <input type="text" name="searchterm" placeholder="Search..." value="<?php print $data['searchterm']; ?>"/>    
+                <input type="submit" class="button btn moxycart-btn" value="Search"/>
+                <a href="<?php print static::page('fields'); ?>" class="btn">Show All</a>
+            </form>
+            
+        </div>
+   </div>  
+
 <?php if ($data['results']): ?>
 <table class="classy">
     <thead>
@@ -56,7 +63,7 @@
 
 <?php else: ?>
 
-    <p>You have not created any custom fields yet.</p>
+    <div class="danger">You have not created any custom fields yet.</div>
 
 <?php endif; ?>
 

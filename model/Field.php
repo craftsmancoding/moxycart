@@ -9,6 +9,8 @@ class Field extends BaseModel {
     public $xclass = 'Field';
     public $default_sort_col = 'slug';
 
+    public $search_columns = array('slug','label','type','group'); 
+
     public static function getTypes() {
         return array(
             'text'=>'Text',

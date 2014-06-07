@@ -10,9 +10,20 @@ print $this->getMsg();
 
 <div class="moxycart_canvas_inner">
 
-<div>
-    <span class="button btn moxycart-btn" onclick="javascript:paint('fieldcreate');">Add Asset</span>
-</div>
+<div class="clearfix">
+
+    <span class="button btn moxycart-btn pull-left" onclick="javascript:paint('fieldcreate');">Add Asset</span>
+
+        <div class="pull-right">   
+            <form action="<?php print static::page('assets'); ?>" method="post">
+                <input type="text" name="searchterm" placeholder="Search..." value="<?php print $data['searchterm']; ?>"/>    
+                <input type="submit" class="button btn moxycart-btn" value="Search"/>
+                <a href="<?php print static::page('assets'); ?>" class="btn">Show All</a>
+            </form>
+            
+        </div>
+   </div>     
+
 <?php if ($data['results']): ?>
 <table class="classy">
     <thead>

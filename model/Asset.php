@@ -12,6 +12,8 @@ class Asset extends BaseModel {
     public $src_file;
     public $dst_file;
     public $target_dir;
+
+    public $search_columns = array('title','alt','thumbnail_url','size'); 
     
     /**
      * We house our exceptional tantrums here.
