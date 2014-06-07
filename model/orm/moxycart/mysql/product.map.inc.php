@@ -564,7 +564,7 @@ $xpdo_meta_map['Product']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
-    'Thumbnail' => 
+    'Image' => 
     array (
       'class' => 'Asset',
       'local' => 'asset_id',

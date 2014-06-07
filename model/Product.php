@@ -98,12 +98,12 @@ class Product extends BaseModel {
         }
 
         $out = array();
-        if ($Products = $this->modx->getCollectionGraph('Product','{"Thumbnail":{}}',$criteria)) {
+        if ($Products = $this->modx->getCollectionGraph('Product','{"Image":{}}',$criteria)) {
             foreach ($Products as $P) {
                 $att = $P->toArray('',false,false,true);
-                if ($P->Thumbnail) {
-                    $att['img'] = $P->Thumbnail->get('url');
-                    $att['thumb'] = $P->Thumbnail->get('thumbnail_url');
+                if ($P->Image) {
+                    $att['img'] = $P->Image->get('url');
+                    $att['thumb'] = $P->Image->get('thumbnail_url');
                     $att['thumb_tag'] = sprintf('<img src="%s" alt="thumbnail for %s" />', $att['thumb'], $att['name']);
                 }
                 else {
@@ -142,7 +142,7 @@ class Product extends BaseModel {
         if ($force_fresh || empty($product_attributes)) {
             $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Refresh requested or no cached data detected.','',__CLASS__,__FUNCTION__,__LINE__);
                
-            $Product = $this->modx->getObjectGraph('Product','{"Thumbnail":{},"Fields":{"Field":{}}}',array('uri'=>$uri));
+            $Product = $this->modx->getObjectGraph('Product','{"Image":{},"Fields":{"Field":{}}}',array('uri'=>$uri));
 
             if (!$Product) {
                 $this->modx->log(\modX::LOG_LEVEL_DEBUG,'No Product found for uri '.$uri,'',__CLASS__,__FUNCTION__,__LINE__);
@@ -154,9 +154,9 @@ class Product extends BaseModel {
             foreach ($Product->Fields as $F) {
                 $product_attributes[$F->Field->get('slug')] = $F->get('value');
             }
-            if (isset($Product->Thumbnail)) {
-                $product_attributes['img'] = $Product->Thumbnail->get('url');
-                $product_attributes['thumb'] = $Product->Thumbnail->get('thumbnail_url');
+            if (isset($Product->Image)) {
+                $product_attributes['img'] = $Product->Image->get('url');
+                $product_attributes['thumb'] = $Product->Image->get('thumbnail_url');
             }
             
             $this->modx->cacheManager->set($fingerprint, $product_attributes, $Product->lifetime, $cache_opts);

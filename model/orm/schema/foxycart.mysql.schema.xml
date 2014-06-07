@@ -222,8 +222,6 @@ See https://wiki.foxycart.com/v/1.1/transaction_xml_datafeed
     <!-- ! TransactionDetailOption -->
     <object class="TransactionDetailOption" table="transactiondetailoptions" extends="xPDOSimpleObject" comment="Foxycart options for transaction detail (i.e. product options)">
         <field key="transactiondetail_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-        
-        <!-- Ideally, this would be a fk back to a vtype_id -->
         <field key="product_option_name" dbtype="varchar" precision="32" phptype="string" null="false" />
         <field key="product_option_value" dbtype="varchar" precision="255" phptype="string" null="false" />
         <field key="price_mod" dbtype="decimal" precision="8,3" phptype="float" null="false" default="0.000" />

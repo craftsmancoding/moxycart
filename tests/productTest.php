@@ -1186,6 +1186,36 @@ class productTest extends \PHPUnit_Framework_TestCase {
         }
     }    
 
+
+    /** 
+     * Test snippet
+     *
+     */ 
+    public function testUpdateProductInventory() {
+        global $modx;
+        $modx = self::$modx;
+ 
+        $P = self::$modx->getObject('Product', array('alias'=> 'family-guy-tshirt'));
+        $this->assertTrue(!empty($P));
+        
+        $qty = $P->get('qty_inventory');
+        
+        $this->assertTrue($qty > 2);
+        
+        $props = array(
+            'product_code' => $P->get('product_id'),
+            'product_quantity' => 2
+        );
+
+        $result = $modx->runSnippet('updateInventory', $props);
+        
+        $this->assertTrue((bool) $result);
+        
+        $P = self::$modx->getObject('Product', array('alias'=> 'family-guy-tshirt'));
+        
+        $this->assertEquals($qty-2, $P->get('qty_inventory'));
+        
+    }
     
     /**
      *
