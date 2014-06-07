@@ -12,16 +12,19 @@ print $this->getMsg();
 <div class="moxycart_canvas_inner">
 
 
-<div>
+<div class="clearfix">
 
-    <span class="btn moxycart-btn" onclick="javascript:paint('optioncreate');">Add Option Type</span>
-    <!--form action="<?php print $data['baseurl']; ?>" method="get">
-        <input type="hidden" name="a" value="<?php print $a; ?>" />
-        <input type="hidden" name="class" value="optiontype" />
-        <input type="text" name="label:LIKE" class="input input-half" placeholder="Search..." />    
-        <input type="submit" class="btn" value="Filter"/>
-    </form-->
-</div>
+     <span class="btn moxycart-btn" onclick="javascript:paint('optioncreate');">Add Option Type</span>
+
+        <div class="pull-right">   
+            <form action="<?php print static::page('options'); ?>" method="post">
+                <input type="text" name="searchterm" placeholder="Search..." value="<?php print $data['searchterm']; ?>"/>    
+                <input type="submit" class="button btn moxycart-btn" value="Search"/>
+                <a href="<?php print static::page('options'); ?>" class="btn">Show All</a>
+            </form>
+            
+        </div>
+   </div>  
 <?php if ($data['results']): ?>
 <table class="classy">
     <thead>

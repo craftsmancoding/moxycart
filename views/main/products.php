@@ -4,16 +4,21 @@
 
 <div class="moxycart_canvas_inner">
 
-<div>
-    <a href="<?php print static::page('productcreate'); ?>" class="button btn moxycart-btn">Add Product</a>
+<div class="clearfix">
+    <a href="<?php print static::page('productcreate'); ?>" class="button btn moxycart-btn pull-left">Add Product</a>
     <!--span class="btn" onclick="javascript:paint('productinventory');">Manage Inventory</span-->
+        <div class="pull-right">   
+            <form action="<?php print static::page('products'); ?>" method="post">
+                <input type="text" name="searchterm" placeholder="Search..." value="<?php print $data['searchterm']; ?>"/>    
+                <input type="submit" class="button btn moxycart-btn" value="Search"/>
+                <a href="<?php print static::page('products'); ?>" class="btn">Show All</a>
+            </form>
             
-    <form action="<?php print static::page('products'); ?>" method="post">
-        <input type="text" name="searchterm" placeholder="Search..." value="<?php print $data['searchterm']; ?>"/>    
-        <input type="submit" value="Search"/>
-    </form>
-    <a href="<?php print static::page('products'); ?>" class="btn">Show All</a>
+        </div>
+
 </div>
+
+
 <?php if ($data['results']): ?>
 <table class="classy">
     <thead>
@@ -46,7 +51,7 @@
 
 <?php else: ?>
 
-    <p>Sorry, no products were found.</p>
+    <div class="danger">Sorry, no products were found.</div>
 
 <?php endif; ?>
 

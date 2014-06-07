@@ -175,6 +175,10 @@ class PageController extends BaseController {
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('main/assets.php');
     }
+
+    public function postAssets(array $scriptProperties = array()) {
+        return $this->getAssets($scriptProperties);
+    }
  
      public function getAssetCreate(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
@@ -486,6 +490,10 @@ class PageController extends BaseController {
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('main/fields.php');
     }
+
+    public function postFields(array $scriptProperties = array()) {
+        return $this->getFields($scriptProperties);
+    }
     
     public function getFieldCreate(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
@@ -543,6 +551,10 @@ class PageController extends BaseController {
         $this->setPlaceholder('results', $results);
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('main/options.php');
+    }
+
+    public function postOptions(array $scriptProperties = array()) {
+        return $this->getOptions($scriptProperties);
     }
 
     public function getOptionCreate(array $scriptProperties = array()) {

@@ -48,6 +48,9 @@ class BaseModel {
     // Store any validation errors here
     public $errors = array();
 
+    // Search columns
+    public $search_columns = array(); 
+
     /**
      * Special words reserved for use by the Foxycart- and local-API
      *
@@ -173,6 +176,24 @@ class BaseModel {
         $args = self::getFilters($args); 
             
         $criteria = $this->modx->newQuery($this->xclass);
+
+        if ($args) {
+            if (isset($args['searchterm'])) {
+                $searchterm = $args['searchterm'];
+                unset($args['searchterm']);
+                $search_c = array();
+                $first = array_shift($this->search_columns);
+                $search_c[$first.':LIKE'] = '%'.$searchterm.'%';
+                foreach ($this->search_columns as $c) {
+                    $search_c['OR:'.$c.':LIKE'] = '%'.$searchterm.'%'; 
+                }
+                $criteria->where($search_c);
+            }
+            else {
+                $criteria->where($args);
+            }
+        }
+        
 
         if ($args) {
             $criteria->where($args);
