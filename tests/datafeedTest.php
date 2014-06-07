@@ -28,6 +28,7 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
         self::$args = $args;
     }
 
+    // Used as a test callback hook
     public static function pretend_snippet($snippetname,$args) {
         self::$cnt++;
         self::$args = $args;
@@ -65,11 +66,13 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
     }
     
     public function testDecodeToXML() {
-        $pwd = 'myrandompassword';
+        // First create a fake payload from one of our sample files
+        $pwd = 'myrandompassword'; // aka API key
         $data = file_get_contents( dirname(__FILE__).'/foxycart/sample1.xml');
-        $encrypted = rc4crypt::encrypt($pwd, $data);
+        $encrypted = \rc4crypt::encrypt($pwd, $data);
         $payload = urlencode($encrypted);
         
+        // Then test it
         $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
         $xml_str = $Datafeed->post2xml($payload,$pwd);
 
@@ -87,6 +90,7 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
         $transactions = $Datafeed->saveFoxyData($xml);
     }
     
+    
     public function testParseFoxycartXML() {
         $api_key = 'test';
         $xml = file_get_contents( dirname(__FILE__).'/foxycart/sample1.xml');
@@ -100,8 +104,7 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
         $result = $Datafeed->saveFoxyData($xml);
         $this->assertEquals($result,'foxy'); 
         $Transaction = self::$modx->getObject('Transaction', array('id'=>'1234567890'));
-        $x = ($Transaction) ? true : false;
-        $this->assertTrue($x);
+        $this->assertTrue((bool)$x);
         $this->assertEquals($Transaction->get('customer_id'),'12345678');
         
         $transaction_id = $Transaction->get('transaction_id');
@@ -187,4 +190,53 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
                 
     }
 
+    /** 
+     * Test the snippet
+     *
+     */
+    public function testParseFoxycartDatafeedSnippet() {
+        global $modx;
+        $modx = self::$modx;
+        $props = array();
+        $api_key = __FUNCTION__;
+        
+        // Overrides for testing.
+        $modx->setOption('moxycart.api_key', $api_key);
+        
+        // Delete from database if present
+        if ($Foxydata = $modx->getObject('Foxydata', array('api_key'=>$api_key))) {
+            $Foxydata->remove();
+        }
+
+        // Test it without any post data
+        $modx->request->parameters['POST'] = array();
+        $actual = $modx->runSnippet('parseFoxycartDatafeed', $props);  
+        // Look for a random string in our user-friendly response
+        $this->assertNotFalse(strpos($actual, 'vmTsGsATTX6XrRfEwqpAnk8DHqjBhGPZD'));
+
+         // Create a fake payload from one of our sample files
+        $data = file_get_contents( dirname(__FILE__).'/foxycart/sample1.xml');
+        $encrypted = \rc4crypt::encrypt($api_key, $data);
+        $payload = urlencode($encrypted);
+
+        // Fake Post Data
+        $modx->request->parameters['POST'] = array('FoxyData'=>$payload);
+        $actual = $modx->runSnippet('parseFoxycartDatafeed', $props);
+        $this->assertEquals('foxy',$actual); 
+
+        $Transaction = $modx->getObject('Transaction', array('id'=>'1234567890'));
+        $this->assertTrue((bool)$Transaction);
+        $this->assertEquals($Transaction->get('customer_id'),'12345678');
+        
+        $transaction_id = $Transaction->get('transaction_id');
+        
+        $TDs = $modx->getCollection('TransactionDetail', array('transaction_id'=>$transaction_id));
+        
+        $names = array('Ham Steak','5 Knives Sausage Sampler','Refrigerated Box');
+        foreach ($TDs as $p) {
+            $this->assertTrue(in_array($p->get('product_name'),$names));
+        }
+
+
+    }
 }

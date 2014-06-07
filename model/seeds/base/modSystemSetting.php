@@ -21,9 +21,10 @@ return array(
 		'namespace' => 'moxycart',
 		'area' => 'moxycart:default'
     ),
+    // api key must begin with "m42Ccf"
     array(
         'key'  =>     'moxycart.api_key',
-		'value'=>     '',
+		'value'=>     'm42Ccf',
 		'xtype'=>     'textfield',
 		'namespace' => 'moxycart',
 		'area' => 'moxycart:default'
@@ -107,6 +108,38 @@ return array(
 		'xtype'=>     'combo-boolean',
 		'namespace' => 'moxycart',
 		'area' => 'moxycart:default'
-    ),    
+    ), 
+    
+    // User Stuff
+    array(
+        'key'  =>     'moxycart.user_group',
+		'value'=>     '',
+		'xtype'=>     'textfield',
+		'namespace' => 'moxycart',
+		'area' => 'moxycart:default'
+    ),
+    array(
+        'key'  =>     'moxycart.user_role',
+		'value'=>     1, // Member
+		'xtype'=>     'textfield',
+		'namespace' => 'moxycart',
+		'area' => 'moxycart:default'
+    ),
+    // are users created via the datafeed active?
+    array(
+        'key'  =>     'moxycart.user_activate',
+		'value'=>     1,
+		'xtype'=>     'combo-boolean',
+		'namespace' => 'moxycart',
+		'area' => 'moxycart:default'
+    ),
+    // does user data get updated if new data comes in via the datafeed?
+    array(
+        'key'  =>     'moxycart.user_update',
+		'value'=>     1,
+		'xtype'=>     'combo-boolean',
+		'namespace' => 'moxycart',
+		'area' => 'moxycart:default'
+    ),
 );
 /*EOF*/
