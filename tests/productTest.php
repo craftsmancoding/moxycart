@@ -660,7 +660,8 @@ class productTest extends \PHPUnit_Framework_TestCase {
         
         $product_id = $One->get('product_id');
         $this->assertFalse(empty($product_id));
-        
+        $this->assertFalse(empty($Others));
+                
         // Prep: Remove all relations
         if($Collection = self::$modx->getCollection('ProductRelation', array('product_id'=>$One->get('product_id')))) {
             foreach ($Collection as $C) {
@@ -668,13 +669,12 @@ class productTest extends \PHPUnit_Framework_TestCase {
             }
         }
 
-        
-/*
         $related = array();
         $related_ids = array();
+
         foreach ($Others as $o) {
-            $related[] = array('related_id'=>$o->get('product_id'),'type'=>'related');
-            $related_ids[] = $o->get('product_id');
+            $related[] = array('related_id'=>$o['product_id'],'type'=>'related');
+            $related_ids[] = $o['product_id'];
         }
 
         $One->addRelations($related);
@@ -722,7 +722,15 @@ class productTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals($i, $PR->get('seq'));
             $i++;
         }
+
+        // Test the related snippet
+/*
+        global $modx;
+        $modx = self::$modx;
+        $props = array();
+        $modx->runSnippet('getRelatedProducts', $props);
 */
+
     }    
 
     /**
