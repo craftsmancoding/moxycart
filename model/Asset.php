@@ -105,7 +105,7 @@ class Asset extends BaseModel {
     public function getThumbnail($filepath,$subdir,$w,$h) {
         $this->_validFile($filepath);
         $thumbnail_path = $this->getThumbFilename($filepath, $subdir,$w,$h);
-        return Image::scale($filepath,$thumbnail_path,$w);
+        return Image::scale2w($filepath,$thumbnail_path,$w);
     }
     
     /**

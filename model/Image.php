@@ -11,15 +11,23 @@
  *      if (x = y) scale only
  *
  * TODO:
- *      limit : show an image of WxH in a potentially smaller space
- *      scale2h : scale image to desired height, preserving aspect ratio.
- *      scale2w : scale image to desired width, preserving aspect ratio.
+ *      thumbnail : do a real zoom-crop thumb
+ *      limit : show an image of WxH in a potentially smaller space (ugh. Use CSS)
+ *      x - scale : resize an image (may distort)
+ *      x - scale2h : scale image to desired height, preserving aspect ratio.
+ *      x - scale2w : scale image to desired width, preserving aspect ratio.
+ *
  *      rotateCW : rotate an image clockwise in 90-degree increments.
  *      rotateCCW : rotate an imagae counter-clockwise in 90-degree increments.
- *      flipH : flip an image horizontally so left becomes right, right becomes left
- *      flipV : flip an image vertically so top becomes bottom, bottom becomes top
+ *          http://www.php.net//manual/en/function.imagerotate.php
+ *      
+ *      flipX : flip an image horizontally so left becomes right, right becomes left
+ *      flipY : flip an image vertically so top becomes bottom, bottom becomes top
+ *          http://www.php.net//manual/en/function.imageflip.php
+ *
  *      watermark : adds a watermark image to an image
  *      textmark : adds text to an image as a watermark
+ *      stream: stream an image from file (e.g. from a location not web-accessible)
  */
 namespace Moxycart;
 class Image {
@@ -34,6 +42,114 @@ class Image {
      */
     public function __construct(\modX &$modx, $primary_key=null) {
         $this->modx =& $modx;
+    }
+    
+    /**
+     *
+     * @param string $dst image path
+     */
+    private static function _prep_destination($dst) {
+        // Careful!
+        // is it an image?
+        if (!in_array(strtolower(substr($dst, -4)), array('.jpg','jpeg','.gif','.png'))) {
+            throw new \Exception('Destination file must be an image: '.$dst);
+        }        
+        if(file_exists($dst)) {
+            if (!unlink($dst)) {
+                throw new \Exception('Unable to overwrite destination file '.$dst);
+            }
+        }
+        if (!file_exists(dirname($dst))) {
+            if (!mkdir(dirname($dst),0777,true)) {
+                throw new \Exception('Failed to create directory '.dirname($dst));
+            }            
+        }    
+    }
+    
+    /**
+     * Read image at $src and return image resource
+     *
+     * @param string $src full path to source image
+     */
+    private static function _get_resource($src) {
+        $ext = strtolower(strrchr($src, '.'));
+        switch ($ext) {
+            case '.jpg':
+            case '.jpeg':
+                $src_img = @imagecreatefromjpeg($src);
+                break;
+            case '.gif':
+                $src_img = @imagecreatefromgif($src);
+                break;
+            case '.png':
+                $src_img = @imagecreatefrompng($src);
+                break;
+        }
+        if (!$src_img) {
+            throw new \Exception('Failed to create image');
+        }
+        
+        return $src_img;
+    }
+
+    /** 
+     * Create a new image to file
+     *
+     * @param $src_image image resource
+     * @param $dst destination file path
+     * @param integer width (x) of src image
+     * @param integer height (y) of src image
+     * @param integer width (x) of new image
+     * @param integer height (y) of new image)
+     *
+     */
+    private static function _create($src_img, $dst, $ox,$oy,$nx,$ny) {
+    
+        $dst_img = imagecreatetruecolor($nx, $ny);
+        
+        $ext = strtolower(strrchr($dst, '.'));
+        // Special behavior for PNGs
+        if ($ext=='.png') {
+                // integer representation of the color black (rgb: 0,0,0)
+                $background = imagecolorallocate($dst_img, 0, 0, 0);
+                // removing the black from the placeholder
+                imagecolortransparent($dst_img, $background);
+
+                // turning off alpha blending (to ensure alpha channel information 
+                // is preserved, rather than removed (blending with the rest of the 
+                // image in the form of black))
+                imagealphablending($dst_img, false);
+
+                // turning on alpha channel information saving (to ensure the full range 
+                // of transparency is preserved)
+                imagesavealpha($dst_img, true);
+        } 
+
+        
+        imagecopyresized($dst_img, $src_img, 0,0,0,0,$nx,$ny,$ox,$oy);
+        
+
+        switch ($ext) {
+            case '.jpg':
+            case '.jpeg':
+                if(!imagejpeg($dst_img, $dst,100)) {
+                    throw new \Exception('Failed to create thumbnail image at '.$dst);
+                }
+                break;
+            case '.gif':
+                if(!imagegif($dst_img, $dst)) {
+                    throw new \Exception('Failed to create thumbnail image at '.$dst);
+                }
+                break;
+            case '.png':
+                if(!imagepng($dst_img, $dst,0)) {
+                    throw new \Exception('Failed to create thumbnail image at '.$dst);
+                }
+                break;
+        }
+        
+        return $dst;
+    
     }
     
     /**
@@ -61,7 +177,7 @@ class Image {
         }
         
         $src_img = '';
-        $ext = strtolower(substr($src, -4));
+        $ext = strtolower(strrchr($dst, '.'));
         $image_func = '';
         $quality = null; // different vals for different funcs
         switch ($ext) {
@@ -70,7 +186,7 @@ class Image {
                 $image_func = 'imagegif';
                 break;
             case '.jpg':
-            case 'jpeg':
+            case '.jpeg':
                 $src_img = @imagecreatefromjpeg($src);
                 $image_func = 'imagejpeg';
                 $quality = 100;
@@ -122,8 +238,56 @@ class Image {
         return $dst;
     }
 
+
     /**
-     * Scale an image to a new width maintaining aspect ratio.
+     * Scale an image to new width and height, copy to spec'd dir. 
+     * This may distort aspect ratio!
+     *
+     *
+     */
+    public static function scale($src,$dst,$new_w,$new_h) {
+        self::_prep_destination($dst);
+        $src_img = self::_get_resource($src);
+        
+        $ox = imagesx($src_img);
+        $oy = imagesy($src_img);
+        $nx = $new_w;
+        $ny = $new_h;
+        
+        return self::_create($src_img, $dst, $ox,$oy,$nx,$ny);
+    }
+
+    /**
+     * Scale an image to a new height while maintaining aspect ratio.
+     * Processes image at $src path and writes it to the $dst filename,
+     * changing the image type according to the extensions detected.
+     * This will attempt to create the destination directory if it 
+     * does not exist. 
+     *
+     * Throws tantrums if things don't work out its way.
+     *
+     * @param string $src full path to source image
+     * @param string $dst full name of image including path
+     * @param integer $new_h new height in pixels
+     * @return string $dst on success. Throws exception on fail.
+     */
+    public static function scale2h($src,$dst,$new_h) { 
+    
+        self::_prep_destination($dst);
+        
+        $src_img = self::_get_resource($src);
+        
+        // old XY (from src) to new XY
+        $ox = imagesx($src_img);
+        $oy = imagesy($src_img);
+        $nx = floor($new_h * ( $ox / $oy ));
+        $ny = $new_h;
+        
+        return self::_create($src_img, $dst, $ox,$oy,$nx,$ny);
+    }
+    
+    /**
+     * Scale an image to a new width while maintaining aspect ratio.
      * Processes image at $src path and writes it to the $dst filename,
      * changing the image type according to the extensions detected.
      * This will attemp to create the destination directory if it 
@@ -136,93 +300,93 @@ class Image {
      * @param integer $new_w new width in pixels
      * @return string $dst on success. Throws exception on fail.
      */
-    // public static function scale2w($src,$dst,$new_w) { 
-    public static function scale($src,$dst,$new_w) {
-        // Careful!
-        // is it an image?
-        if (!in_array(strtolower(substr($dst, -4)), array('.jpg','jpeg','.gif','.png'))) {
-            throw new \Exception('Destination file must be an image: '.$dst);
-        }        
-        if(file_exists($dst)) {
-            if (!unlink($dst)) {
-                throw new \Exception('Unable to overwrite destination file '.$dst);
-            }
-        }
-        if (!file_exists(dirname($dst))) {
-            if (!mkdir(dirname($dst),0777,true)) {
-                throw new \Exception('Failed to create directory '.dirname($dst));
-            }            
-        }
+    public static function scale2w($src,$dst,$new_w) { 
+    
+        self::_prep_destination($dst);
         
-        $ext = strtolower(substr($src, -4));
-        switch ($ext) {
-            case '.jpg':
-            case 'jpeg':
-                $src_img = @imagecreatefromjpeg($src);
-                break;
-            case '.gif':
-                $src_img = @imagecreatefromgif($src);
-                break;
-            case '.png':
-                $src_img = @imagecreatefrompng($src);
-                break;
-        }
-        if (!$src_img) {
-            throw new \Exception('Failed to create image');
-        }
+        $src_img = self::_get_resource($src);        
         
         // old XY (from src) to new XY
         $ox = imagesx($src_img);
         $oy = imagesy($src_img);
+        $nx = $new_w;
+        $ny = floor($new_w * ($oy / $ox));
         
-        $nx = ( $ox >= $new_w ) ? $new_w : $ox;
-        $ny = floor($oy * ($nx / $ox));
-        
-        $dst_img = imagecreatetruecolor($nx, $ny);
-
-        // Special behavior for PNGs
-        if ($ext=='.png') {
-                // integer representation of the color black (rgb: 0,0,0)
-                $background = imagecolorallocate($dst_img, 0, 0, 0);
-                // removing the black from the placeholder
-                imagecolortransparent($dst_img, $background);
-
-                // turning off alpha blending (to ensure alpha channel information 
-                // is preserved, rather than removed (blending with the rest of the 
-                // image in the form of black))
-                imagealphablending($dst_img, false);
-
-                // turning on alpha channel information saving (to ensure the full range 
-                // of transparency is preserved)
-                imagesavealpha($dst_img, true);
-        } 
-
-        
-        imagecopyresized($dst_img, $src_img, 0,0,0,0,$nx,$ny,$ox,$oy);
-        
-        $ext = strtolower(substr($dst, -4));
-        switch ($ext) {
-            case '.jpg':
-            case 'jpeg':
-                if(!imagejpeg($dst_img, $dst,100)) {
-                    throw new \Exception('Failed to create thumbnail image at '.$dst);
-                }
-                break;
-            case '.gif':
-                if(!imagegif($dst_img, $dst)) {
-                    throw new \Exception('Failed to create thumbnail image at '.$dst);
-                }
-                break;
-            case '.png':
-                if(!imagepng($dst_img, $dst,0)) {
-                    throw new \Exception('Failed to create thumbnail image at '.$dst);
-                }
-                break;
-        }
-        
-        return $dst;
+        return self::_create($src_img, $dst, $ox,$oy,$nx,$ny);
     }
 
+
+    /** 
+     * Generate a thumbnail of dimensions $w x $h from the image at $src, save it to $dst.
+     * If the aspect ratio of desired thumbnail does not match the aspect ratio of the original $src,
+     * the image will be centered and cropped to fit.
+     *
+     *  E.g. if original image is 300 x 100 
+     *  and desired thumb is 100 x 100,
+     *  the sides will be cropped:
+     *      +---------------------+
+     *      |     ¦        ¦      |
+     *      |     ¦ thumb  ¦      |
+     *      |     ¦ 100x100¦      |
+     *      |     ¦        ¦      |
+     *      +---------------------+
+     * 
+     * @param $src string full path to source image
+     * @param $dst string full path to where destination image will be written
+     * @param $w integer with of thumbnail in pixels
+     * @param $h integer height of thumbnail in pixels
+     */
+    public function thumbnail($src,$dst,$w,$h) {
+/*
+ *      x = Original  W:H ratio
+ *      y = Thumbnail W:H ratio
+ *      if (x > y) scale to height and crop the width
+ *      if (x < y) scale to width and crop the height
+ *      if (x = y) scale only
+*/    
+        $w = floor($w);
+        $h = floor($h);
+        
+        if (!$w || !$h) {
+            throw new \Exception('Invalid thumbnail dimensions.');
+        }
+        
+        self::_prep_destination($dst);
+        
+        $src_img = self::_get_resource($src);        
+        
+        // old XY (from src) to new XY
+        $ox = imagesx($src_img);
+        $oy = imagesy($src_img);        
+        
+        $ratio_thumb = $w/$h;
+        $ratio_orig = $ox/$oy;
+        
+        // Scale to height and crop the width
+        if ($ratio_thumb < $ratio_orig) {
+            $intermediate_dst = '/tmp/img.jpg';
+            $tmp_src = self::scale2h($src,$intermediate_dst,$h);
+  //          return $dst;
+            $x = abs(($ox - $w)/2);
+            $y = 0;
+            return self::crop($tmp_src,$dst,$x,$y,$w,$h); // overwrite the image in place
+        }
+        // Scale to width and crop the height
+        elseif ($ratio_thumb > $ratio_orig) {
+            $intermediate_dst = '/tmp/img.jpg';
+            $tmp_src = self::scale2w($src,$intermediate_dst,$w);
+//            return $dst;
+            $x = $w;
+            $y = abs(($oy - $h)/2);
+            return self::crop($tmp_src,$dst,$x,$y,$w,$h); // overwrite the image in place
+        
+        }
+        // Ratios Equal: Scale only
+        else {
+            return self::scale($src,$dst,$w,$h);
+        }
+        
+    }
 
     /** 
      * See http://stackoverflow.com/questions/2076284/scaling-images-proportionally-in-css-with-max-width
