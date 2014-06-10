@@ -693,16 +693,20 @@ class PageController extends BaseController {
     public function getStoreProducts(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $store_id = (int) $this->modx->getOption('store_id', $scriptProperties);
+        $this->client_config['store_id'] = $store_id;
         $this->setPlaceholder('store_id', $store_id);
         $this->scriptProperties['_nolayout'] = true;
         $Obj = new Product($this->modx);
         $results = $Obj->all($scriptProperties);
         $count = $Obj->count($scriptProperties);
         $offset = (int) $this->modx->getOption('offset',$scriptProperties,0);
+        $results_per_page = (int) $this->modx->getOption('moxycart.default_per_page','',$this->modx->getOption('default_per_page'));
         $this->_setProductColumns();
         $this->setPlaceholder('baseurl', $this->page('storeproducts'));
         $this->setPlaceholder('results', $results);
         $this->setPlaceholder('count', $count);
+        $this->setPlaceholder('offset', $offset);
+        $this->setPlaceholder('results_per_page', $results_per_page);        
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('main/storeproducts.php');
     }
