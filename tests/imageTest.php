@@ -70,7 +70,7 @@ class imageTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertFalse(file_exists($dst));
               
-        $result = Image::scale($src,$dst,112);
+        $result = Image::scale2w($src,$dst,112);
         
         $this->assertTrue(file_exists($dst));
         $this->assertEquals($result,$dst);
@@ -97,7 +97,7 @@ class imageTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertFalse(file_exists($dst));
               
-        $result = Image::scale($src,$dst,100);
+        $result = Image::scale2w($src,$dst,100);
         
         $this->assertTrue(file_exists($dst));
         $this->assertEquals($result,$dst);
@@ -125,7 +125,7 @@ class imageTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertFalse(file_exists($dst));
               
-        $result = Image::scale($src,$dst,222);
+        $result = Image::scale2w($src,$dst,222);
         
         $this->assertTrue(file_exists($dst));
         $this->assertEquals($result,$dst);
@@ -202,4 +202,24 @@ class imageTest extends \PHPUnit_Framework_TestCase {
             unlink($result);        
         }
     }
+    
+    public function testRealThumb() {
+        $src = dirname(__FILE__).'/assets/macbook_pro.jpg'; 
+        $dst = dirname(__FILE__).'/assets/thumb.macbook_pro.jpg';
+        $actual_dst = dirname(__FILE__).'/assets/thumb2.macbook_pro.jpg';
+        $tmp = 'thumb.macbook_pro.jpg';
+        if (file_exists($dst)) {
+            unlink($dst);        
+        }        
+        $result = Image::thumbnail($src,$dst,300,150);
+
+        $actual_sig = md5_file($actual_dst);
+        $expected_sig = md5_file($dst);
+        $this->assertEquals($actual_sig,$expected_sig);
+        if (file_exists($dst)) {
+            unlink($dst);        
+        }        
+
+    }
+    
 }
