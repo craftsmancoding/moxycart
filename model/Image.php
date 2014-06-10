@@ -3,19 +3,9 @@
  * Image
  * Basic functions for image manipulation with a simple PHP install (no Imagemagik required).
  * 
- * Thumbnail calc:
- *      x = Original  W:H ratio
- *      y = Thumbnail W:H ratio
- *      if (x > y) scale to height and crop the width
- *      if (x < y) scale to width and crop the height
- *      if (x = y) scale only
  *
  * TODO:
- *      thumbnail : do a real zoom-crop thumb
  *      limit : show an image of WxH in a potentially smaller space (ugh. Use CSS)
- *      x - scale : resize an image (may distort)
- *      x - scale2h : scale image to desired height, preserving aspect ratio.
- *      x - scale2w : scale image to desired width, preserving aspect ratio.
  *
  *      rotateCW : rotate an image clockwise in 90-degree increments.
  *      rotateCCW : rotate an imagae counter-clockwise in 90-degree increments.
@@ -222,6 +212,7 @@ class Image {
         if (!imagecopy($dst_img, $src_img, 0, 0, $src_x, $src_y, $src_w, $src_h)) {
             imagedestroy($src_img);
             imagedestroy($dst_img);
+            print "$src_x, $src_y, $src_w, $src_h"; exit;
             throw new \Exception('Could not crop image');
         }
         // Write the cropped image resource to the filesystem
@@ -337,13 +328,7 @@ class Image {
      * @param $h integer height of thumbnail in pixels
      */
     public function thumbnail($src,$dst,$w,$h) {
-/*
- *      x = Original  W:H ratio
- *      y = Thumbnail W:H ratio
- *      if (x > y) scale to height and crop the width
- *      if (x < y) scale to width and crop the height
- *      if (x = y) scale only
-*/    
+
         $w = floor($w);
         $h = floor($h);
         
@@ -364,21 +349,19 @@ class Image {
         
         // Scale to height and crop the width
         if ($ratio_thumb < $ratio_orig) {
-            $intermediate_dst = '/tmp/img.jpg';
-            $tmp_src = self::scale2h($src,$intermediate_dst,$h);
-  //          return $dst;
-            $x = abs(($ox - $w)/2);
-            $y = 0;
-            return self::crop($tmp_src,$dst,$x,$y,$w,$h); // overwrite the image in place
+            $dst = self::scale2h($src,$dst,$h);
+            $nx = floor(($h/$oy) * $ox); // calc w of scaled image
+            $x = abs(($nx - $w)/2);
+            $dst = self::crop($dst,$dst,$x,0,$w,$h); // overwrite the image in place
+            return $dst;
         }
         // Scale to width and crop the height
         elseif ($ratio_thumb > $ratio_orig) {
-            $intermediate_dst = '/tmp/img.jpg';
-            $tmp_src = self::scale2w($src,$intermediate_dst,$w);
-//            return $dst;
-            $x = $w;
-            $y = abs(($oy - $h)/2);
-            return self::crop($tmp_src,$dst,$x,$y,$w,$h); // overwrite the image in place
+            $dst = self::scale2w($src,$dst,$w);
+            $ny = floor(($w/$ox) * $oy); // calc h of scaled image
+            $y = abs(($ny - $h)/2);
+            $dst = self::crop($dst,$dst,0,$y,$w,$h); // overwrite the image in place
+            return $dst;
         
         }
         // Ratios Equal: Scale only

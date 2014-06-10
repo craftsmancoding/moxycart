@@ -206,10 +206,20 @@ class imageTest extends \PHPUnit_Framework_TestCase {
     public function testRealThumb() {
         $src = dirname(__FILE__).'/assets/macbook_pro.jpg'; 
         $dst = dirname(__FILE__).'/assets/thumb.macbook_pro.jpg';
+        $actual_dst = dirname(__FILE__).'/assets/thumb2.macbook_pro.jpg';
+        $tmp = 'thumb.macbook_pro.jpg';
         if (file_exists($dst)) {
             unlink($dst);        
         }        
         $result = Image::thumbnail($src,$dst,300,150);
+
+        $actual_sig = md5_file($actual_dst);
+        $expected_sig = md5_file($dst);
+        $this->assertEquals($actual_sig,$expected_sig);
+        if (file_exists($dst)) {
+            unlink($dst);        
+        }        
+
     }
     
 }
