@@ -102,7 +102,7 @@ if ($Role->get('id') != $user_role) {
 $email = $modx->getOption('customer_email', $scriptProperties);
 
 if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $modx->log(xPDO::LOG_LEVEL_ERROR,'Invalid customer_email. Could not create user.',$log,'userCreate Snippet',__FILE__,__LINE__);
+    $modx->log(xPDO::LOG_LEVEL_ERROR,'Invalid customer_email('.$email.'). Could not create user.',$log,'userCreate Snippet',__FILE__,__LINE__);
     return false;
 }
 

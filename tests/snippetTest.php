@@ -411,7 +411,8 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         if ($User = $modx->getObject('modUser', array('username'=>'dude@dudeson.com'))) {
             $User->remove();
         }        
-
+        //$modx->setLogLevel(3);
+        
         $props = array();        
         $modx->setOption('moxycart.user_group','DOES NOT EXIST');
         $modx->setOption('moxycart.user_role', 1);
