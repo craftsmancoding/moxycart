@@ -154,7 +154,8 @@ class Product extends BaseModel {
             foreach ($Product->Fields as $F) {
                 $product_attributes[$F->Field->get('slug')] = $F->get('value');
             }
-            if (isset($Product->Image)) {
+
+            if (isset($Product->Image) && !empty($Product->Image)) {
                 $product_attributes['img'] = $Product->Image->get('url');
                 $product_attributes['thumb'] = $Product->Image->get('thumbnail_url');
             }
