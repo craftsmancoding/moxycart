@@ -43,6 +43,9 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
     public static $Store;
     public static $Tax;
     public static $Field;
+    public static $Option;
+    public static $Term;
+    public static $ProductOption;
     public static $product_id;
     
     /**
@@ -134,99 +137,101 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         // Rustle up some products
         if (!$Product = self::$modx->getObject('Product', array('alias'=> 'south-park-tshirt', 'store_id'=> self::$Store->get('id')))) {
             $Product = self::$modx->newObject('Product');
-            $Product->fromArray(array(
-                'store_id' => self::$Store->get('id'),
-                'name' => 'Southpark Tshirt',
-                'title' => 'Southpark Tshirt',
-                'description' => '',
-                'content' => '<p>Just imagine this awesome product.</p>',
-                'type' => 'regular',
-                'sku' => 'SOUTHPARK-TSHIRT',
-                'sku_vendor' => '',
-                'alias' => 'south-park-tshirt',
-                'uri' => self::$Store->get('uri').'south-park-tshirt',
-                'track_inventory' => 0,
-                'qty_inventory' => 10,
-                'qty_alert' => 3,
-                'qty_min' => 1,
-                'qty_max' => 0,
-                'qty_backorder_max' => 5,
-                'price' => '19.00',
-                'price_strike_thru' => '25.00',
-                'price_sale' => '',
-                'sale_start' => '',
-                'sale_end' => '',
-                'category' => 'Default',
-                'is_active' => 1,
-                'in_menu' => 1,
-                'currency_id' => 109,
-            ));
-            $Product->save();
         }
+        $Product->fromArray(array(
+            'store_id' => self::$Store->get('id'),
+            'name' => 'Southpark Tshirt',
+            'title' => 'Southpark Tshirt',
+            'description' => '',
+            'content' => '<p>Just imagine this awesome product.</p>',
+            'type' => 'regular',
+            'sku' => 'SOUTHPARK-TSHIRT',
+            'sku_vendor' => '',
+            'alias' => 'south-park-tshirt',
+            'uri' => self::$Store->get('uri').'south-park-tshirt',
+            'track_inventory' => 0,
+            'qty_inventory' => 10,
+            'qty_alert' => 3,
+            'qty_min' => 1,
+            'qty_max' => 0,
+            'qty_backorder_max' => 5,
+            'price' => '19.00',
+            'price_strike_thru' => '25.00',
+            'price_sale' => '',
+            'sale_start' => '',
+            'sale_end' => '',
+            'category' => 'Default',
+            'is_active' => 1,
+            'in_menu' => 1,
+            'currency_id' => 109,
+        ));
+        $Product->save();
+
 
         if (!$Product = self::$modx->getObject('Product', array('alias'=> 'family-guy-tshirt', 'store_id'=> self::$Store->get('id')))) {        
             $Product = self::$modx->newObject('Product');
-            $Product->fromArray(array(
-                'store_id' => self::$Store->get('id'),
-                'name' => 'Family Guy Tshirt',
-                'title' => 'Family Guy Tshirt',
-                'description' => '',
-                'content' => '<p>Just imagine this awesome product.</p>',
-                'type' => 'regular',
-                'sku' => 'FAMILYGUY-TSHIRT',
-                'sku_vendor' => '',
-                'alias' => 'family-guy-tshirt',
-                'uri' => self::$Store->get('uri').'family-guy-tshirt',
-                'track_inventory' => 0,
-                'qty_inventory' => 10,
-                'qty_alert' => 3,
-                'qty_min' => 1,
-                'qty_max' => 0,
-                'qty_backorder_max' => 5,
-                'price' => '20.00',
-                'price_strike_thru' => '25.00',
-                'price_sale' => '',
-                'sale_start' => '',
-                'sale_end' => '',
-                'category' => 'Default',
-                'is_active' => 1,
-                'in_menu' => 1,
-                'currency_id' => 109,
-            ));
-            $Product->save();
         }
+        $Product->fromArray(array(
+            'store_id' => self::$Store->get('id'),
+            'name' => 'Family Guy Tshirt',
+            'title' => 'Family Guy Tshirt',
+            'description' => '',
+            'content' => '<p>Just imagine this awesome product.</p>',
+            'type' => 'regular',
+            'sku' => 'FAMILYGUY-TSHIRT',
+            'sku_vendor' => '',
+            'alias' => 'family-guy-tshirt',
+            'uri' => self::$Store->get('uri').'family-guy-tshirt',
+            'track_inventory' => 0,
+            'qty_inventory' => 10,
+            'qty_alert' => 3,
+            'qty_min' => 1,
+            'qty_max' => 0,
+            'qty_backorder_max' => 5,
+            'price' => '20.00',
+            'price_strike_thru' => '25.00',
+            'price_sale' => '',
+            'sale_start' => '',
+            'sale_end' => '',
+            'category' => 'Default',
+            'is_active' => 1,
+            'in_menu' => 1,
+            'currency_id' => 109,
+        ));
+        $Product->save();
+
         
         if (!$Product = self::$modx->getObject('Product', array('alias'=> 'simpsons-tshirt', 'store_id'=> self::$Store->get('id')))) {        
             $Product = self::$modx->newObject('Product');
-            $Product->fromArray(array(
-                'store_id' => self::$Store->get('id'),
-                'name' => 'Simpsons Tshirt',
-                'title' => 'Simpsons Tshirt',
-                'description' => '',
-                'content' => '<p>Just imagine this awesome product.</p>',
-                'type' => 'regular',
-                'sku' => 'SIMPSONS-TSHIRT',
-                'sku_vendor' => '',
-                'alias' => 'simpsons-tshirt',
-                'uri' => self::$Store->get('uri').'simpsons-tshirt',
-                'track_inventory' => 0,
-                'qty_inventory' => 10,
-                'qty_alert' => 3,
-                'qty_min' => 1,
-                'qty_max' => 0,
-                'qty_backorder_max' => 5,
-                'price' => '21.00',
-                'price_strike_thru' => '25.00',
-                'price_sale' => '',
-                'sale_start' => '',
-                'sale_end' => '',
-                'category' => 'Default',
-                'is_active' => 1,
-                'in_menu' => 1,
-                'currency_id' => 109,
-            ));
-            $Product->save();
         }
+        $Product->fromArray(array(
+            'store_id' => self::$Store->get('id'),
+            'name' => 'Simpsons Tshirt',
+            'title' => 'Simpsons Tshirt',
+            'description' => '',
+            'content' => '<p>Just imagine this awesome product.</p>',
+            'type' => 'regular',
+            'sku' => 'SIMPSONS-TSHIRT',
+            'sku_vendor' => '',
+            'alias' => 'simpsons-tshirt',
+            'uri' => self::$Store->get('uri').'simpsons-tshirt',
+            'track_inventory' => 0,
+            'qty_inventory' => 10,
+            'qty_alert' => 3,
+            'qty_min' => 1,
+            'qty_max' => 0,
+            'qty_backorder_max' => 5,
+            'price' => '21.00',
+            'price_strike_thru' => '25.00',
+            'price_sale' => '',
+            'sale_start' => '',
+            'sale_end' => '',
+            'category' => 'Default',
+            'is_active' => 1,
+            'in_menu' => 1,
+            'currency_id' => 109,
+        ));
+        $Product->save();
 
         // create test data for Product Field
         self::$product_id = $Product->get('product_id');
@@ -240,6 +245,97 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
             $ProductField->save();
         }        
 
+        // Color
+        if (!self::$Option['color'] = self::$modx->getObject('OptionType', array('slug'=>'color'))) {
+            self::$Option['color'] = self::$modx->newObject('OptionType');
+        }
+        self::$Option['color']->fromArray(array(
+            'slug' => 'color',
+            'name' => 'Color',
+        ));
+        self::$Option['color']->save();       
+
+        if (!self::$Term['red'] = self::$modx->getObject('OptionTerm', array('slug'=>'size'))) {
+            self::$Term['red'] = self::$modx->newObject('OptionTerm');       
+        }
+        self::$Term['red']->fromArray(array(
+            'slug' => 'red',
+            'name' => 'Red',
+            'otype_id' => self::$Option['color']->get('otype_id')
+        ));
+        self::$Term['red']->save();        
+
+        if (!self::$Term['black'] = self::$modx->getObject('OptionTerm', array('slug'=>'black'))) {
+            self::$Term['black'] = self::$modx->newObject('OptionTerm');
+        }
+        self::$Term['black']->fromArray(array(
+            'slug' => 'black',
+            'name' => 'Black',
+            'otype_id' => self::$Option['color']->get('otype_id'),
+        ));
+        self::$Term['black']->save();
+
+        if (!self::$Term['white'] = self::$modx->getObject('OptionTerm', array('slug'=>'white'))) {
+            self::$Term['white'] = self::$modx->newObject('OptionTerm');
+        }
+        self::$Term['white']->fromArray(array(
+            'slug' => 'white',
+            'name' => 'White',
+            'otype_id' => self::$Option['color']->get('otype_id'),
+        ));
+        self::$Term['white']->save();
+        
+        // Size
+        if (!self::$Option['size'] = self::$modx->getObject('OptionType', array('slug'=>'size'))) {
+            self::$Option['size'] = self::$modx->newObject('OptionType');
+        }
+        self::$Option['size']->fromArray(array(
+            'slug' => 'size',
+            'name' => 'Size',
+        ));
+        self::$Option['size']->save();       
+
+        
+        if (!self::$Term['small'] = self::$modx->getObject('OptionTerm', array('slug'=>'small'))) {
+            self::$Term['small'] = self::$modx->newObject('OptionTerm');       
+        }
+        self::$Term['small']->fromArray(array(
+            'slug' => 'small',
+            'name' => 'Small',
+            'otype_id' => self::$Option['size']->get('otype_id')
+        ));
+        self::$Term['small']->save();        
+
+        if (!self::$Term['med'] = self::$modx->getObject('OptionTerm', array('slug'=>'med'))) {
+            self::$Term['med'] = self::$modx->newObject('OptionTerm');
+        }
+        self::$Term['med']->fromArray(array(
+            'slug' => 'med',
+            'name' => 'Medium',
+            'otype_id' => self::$Option['size']->get('otype_id'),
+        ));
+        self::$Term['med']->save();
+
+        if (!self::$Term['large'] = self::$modx->getObject('OptionTerm', array('slug'=>'large'))) {
+            self::$Term['large'] = self::$modx->newObject('OptionTerm');
+        }
+        self::$Term['large']->fromArray(array(
+            'slug' => 'large',
+            'name' => 'Large',
+            'mod_price' => '12',
+            'otype_id' => self::$Option['size']->get('otype_id'),
+        ));
+        self::$Term['large']->save();        
+
+       if (!$ProductOption = self::$modx->getObject('ProductOptionType', array('product_id'=> self::$product_id, 'otype_id'=> self::$Option['size']->get('otype_id')))) {        
+            $ProductOption = self::$modx->newObject('ProductOptionType');
+            $ProductOption->fromArray(array(
+                'product_id' => self::$product_id,
+                'otype_id' =>  self::$Option['size']->get('otype_id'),
+            ));
+            $ProductOption->save();
+        }  
+
     }
 
     /**
@@ -251,6 +347,8 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         self::$Tax['A']->remove();
         self::$Tax['B']->remove();
         self::$Tax['C']->remove(); 
+        self::$Option['size']->remove();
+        self::$Option['color']->remove();        
     }
 
 
@@ -503,7 +601,10 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
     }
     
     
-    public function parseFoxycartDatafeed() {
-    
+    public function testBuyButton() {
+        global $modx;
+        $modx = self::$modx;
+        $modx->runSnippet('addToCartButton', array('product_id' => self::$product_id));
+
     }
 }

@@ -47,17 +47,22 @@ else {
 
 $c = $modx->newQuery('ProductOptionType');
 $c->where(array('ProductOptionType.product_id' => $product_id));
-$c->sortby('ProductOptionType.Type.seq, ProductOptionType.Type.Terms.seq','ASC');
+$c->sortby('Type.seq','ASC');
+//$c->sortby('Terms.seq','ASC');
 
 $properties['options'] = '';
-if ($Options = $modx->getCollectionGraph('ProductOptionType','{"Type":{"Terms":{}}}',$c)) {
+if ($Options = $modx->getCollectionGraph('ProductOptionType','{"Type":{}}',$c)) {
 
     foreach ($Options as $o) {
         $opt = '<label for="'.$o->Type->get('slug').'">'.$o->Type->get('name').'</label><select id="'.$o->Type->get('slug').'" name="'.$o->Type->get('slug').'">';
-        foreach ($o->Term->Terms as $t) {
+        $c = $modx->newQuery('OptionTerm');
+        $c->where(array('otype_id' => $o->get('otype_id')));
+        $c->sortby('seq','ASC');
+        $Terms = $modx->getCollection('OptionTerm',$c);
+        foreach ($Terms as $t) {
             $opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
         }
-        $opt .= '</label>';
+        $opt .= '</select>';
         $properties['options.'.$o->Type->get('slug')] = $opt;
         $properties['options'] = $properties['options'] . $opt;
     }
