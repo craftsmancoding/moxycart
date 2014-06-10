@@ -23,10 +23,11 @@ class Asset extends xPDOObject {
             
             // Fallback to placehold.it e.g. http://placehold.it/350x150&text=PDF
             if (empty($raw)) {
-                $ext = strtolower(strrchr($this->get('url'), '.'));
+                //$ext = strtolower(strrchr($this->get('url'), '.'));
                 $w = $this->xpdo->getOption('moxycart.thumbnail_width');
                 $h = $this->xpdo->getOption('moxycart.thumbnail_height');
-                return sprintf('http://placehold.it/%sx%s&text=%s',$w,$h,$ext);
+                return \Moxycart\Asset::getMissingThumbnail($w,$h);
+                //return sprintf('http://placehold.it/%sx%s&text=%s',$w,$h,$ext);
             }
             // Passthru if the user has set a full URL
             elseif(filter_var($raw, FILTER_VALIDATE_URL)) {
