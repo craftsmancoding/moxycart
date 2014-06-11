@@ -14,9 +14,9 @@ class OptionTypeController extends APIController {
 
         $seq = 0;
         foreach ($scriptProperties['seq'] as $oterm_id) {
-            $Field = $this->modx->getObject('OptionTerm', array('oterm_id' => $oterm_id));
-            $Field->set('seq', $seq);
-            $Field->save();
+            $OTerm = $this->modx->getObject('OptionTerm', array('oterm_id' => $oterm_id));
+            $OTerm->set('seq', $seq);
+            $OTerm->save();
             $seq++;
         }
 
