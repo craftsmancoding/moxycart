@@ -75,6 +75,7 @@ function paint(page,data,target) {
         replace_me(target,response);
         jQuery('#moxycart_msg').html('');
         jQuery('#moxycart_msg').show();
+        page_init();
     })
     .fail(function() {
         console.error('[paint] get request to %s failed', url);
@@ -158,7 +159,7 @@ function submit_form(formid,url,redirect) {
     jQuery.post(url, jQuery('#'+formid).serialize(),function( response ) {
         console.debug(response);
         if(response.status == 'fail') {
-            console.log(response.data.errors);
+            console.log('The operation failed!', response.data.errors);
             var msg = 'Error:<br/>';
             for(var fieldname in response.data.errors) {
                 msg = msg + response.data.errors[fieldname] + '<br/>';
@@ -216,6 +217,7 @@ function show_success(msg) {
     });
 }
 
+
 /**
  * @param integer offset
  * @param string sort column name
@@ -249,3 +251,17 @@ function show_all_products() {
     jQuery('#searchterm').val('');
     return get_products(0);
 }
+
+
+/*
+jQuery(document).ready(function() {
+    jQuery(".ui-sortable").sortable();
+});
+*/
+
+function page_init() {
+    console.debug('[page_init]');
+    jQuery(".ui-sortable").sortable();
+}
+
+

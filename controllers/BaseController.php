@@ -208,6 +208,9 @@ class BaseController extends \modExtraManagerController {
         if ($this->client_config) {
             $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
             var moxycart = '.json_encode($this->client_config).';
+            jQuery(document).ready(function() {
+                page_init();
+            });
             </script>');
         }
         

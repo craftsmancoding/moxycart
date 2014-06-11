@@ -13,8 +13,8 @@ print $this->getMsg();
 
 
 <div class="clearfix">
+     <span class="btn moxycart-btn pull-left" onclick="javascript:paint('optioncreate');">Add Option</span>
 
-     <span class="btn moxycart-btn" onclick="javascript:paint('optioncreate');">Add Option</span>
 
         <div class="pull-right">   
             <form action="<?php print static::page('options'); ?>" method="post">
@@ -26,6 +26,7 @@ print $this->getMsg();
         </div>
    </div>  
 <?php if ($data['results']): ?>
+<form action="<?php print static::page('options'); ?>" method="post">
 <table class="classy">
     <thead>
         <tr>
@@ -41,10 +42,13 @@ print $this->getMsg();
             <th>Action</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="ui-sortable">
 <?php foreach ($data['results'] as $r) :?>
     <tr>
-        <td><?php print $r->get('slug'); ?></td>
+        <td>
+            <input type="hidden" name="seq[]" value="<?php print $r->get('otype_id'); ?>" />
+            <?php print $r->get('slug'); ?>
+        </td>
         <td><?php print $r->get('name'); ?></td>
         <td><?php print $r->get('description'); ?></td>
         <td>
@@ -56,7 +60,9 @@ print $this->getMsg();
 <?php endforeach; ?>
     </tbody>
 </table>
-
+<br>
+<input type="submit" class="button btn" value="Save Order"/>
+</form>
 <?php else: ?>
 
     <div class="danger">You have not created any product options yet.</div>

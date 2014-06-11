@@ -22,6 +22,7 @@
    </div>  
 
 <?php if ($data['results']): ?>
+<form action="<?php print static::page('fields'); ?>" method="post" id="custom_fields">
 <table class="classy">
     <thead>
         <tr>
@@ -44,10 +45,13 @@
             <th>Action</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="ui-sortable">
 <?php foreach ($data['results'] as $r) :?>
     <tr>
-        <td><?php print $r->get('slug'); ?></td>
+        <td>
+            <input type="hidden" name="seq[]" value="<?php print $r->get('field_id'); ?>" />
+            <?php print $r->get('slug'); ?>
+        </td>
         <td><?php print $r->get('label'); ?></td>
         <td><?php print $r->get('type'); ?></td>
         <td><?php print $r->get('group'); ?>
@@ -58,8 +62,18 @@
         </td>
     </tr>
 <?php endforeach; ?>
+
+
+
     </tbody>
 </table>
+<br>
+    <input type="submit" class="button btn" value="Save"/>
+
+</form>
+
+
+
 
 <?php else: ?>
 
