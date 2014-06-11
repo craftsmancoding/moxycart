@@ -12,6 +12,16 @@ class OptionTypeController extends APIController {
  
     public function postTerms(array $scriptProperties = array()) {    
 
+        $seq = 0;
+        foreach ($scriptProperties['seq'] as $oterm_id) {
+            $Field = $this->modx->getObject('OptionTerm', array('oterm_id' => $oterm_id));
+            $Field->set('seq', $seq);
+            $Field->save();
+            $seq++;
+        }
+        unset($scriptProperties['seq']);
+
+
         $OT = new OptionType($this->modx);
         $otype_id = (int) $this->modx->getOption('otype_id',$scriptProperties);
         $OT = $OT->find($otype_id);

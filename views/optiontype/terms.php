@@ -71,6 +71,7 @@ print \Formbuilder\Form::open($data['baseurl'])
                     <tr>
                         <td>
                             <input type="hidden" name="oterm_id[]" value="<?php print $t->oterm_id; ?>" />
+                            <input type="hidden" name="seq[]" value="<?php print $t->oterm_id; ?>" />
                             <input type="text" name="slug[]" placeholder="slug" value="<?php print htmlentities($t->slug); ?>" />
                         </td>
                         <td>
