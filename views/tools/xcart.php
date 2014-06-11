@@ -49,7 +49,7 @@ print \Formbuilder\Form::open(self::page('xcart'))
     ->dropdown('template_id',$data['templates'],'',array('label'=>'Product Template','description'=>'&nbsp;'))    
 //    ->dropdown('user_group_id',array())    
     ->html('<h4>Assets</h4><hr>')
-    ->checkbox('migrate_assets',0,array('label'=>'Migrate Assets','description'=>'Copy your xCart images into the path indicated below and this script will import them into the Moxycart database.'))
+    ->checkbox('migrate_assets',0,array('label'=>'Migrate Assets','description'=>'To import them your xCart images into the Moxycart database, first copy them into the directory listed below.  From there they will be processed.'))
     ->text('image_path',MODX_BASE_PATH,array('label'=>'Image Path',
         'description'=>'Full path to where you have copied your xCart image folder. This folder should contain sub-directories C, D, G, etc. This directory must be readable by PHP.',
         'style'=>'width:300px;',

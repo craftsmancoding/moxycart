@@ -91,10 +91,6 @@ class Asset extends BaseModel {
     /**
      * Create the thumbnail and return its full path
      *
-     *         $subdir = $this->modx->getOption('moxycart.thumbnail_dir');
-     * Warning: placehold.it is available ONLY as http.
-     * http://placehold.it/350x150&text=PDF
-     *
      * @param string $filepath full path to original image
      * @param string $subdir inside $filepath's dir where thumbnail will be created.
      *          In prod:  $subdir = $this->modx->getOption('moxycart.thumbnail_dir');
@@ -105,7 +101,20 @@ class Asset extends BaseModel {
     public function getThumbnail($filepath,$subdir,$w,$h) {
         $this->_validFile($filepath);
         $thumbnail_path = $this->getThumbFilename($filepath, $subdir,$w,$h);
-        return Image::scale($filepath,$thumbnail_path,$w);
+        return Image::thumbnail($filepath,$thumbnail_path,$w);
+    }
+    
+    /**
+     * Used if an image is missing
+     *
+     * @param integer $w
+     * @param integer $h
+     */
+    public static function getMissingThumbnail($w,$h) {
+        //$ext = strtolower(strrchr($this->get('url'), '.'));
+        //$w = $this->modx->getOption('moxycart.thumbnail_width');
+        //$h = $this->modx->getOption('moxycart.thumbnail_height');
+        return sprintf('http://placehold.it/%sx%s',$w,$h);
     }
     
     /**

@@ -20,7 +20,7 @@
  *
  * USAGE
  *
- * [[!parseFoxycartDatafeed? &product_hooks=`updateInventory` &transaction_hooks=`createUser`]]
+ * [[!parseFoxycartDatafeed? &product_hooks=`updateInventory` &transaction_hooks=`userCreate`]]
  *
  * PARAMS
  *

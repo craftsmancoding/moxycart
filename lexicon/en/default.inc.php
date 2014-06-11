@@ -79,30 +79,8 @@ $_lang['container_delete'] = 'Delete Product Container';
 $_lang['container_undelete'] = 'Undelete Product Container';
 $_lang['container_publish'] = 'Publish Product Container';
 $_lang['container_unpublish'] = 'Unpublish Product Container';
+$_lang['container_update'] = 'Edit Product Container';
 $_lang['container_view'] = 'View Product Container';
-
-
-$_lang['taxonomy'] = 'Taxonomy';
-$_lang['taxonomies'] = 'Taxonomies';
-$_lang['taxonomy_create_here'] = 'Create a Taxonomy Here';
-$_lang['taxonomy_new'] = 'New Taxonomy';
-$_lang['taxonomy_duplicate'] = 'Duplicate Taxonomy';
-$_lang['taxonomy_delete'] = 'Delete Taxonomy';
-$_lang['taxonomy_undelete'] = 'Undelete Taxonomy';
-$_lang['taxonomy_publish'] = 'Publish Taxonomy';
-$_lang['taxonomy_unpublish'] = 'Unpublish Taxonomy';
-$_lang['taxonomy_view'] = 'View Taxonomy';
-
-$_lang['term'] = 'Term';
-$_lang['terms'] = 'Terms';
-$_lang['term_create_here'] = 'Create a Term Here';
-$_lang['term_new'] = 'New Term';
-$_lang['term_duplicate'] = 'Duplicate Term';
-$_lang['term_delete'] = 'Delete Term';
-$_lang['term_undelete'] = 'Undelete Term';
-$_lang['term_publish'] = 'Publish Term';
-$_lang['term_unpublish'] = 'Unpublish Term';
-$_lang['term_view'] = 'View Term';
 
 
 $_lang['manage_inventory'] = 'Manage Inventory';

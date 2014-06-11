@@ -130,7 +130,7 @@ function getTemplateStore(dtmp){
 		proxy : new Ext.data.HttpProxy({
 			method: 'GET',
 			prettyUrls: false,
-			url: connector_url+'json_templates&t=data'
+			url: moxycart.connector_url+'json_templates&t=data'
 		}),
 		listeners : {
 			load : function(){

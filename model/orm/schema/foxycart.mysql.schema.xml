@@ -96,7 +96,7 @@ See https://wiki.foxycart.com/v/1.1/transaction_xml_datafeed
 		<field key="customer_password" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="customer_password_salt" dbtype="varchar" precision="255" phptype="string" null="false" />
 		<field key="customer_password_hash_type" dbtype="varchar" precision="8" phptype="string" null="false" />
-		<field key="customer_password_hash_config" dbtype="varchar" precision="8" phptype="string" null="false" comment="Not sure what this stores"/>
+		<field key="  " dbtype="varchar" precision="255" phptype="string" null="false" comment="This stores details about how the password is hashed, e.g. for pbkdf2 it designates the iterations, key length, and algorithm used."/>
 		
 		<field key="shipto_addresses" dbtype="varchar" precision="255" phptype="string" null="false" />		
 

@@ -157,6 +157,7 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
     }
     
     public function testExecuteCallback() {
+        self::$modx->setLogLevel(4);
         self::$cnt = 0;
         $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
         $Datafeed->registerCallback('postback','datafeedTest::sample_callback');
@@ -185,8 +186,20 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
             $Foxydata->remove();
         }
         
-        $result = $Datafeed->saveFoxyData($xml);
+        $result = $Datafeed->saveFoxyData($xml,$api_key);
         $this->assertEquals(self::$cnt,6); // products x2 (for 2 product callbacks)
+
+        // Another round
+        self::$cnt = 0;
+        // Delete from database if present
+        if ($Foxydata = self::$modx->getObject('Foxydata', array('api_key'=>$api_key))) {
+            $Foxydata->remove();
+        }        
+        $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
+        $Datafeed->registerCallback('transaction','datafeedTest::pretend_snippet',array('MySnippet'));
+        $result = $Datafeed->saveFoxyData($xml,$api_key);
+        $this->assertEquals(self::$cnt,1); // transation x 1
+
                 
     }
 

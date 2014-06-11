@@ -131,12 +131,31 @@ class Datafeed {
         foreach($array as $t) {
             $Transaction  = $this->modx->newObject('Transaction');
             $Transaction->fromArray((array)$t);            
-            if (isset($t->taxes->tax)) $Transaction->addMany($this->getTaxes($t->taxes->tax));
-            if (isset($t->discounts->discount)) $Transaction->addMany($this->getDiscounts($t->discounts->discount));
-            if (isset($t->custom_fields->custom_field))$Transaction->addMany($this->getCustomFields($t->custom_fields->custom_field));
-            if (isset($t->attributes->attribute)) $Transaction->addMany($this->getAttributes($t->attributes->attribute));
-            if (isset($t->shipto_addresses->shipto_address)) $Transaction->addMany($this->getShiptoAddresses($t->shipto_addresses->shipto_address));
-            if (isset($t->transaction_details->transaction_detail)) $Transaction->addMany($this->getTransactionDetails($t->transaction_details->transaction_detail));
+            // Long form here to avoid E_STRICT PHP INFO re "Only variables should be passed by reference"
+            if (isset($t->taxes->tax)) {
+                $tmp = $this->getTaxes($t->taxes->tax);
+                $Transaction->addMany($tmp);
+            }
+            if (isset($t->discounts->discount)) {
+                $tmp = $this->getDiscounts($t->discounts->discount);
+                $Transaction->addMany($tmp);
+            }
+            if (isset($t->custom_fields->custom_field)) {
+                $tmp = $this->getCustomFields($t->custom_fields->custom_field);
+                $Transaction->addMany($tmp);
+            }
+            if (isset($t->attributes->attribute)) {
+                $tmp = $this->getAttributes($t->attributes->attribute);
+                $Transaction->addMany($tmp);
+            }
+            if (isset($t->shipto_addresses->shipto_address)) {
+                $tmp = $this->getShiptoAddresses($t->shipto_addresses->shipto_address);
+                $Transaction->addMany($tmp);
+            }
+            if (isset($t->transaction_details->transaction_detail)) {
+                $tmp = $this->getTransactionDetails($t->transaction_details->transaction_detail);
+                $Transaction->addMany($tmp);
+            }
             $this->executeCallbacks('transaction',$Transaction->toArray());
             $transactions[] = $Transaction;    
         }
@@ -192,7 +211,13 @@ class Datafeed {
      * @param string $api_key to uniquely identify the source of the xml, e.g. by store id, or "test"
      * @return string foxy on success, Error message on fail
      */
-    public function saveFoxyData($xml,$api_key) {
+    public function saveFoxyData($xml,$api_key='') {
+
+        $Foxydata = $this->modx->newObject('Foxydata');
+        $Foxydata->set('md5', md5(uniqid()));
+        $Foxydata->set('xml', $xml);
+        $Foxydata->set('type', 'FoxyData'); // or FoxySubscriptionData
+        $Foxydata->set('api_key', $api_key);
     
         // Converts string to a hierarchy of SimpleXMLElement Objects
         $xml = simplexml_load_string($xml, null, LIBXML_NOCDATA);
@@ -200,12 +225,6 @@ class Datafeed {
         if (!isset($xml->transactions->transaction)) {
             throw new \Exception('Invalid Foxycart XML body');
         }
-
-        $Foxydata = $this->modx->newObject('Foxydata');
-        $Foxydata->set('md5', md5(uniqid()));
-        $Foxydata->set('xml', $xml);
-        $Foxydata->set('type', 'FoxyData'); // or FoxySubscriptionData
-        $Foxydata->set('api_key', $api_key);
 
         $Foxydata->addMany($this->getTransactions($xml->transactions->transaction));
         
@@ -231,12 +250,12 @@ class Datafeed {
      *
      * E.g. to register a MODX snippet:
      *
-     *      registerCallback('product',array($modx,'runSnippet'),array('MySnippet'));
+     *      registerCallback('product',array($this->modx,'runSnippet'),array('MySnippet'));
      *
      * Any supplied $args come *before* the array of data for the given event. E.g. in a MODX snippet
      * hooked to the "product" event (as pictured above), it translates to:
      *
-     *      $modx->runSnippet('MySnippet', $ProductDetails);
+     *      $this->modx->runSnippet('MySnippet', $ProductDetails);
      *
      * In a raw callback, e.g.:
      *
@@ -269,6 +288,7 @@ class Datafeed {
         }
         $event = strtolower($event);
         if (in_array($event, array('postback','transaction','product'))) {
+            $this->modx->log(\xPDO::LOG_LEVEL_DEBUG,'Registering callback for event:'.$event,'',__CLASS__,__FUNCTION__);
             $this->callbacks_raw[$event][] = array('callback'=>$callback,'args'=>$args);
         }
         else {
@@ -282,8 +302,12 @@ class Datafeed {
      * @param array $data for relevent event, e.g. Foxydata->toArray()
      */
     public function executeCallbacks($event,$data) {
-        if (!isset($this->callbacks_raw[$event])) return;
+        if (!isset($this->callbacks_raw[$event])) {
+            $this->modx->log(\xPDO::LOG_LEVEL_DEBUG,'No callbacks registered for event:'.$event,'',__CLASS__,__FUNCTION__);
+            return;
+        }
         foreach ($this->callbacks_raw[$event] as $cb) {
+            $this->modx->log(\xPDO::LOG_LEVEL_INFO,'Executing callback for event:'.$event,'',__CLASS__,__FUNCTION__);
             $cb['args'][] = $data; // push data onto the end.
             call_user_func_array($cb['callback'], $cb['args']);
         }

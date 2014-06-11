@@ -34,7 +34,11 @@ if (!$Product = $modx->getObject('Product', $product_id)) {
     $modx->log(xPDO::LOG_LEVEL_ERROR,'Product not found '.$product_id,$log,'UpdateInventory Snippet',__FILE__,__LINE__);
     return false;    
 }
-
+// Wrong product?
+if ($Product->get('product_id') != $product_id) {
+    $modx->log(xPDO::LOG_LEVEL_ERROR,'Product not found '.$product_id,$log,'UpdateInventory Snippet',__FILE__,__LINE__);
+    return false;    
+}
 $existing_qty = $Product->get('qty_inventory');
 
 $new_qty = $existing_qty - $quantity_purchased;
