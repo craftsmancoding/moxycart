@@ -61,7 +61,11 @@ print $this->getMsg();
     </tbody>
 </table>
 <br>
+<<<<<<< HEAD
 <input type="submit" class="button btn" value="Save Order"/>
+=======
+<input type="submit" class="button btn" value="Save"/>
+>>>>>>> ad461429bd95d27675d443275d8f8768d40e22a3
 </form>
 <?php else: ?>
 

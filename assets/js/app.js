@@ -253,11 +253,6 @@ function show_all_products() {
 }
 
 
-/*
-jQuery(document).ready(function() {
-    jQuery(".ui-sortable").sortable();
-});
-*/
 
 function page_init() {
     console.debug('[page_init]');

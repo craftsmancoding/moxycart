@@ -20,6 +20,9 @@ class OptionTypeController extends APIController {
             $seq++;
         }
 
+        unset($scriptProperties['seq']);
+
+
         $OT = new OptionType($this->modx);
         $otype_id = (int) $this->modx->getOption('otype_id',$scriptProperties);
         $OT = $OT->find($otype_id);
