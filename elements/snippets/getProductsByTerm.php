@@ -23,7 +23,7 @@
  *
  *   [[!getProductsByTerm? 
         &term_id=`447` 
-        &innerTpl=`<li><a href="[[+Product.uri]]">[[+Product.name]] ([[+Product.sku]])</a> Full sized: [[+Product.Thumbnail.url]] Thumbnail: [[+Product.Thumbnail.thumbnail_url]]</li>`]]
+        &innerTpl=`<li><a href="[[+Product.uri]]">[[+Product.name]] ([[+Product.sku]])</a> Full sized: [[+Product.Image.url]] Thumbnail: [[+Product.Image.thumbnail_url]]</li>`]]
  *
  * @package taxonomies
  **/
@@ -43,17 +43,10 @@ $c->where(array(
 ));
 $c->sortby('Product.seq','ASC');
 
-$Products = $modx->getCollectionGraph('ProductTerm', '{"Product":{"Thumbnail":{}},"Term":{}}',$c);
+$Products = $modx->getCollectionGraph('ProductTerm', '{"Product":{"Image":{}},"Term":{}}',$c);
 
 //return $c->toSQL();
 if ($Products) {
-/*
-    foreach ($Products as $P) {
-        if ($P->get('asset_id')) {
-            return '<pre>'. print_r($P->toArray('',false,false,true),true).'</pre>';
-        }
-    }
-*/
     return $Snippet->format($Products,$innerTpl,$outerTpl);
 }
 

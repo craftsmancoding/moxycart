@@ -492,6 +492,14 @@ class PageController extends BaseController {
     }
 
     public function postFields(array $scriptProperties = array()) {
+        $seq = 0;
+        foreach ($scriptProperties['seq'] as $field_id) {
+            $Field = $this->modx->getObject('Field', array('field_id' => $field_id));
+            $Field->set('seq', $seq);
+            $Field->save();
+            $seq++;
+        }
+        unset($scriptProperties['seq']);
         return $this->getFields($scriptProperties);
     }
     
@@ -544,6 +552,8 @@ class PageController extends BaseController {
     public function getOptions(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new OptionType($this->modx);
+        $scriptProperties['sort'] = 'seq';
+        $scriptProperties['dir'] = 'ASC';
         $results = $Obj->all($scriptProperties);
         // We need these for pagination
         $scriptProperties['count'] = $Obj->count($scriptProperties);        
@@ -554,6 +564,14 @@ class PageController extends BaseController {
     }
 
     public function postOptions(array $scriptProperties = array()) {
+        $seq = 0;
+        foreach ($scriptProperties['seq'] as $otype_id) {
+            $OType = $this->modx->getObject('OptionType', array('otype_id' => $otype_id));
+            $OType->set('seq', $seq);
+            $OType->save();
+            $seq++;
+        }
+        unset($scriptProperties['seq']);
         return $this->getOptions($scriptProperties);
     }
 

@@ -215,3 +215,7 @@ function show_success(msg) {
         jQuery(this).show(); 
     });
 }
+
+jQuery(document).ready(function() {
+    jQuery(".ui-sortable").sortable();
+});

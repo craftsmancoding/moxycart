@@ -10,6 +10,8 @@
  *
  * @param integer product_id, default is the current placeholder for product_id
  * @param integer qty, default is the current placeholder set for qty
+ *
+ * @package moxycart 
  */
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
 require_once $core_path .'vendor/autoload.php';

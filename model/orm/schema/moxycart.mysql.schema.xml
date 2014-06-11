@@ -102,7 +102,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <aggregate alias="Author" class="modUser" local="author_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="UserGroup" class="modUserGroup" local="user_group_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Role" class="modUserGroupRole" local="role_id" foreign="id" cardinality="one" owner="foreign" />
-        <aggregate alias="Thumbnail" class="Asset" local="asset_id" foreign="asset_id" cardinality="one" owner="foreign" />
+        <aggregate alias="Image" class="Asset" local="asset_id" foreign="asset_id" cardinality="one" owner="foreign" />
         
         <!-- parent is the main product: children represent variants in all permutations -->
         <composite alias="Parent" class="Product" local="parent_id" foreign="product_id" cardinality="one" owner="foreign" />
@@ -148,17 +148,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
                   alias="Template"
                   class="modTemplate"
                   message="The template specified does not exist."
-             />
-            <rule field="asset_id"
-                  name="validThumbnail"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="asset_id"
-                  local="asset_id"
-                  alias="Asset"
-                  class="Asset"
-                  message="The thumbnail specified does not exist."
-             /-->             
+             />       
         </validation>
     </object>
 

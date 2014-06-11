@@ -7,14 +7,14 @@ print $this->getMsg();
     <h2 class="moxycart_cmp_heading">Manage Product Options</h2>
 </div>
 
-<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Product Options are types of variations in your product such as "size" or "color".  They will show up on the front-end of your site so your visitors can make a selection about which particular version of the product they want to buy.</p></div>
+<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Product Options define ways by which your product can vary, e.g. by size or by color.  These options will show up on the front-end of your site so your visitors can make a selection about which particular version of the product they want to buy.</p></div>
 
 <div class="moxycart_canvas_inner">
 
 
 <div class="clearfix">
+     <span class="btn moxycart-btn pull-left" onclick="javascript:paint('optioncreate');">Add Option</span>
 
-     <span class="btn moxycart-btn" onclick="javascript:paint('optioncreate');">Add Option Type</span>
 
         <div class="pull-right">   
             <form action="<?php print static::page('options'); ?>" method="post">
@@ -26,6 +26,7 @@ print $this->getMsg();
         </div>
    </div>  
 <?php if ($data['results']): ?>
+<form action="<?php print static::page('options'); ?>" method="post">
 <table class="classy">
     <thead>
         <tr>
@@ -41,10 +42,13 @@ print $this->getMsg();
             <th>Action</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="ui-sortable">
 <?php foreach ($data['results'] as $r) :?>
     <tr>
-        <td><?php print $r->get('slug'); ?></td>
+        <td>
+            <input type="hidden" name="seq[]" value="<?php print $r->get('otype_id'); ?>" />
+            <?php print $r->get('slug'); ?>
+        </td>
         <td><?php print $r->get('name'); ?></td>
         <td><?php print $r->get('description'); ?></td>
         <td>
@@ -56,10 +60,12 @@ print $this->getMsg();
 <?php endforeach; ?>
     </tbody>
 </table>
-
+<br>
+<input type="submit" class="button btn" value="Save"/>
+</form>
 <?php else: ?>
 
-    <div class="danger">You have not created any option types yet.</div>
+    <div class="danger">You have not created any product options yet.</div>
 
 <?php endif; ?>
 
