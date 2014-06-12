@@ -335,6 +335,18 @@ function select_thumb(asset_id,url) {
 
 //}
 
+jQuery(document).ready(function() {
+    jQuery('.po-fset').hide();
+    jQuery('.parent-term-option').on('click',function() {
+        var fs_shild_id = jQuery(this).data('fs_child_id');
+        if(jQuery(this).prop("checked")) {
+            $('.fset-'+fs_shild_id).show();
+        } else {
+            $('.fset-'+fs_shild_id).hide();
+        }
+    });
+});
+
 
 </script>
 
@@ -545,7 +557,7 @@ function select_thumb(asset_id,url) {
                                 
                                 <div class="product-option-wrap">
                                      <h2>Product Options</h2>
-                                     <p>Allow your visitors to select variations in your product.</p>
+                                     <p>Allow your visitors to select variations in your product.</p><br>
                                     <?php
                                     // Special stuff here: we gotta force the field names to ensure that arrays are in sync.
                                     foreach ($data['Options'] as $o):
@@ -554,13 +566,17 @@ function select_thumb(asset_id,url) {
                                         foreach ($o['Terms'] as $t) {
                                             $terms[ $t['oterm_id'] ] = sprintf('%s (%s)', $t['name'], $t['slug']);
                                         }
+                                        ?>
+                                        <div class="term-option-wrap">
+                                        <?php
                                         print \Formbuilder\Form::checkbox("Options[option_id][$option_id]", 'current value',array('label'=>sprintf('%s (%s)', $o['name'], $o['slug'])), '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
-            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]" class="[+class+]" style="[+style+]" [+is_checked+][+extra+]/> [+label+]
+            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]"  class="[+class+] parent-term-option" data-fs_child_id='.$option_id.' style="[+style+]" [+is_checked+][+extra+]/> [+label+]
             [+description+]');    
                                         print \Formbuilder\Form::dropdown("Options[meta][$option_id]", array('all_terms'=>'All Terms','omit_terms'=>'Omit','explicit_terms'=>'Explicit'));
                                         ?>
+                                        </div>
                                        
-                                        <fieldset>
+                                        <fieldset class="po-fset fset-<?php print $option_id; ?>">
                                         <?php
                                             print \Formbuilder\Form::multicheck("Options[Terms][$option_id]", $terms, array(),array());
                                             // '[+error+]                            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+is_checked+] [+extra+]/> [+option+]<br/>'
