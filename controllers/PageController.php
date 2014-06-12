@@ -144,7 +144,9 @@ class PageController extends BaseController {
         //Options (All of them and all Terms)
         // [
         //   {
-        //      slug:"",name:"", Terms:[{slug:"","name":""}]
+        //      slug:"",
+        //      name:"", 
+        //      Terms:[{slug:"","name":""}]
         //   }
         // ]
         $Os = $this->modx->getCollectionGraph('Option','{"Terms":{}}');
@@ -400,10 +402,16 @@ class PageController extends BaseController {
         $c = $this->modx->newQuery('ProductOption');
         $c->where(array('product_id' => $product_id));
         $c->sortby('seq','ASC');        
-        $POTs = $this->modx->getCollection('ProductOption', $c);
+        $POTs = $this->modx->getCollectionGraph('ProductOption','{"Meta":{}}', $c);
         foreach ($POTs as $p) {
-            $product_options[] = $p->get('option_id');
+            $product_options[ $p->get('option_id') ]['checked'] = true;
+            $product_options[ $p->get('option_id') ]['meta'] = $p->get('meta');
+            $product_options[ $p->get('option_id') ]['ProductOptionMeta'] = array();
+            foreach ($p->Meta as $m) {
+                $product_options[ $p->get('option_id') ]['ProductOptionMeta'][] = $m->get('oterm_id');
+            }
         }
+//        print '<pre>'; print_r($product_options); print '</pre>'; exit;
         $this->setPlaceholder('product_options',$product_options);
         
                 

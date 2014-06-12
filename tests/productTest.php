@@ -970,16 +970,9 @@ class productTest extends \PHPUnit_Framework_TestCase {
             $this->assertFalse(empty($PT));
         }
         
-        // Add duplicates, verify that nothing new was created.
-        $One->addOptions($otypes);
-        $cnt2 = self::$modx->getCount('ProductOption', array('product_id'=>$product_id));
-        $this->assertEquals($cnt, $cnt2);
-        
         // Remove all but one
         $odd_man_out = array_pop($otypes);
-        $One->removeOptions($otypes);
-        $cnt3 = self::$modx->getCount('ProductOption', array('product_id'=>$One->get('product_id')));
-        $this->assertEquals($cnt3, 1); // should be only one left
+
         
         // Now, dictate the fields: this should add and remove
         $One->dictateOptions($otypes);

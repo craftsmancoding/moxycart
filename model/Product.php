@@ -749,50 +749,6 @@ class Product extends BaseModel {
     //------------------------------------------------------------------------------
     //! Options
     //------------------------------------------------------------------------------
-    /** 
-     * Add variation-types to a product. 
-     *
-     * @param array $array of option_ids
-     */
-    public function addOptions(array $array) {
-        $this_product_id = $this->_verifyExisting();
-
-        foreach ($array as $id) {
-            $props = array(
-                'product_id'=> $this_product_id, 
-                'option_id'=> $id
-            );
-            if (!$PVT = $this->modx->getObject('ProductOption', $props)) {
-                if (!$VT = $this->modx->getObject('Option', $id)) {
-                    throw new \Exception('Invalid Option ID '.$id);    
-                }
-                $PVT = $this->modx->newObject('ProductOption', $props);
-            }
-            $PVT->save();
-        }
-
-        return true;    
-    }
-
-    /** 
-     * Remove variation-types from a product. We don't care here if the referenced ids are valid or not.
-     * @param array $array of option_ids
-     */
-    public function removeOptions(array $array) {
-        $this_product_id = $this->_verifyExisting();
-        
-        foreach ($array as $id) {
-            $props = array(
-                'product_id'=> $this_product_id, 
-                'option_id'=> $id
-            );
-            if ($PVT = $this->modx->getObject('ProductOption', $props)) {
-                $PVT->remove();
-            }
-        }
-        return true;
-    }
-
     /**
      * Dictate variation-type ids for the current product.
      * This will remove all fields not in the given $array, add any new option_id's from the $array.
@@ -820,6 +776,7 @@ class Product extends BaseModel {
         
         $i = 0;
         foreach ($data as $option_id => $r) {
+            // $option_id is the real option id. $r['option_id'] indicates whether the field was checked
             if ($r['option_id'] == 0) {
                 if ($PO = $this->modx->getObject('ProductOption', array('product_id'=>$this_product_id, 'option_id'=>$option_id))) {
                     if (!$PO->remove()) {
@@ -832,58 +789,30 @@ class Product extends BaseModel {
                 $PO = $this->modx->newObject('ProductOption');
             }
             $PO->fromArray($r);
+            $PO->set('product_id', $this_product_id);
+            $PO->save();
             
+            // all_terms: inherit from the parent
             if ($r['meta'] == 'all_terms') {
-//                $POM = $this->modx->getCollection('ProductOptionMeta', )
-            }
-
-            $k = $r['related_id'] .':'. $r['type'];
-            if (!isset($existing[$k])) {
-                // Create it
-                $PR = $this->modx->newObject('ProductRelation', $r);
-                $PR->set('seq', $i);
-                $PR->save();
-            }
-            else {
-                if ($PR = $this->modx->getObject('ProductRelation', $r)) {
-                    $PR->set('seq', $i);
-                    $PR->save();
+                if ($POM = $this->modx->getCollection('ProductOptionMeta', array('productoption_id'=> $PO->get('id')))) {
+                    foreach ($POM as $p) {
+                        $p->remove();
+                    }
                 }
-                unset($existing[$k]);
+                return true;
             }
-            $i++;
+            
+            foreach ($r['Terms'] as $oterm_id) {
+                if (!$POM = $this->modx->getObject('ProductOptionMeta', array('productoption_id'=> $PO->get('id'),'oterm_id'=>$oterm_id))) {
+                    $POM = $this->modx->newObject('ProductOptionMeta');
+                    $POM->set('productoption_id', $PO->get('id'));
+                    $POM->set('oterm_id', $oterm_id);
+                    $POM->save();
+                }
+            }
         }
-        
-        foreach ($existing as $k => $id) {
-            $PR = $this->modx->getObject('ProductRelation', $id);
-            $PR->remove();
-        }
-        return true;
-
-
-//        $this->modx->log(4, print_r($dictate,true)); exit;
-/*
-        $this_product_id = $this->_verifyExisting();
-        
-        $props = array(
-            'product_id'=> $this_product_id,
-        );
-        
-        // Array of related_id's that are already defined
-        $existing = array();
-        if($ExistingColl = $this->modx->getObject('ProductOption', $props)) {
-            $existing[] = $ExistingColl->get('option_id');   
-        }
-        
-        $to_remove = array_diff($existing,$dictate);
-        $to_add = array_diff($dictate,$existing);
-
-        $this->removeOptions($to_remove);
-        $this->addOptions($to_add);
         
         return true;
-    
-*/
     }
     
     //------------------------------------------------------------------------------
