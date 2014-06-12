@@ -799,9 +799,57 @@ class Product extends BaseModel {
 
      * Exeptions are thrown if the product ids do not exist.
      *
-     * @param array $dictate'd option_id's
+     * @param array $data related data
      */
-    public function dictateOptions(array $dictate) {
+    public function dictateOptions(array $data) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating options: '.print_r($data,true),'',__CLASS__,__FILE__,__LINE__);
+        $this_product_id = $this->_verifyExisting();
+        
+        $props = array(
+            'product_id'=> $this_product_id, 
+        );
+        
+        // Get the existing relations
+        $existing = array();
+        if($Col = $this->modx->getIterator('ProductOption', $props)) {
+            foreach ($Col as $c) {
+                 $existing[] = $c->get('product_id');
+             }
+        }
+        
+        $i = 0;
+        foreach ($data as $r) {
+            if (!isset($r['related_id']) || !isset($r['type'])) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'related_id and type are required','',__CLASS__,__FUNCTION__,__LINE__); 
+                continue;
+            }
+            $r['product_id'] = $this_product_id;
+            $k = $r['related_id'] .':'. $r['type'];
+            if (!isset($existing[$k])) {
+                // Create it
+                $PR = $this->modx->newObject('ProductRelation', $r);
+                $PR->set('seq', $i);
+                $PR->save();
+            }
+            else {
+                if ($PR = $this->modx->getObject('ProductRelation', $r)) {
+                    $PR->set('seq', $i);
+                    $PR->save();
+                }
+                unset($existing[$k]);
+            }
+            $i++;
+        }
+        
+        foreach ($existing as $k => $id) {
+            $PR = $this->modx->getObject('ProductRelation', $id);
+            $PR->remove();
+        }
+        return true;
+
+
+//        $this->modx->log(4, print_r($dictate,true)); exit;
+/*
         $this_product_id = $this->_verifyExisting();
         
         $props = array(
@@ -822,6 +870,7 @@ class Product extends BaseModel {
         
         return true;
     
+*/
     }
     
     //------------------------------------------------------------------------------
@@ -941,12 +990,14 @@ class Product extends BaseModel {
      @param array $data (e.g. from $_POST)
      */
     public function saveRelated($data) {
+        $this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Save related data: '.print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);
         // Extra stuff is ignored... it doesn't matter here whether we're creating or updating an object
         $this->fromArray($data);
         if (!$this->save()) {
             return false;
         }
+
         $product_id = $this->getPrimaryKey(); // $this->get('product_id');
         if (isset($data['Assets'])) $this->dictateAssets($data['Assets']);
         if (isset($data['Fields'])) $this->dictateFields($data['Fields']);

@@ -142,7 +142,7 @@ Array
 
      */
     public function postEdit(array $scriptProperties = array()) {
-        $this->modx->setLogLevel(4);
+        //$this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         $this->modx->setLogLevel(1);
         // This doesn't work unless you add the namespace.
@@ -163,7 +163,7 @@ Array
         //  Assets: has is_active
         //  Fields: has a value
         //  Relations: has a type
-        $related_indices = array('Assets','Fields','Relations');
+        $related_indices = array('Assets','Fields','Relations','Options');
         foreach($related_indices as $k) {
             if (isset($scriptProperties[$k])) $scriptProperties[$k] = $Product->indexedToRecordset($scriptProperties[$k]);
         }

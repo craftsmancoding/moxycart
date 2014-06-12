@@ -562,8 +562,8 @@ function select_thumb(asset_id,url) {
                                         <br/>
                                         <fieldset>
                                         <?php
-                                            print \Formbuilder\Form::multicheck("Options[Terms][$option_id]", $terms, array(),array(),'[+error+]
-                            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+is_checked+] [+extra+]/> [+option+]<br/>');
+                                            print \Formbuilder\Form::multicheck("Options[Terms][$option_id]", $terms, array(),array());
+                                            // '[+error+]                            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+is_checked+] [+extra+]/> [+option+]<br/>'
                                         ?>
                                         </fieldset>
                                         
