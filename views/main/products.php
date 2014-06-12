@@ -20,7 +20,7 @@
 
 
 <?php if ($data['results']): ?>
-<table class="classy">
+<table class="classy products-tbl">
     <thead>
         <tr>
             <?php 

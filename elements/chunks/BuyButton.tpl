@@ -7,7 +7,6 @@
     <input type="hidden" name="price" value="[[+calculated_price]]" />
     <input type="hidden" name="code" value="[[+product_id]]" />
     <input type="hidden" name="image" value="[[+thumb]]"; />
-    <input type="hidden" name="sku" value="[[+sku]]" />
     
     [[+options]]
     

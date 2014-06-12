@@ -13,6 +13,10 @@
  * @param integer $product_id (defaults to current product)
  * @param string $submit text/image to show as the submit button. If an image, a full URL with http:// must be specified. (default: Add to Cart)
  * @param string $soldout text/image to show if inventory tracking is enabled and the qty is below the backorder max. If an image, a full URL with http:// must be specified.  (default: Sold Out)
+ * @param string $cssClassSoldout optional class for the soldout image
+ * @param string $cssClassSubmit optional class for the submit
+ * @param string $cssClassOptionLabel optional class for the label around the option label
+ * @param string $cssClassOptionSelect optional class for the option selects 
  * @param string $tpl name of formatting chunk. (default: BuyButton)
  * @param integer log_level -- you can set the logging level in your snippet to (temporarily) override the system default.
  *
@@ -28,6 +32,10 @@ $product_id = $modx->getOption('product_id', $scriptProperties, $modx->getPlaceh
 $submit = $modx->getOption('submit', $scriptProperties, 'Add to Cart');
 $soldout = $modx->getOption('soldout', $scriptProperties, 'Sold Out');
 $tpl = $modx->getOption('tpl', $scriptProperties, 'BuyButton');
+$cssClassSoldout = $modx->getOption('cssClassSoldout', $scriptProperties);
+$cssClassSubmit = $modx->getOption('cssClassSubmit', $scriptProperties);
+$cssClassOptionLabel = $modx->getOption('cssClassOptionLabel', $scriptProperties);
+$cssClassOptionSelect = $modx->getOption('cssClassOptionSelect', $scriptProperties);
 
 $P = $modx->getObject('Product', array('product_id'=>$product_id));
 if (!$P) {
@@ -44,30 +52,29 @@ if ($P->get('track_inventory')) {
     if(($inventory + $backorder_max) <=  0) {
         if(filter_var($soldout, FILTER_VALIDATE_URL)) {
             $modx->log(modX::LOG_LEVEL_INFO,'Sold Out of product '.$product_id.'; Inventory: '.$inventory.' Backorder max: '.$backorder_max,'','addToCartButton');
-            $soldout = sprintf('<img src="%s" alt="Sold Out"/>',$soldout);    
+            $soldout = sprintf('<img src="%s" alt="Sold Out" class="%s"/>',$soldout,$cssClassSoldout);    
         }
         return $soldout;
     }
 }
 
 if(filter_var($submit, FILTER_VALIDATE_URL)) {
-    $properties['submit'] = sprintf('<input type="image" src="%s" alt="Add to Cart"/>',$submit);    
+    $properties['submit'] = sprintf('<input type="image" src="%s" class="%s" alt="Add to Cart"/>',$submit, $cssClassSubmit);    
 }
 else {
-    $properties['submit'] = sprintf('<input type="submit" value="%s" />',$submit);
+    $properties['submit'] = sprintf('<input type="submit" value="%s" class="%s"/>',$submit, $cssClassSubmit);
 }
 
 
 $c = $modx->newQuery('ProductOptionType');
 $c->where(array('ProductOptionType.product_id' => $product_id));
 $c->sortby('Type.seq','ASC');
-//$c->sortby('Terms.seq','ASC');
 
 $properties['options'] = '';
 if ($Options = $modx->getCollectionGraph('ProductOptionType','{"Type":{}}',$c)) {
 
     foreach ($Options as $o) {
-        $opt = '<label for="'.$o->Type->get('slug').'">'.$o->Type->get('name').'</label><select id="'.$o->Type->get('slug').'" name="'.$o->Type->get('slug').'">';
+        $opt = '<label for="'.$o->Type->get('slug').'" class="'.$cssClassOptionLabel.'">'.$o->Type->get('name').'</label><select id="'.$o->Type->get('slug').'" name="'.$o->Type->get('slug').'" class="'.$cssClassOptionSelect.'">';
         $c = $modx->newQuery('OptionTerm');
         $c->where(array('otype_id' => $o->get('otype_id')));
         $c->sortby('seq','ASC');

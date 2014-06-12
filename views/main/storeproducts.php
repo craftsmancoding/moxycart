@@ -13,7 +13,7 @@
 
 
 <?php if ($data['results']): ?>
-<table class="classy" style="width: 100%; margin-top: 10px;">
+<table class="classy products-tbl" style="width: 100%; margin-top: 10px;">
     <thead>
         <tr>
             <?php 
