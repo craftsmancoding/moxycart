@@ -559,7 +559,7 @@ function select_thumb(asset_id,url) {
             [+description+]');    
                                         print \Formbuilder\Form::dropdown("Options[meta][$option_id]", array('all_terms'=>'All Terms','omit_terms'=>'Omit','explicit_terms'=>'Explicit'));
                                         ?>
-                                        <br/>
+                                       
                                         <fieldset>
                                         <?php
                                             print \Formbuilder\Form::multicheck("Options[Terms][$option_id]", $terms, array(),array());
