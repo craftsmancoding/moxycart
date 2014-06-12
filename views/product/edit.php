@@ -554,7 +554,7 @@ function select_thumb(asset_id,url) {
                                         foreach ($o['Terms'] as $t) {
                                             $terms[ $t['oterm_id'] ] = sprintf('%s (%s)', $t['name'], $t['slug']);
                                         }
-                                        print \Formbuilder\Form::checkbox("Options[option_id][$option_id]", 'current value',array('label'=>sprintf('%s (%s)', $o['name'], $o['slug'])), '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
+                                        print \Formbuilder\Form::checkbox("Options[option_id][$option_id]", 'current value',array('label'=>sprintf('%s (%s)', $o['name'], $o['slug']),'checked_value'=>$option_id), '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
             <input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]" class="[+class+]" style="[+style+]" [+is_checked+][+extra+]/> [+label+]
             [+description+]');    
                                         print \Formbuilder\Form::dropdown("Options[meta][$option_id]", array('all_terms'=>'All Terms','omit_terms'=>'Omit','explicit_terms'=>'Explicit'));

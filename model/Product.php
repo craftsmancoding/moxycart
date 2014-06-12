@@ -802,6 +802,7 @@ class Product extends BaseModel {
      * @param array $data related data
      */
     public function dictateOptions(array $data) {
+        $this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating options: '.print_r($data,true),'',__CLASS__,__FILE__,__LINE__);
         $this_product_id = $this->_verifyExisting();
         
@@ -818,12 +819,24 @@ class Product extends BaseModel {
         }
         
         $i = 0;
-        foreach ($data as $r) {
-            if (!isset($r['related_id']) || !isset($r['type'])) {
-                $this->modx->log(\modX::LOG_LEVEL_ERROR,'related_id and type are required','',__CLASS__,__FUNCTION__,__LINE__); 
+        foreach ($data as $option_id => $r) {
+            if ($r['option_id'] == 0) {
+                if ($PO = $this->modx->getObject('ProductOption', array('product_id'=>$this_product_id, 'option_id'=>$option_id))) {
+                    if (!$PO->remove()) {
+                        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Unable to delete ProductOption for product_id '.$this_product_id.' option_id: '.$option_id,'',__CLASS__,__FUNCTION__,__LINE__); 
+                    }
+                }
                 continue;
             }
-            $r['product_id'] = $this_product_id;
+            if (!$PO = $this->modx->getObject('ProductOption')) {
+                $PO = $this->modx->newObject('ProductOption');
+            }
+            $PO->fromArray($r);
+            
+            if ($r['meta'] == 'all_terms') {
+//                $POM = $this->modx->getCollection('ProductOptionMeta', )
+            }
+
             $k = $r['related_id'] .':'. $r['type'];
             if (!isset($existing[$k])) {
                 // Create it
