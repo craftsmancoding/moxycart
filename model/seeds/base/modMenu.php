@@ -16,7 +16,7 @@ return array(
         'handler' => '',
         'permissions' => '',
         'Action' => array (
-            //'action' => 0, // Omit this so that it will inherit from the related object
+            'action' => 0, // Omit this so that it will inherit from the related object
             // This will create an ERROR: Attempt to set NOT NULL field action to NULL
             // But it's safe to ignore in this case.
             'namespace' => 'moxycart',

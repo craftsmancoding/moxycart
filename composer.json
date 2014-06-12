@@ -99,10 +99,18 @@
                 "update_object": true, 
                 "unique_key": ["otype_id","slug"]
             },
-            "OptionType" : {
+            "Option" : {
                 "preserve_keys": true,
                 "update_object": true, 
-                "unique_key": ["slug"]
+                "unique_key": ["slug"],
+                "related_objects": true,
+                "related_object_attributes": {
+                    "Terms" : {
+                        "preserve_keys": false,
+                        "update_object": false, 
+                        "unique_key": ["otype_id","slug"]
+                    }
+                }
             },    
             "Store": {
                 "preserve_keys": true,

@@ -30,7 +30,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
     public static $Tax; // Taxonomies
     public static $Term;
     public static $Field;
-    public static $OType;
+    public static $Option;
     public static $OTerm;
     public static $Asset;
         
@@ -287,52 +287,52 @@ class productTest extends \PHPUnit_Framework_TestCase {
             self::$Field['three']->save();
         }
         
-        //! OptionTypes
-        if (!self::$OType['color'] = self::$modx->getObject('OptionType', array('slug'=>'color'))) {
-            self::$OType['color'] = self::$modx->newObject('OptionType');
-            self::$OType['color']->fromArray(array(
+        //! Options
+        if (!self::$Option['color'] = self::$modx->getObject('Option', array('slug'=>'color'))) {
+            self::$Option['color'] = self::$modx->newObject('Option');
+            self::$Option['color']->fromArray(array(
                 'slug' => 'color',
                 'name' => 'Color',
                 'description' => 'Testing Variation Type',
                 'seq' => 0,
             ));
-            self::$OType['color']->save();
+            self::$Option['color']->save();
         }
-        if (!self::$OType['size'] = self::$modx->getObject('OptionType', array('slug'=>'size'))) {
-            self::$OType['size'] = self::$modx->newObject('OptionType');
-            self::$OType['size']->fromArray(array(
+        if (!self::$Option['size'] = self::$modx->getObject('Option', array('slug'=>'size'))) {
+            self::$Option['size'] = self::$modx->newObject('Option');
+            self::$Option['size']->fromArray(array(
                 'slug' => 'size',
                 'name' => 'Size',
                 'description' => 'Testing Variation Type',
                 'seq' => 0,
             ));
-            self::$OType['size']->save();
+            self::$Option['size']->save();
         }        
-        if (!self::$OType['material'] = self::$modx->getObject('OptionType', array('slug'=>'material'))) {
-            self::$OType['material'] = self::$modx->newObject('OptionType');
-            self::$OType['material']->fromArray(array(
+        if (!self::$Option['material'] = self::$modx->getObject('Option', array('slug'=>'material'))) {
+            self::$Option['material'] = self::$modx->newObject('Option');
+            self::$Option['material']->fromArray(array(
                 'slug' => 'material',
                 'name' => 'Material',
                 'description' => 'Testing Variation Type',
                 'seq' => 0,
             ));
-            self::$OType['material']->save();
+            self::$Option['material']->save();
         }
-        if (!self::$OType['printing'] = self::$modx->getObject('OptionType', array('slug'=>'printing'))) {
-            self::$OType['printing'] = self::$modx->newObject('OptionType');
-            self::$OType['printing']->fromArray(array(
+        if (!self::$Option['printing'] = self::$modx->getObject('Option', array('slug'=>'printing'))) {
+            self::$Option['printing'] = self::$modx->newObject('Option');
+            self::$Option['printing']->fromArray(array(
                 'slug' => 'printing',
                 'name' => 'Printing',
                 'description' => 'Testing Variation Type',
                 'seq' => 0,
             ));
-            self::$OType['printing']->save();
+            self::$Option['printing']->save();
         }        
         //!OptionTerm : Colors
         if (!self::$OTerm['white'] = self::$modx->getObject('OptionTerm', array('slug'=>'white'))) {
             self::$OTerm['white'] = self::$modx->newObject('OptionTerm');
             self::$OTerm['white']->fromArray(array(
-                'otype_id' => self::$OType['color']->get('otype_id'),
+                'option_id' => self::$Option['color']->get('option_id'),
                 'slug' => 'white',
                 'name' => 'White',
                 'sku_prefix' => '',
@@ -344,7 +344,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         if (!self::$OTerm['black'] = self::$modx->getObject('OptionTerm', array('slug'=>'black'))) {
             self::$OTerm['black'] = self::$modx->newObject('OptionTerm');
             self::$OTerm['black']->fromArray(array(
-                'otype_id' => self::$OType['color']->get('otype_id'),
+                'option_id' => self::$Option['color']->get('option_id'),
                 'slug' => 'black',
                 'name' => 'Black',
                 'sku_prefix' => '',
@@ -356,7 +356,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         if (!self::$OTerm['red'] = self::$modx->getObject('OptionTerm', array('slug'=>'large'))) {
             self::$OTerm['red'] = self::$modx->newObject('OptionTerm');
             self::$OTerm['red']->fromArray(array(
-                'otype_id' => self::$OType['color']->get('otype_id'),
+                'option_id' => self::$Option['color']->get('option_id'),
                 'slug' => 'red',
                 'name' => 'Red',
                 'sku_prefix' => '',
@@ -370,7 +370,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         if (!self::$OTerm['small'] = self::$modx->getObject('OptionTerm', array('slug'=>'small'))) {
             self::$OTerm['small'] = self::$modx->newObject('OptionTerm');
             self::$OTerm['small']->fromArray(array(
-                'otype_id' => self::$OType['size']->get('otype_id'),
+                'option_id' => self::$Option['size']->get('option_id'),
                 'slug' => 'small',
                 'name' => 'Small',
                 'sku_prefix' => '',
@@ -382,7 +382,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         if (!self::$OTerm['med'] = self::$modx->getObject('OptionTerm', array('slug'=>'med'))) {
             self::$OTerm['med'] = self::$modx->newObject('OptionTerm');
             self::$OTerm['med']->fromArray(array(
-                'otype_id' => self::$OType['size']->get('otype_id'),
+                'option_id' => self::$Option['size']->get('option_id'),
                 'slug' => 'med',
                 'name' => 'Medium',
                 'sku_prefix' => '',
@@ -394,7 +394,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         if (!self::$OTerm['large'] = self::$modx->getObject('OptionTerm', array('slug'=>'large'))) {
             self::$OTerm['large'] = self::$modx->newObject('OptionTerm');
             self::$OTerm['large']->fromArray(array(
-                'otype_id' => self::$OType['size']->get('otype_id'),
+                'option_id' => self::$Option['size']->get('option_id'),
                 'slug' => 'large',
                 'name' => 'Large',
                 'sku_prefix' => '',
@@ -408,7 +408,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         if (!self::$OTerm['cotton'] = self::$modx->getObject('OptionTerm', array('slug'=>'cotton'))) {
             self::$OTerm['cotton'] = self::$modx->newObject('OptionTerm');
             self::$OTerm['cotton']->fromArray(array(
-                'otype_id' => self::$OType['material']->get('otype_id'),
+                'option_id' => self::$Option['material']->get('option_id'),
                 'slug' => 'cotton',
                 'name' => 'Cotton',
                 'sku_prefix' => '',
@@ -420,7 +420,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         if (!self::$OTerm['silk'] = self::$modx->getObject('OptionTerm', array('slug'=>'silk'))) {
             self::$OTerm['silk'] = self::$modx->newObject('OptionTerm');
             self::$OTerm['silk']->fromArray(array(
-                'otype_id' => self::$OType['material']->get('otype_id'),
+                'option_id' => self::$Option['material']->get('option_id'),
                 'slug' => 'silk',
                 'name' => 'Silk',
                 'sku_prefix' => '',
@@ -432,7 +432,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         if (!self::$OTerm['wool'] = self::$modx->getObject('OptionTerm', array('slug'=>'wool'))) {
             self::$OTerm['wool'] = self::$modx->newObject('OptionTerm');
             self::$OTerm['wool']->fromArray(array(
-                'otype_id' => self::$OType['material']->get('otype_id'),
+                'option_id' => self::$Option['material']->get('option_id'),
                 'slug' => 'wool',
                 'name' => 'Wool',
                 'sku_prefix' => '',
@@ -446,7 +446,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         if (!self::$OTerm['silkscreen'] = self::$modx->getObject('OptionTerm', array('slug'=>'silkscreen'))) {
             self::$OTerm['silkscreen'] = self::$modx->newObject('OptionTerm');
             self::$OTerm['silkscreen']->fromArray(array(
-                'otype_id' => self::$OType['printing']->get('otype_id'),
+                'option_id' => self::$Option['printing']->get('option_id'),
                 'slug' => 'silkscreen',
                 'name' => 'Silk Screen',
                 'sku_prefix' => '',
@@ -458,7 +458,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         if (!self::$OTerm['embossed'] = self::$modx->getObject('OptionTerm', array('slug'=>'embossed'))) {
             self::$OTerm['embossed'] = self::$modx->newObject('OptionTerm');
             self::$OTerm['embossed']->fromArray(array(
-                'otype_id' => self::$OType['printing']->get('otype_id'),
+                'option_id' => self::$Option['printing']->get('option_id'),
                 'slug' => 'embossed',
                 'name' => 'Embossed',
                 'sku_prefix' => '',
@@ -470,7 +470,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         if (!self::$OTerm['gold'] = self::$modx->getObject('OptionTerm', array('slug'=>'gold'))) {
             self::$OTerm['gold'] = self::$modx->newObject('OptionTerm');
             self::$OTerm['gold']->fromArray(array(
-                'otype_id' => self::$OType['printing']->get('otype_id'),
+                'option_id' => self::$Option['printing']->get('option_id'),
                 'slug' => 'gold',
                 'name' => 'gold',
                 'sku_prefix' => '',
@@ -547,10 +547,10 @@ class productTest extends \PHPUnit_Framework_TestCase {
         self::$Field['two']->remove();
         self::$Field['three']->remove();
         
-        self::$OType['color']->remove();
-        self::$OType['size']->remove();
-        self::$OType['material']->remove();
-        self::$OType['printing']->remove();
+        self::$Option['color']->remove();
+        self::$Option['size']->remove();
+        self::$Option['material']->remove();
+        self::$Option['printing']->remove();
 
         self::$OTerm['white']->remove();
         self::$OTerm['black']->remove();
@@ -936,15 +936,15 @@ class productTest extends \PHPUnit_Framework_TestCase {
      * 
      *
      */
-    public function testOptionTypes() {
+    public function testOptions() {
         $P = new Product(self::$modx);
         
         $One = $P->one(array(
             'store_id' => self::$Store->get('id'),
             'sku' => 'SOUTHPARK-TSHIRT'));
             
-        // Prep: Remove all OptionType Associations for this product
-        if($Collection = self::$modx->getCollection('ProductOptionType', array('product_id'=>$One->get('product_id')))) {
+        // Prep: Remove all Options Associations for this product
+        if($Collection = self::$modx->getCollection('ProductOption', array('product_id'=>$One->get('product_id')))) {
             foreach ($Collection as $C) {
                 $C->remove();
             }
@@ -953,37 +953,30 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse(empty($product_id));
         
         $otypes = array();
-        $otypes[] = self::$OType['color']->get('otype_id');
-        $otypes[] = self::$OType['size']->get('otype_id');
-        $otypes[] = self::$OType['material']->get('otype_id');
-        $otypes[] = self::$OType['printing']->get('otype_id');
+        $otypes[] = self::$Option['color']->get('option_id');
+        $otypes[] = self::$Option['size']->get('option_id');
+        $otypes[] = self::$Option['material']->get('option_id');
+        $otypes[] = self::$Option['printing']->get('option_id');
         
-        $One->addOptionTypes($otypes);
+        $One->addOptions($otypes);
         
         // Verify they all exist:
-        $Collection = self::$modx->getCollection('ProductOptionType', array('product_id'=>$product_id));
-        $this->assertFalse(empty($Collection),'Product OptionTypes were not added!');
-        $cnt = self::$modx->getCount('ProductOptionType', array('product_id'=>$product_id));
+        $Collection = self::$modx->getCollection('ProductOption', array('product_id'=>$product_id));
+        $this->assertFalse(empty($Collection),'Product Options were not added!');
+        $cnt = self::$modx->getCount('ProductOption', array('product_id'=>$product_id));
         $this->assertEquals(count($otypes), $cnt);
         foreach ($otypes as $id) {
-            $PT = self::$modx->getObject('ProductOptionType', array('product_id'=>$product_id,'otype_id'=>$id));
+            $PT = self::$modx->getObject('ProductOption', array('product_id'=>$product_id,'option_id'=>$id));
             $this->assertFalse(empty($PT));
         }
         
-        // Add duplicates, verify that nothing new was created.
-        $One->addOptionTypes($otypes);
-        $cnt2 = self::$modx->getCount('ProductOptionType', array('product_id'=>$product_id));
-        $this->assertEquals($cnt, $cnt2);
-        
         // Remove all but one
         $odd_man_out = array_pop($otypes);
-        $One->removeOptionTypes($otypes);
-        $cnt3 = self::$modx->getCount('ProductOptionType', array('product_id'=>$One->get('product_id')));
-        $this->assertEquals($cnt3, 1); // should be only one left
+
         
         // Now, dictate the fields: this should add and remove
-        $One->dictateOptionTypes($otypes);
-        $cnt4 = self::$modx->getCount('ProductOptionType', array('product_id'=>$One->get('product_id')));
+        $One->dictateOptions($otypes);
+        $cnt4 = self::$modx->getCount('ProductOption', array('product_id'=>$One->get('product_id')));
         $this->assertEquals($cnt4, count($otypes)); 
     } 
 

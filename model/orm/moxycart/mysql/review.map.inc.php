@@ -150,7 +150,4 @@ $xpdo_meta_map['Review']= array (
       'owner' => 'foreign',
     ),
   ),
-  'validation' => 
-  array (
-  ),
 );

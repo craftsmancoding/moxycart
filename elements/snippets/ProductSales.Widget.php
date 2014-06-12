@@ -15,7 +15,8 @@
  * /assets/mycomponents/moxycart/core/components/moxycart/elements/chunks/ProductSales.tpl
  * 
  * @package moxycart
- **/
+ */
+/*
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
 $assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
 
@@ -59,3 +60,4 @@ $chunk->setCacheable(false);
 $out = $chunk->process(array(), $tpl);
 
 return $out;
+*/
