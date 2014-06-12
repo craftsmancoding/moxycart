@@ -418,6 +418,7 @@ hr {
 
 .product-option-wrap .parent-term-option {
   vertical-align: middle;
+  margin-top: 0;
 }
 
 .term-option-wrap {
