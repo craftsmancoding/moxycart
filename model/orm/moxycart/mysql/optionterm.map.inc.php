@@ -7,7 +7,7 @@ $xpdo_meta_map['OptionTerm']= array (
   'fields' => 
   array (
     'oterm_id' => NULL,
-    'otype_id' => NULL,
+    'option_id' => NULL,
     'slug' => NULL,
     'name' => NULL,
     'mod_price' => 0,
@@ -27,7 +27,7 @@ $xpdo_meta_map['OptionTerm']= array (
       'index' => 'pk',
       'generated' => 'native',
     ),
-    'otype_id' => 
+    'option_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -115,7 +115,7 @@ $xpdo_meta_map['OptionTerm']= array (
       'type' => 'BTREE',
       'columns' => 
       array (
-        'otype_id' => 
+        'option_id' => 
         array (
           'length' => '',
           'collation' => 'A',
@@ -130,13 +130,24 @@ $xpdo_meta_map['OptionTerm']= array (
       ),
     ),
   ),
+  'composites' => 
+  array (
+    'Meta' => 
+    array (
+      'class' => 'ProductOptionMeta',
+      'local' => 'oterm_id',
+      'foreign' => 'oterm_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
+    ),
+  ),
   'aggregates' => 
   array (
-    'Type' => 
+    'Option' => 
     array (
-      'class' => 'OptionType',
-      'local' => 'otype_id',
-      'foreign' => 'otype_id',
+      'class' => 'Option',
+      'local' => 'option_id',
+      'foreign' => 'option_id',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),

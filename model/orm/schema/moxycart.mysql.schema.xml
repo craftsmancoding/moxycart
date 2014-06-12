@@ -107,49 +107,13 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <!-- parent is the main product: children represent variants in all permutations -->
         <composite alias="Parent" class="Product" local="parent_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Variant" class="Product" local="product_id" foreign="parent_id" cardinality="many" owner="local" />
-		<composite alias="OptionTypes" class="ProductOptionType" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+		<composite alias="Options" class="ProductOption" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Assets" class="ProductAsset" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Terms" class="ProductTerm" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Taxonomies" class="ProductTaxonomy" local="product_id" foreign="product_id" cardinality="many" owner="local" />
         <composite alias="Fields" class="ProductField" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Relations" class="ProductRelation" local="product_id" foreign="product_id" cardinality="many" owner="local" />
 		<composite alias="Reviews" class="Review" local="product_id" foreign="product_id" cardinality="many" owner="local" />
-		
-		<!-- These need to be enforced in complex ways depending on whether the product is a variant -->
-        <validation>
-            <!--rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Product name must be at least 1 character."/-->
-            <!--rule field="alias" name="validURLchars" type="preg_match" rule="/^[a-z0-9\-_\/]+$/i" message="Contains invalid URL characters." /-->
-            <!--rule field="parent_id"
-                  name="validParent"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="product_id"
-                  local="parent_id"
-                  alias="Parent"
-                  class="Product"
-                  message="The parent product specified does not exist."
-             />
-            <rule field="store_id"
-                  name="validStore"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="id"
-                  local="store_id"
-                  alias="Store"
-                  class="modResource"
-                  message="The parent store specified does not exist."
-             />
-            <rule field="template_id"
-                  name="validTemplate"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="id"
-                  local="template_id"
-                  alias="Template"
-                  class="modTemplate"
-                  message="The template specified does not exist."
-             />       
-        </validation>
     </object>
 
 
@@ -180,7 +144,6 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<validation>
             <rule field="slug" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field slug must be at least 1 character."/>
             <rule field="slug" name="validchars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
-            <!--rule field="label" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field label must be at least 1 character."/-->
             <rule field="type" name="validchars" type="preg_match" rule="/^[a-z_][a-z0-9_]+$/i" message="Contains invalid characters." />
         </validation>
 		
@@ -197,30 +160,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		</index>
 
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
-        <aggregate alias="Field" class="Field" local="field_id" foreign="field_id" cardinality="one" owner="foreign" />
-        <validation>
-            <!--rule field="product_id"
-                  name="validProduct"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="product_id"
-                  local="product_id"
-                  alias="Product"
-                  class="Product"
-                  message="The product specified does not exist."
-             />
-            <rule field="field_id"
-                  name="validField"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="field_id"
-                  local="field_id"
-                  alias="Field"
-                  class="Field"
-                  message="The field specified does not exist."
-             /-->
-        </validation>
-        
+        <aggregate alias="Field" class="Field" local="field_id" foreign="field_id" cardinality="one" owner="foreign" />        
 	</object>
 
 	<!-- ! Review -->
@@ -247,48 +187,26 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <aggregate alias="Author" class="modUser" local="author_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 
-        <validation>
-            <!--rule field="product_id"
-                  name="validProduct"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="product_id"
-                  local="product_id"
-                  alias="Product"
-                  class="Product"
-                  message="The product specified does not exist."
-             />
-            <rule field="author_id"
-                  name="validAuthor"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="id"
-                  local="author_id"
-                  alias="Author"
-                  class="modUser"
-                  message="The author specified does not exist."
-             /-->
-        </validation>
 	</object>
 
 
-	<!-- ! Option Types -->
+	<!-- ! Option -->
 	<!-- eg. "Color", "Size", "Material" -->
-	<object class="OptionType" table="option_types" extends="xPDOObject">
-		<field key="otype_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
+	<object class="Option" table="options" extends="xPDOObject">
+		<field key="option_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
 		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" index="index" comment="unique lowercase slug"/>
 		<field key="name" dbtype="varchar" precision="32" phptype="string" null="false" />
 		<field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="true" />
 
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="otype_id" length="" collation="A" null="false" />
+			<column key="option_id" length="" collation="A" null="false" />
 		</index>
         <index alias="slug" name="slug" primary="false" unique="true" type="BTREE">
 			<column key="slug" length="" collation="A" null="false" />
 		</index>	
 		
-		<composite alias="Terms" class="OptionTerm" local="otype_id" foreign="otype_id" cardinality="many" owner="local" />
+		<composite alias="Terms" class="OptionTerm" local="option_id" foreign="option_id" cardinality="many" owner="local" />
 		
         <validation>
             <rule field="slug" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field slug must be at least 1 character."/>
@@ -298,17 +216,14 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 
 	</object>
 
-    <!-- ! Option Terms -->
+    <!-- ! Option Term -->
     <!-- e.g. "Small", "Medium", "Large" -->
 	<object class="OptionTerm" table="option_terms" extends="xPDOObject">
     	<field key="oterm_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-		<field key="otype_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		<field key="option_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" index="index" comment="unique lowercase slug"/>
 		<field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
-		
-		<!--field key="sku_prefix" dbtype="varchar" precision="16" phptype="string" null="false" />
-		<field key="sku_suffix" dbtype="varchar" precision="16" phptype="string" null="false" /-->
-		
+
 		<!-- Product Option Modifiers https://wiki.foxycart.com/v/1.1/cheat_sheet#product_option_modifiers -->
 		<field key="mod_price" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>
         <field key="mod_weight" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>
@@ -322,28 +237,17 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		</index>
 		<!-- the term must be unique within the given option type -->
         <index alias="otypeslug" name="otypeslug" primary="false" unique="true" type="BTREE">
-			<column key="otype_id" length="" collation="A" null="false" />
+			<column key="option_id" length="" collation="A" null="false" />
 			<column key="slug" length="" collation="A" null="false" />
 		</index>
 		
-        <aggregate alias="Type" class="OptionType" local="otype_id" foreign="otype_id" cardinality="one" owner="foreign" />
+		<composite alias="Meta" class="ProductOptionMeta" local="oterm_id" foreign="oterm_id" cardinality="many" owner="local" />
+        <aggregate alias="Option" class="Option" local="option_id" foreign="option_id" cardinality="one" owner="foreign" />
         
 		<validation>
             <rule field="slug" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Field slug must be at least 1 character."/>
             <rule field="slug" name="slugchars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
-            <!--rule field="sku_prefix" name="sku_prefix_chars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." />
-            <rule field="sku_suffix" name="sku_suffix_chars" type="preg_match" rule="/^[a-z0-9\-_]+$/i" message="Contains invalid characters." /-->
             <rule field="name" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="1" message="Name must be at least 1 character."/>
-            <!--rule field="otype_id"
-                  name="validOptionTerm"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="otype_id"
-                  local="otype_id"
-                  alias="Type"
-                  class="OptionType"
-                  message="The option type does not exist."
-             /-->
         </validation>
         
 	</object>
@@ -362,71 +266,49 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Relation" class="Product" local="related_id" foreign="product_id" cardinality="one" owner="foreign" />
         
-		<validation>
-            <!--rule field="related_id"
-                  name="validContentType"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="product_id"
-                  local="related_id"
-                  alias="Product"
-                  class="Product"
-                  message="The referenced product does not exist."
-             />
-            <rule field="product_id"
-                  name="validProduct"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="product_id"
-                  local="product_id"
-                  alias="Product"
-                  class="Product"
-                  message="The referenced product does not exist."
-             /-->
-        </validation>        
 	</object>
 	
-	<!-- !Product Option Types 
-	This declares that "this parent product varies by Color, Size, or Material etc.
-	-->
-	<object class="ProductOptionType" table="product_option_types" extends="xPDOSimpleObject">
+	<!-- ! ProductOption -->
+	<!-- This declares that "this parent product varies by Color, Size, or Material etc.-->
+	<object class="ProductOption" table="product_options" extends="xPDOSimpleObject">
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-		<field key="otype_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		<field key="option_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="meta" dbtype="varchar" precision="32" phptype="string" null="false" comment="all_terms,omit_terms,explicit_terms"/>
         <field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" length="" collation="A" null="false" />
 		</index>
 
-        <index alias="productoptiontype" name="productoptiontype" primary="false" unique="true" type="BTREE">
+        <index alias="productoption" name="productoption" primary="false" unique="true" type="BTREE">
 			<column key="product_id" length="" collation="A" null="false" />        
-			<column key="otype_id" length="" collation="A" null="false" />
+			<column key="option_id" length="" collation="A" null="false" />
 		</index>
 		
-        <aggregate alias="Type" class="OptionType" local="otype_id" foreign="otype_id" cardinality="one" owner="foreign" />
+		<composite alias="Meta" class="ProductOptionMeta" local="id" foreign="productoption_id" cardinality="many" owner="local" />
+        <aggregate alias="Option" class="Option" local="option_id" foreign="option_id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+
+	</object>
+
+	<!-- ! ProductOptionMeta -->
+	<!-- This is a weird one!  Specifies which terms are visible for a given Option for a given Product.
+	The listed options here might be omitted from viable selection, or they might be included.
+	Behavior determined by the ProductOption meta field.
+	-->
+	<object class="ProductOptionMeta" table="product_option_meta" extends="xPDOSimpleObject">
+		<field key="productoption_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		<field key="oterm_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+			<column key="id" length="" collation="A" null="false" />
+		</index>
+
+        <index alias="productoptionmeta" name="productoptionmeta" primary="false" unique="true" type="BTREE">
+			<column key="productoption_id" length="" collation="A" null="false" />        
+			<column key="oterm_id" length="" collation="A" null="false" />
+		</index>
+		
+        <aggregate alias="Term" class="OptionTerm" local="oterm_id" foreign="oterm_id" cardinality="one" owner="foreign" />
         
-		<validation>
-            <!--rule field="otype_id"
-                  name="validOptionType"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="otype_id"
-                  local="otype_id"
-                  alias="Type"
-                  class="OptionType"
-                  message="The referenced variation type does not exist."
-             />
-            <rule field="product_id"
-                  name="validProduct"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="product_id"
-                  local="product_id"
-                  alias="Product"
-                  class="Product"
-                  message="The referenced product does not exist."
-             /-->
-        </validation>
 	</object>
 	
     <!-- ! ProductTaxonomy -->
@@ -445,30 +327,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		</index>
         <aggregate alias="Taxonomy" class="Taxonomy" local="taxonomy_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
-        
-		<validation>
-            <!--rule field="taxonomy_id"
-                  name="validTaxonomy"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="id"
-                  local="taxonomy_id"
-                  alias="Term"
-                  class="modResource"
-                  message="The referenced taxonomy does not exist."
-             />
-            <rule field="product_id"
-                  name="validProduct"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="product_id"
-                  local="product_id"
-                  alias="Product"
-                  class="Product"
-                  message="The referenced product does not exist."
-             /-->
-        </validation>
-        
+                
 	</object>
 	    
     <!-- ! ProductTerm -->
@@ -487,28 +346,6 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <aggregate alias="Term" class="Term" local="term_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 
-		<validation>
-            <!--rule field="term_id"
-                  name="validContentType"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="id"
-                  local="term_id"
-                  alias="Term"
-                  class="modResource"
-                  message="The referenced term does not exist."
-             />
-            <rule field="product_id"
-                  name="validProduct"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="product_id"
-                  local="product_id"
-                  alias="Product"
-                  class="Product"
-                  message="The referenced product does not exist."
-             /-->
-        </validation>
 	</object>
     
 	<!-- ! Asset -->
@@ -559,27 +396,6 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<validation>
             <rule field="url" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="3" message="URL must be at least 3 characters."/>
             <rule field="path" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="3" message="Path must be at least 3 characters."/>
-            <!--rule field="content_type_id"
-                  name="validContentType"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="id"
-                  local="content_type_id"
-                  alias="ContentType"
-                  class="modContentType"
-                  message="The referenced content type does not exist."
-             />
-            <rule field="product_id"
-                  name="validProduct"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="product_id"
-                  local="product_id"
-                  alias="Product"
-                  class="Product"
-                  message="The referenced product does not exist."
-             /-->
-
         </validation>
 	</object>
 
@@ -599,29 +415,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
         <aggregate alias="Asset" class="Asset" local="asset_id" foreign="asset_id" cardinality="one" owner="foreign" />
-        
-		<validation>
-            <!--rule field="related_id"
-                  name="validContentType"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="product_id"
-                  local="related_id"
-                  alias="Product"
-                  class="Product"
-                  message="The referenced product does not exist."
-             />
-            <rule field="product_id"
-                  name="validProduct"
-                  type="xPDOValidationRule"
-                  rule="xPDOForeignKeyConstraint"
-                  foreign="product_id"
-                  local="product_id"
-                  alias="Product"
-                  class="Product"
-                  message="The referenced product does not exist."
-             /-->
-        </validation>        
+              
 	</object>
 
 

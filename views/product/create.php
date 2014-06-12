@@ -533,7 +533,7 @@ function select_thumb(asset_id,url) {
                                      <h2>Product Options</h2>
                                      <p>Allow your visitors to select variations in your product.</p>
                                     <?php
-                                    print \Formbuilder\Form::multicheck('OptionTypes', $data['OptionTypes'], $data['product_option_types'],array(),'[+error+]
+                                    print \Formbuilder\Form::multicheck('Options', $data['Options'], $data['product_option_types'],array(),'[+error+]
             <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> [+option+]<br/>');
                                     ?>
                                 </div>

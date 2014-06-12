@@ -1,12 +1,12 @@
 <?php
-$xpdo_meta_map['OptionType']= array (
+$xpdo_meta_map['Option']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'option_types',
+  'table' => 'options',
   'extends' => 'xPDOObject',
   'fields' => 
   array (
-    'otype_id' => NULL,
+    'option_id' => NULL,
     'slug' => NULL,
     'name' => NULL,
     'description' => NULL,
@@ -14,7 +14,7 @@ $xpdo_meta_map['OptionType']= array (
   ),
   'fieldMeta' => 
   array (
-    'otype_id' => 
+    'option_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -63,7 +63,7 @@ $xpdo_meta_map['OptionType']= array (
       'unique' => true,
       'columns' => 
       array (
-        'otype_id' => 
+        'option_id' => 
         array (
           'length' => '',
           'collation' => 'A',
@@ -93,8 +93,8 @@ $xpdo_meta_map['OptionType']= array (
     'Terms' => 
     array (
       'class' => 'OptionTerm',
-      'local' => 'otype_id',
-      'foreign' => 'otype_id',
+      'local' => 'option_id',
+      'foreign' => 'option_id',
       'cardinality' => 'many',
       'owner' => 'local',
     ),

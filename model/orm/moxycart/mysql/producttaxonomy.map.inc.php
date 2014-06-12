@@ -93,7 +93,4 @@ $xpdo_meta_map['ProductTaxonomy']= array (
       'owner' => 'foreign',
     ),
   ),
-  'validation' => 
-  array (
-  ),
 );

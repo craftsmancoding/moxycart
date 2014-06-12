@@ -1,13 +1,15 @@
 <?php
-$xpdo_meta_map['ProductTerm']= array (
+$xpdo_meta_map['ProductOption']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'product_terms',
+  'table' => 'product_options',
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
     'product_id' => NULL,
-    'term_id' => NULL,
+    'option_id' => NULL,
+    'meta' => NULL,
+    'seq' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -18,12 +20,27 @@ $xpdo_meta_map['ProductTerm']= array (
       'phptype' => 'integer',
       'null' => false,
     ),
-    'term_id' => 
+    'option_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
+    ),
+    'meta' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '32',
+      'phptype' => 'string',
+      'null' => false,
+      'comment' => 'all_terms,omit_terms,explicit_terms',
+    ),
+    'seq' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '3',
+      'phptype' => 'integer',
+      'null' => true,
     ),
   ),
   'indexes' => 
@@ -43,9 +60,9 @@ $xpdo_meta_map['ProductTerm']= array (
         ),
       ),
     ),
-    'productterm' => 
+    'productoption' => 
     array (
-      'alias' => 'productterm',
+      'alias' => 'productoption',
       'primary' => false,
       'unique' => true,
       'type' => 'BTREE',
@@ -57,7 +74,7 @@ $xpdo_meta_map['ProductTerm']= array (
           'collation' => 'A',
           'null' => false,
         ),
-        'term_id' => 
+        'option_id' => 
         array (
           'length' => '',
           'collation' => 'A',
@@ -66,13 +83,24 @@ $xpdo_meta_map['ProductTerm']= array (
       ),
     ),
   ),
+  'composites' => 
+  array (
+    'Meta' => 
+    array (
+      'class' => 'ProductOptionMeta',
+      'local' => 'id',
+      'foreign' => 'productoption_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
+    ),
+  ),
   'aggregates' => 
   array (
-    'Term' => 
+    'Option' => 
     array (
-      'class' => 'Term',
-      'local' => 'term_id',
-      'foreign' => 'id',
+      'class' => 'Option',
+      'local' => 'option_id',
+      'foreign' => 'option_id',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),

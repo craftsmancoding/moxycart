@@ -465,9 +465,9 @@ $xpdo_meta_map['Product']= array (
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
-    'OptionTypes' => 
+    'Options' => 
     array (
-      'class' => 'ProductOptionType',
+      'class' => 'ProductOption',
       'local' => 'product_id',
       'foreign' => 'product_id',
       'cardinality' => 'many',
@@ -580,8 +580,5 @@ $xpdo_meta_map['Product']= array (
       'cardinality' => 'many',
       'owner' => 'local',
     ),
-  ),
-  'validation' => 
-  array (
   ),
 );

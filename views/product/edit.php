@@ -547,8 +547,28 @@ function select_thumb(asset_id,url) {
                                      <h2>Product Options</h2>
                                      <p>Allow your visitors to select variations in your product.</p>
                                     <?php
-                                    print \Formbuilder\Form::multicheck('OptionTypes', $data['OptionTypes'], $data['product_option_types'],array(),'[+error+]
-            <input type="checkbox" name="[+name+][]" id="[+id+]" value="[+value+]" class="[+class+]"[+is_checked+] [+extra+]/> [+option+]<br/>');
+                                    // Special stuff here: we gotta force the field names to ensure that arrays are in sync.
+                                    foreach ($data['Options'] as $o):
+                                        $option_id = $o['option_id'];
+                                        $terms = array();
+                                        foreach ($o['Terms'] as $t) {
+                                            $terms[ $t['oterm_id'] ] = sprintf('%s (%s)', $t['name'], $t['slug']);
+                                        }
+                                        print \Formbuilder\Form::checkbox("Options[option_id][$option_id]", 'current value',array('label'=>sprintf('%s (%s)', $o['name'], $o['slug'])), '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
+            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]" class="[+class+]" style="[+style+]" [+is_checked+][+extra+]/> [+label+]
+            [+description+]');    
+                                        print \Formbuilder\Form::dropdown("Options[meta][$option_id]", array('all_terms'=>'All Terms','omit_terms'=>'Omit','explicit_terms'=>'Explicit'));
+                                        ?>
+                                        <br/>
+                                        <fieldset>
+                                        <?php
+                                            print \Formbuilder\Form::multicheck("Options[Terms][$option_id]", $terms, array(),array(),'[+error+]
+                            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+is_checked+] [+extra+]/> [+option+]<br/>');
+                                        ?>
+                                        </fieldset>
+                                        
+                                    <?php
+                                    endforeach;
                                     ?>
                                 </div>
                                

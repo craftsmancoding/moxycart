@@ -16,9 +16,10 @@ $manager = $modx->getManager();
 // Moxycart
 $manager->removeObjectContainer('Product');
 $manager->removeObjectContainer('Field');
-$manager->removeObjectContainer('OptionType'); 
+$manager->removeObjectContainer('Option'); 
 $manager->removeObjectContainer('OptionTerm');
-$manager->removeObjectContainer('ProductOptionType');
+$manager->removeObjectContainer('ProductOption');
+$manager->removeObjectContainer('ProductOptionMeta');
 $manager->removeObjectContainer('ProductTaxonomy');
 $manager->removeObjectContainer('ProductTerm');
 $manager->removeObjectContainer('ProductField'); 
@@ -41,7 +42,7 @@ $manager->removeObjectContainer('ShiptoAddress');
 
 // Cleanup of Legacy table names for which classes are no longer defined:
 $legacy = array('moxy_carts','moxy_images','moxy_product_specs','moxy_specs','moxy_currencies','moxy_variation_types',
-'moxy_variation_terms', 'moxy_product_variation_types');
+'moxy_variation_terms', 'moxy_product_variation_types','moxy_option_types');
 foreach ($legacy as $l) {
     $removed = $modx->exec('DROP TABLE IF EXISTS '.$l);
     if ($removed === false && $modx->errorCode() !== '' && $modx->errorCode() !== PDO::ERR_NONE) {

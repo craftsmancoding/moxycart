@@ -80,7 +80,4 @@ $xpdo_meta_map['ProductRelation']= array (
       'owner' => 'foreign',
     ),
   ),
-  'validation' => 
-  array (
-  ),
 );

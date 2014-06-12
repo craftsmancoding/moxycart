@@ -123,6 +123,14 @@ class Product extends BaseModel {
     }
 
     /**
+     *
+     *
+     */
+    public function options($product_id) {
+    
+    }
+    
+    /**
      * Load a product AND its fields from a given $url
      *
      * @param string $uri relative to MODX_BASE_URL e.g. "mystore/myproduct"
@@ -739,26 +747,26 @@ class Product extends BaseModel {
 */
 
     //------------------------------------------------------------------------------
-    //! OptionTypes
+    //! Options
     //------------------------------------------------------------------------------
     /** 
      * Add variation-types to a product. 
      *
-     * @param array $array of otype_ids
+     * @param array $array of option_ids
      */
-    public function addOptionTypes(array $array) {
+    public function addOptions(array $array) {
         $this_product_id = $this->_verifyExisting();
 
         foreach ($array as $id) {
             $props = array(
                 'product_id'=> $this_product_id, 
-                'otype_id'=> $id
+                'option_id'=> $id
             );
-            if (!$PVT = $this->modx->getObject('ProductOptionType', $props)) {
-                if (!$VT = $this->modx->getObject('OptionType', $id)) {
-                    throw new \Exception('Invalid Option Type ID '.$id);    
+            if (!$PVT = $this->modx->getObject('ProductOption', $props)) {
+                if (!$VT = $this->modx->getObject('Option', $id)) {
+                    throw new \Exception('Invalid Option ID '.$id);    
                 }
-                $PVT = $this->modx->newObject('ProductOptionType', $props);
+                $PVT = $this->modx->newObject('ProductOption', $props);
             }
             $PVT->save();
         }
@@ -768,17 +776,17 @@ class Product extends BaseModel {
 
     /** 
      * Remove variation-types from a product. We don't care here if the referenced ids are valid or not.
-     * @param array $array of otype_ids
+     * @param array $array of option_ids
      */
-    public function removeOptionTypes(array $array) {
+    public function removeOptions(array $array) {
         $this_product_id = $this->_verifyExisting();
         
         foreach ($array as $id) {
             $props = array(
                 'product_id'=> $this_product_id, 
-                'otype_id'=> $id
+                'option_id'=> $id
             );
-            if ($PVT = $this->modx->getObject('ProductOptionType', $props)) {
+            if ($PVT = $this->modx->getObject('ProductOption', $props)) {
                 $PVT->remove();
             }
         }
@@ -787,13 +795,13 @@ class Product extends BaseModel {
 
     /**
      * Dictate variation-type ids for the current product.
-     * This will remove all fields not in the given $array, add any new otype_id's from the $array.
+     * This will remove all fields not in the given $array, add any new option_id's from the $array.
 
      * Exeptions are thrown if the product ids do not exist.
      *
-     * @param array $dictate'd otype_id's
+     * @param array $dictate'd option_id's
      */
-    public function dictateOptionTypes(array $dictate) {
+    public function dictateOptions(array $dictate) {
         $this_product_id = $this->_verifyExisting();
         
         $props = array(
@@ -802,15 +810,15 @@ class Product extends BaseModel {
         
         // Array of related_id's that are already defined
         $existing = array();
-        if($ExistingColl = $this->modx->getObject('ProductOptionType', $props)) {
-            $existing[] = $ExistingColl->get('otype_id');   
+        if($ExistingColl = $this->modx->getObject('ProductOption', $props)) {
+            $existing[] = $ExistingColl->get('option_id');   
         }
         
         $to_remove = array_diff($existing,$dictate);
         $to_add = array_diff($dictate,$existing);
 
-        $this->removeOptionTypes($to_remove);
-        $this->addOptionTypes($to_add);
+        $this->removeOptions($to_remove);
+        $this->addOptions($to_add);
         
         return true;
     
@@ -890,7 +898,7 @@ class Product extends BaseModel {
             	<option value="Custom{p:5|w+1|c:01s}">Custom</option>
             </select>
         
-        $matrix = array( $otype_id => $oterm_id [, $otype_id2 => $oterm_id2 ... ] )
+        $matrix = array( $option_id => $oterm_id [, $option_id2 => $oterm_id2 ... ] )
      */
 /*
     public function addVariant($matrix) {
@@ -919,7 +927,7 @@ class Product extends BaseModel {
             'value' => 'Something'
         )
      ),
-     'OptionTypes' => array(1,2,3),
+     'Options' => array(1,2,3),
      'Relations' => array(
         array(
             'related_id' => 53,
@@ -942,7 +950,7 @@ class Product extends BaseModel {
         $product_id = $this->getPrimaryKey(); // $this->get('product_id');
         if (isset($data['Assets'])) $this->dictateAssets($data['Assets']);
         if (isset($data['Fields'])) $this->dictateFields($data['Fields']);
-        if (isset($data['OptionTypes'])) $this->dictateOptionTypes($data['OptionTypes']);
+        if (isset($data['Options'])) $this->dictateOptions($data['Options']);
         if (isset($data['Relations'])) $this->dictateRelations($data['Relations']);
         if (isset($data['Taxonomies'])) $this->dictateTaxonomies($data['Taxonomies']);
         if (isset($data['Terms'])) $this->dictateTerms($data['Terms']);

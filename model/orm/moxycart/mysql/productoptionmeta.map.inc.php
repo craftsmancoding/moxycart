@@ -1,37 +1,29 @@
 <?php
-$xpdo_meta_map['ProductOptionType']= array (
+$xpdo_meta_map['ProductOptionMeta']= array (
   'package' => 'moxycart',
   'version' => '1.0',
-  'table' => 'product_option_types',
+  'table' => 'product_option_meta',
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
-    'product_id' => NULL,
-    'otype_id' => NULL,
-    'seq' => NULL,
+    'productoption_id' => NULL,
+    'oterm_id' => NULL,
   ),
   'fieldMeta' => 
   array (
-    'product_id' => 
+    'productoption_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
     ),
-    'otype_id' => 
+    'oterm_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
-    ),
-    'seq' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '3',
-      'phptype' => 'integer',
-      'null' => true,
     ),
   ),
   'indexes' => 
@@ -51,21 +43,21 @@ $xpdo_meta_map['ProductOptionType']= array (
         ),
       ),
     ),
-    'productoptiontype' => 
+    'productoptionmeta' => 
     array (
-      'alias' => 'productoptiontype',
+      'alias' => 'productoptionmeta',
       'primary' => false,
       'unique' => true,
       'type' => 'BTREE',
       'columns' => 
       array (
-        'product_id' => 
+        'productoption_id' => 
         array (
           'length' => '',
           'collation' => 'A',
           'null' => false,
         ),
-        'otype_id' => 
+        'oterm_id' => 
         array (
           'length' => '',
           'collation' => 'A',
@@ -76,24 +68,13 @@ $xpdo_meta_map['ProductOptionType']= array (
   ),
   'aggregates' => 
   array (
-    'Type' => 
+    'Term' => 
     array (
-      'class' => 'OptionType',
-      'local' => 'otype_id',
-      'foreign' => 'otype_id',
+      'class' => 'OptionTerm',
+      'local' => 'oterm_id',
+      'foreign' => 'oterm_id',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),
-    'Product' => 
-    array (
-      'class' => 'Product',
-      'local' => 'product_id',
-      'foreign' => 'product_id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
-  ),
-  'validation' => 
-  array (
   ),
 );

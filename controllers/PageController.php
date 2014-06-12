@@ -141,13 +141,18 @@ class PageController extends BaseController {
         $this->setPlaceholder('taxonomies',$taxonomies);
         
         
-        //OptionType
-        $OTs = $this->modx->getCollection('OptionType');
-        $OptionTypes = array();
-        foreach ($OTs as $o) {
-            $OptionTypes[$o->get('otype_id')] = sprintf('%s (%s)',$o->get('name'),$o->get('slug'));
+        //Options (All of them and all Terms)
+        // [
+        //   {
+        //      slug:"",name:"", Terms:[{slug:"","name":""}]
+        //   }
+        // ]
+        $Os = $this->modx->getCollectionGraph('Option','{"Terms":{}}');
+        $Options = array();
+        foreach ($Os as $o) {
+            $Options[] = $o->toArray('',false,false,true);
         }
-        $this->setPlaceholder('OptionTypes',$OptionTypes);
+        $this->setPlaceholder('Options',$Options);
 
         // categories (foxycart)
         $this->setPlaceholder('categories',json_decode($this->modx->getOption('moxycart.categories'),true));
@@ -237,7 +242,7 @@ class PageController extends BaseController {
      *      templates
      *      categories (foxycart)
      *      Fields
-     *      OptionTypes
+     *      Options
      *      Types (product types)
      */
     public function getProductCreate(array $scriptProperties = array()) {
@@ -304,7 +309,7 @@ class PageController extends BaseController {
      * HUGE.  Thin controller FAIL.  (hangs head in shame).
      */
     public function getProductEdit(array $scriptProperties = array()) {
-//        $this->addStandardLayout($scriptProperties); // For some reason we have to do this here (?)
+
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
         $this->setPlaceholder('product_form_action', 'product_update');
@@ -390,24 +395,17 @@ class PageController extends BaseController {
         $PR = new ProductRelation($this->modx);
         $this->setPlaceholder('relation_types',$PR->getTypes());
                 
-        // product_option_types
-        $product_option_types = array();
-        $c = $this->modx->newQuery('ProductOptionType');
+        // product_options
+        $product_options = array();
+        $c = $this->modx->newQuery('ProductOption');
         $c->where(array('product_id' => $product_id));
         $c->sortby('seq','ASC');        
-        $POTs = $this->modx->getCollection('ProductOptionType', $c);
+        $POTs = $this->modx->getCollection('ProductOption', $c);
         foreach ($POTs as $p) {
-            $product_option_types[] = $p->get('otype_id');
+            $product_options[] = $p->get('option_id');
         }
-        $this->setPlaceholder('product_option_types',$product_option_types);
+        $this->setPlaceholder('product_options',$product_options);
         
-        //OptionType
-        $OTs = $this->modx->getCollection('OptionType');
-        $OptionTypes = array();
-        foreach ($OTs as $o) {
-            $OptionTypes[$o->get('otype_id')] = sprintf('%s (%s)',$o->get('name'),$o->get('slug'));
-        }
-        $this->setPlaceholder('OptionTypes',$OptionTypes);
                 
         // ProductTaxonomy
         $product_taxonomies = array();
@@ -551,13 +549,13 @@ class PageController extends BaseController {
      */
     public function getOptions(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
-        $Obj = new OptionType($this->modx);
+        $Obj = new Option($this->modx);
         $scriptProperties['sort'] = 'seq';
         $scriptProperties['dir'] = 'ASC';
         $results = $Obj->all($scriptProperties);
         // We need these for pagination
         $scriptProperties['count'] = $Obj->count($scriptProperties);        
-        $scriptProperties['baseurl'] = self::url('optiontype','index');
+        $scriptProperties['baseurl'] = self::url('option','index');
         $this->setPlaceholder('results', $results);
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('main/options.php');
@@ -565,8 +563,8 @@ class PageController extends BaseController {
 
     public function postOptions(array $scriptProperties = array()) {
         $seq = 0;
-        foreach ($scriptProperties['seq'] as $otype_id) {
-            $OType = $this->modx->getObject('OptionType', array('otype_id' => $otype_id));
+        foreach ($scriptProperties['seq'] as $option_id) {
+            $OType = $this->modx->getObject('Option', array('option_id' => $option_id));
             $OType->set('seq', $seq);
             $OType->save();
             $seq++;
@@ -577,13 +575,13 @@ class PageController extends BaseController {
 
     public function getOptionCreate(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
-        $Obj = new OptionType($this->modx);    
+        $Obj = new Option($this->modx);    
 
-        $scriptProperties['baseurl'] = self::url('optiontype','create');
+        $scriptProperties['baseurl'] = self::url('option','create');
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($Obj->toArray());
         $this->setPlaceholder('result',$Obj);
-        return $this->fetchTemplate('optiontype/create.php');
+        return $this->fetchTemplate('option/create.php');
     }    
 
     /**
@@ -591,16 +589,16 @@ class PageController extends BaseController {
      */
     public function getOptionEdit(array $scriptProperties = array()) {   
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__); 
-        $otype_id = (int) $this->modx->getOption('otype_id',$scriptProperties);
-        $Obj = new OptionType($this->modx);    
-        if (!$result = $Obj->find($otype_id)) {
+        $option_id = (int) $this->modx->getOption('option_id',$scriptProperties);
+        $Obj = new Option($this->modx);    
+        if (!$result = $Obj->find($option_id)) {
             return $this->sendError('Page not found.');
         }
-        $scriptProperties['baseurl'] = self::url('optiontype','edit',array('otype_id'=>$otype_id));
+        $scriptProperties['baseurl'] = self::url('option','edit',array('option_id'=>$option_id));
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($result->toArray());
         $this->setPlaceholder('result',$result);
-        return $this->fetchTemplate('optiontype/edit.php');
+        return $this->fetchTemplate('option/edit.php');
     }
     
     /**
@@ -608,20 +606,20 @@ class PageController extends BaseController {
      */
     public function getOptionTerms(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
-        $otype_id = (int) $this->modx->getOption('otype_id',$scriptProperties);
-        $Obj = new OptionType($this->modx);    
-        if (!$result = $Obj->find($otype_id)) {
+        $option_id = (int) $this->modx->getOption('option_id',$scriptProperties);
+        $Obj = new Option($this->modx);    
+        if (!$result = $Obj->find($option_id)) {
             return $this->sendError('Invalid option type');
         }
 
         $Terms = new OptionTerm($this->modx);
-        $Terms = $Terms->all(array('otype_id'=>$otype_id,'sort'=>'seq'));
-        $scriptProperties['baseurl'] = self::url('optiontype','terms',array('otype_id'=>$otype_id));
+        $Terms = $Terms->all(array('option_id'=>$option_id,'sort'=>'seq'));
+        $scriptProperties['baseurl'] = self::url('option','terms',array('option_id'=>$option_id));
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($result->toArray());
         $this->setPlaceholder('result',$result);
         $this->setPlaceholder('terms', $Terms);
-        return $this->fetchTemplate('optiontype/terms.php');
+        return $this->fetchTemplate('option/terms.php');
     }
 
 

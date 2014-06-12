@@ -15,10 +15,10 @@ class ProductController extends APIController {
     public function postView(array $scriptProperties = array(),$raw=false) {
         $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
         //$Obj = new Product($this->modx);
-        if (!$P = $this->modx->getObjectGraph('Product','{"Assets":{"Asset":{}},"OptionTypes":{"Type":{}},"Relations":{"Relation":{}}}',$product_id)) {
+        if (!$P = $this->modx->getObjectGraph('Product','{"Assets":{"Asset":{}},"Options":{"Option":{}},"Relations":{"Relation":{}}}',$product_id)) {
             return $this->sendFail('Product not found');
         }
-
+        
         // Reindexing doesn't work in all cases (e.g. Relations reuse the keys)
         // so we push related records onto the 'RelData' index, keyed off their primary key, e.g.
         // $P['RelData']['Asset'][123]  stores record data for asset_id 123
@@ -28,9 +28,9 @@ class ProductController extends APIController {
                 $P1['RelData']['Asset'][ $v['Asset']['asset_id'] ] = $v['Asset'];
             }
         }
-        if (isset($P1['OptionTypes']) && is_array($P1['OptionTypes'])) {        
-            foreach ($P1['OptionTypes'] as $k => $v) {
-                $P1['RelData']['OptionType'][ $v['Type']['otype_id'] ] = $v['Type'];
+        if (isset($P1['Options']) && is_array($P1['Options'])) {        
+            foreach ($P1['Options'] as $k => $v) {
+                $P1['RelData']['Option'][ $v['Option']['option_id'] ] = $v['Option'];
             }
         }
         if (isset($P1['Relations']) && is_array($P1['Relations'])) {
@@ -46,7 +46,7 @@ class ProductController extends APIController {
 When submitted via a form, the format is something like this:
 Array
 (
-    [name] => Another Sweatersss
+    [name] => Another Sweater
     [product_id] => 3
     [title] => Another Sweatersss
     [alias] => another-sweater
@@ -54,20 +54,37 @@ Array
     [sku] => ANOTHER-SWEATER
     [price] => 49
     [price_strike_thru] => 99
+    [asset_id] => 0
     [in_menu] => 1
     [category] => Default
     [is_active] => 1
-    [template_id] => 145
+    [template_id] => 38
     [content] => <p>Just imagine this awesome sweater.</p>
     [qty_inventory] => 78
     [qty_alert] => 4
     [track_inventory] => 0
     [type] => regular
     [weight] => 0
-    [OptionTypes] => Array
+    [Options] => Array
         (
-            [0] => 1
-            [1] => 3
+            [option_id] => Array
+                (
+                    [1] => 1
+                    [2] => 0
+                )
+
+            [meta] => Array
+                (
+                    [1] => omit_terms
+                    [2] => omit_terms
+                )
+
+            [Terms] => Array
+                (
+                    [1] => 4
+                    [2] => 8
+                )
+
         )
 
     [sku_vendor] =>
@@ -77,7 +94,7 @@ Array
     [qty_min] => 1
     [qty_max] => 0
     [back_order_cap] =>
-    [store_id] => 218
+    [store_id] => 89
     [Fields] => Array
         (
             [field_id] => Array
@@ -125,7 +142,9 @@ Array
 
      */
     public function postEdit(array $scriptProperties = array()) {
+        $this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
+        $this->modx->setLogLevel(1);
         // This doesn't work unless you add the namespace.
         // Oddly, if you write it out (w/o a var), it works. wtf?
         $classname = '\\Moxycart\\'.$this->model;
@@ -139,7 +158,7 @@ Array
 
         // Add Related w meta-data: one to many relationships including data about the relation 
         // (i.e. it's not just simple relations w only an array of ids and an implied seq)
-        // Simple relations are: 'OptionTypes', 'Terms','Taxonomies'
+        // Simple relations are: 'Options', 'Terms','Taxonomies'
         // Meta Data:
         //  Assets: has is_active
         //  Fields: has a value
