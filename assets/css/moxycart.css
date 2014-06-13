@@ -440,6 +440,13 @@ hr {
   -webkit-border-radius: 2px;
 }
 
+.dashboard-block #moxycart_header,
+.dashboard-block #moxycart_footer {
+  display: none;
+}
+
+
+
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */
 .clear:before, .clear:after,
