@@ -777,7 +777,7 @@ class Product extends BaseModel {
         $i = 0;
         foreach ($data as $option_id => $r) {
             // $option_id is the real option id. $r['option_id'] indicates whether the field was checked
-            if ($r['option_id'] == 0) {
+            if ($r['checked'] == 0) {
                 if ($PO = $this->modx->getObject('ProductOption', array('product_id'=>$this_product_id, 'option_id'=>$option_id))) {
                     if (!$PO->remove()) {
                         $this->modx->log(\modX::LOG_LEVEL_ERROR,'Unable to delete ProductOption for product_id '.$this_product_id.' option_id: '.$option_id,'',__CLASS__,__FUNCTION__,__LINE__); 
@@ -785,10 +785,11 @@ class Product extends BaseModel {
                 }
                 continue;
             }
-            if (!$PO = $this->modx->getObject('ProductOption')) {
+            if (!$PO = $this->modx->getObject('ProductOption', array('product_id'=>$this_product_id, 'option_id'=>$option_id))) {
                 $PO = $this->modx->newObject('ProductOption');
             }
-            $PO->fromArray($r);
+            $PO->set('option_id', $option_id);
+            $PO->set('meta', $r['meta']);
             $PO->set('product_id', $this_product_id);
             $PO->save();
             
@@ -799,7 +800,7 @@ class Product extends BaseModel {
                         $p->remove();
                     }
                 }
-                return true;
+                continue;
             }
             
             foreach ($r['Terms'] as $oterm_id) {

@@ -582,7 +582,7 @@ jQuery(document).ready(function() {
                                         ?>
                                         <div class="term-option-wrap">
                                         <?php
-                                        print \Formbuilder\Form::checkbox("Options[option_id][$option_id]", isset($data['product_options'][$option_id]['checked']),array('label'=>sprintf('%s (%s)', $o['name'], $o['slug'])), '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
+                                        print \Formbuilder\Form::checkbox("Options[checked][$option_id]", isset($data['product_options'][$option_id]['checked']),array('label'=>sprintf('%s (%s)', $o['name'], $o['slug'])), '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
             <input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]"  class="[+class+] parent-term-option" data-fs_child_id='.$option_id.' style="[+style+]" [+is_checked+][+extra+]/> [+label+]
             [+description+]');    
                                         print \Formbuilder\Form::dropdown("Options[meta][$option_id]", array('all_terms'=>'All Terms','omit_terms'=>'Omit','explicit_terms'=>'Explicit'), $data['product_options'][$option_id]['meta']);
