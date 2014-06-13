@@ -244,6 +244,36 @@ function product_init() {
             }
         }   
     });
+
+
+
+    // Taxonomy Selection Modal
+    var iMaxWidth = 500;
+
+    $('#taxonomy-modal').width(iMaxWidth);
+    var iHeight = $('#taxonomy-modal').height() + 16;
+
+    $('#taxonomy-btn').click(function() {
+        $("#taxonomy-modal").dialog({
+            autoOpen: true,
+            height: 300,
+            width: 500,
+            modal: true
+        });
+        var iCurrentHeight = $("#taxonomy-modal").height();
+        var iCurrentWidth = $("#taxonomy-modal").width();
+        if (iCurrentHeight < iHeight || iCurrentWidth < iMaxWidth) {
+            var oOffset = $("#taxonomy-modal").parent().offset();
+            $("#taxonomy-modal").parent()
+                .width(iMaxWidth + 50)
+                .animate({ 
+                    top: oOffset.top - ((iHeight - iCurrentHeight) / 2),
+                    left: oOffset.left - ((iMaxWidth - iCurrentWidth) / 2)
+                });
+            $("#taxonomy-modal").animate({ height: iHeight, width: iMaxWidth}, 500);
+        }
+    });
+
     
     // Edit Asset Form
     jQuery( "#asset_edit_form" ).dialog({
@@ -660,7 +690,7 @@ jQuery(document).ready(function() {
 	<div id="fields_tab" class="content">
 			<div id="product_fields">
 	                <?php if (!$data['product_fields']) : ?>
-				        <span id="no_specs_msg">No Custom Fields Found</span>	                
+				        <div class="danger" id="no_specs_msg">No Custom Fields Found</div>	                
 	                <?php endif; ?>
 	                
                     <?php foreach ($data['product_fields'] as $field_id => $f): ?>
@@ -852,14 +882,21 @@ jQuery(document).ready(function() {
 
     <?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
     	<div id="taxonomies_tab" class="content"><br>
-    		<legend>Enable Taxonomies</legend>
-            <div id="taxonomy_list">
-                <?php print \Formbuilder\Form::multicheck('Taxonomies',$data['taxonomies'],$data['product_taxonomies']); ?>
-            </div>
-            <legend>Terms</legend>
-            <div id="taxonomy_terms">
-                <?php print \Formbuilder\Form::multicheck('Terms',$data['terms'],$data['product_terms']); ?>
-            </div>    
+
+                <span class="btn" id="taxonomy-btn">Show / Hide Taxonomies</span>
+        
+                <?php /* ======== MODAL DIALOG BOX ======*/ ?>
+                <div id="taxonomy-modal" style="display:none;" title="Select Taxonomy">
+                   <legend>Enable Taxonomies</legend>
+                    <div id="taxonomy_list">
+                        <?php print \Formbuilder\Form::multicheck('Taxonomies',$data['taxonomies'],$data['product_taxonomies']); ?>
+                    </div>
+                    <legend>Terms</legend>
+                    <div id="taxonomy_terms">
+                        <?php print \Formbuilder\Form::multicheck('Terms',$data['terms'],$data['product_terms']); ?>
+                    </div>    
+
+                </div> 
     	</div>
     <?php endif; // moxycart.enable_taxonomies ?>
 
