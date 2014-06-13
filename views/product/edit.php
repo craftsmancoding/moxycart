@@ -337,12 +337,24 @@ function select_thumb(asset_id,url) {
 
 jQuery(document).ready(function() {
     jQuery('.po-fset').hide();
-    jQuery('.parent-term-option').on('click',function() {
-        var fs_shild_id = jQuery(this).data('fs_child_id');
+    // on page load, initialize fieldset state
+    $('.parent-term-option').each(function () {
+        var fs_child_id = jQuery(this).data('fs_child_id');
         if(jQuery(this).prop("checked")) {
-            $('.fset-'+fs_shild_id).show();
+            if(jQuery('#Options_meta__'+fs_child_id+'_').val() != 'all_terms') {
+                $('.fset-'+fs_child_id).show();
+            }
         } else {
-            $('.fset-'+fs_shild_id).hide();
+            $('.fset-'+fs_child_id).hide();
+        }
+    });
+
+    // on change of the select terms option, hide/show fieldset
+    jQuery('.term-option-wrap select').on('change',function() {
+        if(jQuery(this).val() != 'all_terms') {
+            jQuery(this).parent().next().show();
+        } else {
+            jQuery(this).parent().next().hide();
         }
     });
 });
