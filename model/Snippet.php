@@ -77,6 +77,7 @@ class Snippet {
         if (empty($records)) {
             return '';
         }
+
         
         // A Chunk Name was passed
         $use_tmp_chunk = false;
@@ -85,8 +86,11 @@ class Snippet {
         }
         
         $out = '';
+
         foreach ($records as $r) {
+          
             if (is_object($r)) $r = $r->toArray('',false,false,true); // Handle xPDO objects
+
             // Use a temporary Chunk when dealing with raw formatting strings
             if ($use_tmp_chunk) {
                 $uniqid = uniqid();
@@ -99,6 +103,7 @@ class Snippet {
                 $out .= $this->modx->getChunk($innerTpl, $r);
             }
         }
+
         
         if ($outerTpl) {
             $props = array('content'=>$out);
@@ -114,6 +119,7 @@ class Snippet {
                 return $this->modx->getChunk($outerTpl, $props);
             }
         }
+
         return $out;
     }
     
