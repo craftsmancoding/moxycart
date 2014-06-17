@@ -5,9 +5,9 @@
  * @package moxycart 
  */
 namespace Moxycart;
-class OptionTypeController extends APIController {
+class OptionController extends APIController {
 
-    public $model = 'OptionType'; 
+    public $model = 'Option'; 
         
  
     public function postTerms(array $scriptProperties = array()) {    
@@ -23,12 +23,12 @@ class OptionTypeController extends APIController {
         unset($scriptProperties['seq']);
 
 
-        $OT = new OptionType($this->modx);
-        $otype_id = (int) $this->modx->getOption('otype_id',$scriptProperties);
+        $OT = new Option($this->modx);
+        $otype_id = (int) $this->modx->getOption('option_id',$scriptProperties);
         $OT = $OT->find($otype_id);
     
         if (!$OT = $OT->find($otype_id)) {
-            return $this->sendFail(array('msg'=>'Parent Option Type not found'));
+            return $this->sendFail(array('msg'=>'Parent Option not found'));
         }
         
         $records = $OT->indexedToRecordset($scriptProperties);

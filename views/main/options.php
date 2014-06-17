@@ -46,15 +46,15 @@ print $this->getMsg();
 <?php foreach ($data['results'] as $r) :?>
     <tr>
         <td>
-            <input type="hidden" name="seq[]" value="<?php print $r->get('otype_id'); ?>" />
+            <input type="hidden" name="seq[]" value="<?php print $r->get('option_id'); ?>" />
             <?php print $r->get('slug'); ?>
         </td>
         <td><?php print $r->get('name'); ?></td>
         <td><?php print $r->get('description'); ?></td>
         <td>
-            <span class="button btn" onclick="javascript:paint('optionedit',{otype_id:<?php print $r->get('otype_id'); ?>});">Edit</span>
-            <span class="button btn" onclick="javascript:paint('optionterms',{otype_id:<?php print $r->get('otype_id'); ?>});">Manage Terms</span>
-            <span class="button btn" onclick="javascript:mapi('optiontype','delete',{otype_id:<?php print $r->get('otype_id'); ?>},function(response){ paint('options'); });">Delete</span>     
+            <span class="button btn" onclick="javascript:paint('optionedit',{option_id:<?php print $r->get('option_id'); ?>});">Edit</span>
+            <span class="button btn" onclick="javascript:paint('optionterms',{option_id:<?php print $r->get('option_id'); ?>});">Manage Terms</span>
+            <span class="button btn" onclick="javascript:mapi('optiontype','delete',{option_id:<?php print $r->get('option_id'); ?>},function(response){ paint('options'); });">Delete</span>     
         </td>
     </tr>
 <?php endforeach; ?>

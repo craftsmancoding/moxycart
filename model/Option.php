@@ -5,9 +5,9 @@
  * E.g. Color, Size, Material -- any container for VariationTerms
  */
 namespace Moxycart;
-class OptionType extends BaseModel {
+class Option extends BaseModel {
 
-    public $xclass = 'OptionType';
+    public $xclass = 'Option';
     public $default_sort_col = 'name';     
     public $otype_id;
     public $search_columns = array('slug','name','description'); 

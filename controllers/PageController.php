@@ -149,11 +149,16 @@ class PageController extends BaseController {
         //      Terms:[{slug:"","name":""}]
         //   }
         // ]
-        $Os = $this->modx->getCollectionGraph('Option','{"Terms":{}}');
+        $c = $this->modx->newQuery('Option');
+        $c->sortby('Option.seq','ASC');
+        $c->sortby('Terms.seq','ASC');
+
+        $Os = $this->modx->getCollectionGraph('Option','{"Terms":{}}',$c);
         $Options = array();
         foreach ($Os as $o) {
             $Options[] = $o->toArray('',false,false,true);
         }
+        //print_r($Options); exit;
         $this->setPlaceholder('Options',$Options);
 
         // categories (foxycart)
@@ -248,7 +253,7 @@ class PageController extends BaseController {
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.json_encode($full_product_data).';            
             var use_editor = "'.$this->modx->getOption('use_editor').'";
-            var assets_url = "'.$this->config['assets_url'].'"; 
+            var assets_url = "'.self::url('asset','create',array(),'assman').'"; 
             // Document read stuff has to be in here
             jQuery(document).ready(function() {
                 console.log("ready to init product.");
@@ -525,7 +530,9 @@ class PageController extends BaseController {
         return $this->fetchTemplate('main/options.php');
     }
 
+
     public function postOptions(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_ERROR, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $seq = 0;
         foreach ($scriptProperties['seq'] as $option_id) {
             $OType = $this->modx->getObject('Option', array('option_id' => $option_id));
