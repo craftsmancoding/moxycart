@@ -5,14 +5,14 @@
     </div>
 </div>
 
-<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Here you can Edit Option Types.</p></div>
+<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Here you can Edit Options.</p></div>
 
 <div class="moxycart_canvas_inner">
 
 <?php
 \Formbuilder\Form::setTpl('description','<p class="description-txt">[+description+]</p>');
 print \Formbuilder\Form::open($data['baseurl'],array('id'=>'optiontype_edit'))
-    ->hidden('otype_id',$data['otype_id'])
+    ->hidden('option_id',$data['option_id'])
     ->text('slug', $data['slug'], array('label'=>'Slug','description'=>'Lowercase alphanumeric identifier with no spaces or special characters.','class'=>'input input-half'))
     ->text('name', $data['name'], array('label'=>'Name','description'=>'Human readable name for this list.','class'=>'input input-half'))
     ->text('description', $data['description'], array('label'=>'Description', 'description'=>'A brief description of the field.','class'=>'input input-half'))

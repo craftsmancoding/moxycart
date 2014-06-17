@@ -1,6 +1,6 @@
 <?php
 /**
- * OptionType
+ * Option
  *
  * E.g. Color, Size, Material -- any container for VariationTerms
  */
@@ -9,7 +9,7 @@ class Option extends BaseModel {
 
     public $xclass = 'Option';
     public $default_sort_col = 'name';     
-    public $otype_id;
+    public $option_id;
     public $search_columns = array('slug','name','description'); 
 
     /**
@@ -19,27 +19,27 @@ class Option extends BaseModel {
      */
     private function _verifyExisting() {
     
-        if (!$this->modelObj->isNew() && !empty($this->otype_id)) {
-            return $this->otype_id;
+        if (!$this->modelObj->isNew() && !empty($this->option_id)) {
+            return $this->option_id;
         }
 
-        if(!$this->otype_id = $this->get('otype_id')) {
+        if(!$this->option_id = $this->get('option_id')) {
             throw new \Exception('Option Type ID not defined');
         }
         // Make sure we're not getting jerked around by an un-persisted product_id
-        if (!$O = $this->modx->getObject('OptionType', $this->otype_id)) {
-            throw new \Exception('Option Type does not exist '.$this->otype_id);    
+        if (!$O = $this->modx->getObject('Option', $this->option_id)) {
+            throw new \Exception('Option Type does not exist '.$this->option_id);    
         }
         
-        return $this->otype_id; 
+        return $this->option_id; 
     }
 
     /**
      * Add and Remove anything not set in the 
      */
     public function dictateTerms(array $records) {
-        $otype_id = $this->_verifyExisting();
-        $Terms = $this->modx->getCollection('OptionTerm', array('otype_id'=>$otype_id));
+        $option_id = $this->_verifyExisting();
+        $Terms = $this->modx->getCollection('OptionTerm', array('option_id'=>$option_id));
  
         $ids = array();
         foreach ($records as $r) {
@@ -50,6 +50,7 @@ class Option extends BaseModel {
                 $t->remove();
             }
         }
+        $seq = 0;
         foreach ($records as $r) {
             if ($r['oterm_id']) {
                 if (!$OT = $this->modx->getObject('OptionTerm', $r['oterm_id'])) {
@@ -60,8 +61,10 @@ class Option extends BaseModel {
                 $OT = $this->modx->newObject('OptionTerm');
             }
             $OT->fromArray($r);
-            $OT->set('otype_id',$otype_id);
+            $OT->set('option_id',$option_id);
+            $OT->set('seq', $seq);
             $OT->save();
+            $seq++;
         }
     }
     

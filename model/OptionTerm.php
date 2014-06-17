@@ -11,13 +11,13 @@ class OptionTerm extends BaseModel {
     public $default_sort_col = 'name';
     
     /**
-     * Validate the otype_id
+     * Validate the option_id
      *
      */
     public function save() {
         $result = true;
-        if (!$Otype = $this->modx->getObject('OptionType', $this->get('otype_id'))) {
-            $this->errors['otype_id'] = 'Invalid Option Type';
+        if (!$Otype = $this->modx->getObject('Option', $this->get('option_id'))) {
+            $this->errors['option_id'] = 'Invalid Option Type';
             $result = false;
         }
         

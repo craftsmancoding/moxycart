@@ -216,7 +216,7 @@ class BaseController extends \modExtraManagerController {
         
         $path = $this->modx->getOption('moxycart.core_path','', MODX_CORE_PATH.'components/moxycart/').'views/';
 
-        $data =& $this->getPlaceholders();
+        $data = $this->getPlaceholders();
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'View: ' .$file.' data: '.print_r($data,true),'','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
 		if (!is_file($path.$file)) {
     		$this->modx->log(\modX::LOG_LEVEL_ERROR, 'View file does not exist: '. $file, '','BaseController::'.__FUNCTION__,'Line:'.__LINE__);

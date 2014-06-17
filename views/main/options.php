@@ -67,7 +67,7 @@ print $this->getMsg();
 </form>
 <?php else: ?>
 
-    <div class="danger">You have not created any product options yet.</div>
+    <div class="danger">No options found.</div>
 
 <?php endif; ?>
 

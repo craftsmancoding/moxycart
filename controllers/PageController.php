@@ -186,6 +186,7 @@ class PageController extends BaseController {
         $offset = (int) $this->modx->getOption('offset',$scriptProperties,0);
         $this->_setProductColumns();
         $this->setPlaceholders($scriptProperties);
+        $this->setPlaceholder('searchterm','');        
         $this->setPlaceholder('results', $results);
         $this->setPlaceholder('count', $count);
         $this->setPlaceholder('offset', $offset);
@@ -244,7 +245,7 @@ class PageController extends BaseController {
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
+        $this->modx->regClientStartupScript($this->config['assman_assets_url'].'js/dropzone.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
 
@@ -263,7 +264,7 @@ class PageController extends BaseController {
         if ($this->modx->getOption('use_editor')) {
             $this->_load_tinyMCE();
         }
-
+        $this->setPlaceholder('product_options',array());
         return $this->fetchTemplate('product/edit.php');
 
     }    
@@ -449,10 +450,11 @@ class PageController extends BaseController {
         $results = $Obj->all($scriptProperties);
         //$debug = $Obj->all($scriptProperties,true);
         //print $debug; exit;
-        $this->setPlaceholder('debug', $debug);
+        //$this->setPlaceholder('debug', $debug);
         // We need these for pagination
         $scriptProperties['count'] = $Obj->count($scriptProperties);        
         $scriptProperties['baseurl'] = self::url('field','index');
+        $this->setPlaceholder('searchterm','');
         $this->setPlaceholder('results', $results);
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('main/fields.php');
@@ -478,6 +480,13 @@ class PageController extends BaseController {
         $scriptProperties['count'] = $Obj->count($scriptProperties);        
         $scriptProperties['baseurl'] = self::url('field','index');
         $this->setPlaceholder('results', $results);
+        $this->setPlaceholder('slug','');
+        $this->setPlaceholder('label','');
+        $this->setPlaceholder('type','');
+        $this->setPlaceholder('description','');
+        $this->setPlaceholder('config','');
+        $this->setPlaceholder('group','');
+        
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('field/create.php');
     }    
@@ -526,6 +535,7 @@ class PageController extends BaseController {
         $scriptProperties['count'] = $Obj->count($scriptProperties);        
         $scriptProperties['baseurl'] = self::url('option','index');
         $this->setPlaceholder('results', $results);
+        $this->setPlaceholder('searchterm','');
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('main/options.php');
     }

@@ -97,7 +97,7 @@
             "OptionTerm" : {
                 "preserve_keys": true,
                 "update_object": true, 
-                "unique_key": ["otype_id","slug"]
+                "unique_key": ["option_id","slug"]
             },
             "Option" : {
                 "preserve_keys": true,
@@ -108,7 +108,7 @@
                     "Terms" : {
                         "preserve_keys": false,
                         "update_object": false, 
-                        "unique_key": ["otype_id","slug"]
+                        "unique_key": ["option_id","slug"]
                     }
                 }
             },    

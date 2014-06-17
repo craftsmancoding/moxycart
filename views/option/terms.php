@@ -37,7 +37,7 @@ print $this->getMsg();
 <?php
 /*
 print \Formbuilder\Form::open($data['baseurl'])
-    ->hidden('otype_id',$data['otype_id'])
+    ->hidden('option_id',$data['option_id'])
     ->text('slug', $data['slug'], array('label'=>'Slug','description'=>'Lowercase alphanumeric identifier with no spaces or special characters.'))
     ->text('name', $data['name'], array('label'=>'Name','description'=>'Human readable name for this list.'))
     ->text('description', $data['description'], array('label'=>'Description', 'description'=>'A brief description of the field.'))
@@ -46,7 +46,7 @@ print \Formbuilder\Form::open($data['baseurl'])
 */
 ?>
 <form action="<?php print $data['baseurl']; ?>" method="post" id="option_terms">
-    <input type="hidden" name="otype_id" value="<?php print $data['otype_id']; ?>" />
+    <input type="hidden" name="option_id" value="<?php print $data['option_id']; ?>" />
     <table id="option_terms" class="classy">
         <thead>
             <tr>
@@ -101,7 +101,7 @@ print \Formbuilder\Form::open($data['baseurl'])
         </tbody>
     </table>
     <br>
-    <span class="btn moxycart-btn" onclick="javascript:submit_form('option_terms', '<?php print self::url('optiontype','terms'); ?>','options');">Save</span>
+    <span class="btn moxycart-btn" onclick="javascript:submit_form('option_terms', '<?php print self::url('option','terms'); ?>','options');">Save</span>
     <span class="btn btn-cancel" onclick="javascript:paint('options');">Cancel</span>
 
 </form>

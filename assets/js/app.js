@@ -156,8 +156,9 @@ function mapi(classname,methodname,data,callback) {
  */
 function submit_form(formid,url,redirect) {
     console.debug('[submit_form]',formid,url);
-    jQuery.post(url, jQuery('#'+formid).serialize(),function( response ) {
-        console.debug(response);
+    var data = jQuery('#'+formid).serialize();
+    jQuery.post(url, data,function( response ) {
+        console.debug('Response:', response);
         if(response.status == 'fail') {
             console.log('The operation failed!', response.data.errors);
             var msg = 'Error:<br/>';
@@ -167,6 +168,7 @@ function submit_form(formid,url,redirect) {
             return show_error(msg); 
         }
         else if (response.status == 'success') {
+            console.log('[submit_form] Success!', response.data.msg);
             show_success(response.data.msg);
             paint(redirect);
         }

@@ -81,7 +81,7 @@ class IndexManagerController extends \Moxycart\BaseController {
      * @return instance of a controller object
      */
     public static function getInstance(\modX &$modx, $className, array $config = array()) {
-
+//        $modx->setLogLevel(3);
         $config['method'] = (isset($_REQUEST['method'])) ? $_REQUEST['method'] : 'index';
         $class = (isset($_REQUEST['class'])) ? $_REQUEST['class'] : 'Page'; // Default Controller
         

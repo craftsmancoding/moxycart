@@ -11,7 +11,12 @@ class OptionController extends APIController {
         
  
     public function postTerms(array $scriptProperties = array()) {    
-
+        $this->modx->setLogLevel(4);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, print_r($scriptProperties,true),'','Moxycart OptionController:'.__FUNCTION__);
+        $OT = new Option($this->modx);
+/*
+        $data = $OT->indexedToRecordset($scriptProperties);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, print_r($data,true),'','Moxycart OptionController:'.__FUNCTION__);
         $seq = 0;
         foreach ($scriptProperties['seq'] as $oterm_id) {
             $OTerm = $this->modx->getObject('OptionTerm', array('oterm_id' => $oterm_id));
@@ -21,13 +26,14 @@ class OptionController extends APIController {
         }
 
         unset($scriptProperties['seq']);
+*/
 
 
-        $OT = new Option($this->modx);
-        $otype_id = (int) $this->modx->getOption('option_id',$scriptProperties);
-        $OT = $OT->find($otype_id);
+        
+        $option_id = (int) $this->modx->getOption('option_id',$scriptProperties);
+        $OT = $OT->find($option_id);
     
-        if (!$OT = $OT->find($otype_id)) {
+        if (!$OT = $OT->find($option_id)) {
             return $this->sendFail(array('msg'=>'Parent Option not found'));
         }
         
