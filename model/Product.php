@@ -942,7 +942,11 @@ class Product extends BaseModel {
         }
 
         $product_id = $this->getPrimaryKey(); // $this->get('product_id');
-        if (isset($data['Assets'])) $this->dictateAssets($data['Assets']);
+        if (isset($data['Assets'])) {
+            $Asset = new \Assman\Asset($this->modx);
+            $Asset->dictateRelations($data['Assets'], $product_id, 'product_id', 'ProductAsset');
+//            $this->dictateAssets($data['Assets']);
+        }
         if (isset($data['Fields'])) $this->dictateFields($data['Fields']);
         if (isset($data['Options'])) $this->dictateOptions($data['Options']);
         if (isset($data['Relations'])) $this->dictateRelations($data['Relations']);

@@ -1,37 +1,3 @@
-<?php
-/*
-// WTF? Stuff doesn't load correctly if I load it here (?!?)
-
-$this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
-$this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
-$this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
-$this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
-
-$this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
-$this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
-$this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
-
-$this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
-$this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
-$this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
-
-$this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
-$this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
-
-$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-	var product = '.$data['result']->toJson().';            
-    var use_editor = "'.$this->modx->getOption('use_editor').'";
-    var assets_url = "'.$this->config['assets_url'].'"; 
-    // Document read stuff has to be in here
-    jQuery(document).ready(function() {
-        product_init();
-    });
-	</script>');
-if ($this->modx->getOption('use_editor')) {
-    $this->_load_tinyMCE();
-}
-*/
-?>
 <style>
 /* http://jsfiddle.net/thirtydot/NTKK3/ */
 .asset_thumbnail_container {
@@ -95,7 +61,7 @@ function product_init() {
 
 
     // Dropzone for Assets 
-    var myDropzone = new Dropzone("div#image_upload", {url: controller_url("asset","create")});    
+    var myDropzone = new Dropzone("div#image_upload", {url: assets_url});    
     // Refresh the list on success (append new tile to end)
     myDropzone.on("success", function(file,response) {
 
@@ -786,7 +752,6 @@ jQuery(document).ready(function() {
                 foreach ($data['product_assets'] as $a): ?>
                     <li class="li_product_image" id="product-asset-<?php print $a->get('asset_id'); ?>">
                     	<div class="img-info-wrap">
-                    	    <!--a class="edit-img" href="#<?php print $a->get('asset_id'); ?>" data-asset_id="<?php print $a->get('asset_id'); ?>" data-toggle="modal" data-target="#update-image"-->
                     		  <img src="<?php print $a->Asset->get('thumbnail_url'); ?>?rand=<?php print uniqid(); ?>" alt="<?php print $a->Asset->get('alt'); ?>" width="" onclick="javascript:jQuery('#asset_edit_form').data('asset_id', <?php print $a->get('asset_id'); ?>).dialog('open');" style="cursor:pointer;"/>
                     		<!--/a-->
                     	    <input type="hidden" id="asset_asset_id_<?php print $a->get('asset_id'); ?>" class="asset_asset_id" name="Assets[asset_id][]" value="<?php print $a->get('asset_id'); ?>" />

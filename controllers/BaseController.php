@@ -420,11 +420,11 @@ class BaseController extends \modExtraManagerController {
      * @param string $class of one of our controllers
      * @param string $method default: index
      * @param array any optional arguments, e.g. array('action'=>'children','parent'=>123)
+     * @param string namespace (rare)
      * @return string
      */
-    public static function url($class='',$method='index',$args=array()) {
+    public static function url($class='',$method='index',$args=array(),$namespace='moxycart') {
         // future: pass as args:
-        $namespace='moxycart';
         $controller='index';
         $url = MODX_MANAGER_URL;
         if ($Action = static::$x->getObject('modAction', array('namespace'=>$namespace,'controller'=>$controller))) {

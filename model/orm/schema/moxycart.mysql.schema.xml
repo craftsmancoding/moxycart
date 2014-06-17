@@ -347,58 +347,6 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 
 	</object>
-    
-	<!-- ! Asset -->
-	<!-- Assets live independently from products -->
-	<object class="Asset" table="assets" extends="xPDOObject">
-    	<field key="asset_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
-    	<field key="content_type_id" dbtype="int" precision="11" phptype="integer" null="false"/>
-		<field key="title" dbtype="varchar" precision="255" phptype="string" null="false" />
-		<field key="alt" dbtype="varchar" precision="255" phptype="string" null="false" />
-		<!-- stored URL relative to MODX_ASSET_URL . moxycart.upload_dir -->
-		<field key="url" dbtype="varchar" precision="255" phptype="string" null="false" index="index"/>
-		<!-- For images, this will be a smaller version of the image, otherwise it'll be an icon for the content type -->
-		<field key="thumbnail_url" dbtype="varchar" precision="255" phptype="string" null="false" index="index"/>
-		<!-- stored URL relative to MODX_ASSET_PATH . moxycart.upload_dir 
-		This might be null if a foriegn image is referenced
-		-->
-		<field key="path" dbtype="varchar" precision="255" phptype="string" null="true" index="index"/>
-		<field key="width" dbtype="int" precision="4" phptype="integer" null="false" />
-		<field key="height" dbtype="int" precision="4" phptype="integer" null="false" />
-		<field key="size" dbtype="int" precision="11" phptype="integer" null="false" comment="In Bytes"/>
-		<field key="duration" dbtype="int" precision="11" phptype="integer" null="false" comment="for videos and sound files: round to seconds"/>
-		<!-- md5_file signature calculation of the file or url -->
-		<field key="sig" dbtype="varchar" precision="40" phptype="string" null="false" index="index"/>
-		<field key="seq" dbtype="int" precision="4" phptype="integer" null="false" />
-		<field key="is_image" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
-		<field key="is_active" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
-		<field key="is_protected" dbtype="tinyint" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" />
-
-		<field key="timestamp_created" dbtype="timestamp" phptype="timestamp" null="true" default="CURRENT_TIMESTAMP" />
-		<field key="timestamp_modified" dbtype="timestamp" phptype="timestamp" null="true" />
-		
-		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
-			<column key="asset_id" length="" collation="A" null="false" />
-		</index>
-        <index alias="url" name="url" primary="false" unique="true" type="BTREE">
-			<column key="url" length="" collation="A" null="false" />
-		</index>
-        <index alias="path" name="path" primary="false" unique="true" type="BTREE">
-			<column key="path" length="" collation="A" null="true" />
-		</index>
-        <index alias="sig" name="sig" primary="false" unique="true" type="BTREE">
-			<column key="sig" length="" collation="A" null="false" />
-		</index>
-
-        <composite alias="Products" class="ProductAsset" local="asset_id" foreign="asset_id" cardinality="many" owner="local" />
-        <aggregate alias="ContentType" class="modContentType" local="content_type_id" foreign="id" cardinality="one" owner="foreign" />
-        
-		<validation>
-            <rule field="url" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="3" message="URL must be at least 3 characters."/>
-            <rule field="path" name="minlength" type="xPDOValidationRule" rule="xPDOMinLengthValidationRule" value="3" message="Path must be at least 3 characters."/>
-        </validation>
-	</object>
-
 
     <!-- ! ProductAsset 
     for linking product and assets. Sort into groups and then by seq.

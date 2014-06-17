@@ -93,6 +93,13 @@ class IndexManagerController extends \Moxycart\BaseController {
         $config['core_path'] = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
         $config['assets_url'] = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
 
+        $config['assman_core_path'] = $modx->getOption('assman.core_path', null, MODX_CORE_PATH.'components/assman/');
+        $config['assman_assets_url'] = $modx->getOption('assman.assets_url', null, MODX_ASSETS_URL.'components/assman/');
+
+        // Load up related libs
+//        print $config['assman_core_path'] .'vendor/autoload.php'; exit;
+        require_once $config['assman_core_path'] .'vendor/autoload.php';
+
         // If you don't do this, the $_POST array will seem to be populated even during normal GET requests.
         unset($_POST['HTTP_MODAUTH']);
         // Function names are not case sensitive

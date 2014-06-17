@@ -22,10 +22,6 @@ Valid pagename can be any function in the PageController (minus the get/post pre
         
         </li>
         <li class="moxycart_nav_item">
-            <!--span class="linklike" onclick="javascript:paint('assets');">Assets</span-->
-            <a href="<?php print self::page('assets'); ?>">Assets</a>
-        </li>
-        <li class="moxycart_nav_item">
             <!--span class="linklike" onclick="javascript:paint('fields');">Custom Fields</span-->
             <a href="<?php print self::page('fields'); ?>">Custom Fields</a>
         </li>

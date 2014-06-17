@@ -12,7 +12,6 @@ $xpdo_meta_map = array (
     2 => 'Review',
     3 => 'Option',
     4 => 'OptionTerm',
-    5 => 'Asset',
   ),
   'xPDOSimpleObject' => 
   array (

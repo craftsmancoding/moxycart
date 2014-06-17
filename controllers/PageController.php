@@ -164,50 +164,6 @@ class PageController extends BaseController {
         $this->setPlaceholder('types',$P->getTypes());        
     
     }
-    
-    //------------------------------------------------------------------------------
-    //! Assets
-    //------------------------------------------------------------------------------
-    /**
-     * Asset management main page
-     *
-     * @param array $scriptProperties
-     */
-    public function getAssets(array $scriptProperties = array()) {
-        $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
-        $Obj = new Asset($this->modx);
-        $results = $Obj->all($scriptProperties);
-//        return $results; exit;
-        $this->setPlaceholder('results', $results);
-        $this->setPlaceholders($scriptProperties);
-        return $this->fetchTemplate('main/assets.php');
-    }
-
-    public function postAssets(array $scriptProperties = array()) {
-        return $this->getAssets($scriptProperties);
-    }
- 
-     public function getAssetCreate(array $scriptProperties = array()) {
-        $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
-        $Obj = new Asset($this->modx);
-        $results = $Obj->all($scriptProperties);
-        $this->setPlaceholder('results', $results);
-        $this->setPlaceholders($scriptProperties);
-        return $this->fetchTemplate('asset/create.php');
-    }    
-
-    public function getAssetEdit(array $scriptProperties = array()) {
-        $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
-        $asset_id = (int) $this->modx->getOption('asset_id',$scriptProperties);
-        $Obj = new Asset($this->modx);    
-        if (!$result = $Obj->find($asset_id)) {
-            return $this->sendError('Page not found.');
-        }
-        $this->setPlaceholders($scriptProperties);
-        $this->setPlaceholders($result->toArray());
-        $this->setPlaceholder('result',$result);
-        return $this->fetchTemplate('asset/edit.php');
-    }
 
     //------------------------------------------------------------------------------
     //! Products
@@ -338,7 +294,7 @@ class PageController extends BaseController {
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
+        $this->modx->regClientStartupScript($this->config['assman_assets_url'].'js/dropzone.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
 
@@ -348,7 +304,7 @@ class PageController extends BaseController {
     	   console.log("[moxycart] '.__FUNCTION__.'");
     		var product = '.json_encode($full_product_data).';            
             var use_editor = "'.$this->modx->getOption('use_editor').'";
-            var assets_url = "'.$this->config['assets_url'].'"; 
+            var assets_url = "'.self::url('asset','create',array(),'assman').'"; 
             // Document read stuff has to be in here
             jQuery(document).ready(function() {
                 product_init();

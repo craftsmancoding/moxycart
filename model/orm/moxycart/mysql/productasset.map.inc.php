@@ -89,7 +89,4 @@ $xpdo_meta_map['ProductAsset']= array (
       'owner' => 'foreign',
     ),
   ),
-  'validation' => 
-  array (
-  ),
 );
