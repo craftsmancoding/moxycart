@@ -738,6 +738,12 @@ class PageController extends BaseController {
     }
 
     public function postXcart(array $scriptProperties = array()) {
+        $assman_core_path = $modx->getOption('assman.core_path', null, MODX_CORE_PATH.'components/assman/');
+        $taxonomies_core_path = $modx->getOption('taxonomies.core_path', null, MODX_CORE_PATH.'components/taxonomies/');
+
+        require_once $assman_core_path.'vendor/autoload.php';
+        require_once $taxonomies_core_path.'vendor/autoload.php';
+
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);    
         $this->_setUIdata();
         $this->setPlaceholders($scriptProperties);

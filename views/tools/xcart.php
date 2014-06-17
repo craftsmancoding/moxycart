@@ -434,7 +434,7 @@ foreach ($image_tables as $tbl) {
             'is_active' => ($i['avail'] == 'Y') ? true : false, 
         );
         
-        $Asset = new \Moxycart\Asset($this->modx);
+        $Asset = new \Assman\Asset($this->modx);
         
         try {        
             $Asset = $Asset->fromFile($FILE);
