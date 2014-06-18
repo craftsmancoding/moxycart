@@ -294,9 +294,11 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 	<!-- This is a weird one!  Specifies which terms are visible for a given Option for a given Product.
 	The listed options here might be omitted from viable selection, or they might be included.
 	Behavior determined by the ProductOption meta field.
+	Some redundancies here make for easier lookups.
 	-->
 	<object class="ProductOptionMeta" table="product_option_meta" extends="xPDOSimpleObject">
-		<field key="productoption_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		<field key="option_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="oterm_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		
 		<!-- Product Option Modifiers: these can override the global settings on a per-product basis -->
@@ -312,10 +314,13 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		</index>
 
         <index alias="productoptionmeta" name="productoptionmeta" primary="false" unique="true" type="BTREE">
-			<column key="productoption_id" length="" collation="A" null="false" />        
+			<column key="product_id" length="" collation="A" null="false" />
+			<column key="option_id" length="" collation="A" null="false" />
 			<column key="oterm_id" length="" collation="A" null="false" />
 		</index>
 		
+		<aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+		<aggregate alias="Option" class="Option" local="option_id" foreign="option_id" cardinality="one" owner="foreign" />
         <aggregate alias="Term" class="OptionTerm" local="oterm_id" foreign="oterm_id" cardinality="one" owner="foreign" />
         <aggregate alias="Asset" class="Asset" local="asset_id" foreign="asset_id" cardinality="one" owner="foreign" />        
 	</object>

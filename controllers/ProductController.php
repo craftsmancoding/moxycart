@@ -146,9 +146,9 @@ Array
 
      */
     public function postEdit(array $scriptProperties = array()) {
-        //$this->modx->setLogLevel(4);
-        $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
-        $this->modx->setLogLevel(1);
+        $this->modx->setLogLevel(4);
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
+        
         // This doesn't work unless you add the namespace.
         // Oddly, if you write it out (w/o a var), it works. wtf?
         $classname = '\\Moxycart\\'.$this->model;
@@ -167,7 +167,7 @@ Array
         //  Assets: has is_active
         //  Fields: has a value
         //  Relations: has a type
-        $related_indices = array('Assets','Fields','Relations','Options');
+        $related_indices = array('Assets','Fields','Relations','Options','Meta');
         foreach($related_indices as $k) {
             if (isset($scriptProperties[$k])) $scriptProperties[$k] = $Product->indexedToRecordset($scriptProperties[$k]);
         }
@@ -183,13 +183,14 @@ Array
      * Pretty much identical to postEdit, but we don't validate for the product_id
      */
     public function postCreate(array $scriptProperties = array()) {
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
+        //exit;
         // This doesn't work unless you add the namespace.
         // Oddly, if you write it out (w/o a var), it works. wtf?
         $classname = '\\Moxycart\\'.$this->model;
         $Product = new $classname($this->modx);    
 
-        $related_indices = array('Assets','Fields','Relations');
+        $related_indices = array('Assets','Fields','Relations','Options','Meta');
         foreach($related_indices as $k) {
             if (isset($scriptProperties[$k])) $scriptProperties[$k] = $Product->indexedToRecordset($scriptProperties[$k]);
         }

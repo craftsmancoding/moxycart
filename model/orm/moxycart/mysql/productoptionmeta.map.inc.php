@@ -6,7 +6,8 @@ $xpdo_meta_map['ProductOptionMeta']= array (
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
-    'productoption_id' => NULL,
+    'product_id' => NULL,
+    'option_id' => NULL,
     'oterm_id' => NULL,
     'mod_price' => 0,
     'mod_weight' => 0,
@@ -16,7 +17,14 @@ $xpdo_meta_map['ProductOptionMeta']= array (
   ),
   'fieldMeta' => 
   array (
-    'productoption_id' => 
+    'product_id' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => false,
+    ),
+    'option_id' => 
     array (
       'dbtype' => 'int',
       'precision' => '11',
@@ -95,7 +103,13 @@ $xpdo_meta_map['ProductOptionMeta']= array (
       'type' => 'BTREE',
       'columns' => 
       array (
-        'productoption_id' => 
+        'product_id' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+        'option_id' => 
         array (
           'length' => '',
           'collation' => 'A',
@@ -112,6 +126,22 @@ $xpdo_meta_map['ProductOptionMeta']= array (
   ),
   'aggregates' => 
   array (
+    'Product' => 
+    array (
+      'class' => 'Product',
+      'local' => 'product_id',
+      'foreign' => 'product_id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
+    'Option' => 
+    array (
+      'class' => 'Option',
+      'local' => 'option_id',
+      'foreign' => 'option_id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
     'Term' => 
     array (
       'class' => 'OptionTerm',

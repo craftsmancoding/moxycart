@@ -569,16 +569,11 @@ jQuery(document).ready(function() {
                                      <h2>Product Options</h2>
                                      <p>Allow your visitors to select variations in your product.</p><br>
                                     <?php
+                                    //print '<pre>'; print_r($data['Options']); print '</pre>'; exit;
                                     // @#$%@#. Special stuff here: we gotta force the field names to ensure that arrays are in sync.
-                                    foreach ($data['Options'] as $o):
+                                    foreach ($data['Options'] as $o): 
                                         $option_id = $o['option_id'];
-                                        $terms = array();
-                                        if (isset($o['Terms']) && is_array($o['Terms'])) {
-                                            foreach ($o['Terms'] as $t) {
-                                                $terms[ $t['oterm_id'] ] = sprintf('%s (%s)', $t['name'], $t['slug']);
-                                            }
-                                        }
-                                        ?>
+                                    ?>
                                         <div class="term-option-wrap">
                                         <?php
                                         print \Formbuilder\Form::checkbox("Options[checked][$option_id]", $data['product_options'][$option_id]['checked'], array('label'=>sprintf('%s (%s)', $o['name'], $o['slug'])), '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
@@ -602,47 +597,48 @@ jQuery(document).ready(function() {
                                                 </thead>
                                                 <tbody>
                                                 
-                                        <?php
-                                            //print \Formbuilder\Form::multicheck("Options[Terms][$option_id]", $terms, $data['product_options'][$option_id]['ProductOptionMeta'],array());
-                                            // '[+error+]                            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+is_checked+] [+extra+]/> [+option+]<br/>'
-                                            foreach ($data['product_options'][$option_id]['Terms'] as $oterm_id => $m):
+                                            <?php
+                                            // Option Meta Data
+                                            foreach ($data['product_option_meta'][$option_id]['Terms'] as $oterm_id => $m):
+                                                // We gotta ref an arbitrary integer as a placeholder in the POST array to keep arrays in sync
                                             ?>
                                                 <tr>
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::checkbox("Options[Terms][$option_id][option_id][]", $m['checked'], array('checked_value'=>$oterm_id,'label'=>$m['name']));
+                                                            print \Formbuilder\Form::hidden("Meta[option_id][$oterm_id]", $option_id);
+                                                            print \Formbuilder\Form::hidden("Meta[oterm_id][$oterm_id]", $oterm_id);
+                                                            print \Formbuilder\Form::checkbox("Meta[checked][$oterm_id]", $m['checked'], array('label'=>$m['name']));
                                                         ?>
                                                     </td>
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_price]", $m['mod_price'], array('style'=>'width: 100px;'));
+                                                         print \Formbuilder\Form::text("Meta[mod_price][$oterm_id]", $m['mod_price'], array('style'=>'width: 100px;'));
 
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_weight]", $m['mod_weight'], array('style'=>'width: 50px;'));
+                                                         print \Formbuilder\Form::text("Meta[mod_weight][$oterm_id]", $m['mod_weight'], array('style'=>'width: 50px;'));
 
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
 
-                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_code]", $m['mod_code'], array('style'=>'width: 50px;'));
+                                                         print \Formbuilder\Form::text("Meta[mod_code][$oterm_id]", $m['mod_code'], array('style'=>'width: 50px;'));
                                                         ?>
                                                     </td>                                                    
 
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_category]", $m['mod_category'], array('style'=>'width: 150px;'));
+                                                         print \Formbuilder\Form::text("Meta[mod_category][$oterm_id]", $m['mod_category'], array('style'=>'width: 150px;'));
                                                         ?>
                                                     </td>                                                    
 
                                                 </tr>
                                             <?php
                                             endforeach;
-                                            
-                                        ?>
+                                            ?>
                                             </tbody>
                                             </table>
                                         </fieldset>

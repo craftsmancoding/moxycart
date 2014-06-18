@@ -366,34 +366,48 @@ class PageController extends BaseController {
         $c = $this->modx->newQuery('ProductOption');
         $c->where(array('product_id' => $product_id));
         $c->sortby('seq','ASC');        
-        $POTs = $this->modx->getCollectionGraph('ProductOption','{"Meta":{}}', $c);
+        $POTs = $this->modx->getCollection('ProductOption', $c);
 
         foreach ($POTs as $p) {
-            $Terms = $this->modx->getCollection('OptionTerm',array('option_id'=>$p->get('option_id')));
-            foreach ($Terms as $t) {
-                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ] = $t->toArray();
-                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['checked'] = false;
-                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_price'] = '';
-                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_weight'] = '';
-                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_code'] = '';
-                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_category'] = '';
-                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['asset_id'] = ''; // future
-            } 
+        
+            $product_options[ $p->get('option_id') ]['option_id'] = $p->get('option_id');
             $product_options[ $p->get('option_id') ]['checked'] = true;
             $product_options[ $p->get('option_id') ]['meta'] = $p->get('meta');
-            
-            foreach ($p->Meta as $m) {
-                $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['checked'] = true;
-                $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_price'] = $m->get('mod_price');
-                $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_weight'] = $m->get('mod_weight');
-                $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_code'] = $m->get('mod_code');
-                $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_category'] = $m->get('mod_category');
-                $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['asset_id'] = $m->get('asset_id');                
+
+        }
+        //print '<pre>'; print_r($product_options); print '</pre>'; exit;
+        $this->setPlaceholder('product_options',$product_options);
+
+        // product_option_meta
+        $meta = array();
+        $c = $this->modx->newQuery('OptionTerm');
+        $c->where(array('product_id' => $product_id));
+        $c->sortby('seq','ASC');        
+        $Terms = $this->modx->getCollectionGraph('OptionTerm', $c);
+
+        foreach ($Terms as $t) {
+            // Global values
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ] = $t->toArray();
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['checked'] = false;
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_price'] = '';
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_weight'] = '';
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_code'] = '';
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_category'] = '';
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['asset_id'] = ''; // future
+
+            // Overrides for this product and this option
+            $Metas = $this->modx->getCollection('ProductOptionMeta',array('product_id'=>$product_id, 'option_id'=>$t->get('option_id')));
+            foreach ($Metas as $m) {
+                $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['checked'] = true; // if it exists, it is used i.e. checked
+                $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_price'] = $m->get('mod_price');
+                $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_weight'] = $m->get('mod_weight');
+                $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_code'] = $m->get('mod_code');
+                $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_category'] = $m->get('mod_category');
+                $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['asset_id'] = $m->get('asset_id');                
             }
         }
-//        print '<pre>'; print_r($product_options); print '</pre>'; exit;
-        $this->setPlaceholder('product_options',$product_options);
-        
+        //print '<pre>'; print_r($meta); print '</pre>'; exit;
+        $this->setPlaceholder('product_option_meta',$meta);
                 
         // ProductTaxonomy
         $product_taxonomies = array();

@@ -593,36 +593,6 @@ class Product extends BaseModel {
         return true;
     }
 
-    /**
-     * Dictate terms for the current product.
-     * This will remove all terms not in the given $array, add any new relations from the $array,
-     * it will order the relations based on the incoming $array order (seq will be set).
-     * Exeptions are thrown if the product ids do not exist.
-     *
-     * @param array $dictate'd related_id's
-     */
-    public function dictateTerms(array $dictate) {
-        $this_product_id = $this->_verifyExisting();
-        
-        $props = array(
-            'product_id'=> $this_product_id,
-        );
-        
-        // Array of related_id's that are already defined
-        $existing = array();
-        if($ExistingColl = $this->modx->getObject('ProductTerm', $props)) {
-            $existing[] = $ExistingColl->get('term_id');   
-        }
-        
-        $to_remove = array_diff($existing,$dictate);
-        $to_add = array_diff($dictate,$existing);
-
-        $this->removeTerms($to_remove);
-        $this->addTerms($to_add);
-        
-        return true;
-    
-    }
         
     //------------------------------------------------------------------------------
     //! Fields
@@ -758,7 +728,7 @@ class Product extends BaseModel {
      * @param array $data related data
      */
     public function dictateOptions(array $data) {
-        $this->modx->setLogLevel(4);
+        //$this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating options: '.print_r($data,true),'',__CLASS__,__FILE__,__LINE__);
         $this_product_id = $this->_verifyExisting();
         
@@ -776,7 +746,6 @@ class Product extends BaseModel {
         
         $i = 0;
         foreach ($data as $option_id => $r) {
-            // $option_id is the real option id. $r['option_id'] indicates whether the field was checked
             if ($r['checked'] == 0) {
                 if ($PO = $this->modx->getObject('ProductOption', array('product_id'=>$this_product_id, 'option_id'=>$option_id))) {
                     if (!$PO->remove()) {
@@ -792,29 +761,57 @@ class Product extends BaseModel {
             $PO->set('meta', $r['meta']);
             $PO->set('product_id', $this_product_id);
             $PO->save();
-            
-            // all_terms: inherit from the parent
-            if ($r['meta'] == 'all_terms') {
-                if ($POM = $this->modx->getCollection('ProductOptionMeta', array('productoption_id'=> $PO->get('id')))) {
-                    foreach ($POM as $p) {
-                        $p->remove();
-                    }
-                }
-                continue;
-            }
-            
-            foreach ($r['Terms'] as $oterm_id) {
-                if (!$POM = $this->modx->getObject('ProductOptionMeta', array('productoption_id'=> $PO->get('id'),'oterm_id'=>$oterm_id))) {
-                    $POM = $this->modx->newObject('ProductOptionMeta');
-                    $POM->set('productoption_id', $PO->get('id'));
-                    $POM->set('oterm_id', $oterm_id);
-                    $POM->save();
-                }
-            }
         }
         
         return true;
     }
+
+
+    //------------------------------------------------------------------------------
+    //! Meta
+    //------------------------------------------------------------------------------
+    /**
+     * Dictate product option meta data
+     *
+     * @param array $data related data
+     */
+    public function dictateMeta(array $data) {
+        $this->modx->setLogLevel(4);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating meta: '.print_r($data,true),'',__CLASS__,__FILE__,__LINE__);
+        $this_product_id = $this->_verifyExisting();
+        
+        $props = array(
+            'product_id'=> $this_product_id, 
+        );
+        
+        foreach ($data as $d) {
+            if (!$M = $this->modx->getObject('ProductOptionMeta', 
+                array('product_id'=>$this_product_id,
+                    'option_id'=>$d['option_id'],
+                    'oterm_id'=>$d['oterm_id'])
+                )) {
+                
+                $M = $this->modx->newObject('ProductOptionMeta', 
+                    array('product_id'=>$this_product_id,
+                        'option_id'=>$d['option_id'],
+                        'oterm_id'=>$d['oterm_id'])
+                    );
+            }
+            
+            if (!isset($d['checked']) || !$d['checked']) {
+                $M->remove();
+                continue;
+            }
+            
+            $M->fromArray($d);
+            $M->set('product_id',$this_product_id);
+            $M->save();
+
+        }
+
+        return true;
+    }
+
     
     //------------------------------------------------------------------------------
     /**
@@ -949,9 +946,9 @@ class Product extends BaseModel {
         }
         if (isset($data['Fields'])) $this->dictateFields($data['Fields']);
         if (isset($data['Options'])) $this->dictateOptions($data['Options']);
+        if (isset($data['Meta'])) $this->dictateMeta($data['Meta']);
         if (isset($data['Relations'])) $this->dictateRelations($data['Relations']);
         if (isset($data['Taxonomies'])) $this->dictateTaxonomies($data['Taxonomies']);
-        if (isset($data['Terms'])) $this->dictateTerms($data['Terms']);
         
         return $product_id;
     }
