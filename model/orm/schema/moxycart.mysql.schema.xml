@@ -225,8 +225,8 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
 
 		<!-- Product Option Modifiers https://wiki.foxycart.com/v/1.1/cheat_sheet#product_option_modifiers -->
-		<field key="mod_price" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>
-        <field key="mod_weight" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>
+		<field key="mod_price" dbtype="decimal" precision="8,2" phptype="float" null="false" default=""/>
+        <field key="mod_weight" dbtype="decimal" precision="8,2" phptype="float" null="false" default=""/>
         <field key="mod_code" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="mod_category" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         
@@ -297,14 +297,15 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 	Some redundancies here make for easier lookups.
 	-->
 	<object class="ProductOptionMeta" table="product_option_meta" extends="xPDOSimpleObject">
+	    <field key="productoption_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="product_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="option_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="oterm_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		
 		<field key="is_override" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0" comment="If checked, apply the mods"/>
 		<!-- Product Option Modifiers: these can override the global settings on a per-product basis -->
-		<field key="mod_price" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>
-        <field key="mod_weight" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>
+		<field key="mod_price" dbtype="decimal" precision="8,2" phptype="float" null="false" default=""/>
+        <field key="mod_weight" dbtype="decimal" precision="8,2" phptype="float" null="false" default=""/>
         <field key="mod_code" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="mod_category" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
 		

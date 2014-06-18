@@ -461,7 +461,9 @@ if ($data['migrate_assets']):
 
 $this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Image Migration =============','','xcart',__LINE__);  
 $image_tables = array('xcart_images_B','xcart_images_C','xcart_images_D','xcart_images_F','xcart_images_G','xcart_images_L',
-    'xcart_images_M','xcart_images_P','xcart_images_S','xcart_images_T','xcart_images_W','xcart_images_Z');
+    'xcart_images_M','xcart_images_P','xcart_images_S',
+    //'xcart_images_T', // thumbnails.
+    'xcart_images_W','xcart_images_Z');
 $this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import: Images =============','','xcart',__LINE__);  
 $prefix = './images/';
 foreach ($image_tables as $tbl) {

@@ -69,49 +69,58 @@ else {
 $c = $modx->newQuery('ProductOption');
 $c->where(array('ProductOption.product_id' => $product_id));
 $c->sortby('Option.seq','ASC');
-
+//$c->bindGraph('{"Option":{"Terms":{}},"Meta":{}}');
+//$c->prepare();
+//return 'xxxx<pre>'.$c->toSQL().'</pre>';
 $properties['options'] = '';
-if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{},"Meta":{}}',$c)) {
+
+if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}',$c)) {
 
     foreach ($Options as $o) {
-        
-        
-        $opt = '<label for="'.$o->Option->get('slug').'" class="'.$cssClassOptionLabel.'">'.$o->Option->get('name').'</label><select id="'.$o->Option->get('slug').'" name="'.$o->Option->get('slug').'" class="'.$cssClassOptionSelect.'">';
-        $c = $modx->newQuery('OptionTerm');
-        $criteria = array('option_id' => $o->get('option_id'));
-        
-        // all_terms,omit_terms,explicit_terms
-        $list_type = $o->get('meta');
-        if ($list_type == 'explicit_terms') {
-            $c2 = $modx->newQuery('ProductOptionMeta');
-            $c2->where(array('productoption_id'=> $o->get('id')));
-            $explicit = array();
-            if($Meta = $modx->getCollection('ProductOptionMeta',$c2)) {
-                foreach ($Meta as $m) {
-                    $explicit[] = $m->get('oterm_id');
-                }
-            }
-            $criteria['oterm_id:IN'] = $explicit;
             
-        }
-        elseif ($list_type == 'omit_terms') {
-            $c2 = $modx->newQuery('ProductOptionMeta');
-            $c2->where(array('productoption_id'=> $o->get('id')));
-            $omit = array();
-            if($Meta = $modx->getCollection('ProductOptionMeta',$c2)) {
-                foreach ($Meta as $m) {
-                    $omit[] = $m->get('oterm_id');
-                }
+        $opt = '<label for="'.$o->Option->get('slug').'" class="'.$cssClassOptionLabel.'">'.$o->Option->get('name').'</label>'
+            .'<select id="'.$o->Option->get('slug').'" name="'.$o->Option->get('slug').'" class="'.$cssClassOptionSelect.'">';      
+      
+        // all_terms,omit_terms,explicit_terms
+        if ($o->get('meta') == 'all_terms') {
+            $Terms = $modx->getCollection('OptionTerm', array('option_id'=>$o->get('option_id')));
+            foreach ($Terms as $t) {
+                $opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
             }
-            $criteria['oterm_id:NOT IN'] = $explicit;
         }
-        
-        $c->where($criteria);
-        $c->sortby('seq','ASC');
-        $Terms = $modx->getCollection('OptionTerm',$c);
-        foreach ($Terms as $t) {
-            $opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
+        elseif ($o->get('meta') == 'omit_terms') {
+            $Meta = $modx->getCollection('ProductOptionMeta', array('product_id' => $product_id, 'option_id'=>$o->get('option_id')));
+            $omit = array();
+            foreach ($Meta as $m) {
+                $omit[] = $m->get('oterm_id');
+            }
+            $c = $modx->newQuery('OptionTerm');
+            $c->where(array('option_id' => $o->get('option_id'),'oterm_id:NOT IN' => $omit));            
+            $Terms = $modx->getCollection('OptionTerm', $c);
+            foreach ($Terms as $t) {
+                if (!in_array($t->get('oterm_id'), $omit)) {
+                    $opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
+                }
+            }        
         }
+        elseif ($o->get('meta') == 'explicit_terms') {
+            $Meta = $modx->getCollection('ProductOptionMeta', array('product_id' => $product_id, 'option_id'=>$o->get('option_id')));
+            $explicit = array();
+            foreach ($Meta as $m) {
+                $explicit[ $m->get('oterm_id') ] = $m->toArray();
+            }
+            $Terms = $modx->getCollection('OptionTerm', array('option_id'=>$o->get('option_id')));
+            foreach ($Terms as $t) {
+                if (isset($explicit[ $t->get('oterm_id') ])) {
+                    // setting the values on the OptionTerm object will tie into the custom logic in the xpdo optionterm.class.php
+                    if ($explicit[ $t->get('oterm_id') ]['is_override']) {
+                        $t->fromArray($explicit[ $t->get('oterm_id') ]);
+                    }
+                    $opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
+                }
+            }   
+        }
+
         $opt .= '</select>';
         $properties['options.'.$o->Option->get('slug')] = $opt;
         $properties['options'] = $properties['options'] . $opt;

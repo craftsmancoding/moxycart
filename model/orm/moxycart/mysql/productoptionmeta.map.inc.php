@@ -6,6 +6,7 @@ $xpdo_meta_map['ProductOptionMeta']= array (
   'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
+    'productoption_id' => NULL,
     'product_id' => NULL,
     'option_id' => NULL,
     'oterm_id' => NULL,
@@ -18,6 +19,13 @@ $xpdo_meta_map['ProductOptionMeta']= array (
   ),
   'fieldMeta' => 
   array (
+    'productoption_id' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '11',
+      'phptype' => 'integer',
+      'null' => false,
+    ),
     'product_id' => 
     array (
       'dbtype' => 'int',

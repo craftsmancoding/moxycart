@@ -148,7 +148,9 @@
   <span class="price-old">$[[+price_strike_thru]]</span>&nbsp;&nbsp;<span class="price">$[[+calculated_price]]</span>
 </header>
 
- <form role="form" class="foxycart shop-form form-horizontal" action="[[++moxycart.domain]]/cart" method="post" accept-charset="utf-8">
+    [[!addToCartButton]]
+    
+ <!--form role="form" class="foxycart shop-form form-horizontal" action="[[++moxycart.domain]]/cart" method="post" accept-charset="utf-8">
 	<input type="hidden" name="quantity" value="1" />
 	<input type="hidden" name="name" value="[[+name]]" />
 	<input type="hidden" name="price" value="[[+calculated_price]]" />
@@ -163,7 +165,7 @@
 
 	<input type="submit" class="btn btn-primary" value="Add to cart" class="submit" />
 <div class="clearfix"></div>
-	</form>
+	</form-->
 
 <div class="shop-product-single-social">
   <span class="social-label pull-left">Share this product</span>

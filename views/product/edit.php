@@ -823,17 +823,13 @@ jQuery(document).ready(function() {
         	<ul class="clearfix" id="product_images">
                 <?php 
                 foreach ($data['product_assets'] as $a): 
-                    // This can fail catastrophically if the asset was deleted, but not the product_assets row.
+                    // This can fail catastrophically if the product_assets row refs an asset that has been deleted!
                     if (empty($a->Asset)) continue;
                 ?>
                     <li class="li_product_image" id="product-asset-<?php print $a->get('asset_id'); ?>">
                     	<div class="img-info-wrap">
                     		  <img src="<?php print $a->Asset->get('thumbnail_url'); ?>?rand=<?php print uniqid(); ?>" alt="<?php print $a->Asset->get('alt'); ?>" width="" onclick="javascript:jQuery('#asset_edit_form').data('asset_id', <?php print $a->get('asset_id'); ?>).dialog('open');" style="cursor:pointer;"/>
-                    		<!--/a-->
                     	    <input type="hidden" id="asset_asset_id_<?php print $a->get('asset_id'); ?>" class="asset_asset_id" name="Assets[asset_id][]" value="<?php print $a->get('asset_id'); ?>" />
-                    	    <!-- Button trigger modal -->
-                    		
-                    		<!-- Modal-->
                     	</div>
                     </li>            
                 
