@@ -623,7 +623,7 @@ jQuery(document).ready(function() {
 
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Meta[mod_category][$oterm_id]", $m['mod_category'], array('style'=>'width: 150px;','placeholder'=>'* inherit *'));
+                                                         print \Formbuilder\Form::text("Meta[mod_category][$oterm_id]", $m['mod_category'], array('style'=>'width: 100px;','placeholder'=>'* inherit *'));
                                                         ?>
                                                     </td>                                                    
 
