@@ -473,7 +473,7 @@ function select_thumb(asset_id,url) {
                                     <option value="0">No</option>
                                 </select>
 
-                            	<label for="category">Category</label>
+                            	<label for="category">Foxycart Category</label>
                                 <?php
 								print \Formbuilder\Form::dropdown('category', $data['categories'], $data['category']);
 								?>

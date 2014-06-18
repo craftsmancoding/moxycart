@@ -135,7 +135,7 @@ function product_init() {
 	      	var asset_id = jQuery(ui.draggable).find('input.asset_asset_id').val();	      
 	      	if (confirm("Are you Sure you want to Delete this Image?")) {
 	      		jQuery(this).removeClass('over-trash');
-	      		mapi('asset','delete',{"asset_id":asset_id});
+	      		mapi('productasset','delete',{"asset_id":asset_id,"product_id":product.product_id});
 	      		$('#product-asset-'+asset_id).remove();
 		    }
 		    jQuery(this).removeClass('over-trash');
@@ -487,7 +487,9 @@ jQuery(document).ready(function() {
 								<?php /* ======== MODAL DIALOG BOX ======*/ ?>
 								<div id="thumbnail_form" title="Select Product Thumbnail">
 								    <div class="asset_thumbnail_container">
-								        <?php foreach ($data['product_assets'] as $a): ?>
+								        <?php foreach ($data['product_assets'] as $a): 
+								                if (empty($a->Asset)) continue;
+								        ?>
 								            <div class="asset_thumbnail_item">
     								            <img src="<?php print $a->Asset->get('thumbnail_url'); ?>" 
     								                alt="<?php print $a->Asset->get('alt'); ?>" 
@@ -507,7 +509,7 @@ jQuery(document).ready(function() {
                                     <option value="0">No</option>
                                 </select>
 
-                            	<label for="category">Category</label>
+                            	<label for="category">Foxycart Category</label>
                                 <?php
 								print \Formbuilder\Form::dropdown('category', $data['categories'], $data['category']);
 								?>
@@ -780,7 +782,10 @@ jQuery(document).ready(function() {
 
         	<ul class="clearfix" id="product_images">
                 <?php 
-                foreach ($data['product_assets'] as $a): ?>
+                foreach ($data['product_assets'] as $a): 
+                    // This can fail catastrophically if the asset was deleted, but not the product_assets row.
+                    if (empty($a->Asset)) continue;
+                ?>
                     <li class="li_product_image" id="product-asset-<?php print $a->get('asset_id'); ?>">
                     	<div class="img-info-wrap">
                     		  <img src="<?php print $a->Asset->get('thumbnail_url'); ?>?rand=<?php print uniqid(); ?>" alt="<?php print $a->Asset->get('alt'); ?>" width="" onclick="javascript:jQuery('#asset_edit_form').data('asset_id', <?php print $a->get('asset_id'); ?>).dialog('open');" style="cursor:pointer;"/>

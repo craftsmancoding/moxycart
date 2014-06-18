@@ -4538,6 +4538,10 @@ label {
   font-weight: bold;
 }
 
+.page-count {
+  margin-top: 15px !important;
+}
+
 .page-count,
 .displaying-page {
   margin: 5px 0px;
@@ -4551,7 +4555,19 @@ hr {
 }
 
 .products-tbl tbody tr td:first-child img {
-  width: 130px !important;
+  max-width: 300px !important;
+  width: 60%;
+
+}
+
+table.products-tbl thead th {
+  font-size: 13px;
+  text-shadow: none !important;
+  letter-spacing: 0.5em;
+}
+
+table.products-tbl td {
+  font-size: 16px;
 }
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */

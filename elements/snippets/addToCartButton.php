@@ -66,24 +66,54 @@ else {
 }
 
 
-$c = $modx->newQuery('ProductOptionType');
-$c->where(array('ProductOptionType.product_id' => $product_id));
-$c->sortby('Type.seq','ASC');
+$c = $modx->newQuery('ProductOption');
+$c->where(array('ProductOption.product_id' => $product_id));
+$c->sortby('Option.seq','ASC');
 
 $properties['options'] = '';
-if ($Options = $modx->getCollectionGraph('ProductOptionType','{"Type":{}}',$c)) {
+if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{},"Meta":{}}',$c)) {
 
     foreach ($Options as $o) {
-        $opt = '<label for="'.$o->Type->get('slug').'" class="'.$cssClassOptionLabel.'">'.$o->Type->get('name').'</label><select id="'.$o->Type->get('slug').'" name="'.$o->Type->get('slug').'" class="'.$cssClassOptionSelect.'">';
+        
+        
+        $opt = '<label for="'.$o->Option->get('slug').'" class="'.$cssClassOptionLabel.'">'.$o->Option->get('name').'</label><select id="'.$o->Option->get('slug').'" name="'.$o->Option->get('slug').'" class="'.$cssClassOptionSelect.'">';
         $c = $modx->newQuery('OptionTerm');
-        $c->where(array('otype_id' => $o->get('otype_id')));
+        $criteria = array('option_id' => $o->get('option_id'));
+        
+        // all_terms,omit_terms,explicit_terms
+        $list_type = $o->get('meta');
+        if ($list_type == 'explicit_terms') {
+            $c2 = $modx->newQuery('ProductOptionMeta');
+            $c2->where(array('productoption_id'=> $o->get('id')));
+            $explicit = array();
+            if($Meta = $modx->getCollection('ProductOptionMeta',$c2)) {
+                foreach ($Meta as $m) {
+                    $explicit[] = $m->get('oterm_id');
+                }
+            }
+            $criteria['oterm_id:IN'] = $explicit;
+            
+        }
+        elseif ($list_type == 'omit_terms') {
+            $c2 = $modx->newQuery('ProductOptionMeta');
+            $c2->where(array('productoption_id'=> $o->get('id')));
+            $omit = array();
+            if($Meta = $modx->getCollection('ProductOptionMeta',$c2)) {
+                foreach ($Meta as $m) {
+                    $omit[] = $m->get('oterm_id');
+                }
+            }
+            $criteria['oterm_id:NOT IN'] = $explicit;
+        }
+        
+        $c->where($criteria);
         $c->sortby('seq','ASC');
         $Terms = $modx->getCollection('OptionTerm',$c);
         foreach ($Terms as $t) {
             $opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
         }
         $opt .= '</select>';
-        $properties['options.'.$o->Type->get('slug')] = $opt;
+        $properties['options.'.$o->Option->get('slug')] = $opt;
         $properties['options'] = $properties['options'] . $opt;
     }
 }

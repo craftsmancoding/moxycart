@@ -18,28 +18,28 @@ Valid pagename can be any function in the PageController (minus the get/post pre
         <!--/li-->
         <li class="moxycart_nav_item">
             <!--span class="linklike" onclick="javascript:paint('products');">Products</span-->
-            <a href="<?php print self::page('products'); ?>">Products</a>
+            <a class="<?php print ($_GET['method'] == 'products') ? 'current' : '' ; ?>" href="<?php print self::page('products'); ?>">Products</a>
         
         </li>
         <li class="moxycart_nav_item">
             <!--span class="linklike" onclick="javascript:paint('fields');">Custom Fields</span-->
-            <a href="<?php print self::page('fields'); ?>">Custom Fields</a>
+            <a class="<?php print ($_GET['method'] == 'fields') ? 'current' : '' ; ?>" href="<?php print self::page('fields'); ?>">Custom Fields</a>
         </li>
         <li class="moxycart_nav_item">
             <!--span class="linklike" onclick="javascript:paint('options');">Options</span-->
-            <a href="<?php print self::page('options'); ?>">Options</a>
+            <a class="<?php print ($_GET['method'] == 'options') ? 'current' : '' ; ?>" href="<?php print self::page('options'); ?>">Options</a>
         </li>
         <li class="moxycart_nav_item">
             <!--span class="linklike" onclick="javascript:paint('reviews');">Reviews</span-->
-            <a href="<?php print self::page('reviews'); ?>">Reviews</a>
+            <a class="<?php print ($_GET['method'] == 'reviews') ? 'current' : '' ; ?>" href="<?php print self::page('reviews'); ?>">Reviews</a>
         </li>
         <li class="moxycart_nav_item">
             <!--span class="linklike" onclick="javascript:paint('reports');">Reports</span-->
-            <a href="<?php print self::page('reports'); ?>">Reports</a>
+            <a class="<?php print ($_GET['method'] == 'reports') ? 'current' : '' ; ?>" href="<?php print self::page('reports'); ?>">Reports</a>
         </li>
         <li class="moxycart_nav_item">
             <!--span class="linklike" onclick="javascript:paint('settings');">Settings</span-->
-            <a href="<?php print self::page('settings'); ?>">Settings</a>
+            <a class="<?php print ($_GET['method'] == 'settings') ? 'current' : '' ; ?>" href="<?php print self::page('settings'); ?>">Settings</a>
         </li>
     </ul>
 </div>

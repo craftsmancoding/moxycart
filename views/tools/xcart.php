@@ -221,6 +221,7 @@ foreach($cats as $c) {
 }
 
 
+//------------------------------------------------------------------------------
 //! Extra Fields
 // xcart_extra_fields
 // xcart-id --> modx id
@@ -253,10 +254,51 @@ foreach($extrafields as $x) {
     $map['xcart_extra_fields'][ $x['fieldid'] ] = $EF->get('field_id');
 }
 
+//------------------------------------------------------------------------------
+//! Options and Option Terms
+//------------------------------------------------------------------------------
+$this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import Options =============','','xcart',__LINE__);  
+$product_options = array(); // productid => OUR option_id
+$options = array(); // optionid => data
+$rawoptions = $xpdo->query("SELECT o.classid, o.productid, o.class, o.classtext, t.option_name FROM xcart_classes o JOIN xcart_class_options t ON o.classid = t.classid ORDER BY t.classid");
+foreach ($rawoptions as $opt) {
+
+    
+    $slug = strtolower($opt['class']);
+    $slug = trim(str_replace(array(' ','-'), '_', $slug));
+    if (in_array($slug, $O2->reserved_words)) {
+        $slug = $slug . $opt['classid'];
+    }
+    
+    if (!$O = $this->modx->getObject('Option', array('slug'=>$slug))) {
+        $O = $this->modx->newObject('Option', array('slug'=>$slug));
+    }
+    $O->set('name', $opt['classtext']);
+    $O->save();
+    
+    $this->modx->log(\modX::LOG_LEVEL_INFO,'Option added/updated: '.$O->get('slug'),'','xcart',__LINE__);
+    $product_options[ $opt['productid'] ] = $O->get('option_id'); // Mapping
+    
+    // Terms
+    $termslug = $opt['option_name']; 
+    $prefix = 'Length - ';
+    if (substr($termslug, 0, strlen($prefix)) == $prefix) {
+        $termslug = substr($termslug, strlen($prefix));
+    }
+    $termname = trim($termslug);
+    $termslug = trim(str_replace(array(' ','-'), '_', strtolower($termslug)));
+    if (!$T = $this->modx->getObject('OptionTerm', array('slug'=>$termslug,'option_id'=>$option_id))) {
+        $T = $this->modx->newObject('OptionTerm', array('slug'=>$termslug,'option_id'=>$option_id));
+    }
+    $T->set('name', $termname);
+    $T->save();    
+}
 
 
 
+//------------------------------------------------------------------------------
 //! Products
+//------------------------------------------------------------------------------
 $this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import Products =============','','xcart',__LINE__);  
 $map['xcart_products'] = array();
 $products = $xpdo->query("SELECT * FROM xcart_products"); 
@@ -378,7 +420,17 @@ foreach ($products as $r) {
         else {
             $this->modx->log(\modX::LOG_LEVEL_ERROR,'No mapping for xcart_categories: '.$pc['categoryid'],'','xcart',__LINE__);           
         }
-    }    
+    }
+    
+    // ProductOptions
+    if (isset($product_options['productid'])) {
+        if (!$PO = $this->modx->getObject('ProductOption', array('product_id'=>$P->get('product_id'), 'option_id'=> $product_options['productid']))) {
+            $PO = $this->modx->newObject('ProductOption', array('product_id'=>$P->get('product_id'), 'option_id'=> $product_options['productid']));
+            $PO->set('meta', 'all_terms');
+            $PO->save();
+        }
+    }
+    
 }
 
 //------------------------------------------------------------------------------
@@ -399,6 +451,8 @@ foreach ($map['xcart_products'] as $xcart_id => $product_id) {
         $this->modx->log(\modX::LOG_LEVEL_INFO,'Pricing updated for product '.$product_id,'','xcart',__LINE__);          
     }
 }
+
+
 
 //------------------------------------------------------------------------------
 //! Assets
