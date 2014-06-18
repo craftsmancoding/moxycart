@@ -776,7 +776,7 @@ class Product extends BaseModel {
      * @param array $data related data
      */
     public function dictateMeta(array $data) {
-        $this->modx->setLogLevel(4);
+        //$this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating meta: '.print_r($data,true),'',__CLASS__,__FILE__,__LINE__);
         $this_product_id = $this->_verifyExisting();
         
@@ -930,7 +930,7 @@ class Product extends BaseModel {
      @param array $data (e.g. from $_POST)
      */
     public function saveRelated($data) {
-        $this->modx->setLogLevel(4);
+        //$this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Save related data: '.print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);
         // Extra stuff is ignored... it doesn't matter here whether we're creating or updating an object
         $this->fromArray($data);

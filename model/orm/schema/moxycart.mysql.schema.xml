@@ -301,6 +301,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<field key="option_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="oterm_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		
+		<field key="is_override" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0" comment="If checked, apply the mods"/>
 		<!-- Product Option Modifiers: these can override the global settings on a per-product basis -->
 		<field key="mod_price" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>
         <field key="mod_weight" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>

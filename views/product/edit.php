@@ -203,42 +203,23 @@ function product_init() {
                     
                 }
                 
-                $( this ).dialog( "close" );
+                jQuery( this ).dialog( "close" );
             },
             "Done": function() {
-                $( this ).dialog( "close" );
+                jQuery( this ).dialog( "close" );
             }
         }   
     });
 
 
-
-    // Taxonomy Selection Modal
-    var iMaxWidth = 500;
-
-    $('#taxonomy-modal').width(iMaxWidth);
-    var iHeight = $('#taxonomy-modal').height() + 16;
-
-    $('#taxonomy-btn').click(function() {
-        $("#taxonomy-modal").dialog({
-            autoOpen: true,
-            height: 300,
-            width: 500,
-            modal: true
-        });
-        var iCurrentHeight = $("#taxonomy-modal").height();
-        var iCurrentWidth = $("#taxonomy-modal").width();
-        if (iCurrentHeight < iHeight || iCurrentWidth < iMaxWidth) {
-            var oOffset = $("#taxonomy-modal").parent().offset();
-            $("#taxonomy-modal").parent()
-                .width(iMaxWidth + 50)
-                .animate({ 
-                    top: oOffset.top - ((iHeight - iCurrentHeight) / 2),
-                    left: oOffset.left - ((iMaxWidth - iCurrentWidth) / 2)
-                });
-            $("#taxonomy-modal").animate({ height: iHeight, width: iMaxWidth}, 500);
-        }
+    jQuery("#taxonomy-modal").dialog({
+        autoOpen: false,
+        height: 300,
+        width: 500,
+        modal: true,
+        closeOnEscape: true
     });
+
 
     
     // Edit Asset Form
@@ -576,7 +557,12 @@ jQuery(document).ready(function() {
                                     ?>
                                         <div class="term-option-wrap">
                                         <?php
-                                        print \Formbuilder\Form::checkbox("Options[checked][$option_id]", $data['product_options'][$option_id]['checked'], array('label'=>sprintf('%s (%s)', $o['name'], $o['slug'])), '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
+                                        print \Formbuilder\Form::checkbox("Options[checked][$option_id]", 
+                                        $data['product_options'][$option_id]['checked'], 
+                                        array('label'=>sprintf('%s (%s)', 
+                                            $o['name'], 
+                                            $o['slug'])
+                                        ), '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
             <input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]"  class="[+class+] parent-term-option" data-fs_child_id='.$option_id.' style="[+style+]" [+is_checked+][+extra+]/> [+label+]
             [+description+]');    
                                         print \Formbuilder\Form::dropdown("Options[meta][$option_id]", array('all_terms'=>'All Terms','omit_terms'=>'Omit Selected Terms','explicit_terms'=>'Specify Terms'), $data['product_options'][$option_id]['meta']);
@@ -588,7 +574,8 @@ jQuery(document).ready(function() {
                                             <table class="classy sub-terms">
                                                 <thead>
                                                     <tr>
-                                                        <th></th>
+                                                        <th>&nbsp;</th>
+                                                        <th>Override?</th>
                                                         <th>Price</th>
                                                         <th>Weight</th>
                                                         <th>Code</th>
@@ -612,26 +599,31 @@ jQuery(document).ready(function() {
                                                     </td>
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Meta[mod_price][$oterm_id]", $m['mod_price'], array('style'=>'width: 100px;'));
+                                                        print \Formbuilder\Form::checkbox("Meta[is_override][$oterm_id]", $m['is_override'], array());
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                         print \Formbuilder\Form::text("Meta[mod_price][$oterm_id]", $m['mod_price'], array('style'=>'width: 100px;','placeholder'=>'* inherit *'));
 
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Meta[mod_weight][$oterm_id]", $m['mod_weight'], array('style'=>'width: 50px;'));
+                                                         print \Formbuilder\Form::text("Meta[mod_weight][$oterm_id]", $m['mod_weight'], array('style'=>'width: 50px;','placeholder'=>'* inherit *'));
 
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
 
-                                                         print \Formbuilder\Form::text("Meta[mod_code][$oterm_id]", $m['mod_code'], array('style'=>'width: 50px;'));
+                                                         print \Formbuilder\Form::text("Meta[mod_code][$oterm_id]", $m['mod_code'], array('style'=>'width: 50px;','placeholder'=>'* inherit *'));
                                                         ?>
                                                     </td>                                                    
 
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Meta[mod_category][$oterm_id]", $m['mod_category'], array('style'=>'width: 150px;'));
+                                                         print \Formbuilder\Form::text("Meta[mod_category][$oterm_id]", $m['mod_category'], array('style'=>'width: 150px;','placeholder'=>'* inherit *'));
                                                         ?>
                                                     </td>                                                    
 
@@ -909,7 +901,7 @@ jQuery(document).ready(function() {
 
                 <br/>
                 
-                <span class="btn" id="taxonomy-btn">Show / Hide Taxonomies</span>
+                <span class="btn" onclick="javascript:jQuery('#taxonomy-modal').dialog('open');" id="taxonomy-btn">Show / Hide Taxonomies</span>
         
                 <?php /* ======== MODAL DIALOG BOX ======*/ ?>
                 <div id="taxonomy-modal" style="display:none;" title="Select Taxonomy">

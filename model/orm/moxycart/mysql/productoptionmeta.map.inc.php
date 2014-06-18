@@ -9,6 +9,7 @@ $xpdo_meta_map['ProductOptionMeta']= array (
     'product_id' => NULL,
     'option_id' => NULL,
     'oterm_id' => NULL,
+    'is_override' => 0,
     'mod_price' => 0,
     'mod_weight' => 0,
     'mod_code' => '',
@@ -37,6 +38,15 @@ $xpdo_meta_map['ProductOptionMeta']= array (
       'precision' => '11',
       'phptype' => 'integer',
       'null' => false,
+    ),
+    'is_override' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'phptype' => 'integer',
+      'null' => false,
+      'default' => 0,
+      'comment' => 'If checked, apply the mods',
     ),
     'mod_price' => 
     array (

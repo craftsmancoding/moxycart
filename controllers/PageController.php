@@ -363,17 +363,22 @@ class PageController extends BaseController {
                 
         // product_options
         $product_options = array();
+        $Opts = $this->modx->getCollection('Option');
+        foreach($Opts as $o) {
+            $product_options[ $o->get('option_id') ]['option_id'] = $o->get('option_id');
+            $product_options[ $o->get('option_id') ]['checked'] = false;
+            $product_options[ $o->get('option_id') ]['meta'] = 'all_terms';        
+        }
+        
         $c = $this->modx->newQuery('ProductOption');
         $c->where(array('product_id' => $product_id));
         $c->sortby('seq','ASC');        
         $POTs = $this->modx->getCollection('ProductOption', $c);
 
         foreach ($POTs as $p) {
-        
             $product_options[ $p->get('option_id') ]['option_id'] = $p->get('option_id');
             $product_options[ $p->get('option_id') ]['checked'] = true;
             $product_options[ $p->get('option_id') ]['meta'] = $p->get('meta');
-
         }
         //print '<pre>'; print_r($product_options); print '</pre>'; exit;
         $this->setPlaceholder('product_options',$product_options);
@@ -389,6 +394,7 @@ class PageController extends BaseController {
             // Global values
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ] = $t->toArray();
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['checked'] = false;
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['is_override'] = false;
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_price'] = '';
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_weight'] = '';
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_code'] = '';
@@ -399,11 +405,14 @@ class PageController extends BaseController {
             $Metas = $this->modx->getCollection('ProductOptionMeta',array('product_id'=>$product_id, 'option_id'=>$t->get('option_id')));
             foreach ($Metas as $m) {
                 $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['checked'] = true; // if it exists, it is used i.e. checked
-                $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_price'] = $m->get('mod_price');
-                $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_weight'] = $m->get('mod_weight');
-                $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_code'] = $m->get('mod_code');
-                $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_category'] = $m->get('mod_category');
-                $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['asset_id'] = $m->get('asset_id');                
+                if ($m->get('is_override')) {
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['is_override'] = $m->get('is_override');
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_price'] = $m->get('mod_price');
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_weight'] = $m->get('mod_weight');
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_code'] = $m->get('mod_code');
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_category'] = $m->get('mod_category');
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['asset_id'] = $m->get('asset_id');                
+                }
             }
         }
         //print '<pre>'; print_r($meta); print '</pre>'; exit;
