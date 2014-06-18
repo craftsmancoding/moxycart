@@ -372,12 +372,18 @@ class PageController extends BaseController {
             $Terms = $this->modx->getCollection('OptionTerm',array('option_id'=>$p->get('option_id')));
             foreach ($Terms as $t) {
                 $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ] = $t->toArray();
+                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['checked'] = false;
+                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_price'] = '';
+                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_weight'] = '';
+                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_code'] = '';
+                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_category'] = '';
                 $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['asset_id'] = ''; // future
             } 
             $product_options[ $p->get('option_id') ]['checked'] = true;
             $product_options[ $p->get('option_id') ]['meta'] = $p->get('meta');
             
             foreach ($p->Meta as $m) {
+                $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['checked'] = true;
                 $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_price'] = $m->get('mod_price');
                 $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_weight'] = $m->get('mod_weight');
                 $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_code'] = $m->get('mod_code');
