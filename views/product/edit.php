@@ -121,11 +121,11 @@ function product_init() {
 	jQuery( "#trash-can" ).droppable({
 		
 		over: function( event, ui ) {
-			$(this).addClass('over-trash');
+			jQuery(this).addClass('over-trash');
 		},
 		out: function(event, ui) {
 			var id = $(ui.draggable).attr('id');
-			$(this).removeClass('over-trash');
+			jQuery(this).removeClass('over-trash');
 		},
 	    drop: function( event, ui ) {
 	      	var id = jQuery(ui.draggable).attr('id');
@@ -136,7 +136,7 @@ function product_init() {
 	      	if (confirm("Are you Sure you want to Delete this Image?")) {
 	      		jQuery(this).removeClass('over-trash');
 	      		mapi('productasset','delete',{"asset_id":asset_id,"product_id":product.product_id});
-	      		$('#product-asset-'+asset_id).remove();
+	      		jQuery('#product-asset-'+asset_id).remove();
 		    }
 		    jQuery(this).removeClass('over-trash');
 
@@ -153,7 +153,7 @@ function product_init() {
         closeOnEscape: true,        
         buttons: {
             "Done": function() {
-                $( this ).dialog( "close" );
+                jQuery( this ).dialog( "close" );
             }
         }   
     });
@@ -167,7 +167,7 @@ function product_init() {
         closeOnEscape: true,
         buttons: {
             "Define New Field": function() {
-                $( this ).dialog( "close" );
+                jQuery( this ).dialog( "close" );
             },
             "Redraw Fields": function() {
                 //Fields[field_id][]
@@ -263,10 +263,10 @@ function product_init() {
                 // This data here is specific to the Asset
                 mapi('asset','edit',{"asset_id":asset_id,"title":title,"alt":alt});
                 
-                $( this ).dialog( "close" );
+                jQuery( this ).dialog( "close" );
             },
             "Cancel": function() {
-                $( this ).dialog( "close" );
+                jQuery( this ).dialog( "close" );
             }
         }   
     });
@@ -319,10 +319,10 @@ jQuery(document).ready(function() {
         var fs_child_id = jQuery(this).data('fs_child_id');
         if(jQuery(this).prop("checked")) {
             if(jQuery('#Options_meta__'+fs_child_id+'_').val() != 'all_terms') {
-                $('.fset-'+fs_child_id).show();
+                jQuery('.fset-'+fs_child_id).show();
             }
         } else {
-            $('.fset-'+fs_child_id).hide();
+            jQuery('.fset-'+fs_child_id).hide();
         }
     });
 

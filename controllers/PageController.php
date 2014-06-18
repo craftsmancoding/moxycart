@@ -247,9 +247,7 @@ class PageController extends BaseController {
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->config['assman_assets_url'].'js/dropzone.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
-
-        //$this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
+      
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.json_encode($full_product_data).';            
@@ -303,9 +301,7 @@ class PageController extends BaseController {
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->config['assman_assets_url'].'js/dropzone.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
-
-        //$this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
+      
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     	   console.log("[moxycart] '.__FUNCTION__.'");
