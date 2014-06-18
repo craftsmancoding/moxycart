@@ -270,6 +270,19 @@ function product_init() {
             }
         }   
     });
+
+    // on page load, initialize fieldset state
+    $('.parent-term-option').each(function () {
+        var fs_child_id = jQuery(this).data('fs_child_id');
+        if(jQuery(this).prop("checked")) {
+            if(jQuery('#Options_meta__'+fs_child_id+'_').val() != 'all_terms') {
+                jQuery('.fset-'+fs_child_id).show();
+            }
+        } else {
+            jQuery('.fset-'+fs_child_id).hide();
+        }
+    });
+
 };
 
 /**
@@ -313,19 +326,6 @@ function select_thumb(asset_id,url) {
 //}
 
 jQuery(document).ready(function() {
-    jQuery('.po-fset').hide();
-    // on page load, initialize fieldset state
-    $('.parent-term-option').each(function () {
-        var fs_child_id = jQuery(this).data('fs_child_id');
-        if(jQuery(this).prop("checked")) {
-            if(jQuery('#Options_meta__'+fs_child_id+'_').val() != 'all_terms') {
-                jQuery('.fset-'+fs_child_id).show();
-            }
-        } else {
-            jQuery('.fset-'+fs_child_id).hide();
-        }
-    });
-
     // on change of the select terms option, hide/show fieldset
     jQuery('.term-option-wrap select').on('change',function() {
         if(jQuery(this).val() != 'all_terms') {
@@ -335,6 +335,16 @@ jQuery(document).ready(function() {
         }
     });
 });
+
+// show_child_options 
+// on change of the select terms option, hide/show fieldset
+/*function show_child_options() {
+    if(jQuery(this).val() != 'all_terms') {
+        jQuery(this).parent().next().show();
+    } else {
+        jQuery(this).parent().next().hide();
+    }
+}*/
 
 
 </script>
@@ -563,7 +573,7 @@ jQuery(document).ready(function() {
                                             $o['name'], 
                                             $o['slug'])
                                         ), '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
-            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]"  class="[+class+] parent-term-option" data-fs_child_id='.$option_id.' style="[+style+]" [+is_checked+][+extra+]/> [+label+]
+            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]" class="[+class+] parent-term-option" data-fs_child_id='.$option_id.' style="[+style+]" [+is_checked+][+extra+]/> [+label+]
             [+description+]');    
                                         print \Formbuilder\Form::dropdown("Options[meta][$option_id]", array('all_terms'=>'All Terms','omit_terms'=>'Omit Selected Terms','explicit_terms'=>'Specify Terms'), $data['product_options'][$option_id]['meta']);
                                         
