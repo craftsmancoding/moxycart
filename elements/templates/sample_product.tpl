@@ -114,19 +114,19 @@
 <article class="row shop-product-single">
 <div class="col-md-6 space-right-20">
 
+[[getProductImages? &product_id=`[[+product_id]]` &is_active=`1` &limit=`0`]]
 
-
-	[[getProductImages:gte=`1`:then=`
+	[[#getProductImages:gte=`1`:then=`
 		 <!-- thumbnailSlider -->
 		  <div class="thumbnailSlider">
 		    <div class="flexslider flexslider-thumbnails">
 		      <ul class="slides">
-		       [[getProductImages? &product_id=`[[+product_id]]` &innerTpl=`ProductImage` &is_active=`1` &limit=`0`]]
+		       [[#getProductImages? &product_id=`[[+product_id]]` &innerTpl=`ProductImage` &is_active=`1` &limit=`0`]]
 		      </ul>
 		    </div>
 
 		    <ul class="smallThumbnails clearfix">
-		    	[[getProductImages? &product_id=`[[+product_id]]` &innerTpl=`ProductImageThumb` &firstClass=`active` &is_active=`1` &limit=`0`]]
+		    	[[#getProductImages? &product_id=`[[+product_id]]` &innerTpl=`ProductImageThumb` &firstClass=`active` &is_active=`1` &limit=`0`]]
 		    </ul>
 		  </div>
 		  <!-- / thumbnailSlider -->

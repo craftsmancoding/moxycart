@@ -38,6 +38,8 @@
  *
  * @package moxycart
  **/
+$assman_corepath = $modx->getOption('assman.core_path', null, MODX_CORE_PATH.'components/assman/');
+require_once $assman_corepath .'vendor/autoload.php';
 
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
 require_once $core_path .'vendor/autoload.php';
@@ -58,12 +60,15 @@ if (!$product_id) {
     return 'product_id is required.';
 }
 
+
 $c = $modx->newQuery('ProductAsset');
 $c->where(array(
     'ProductAsset.product_id'=>$product_id,
     'ProductAsset.is_active'=>true,
     'Asset.is_image' => true,
 ));
+
+
 $c->sortby('ProductAsset.seq','ASC');
 if ($scriptProperties['limit']) {
     $c->limit($scriptProperties['limit']);
@@ -73,6 +78,7 @@ $ProductAssets = $modx->getCollectionGraph('ProductAsset','{"Asset":{}}', $c);
 if ($ProductAssets) {
     return $Snippet->format($ProductAssets,$innerTpl,$outerTpl);    
 }
+
 
 $modx->log(\modX::LOG_LEVEL_DEBUG, "No results found",'','getProducts',__LINE__);
 
