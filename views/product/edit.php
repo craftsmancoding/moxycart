@@ -590,14 +590,18 @@ jQuery(document).ready(function() {
                                         </div>
                                        
                                         <fieldset class="po-fset fset-<?php print $option_id; ?>">
-                                            <table>
-                                                <tr>
-                                                    <td></td>
-                                                    <td>Price</td>
-                                                    <td>Weight</td>
-                                                    <td>Code</td>
-                                                    <td>Category</td>
-                                                </tr>
+                                            <table class="classy sub-terms">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Price</th>
+                                                        <th>Weight</th>
+                                                        <th>Code</th>
+                                                        <th>Category</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                
                                         <?php
                                             //print \Formbuilder\Form::multicheck("Options[Terms][$option_id]", $terms, $data['product_options'][$option_id]['ProductOptionMeta'],array());
                                             // '[+error+]                            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+is_checked+] [+extra+]/> [+option+]<br/>'
@@ -611,23 +615,26 @@ jQuery(document).ready(function() {
                                                     </td>
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_price][]", '', array());
+                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_price]", '', array('style'=>'width: 100px;'));
+
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_weight][]", '', array());
+                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_weight]", '', array('style'=>'width: 50px;'));
+
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_code][]", '', array());
+
+                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_code]", '', array('style'=>'width: 50px;'));
                                                         ?>
                                                     </td>                                                    
 
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_category]", '', array());
+                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_category]", '', array('style'=>'width: 150px;'));
                                                         ?>
                                                     </td>                                                    
 
@@ -636,6 +643,7 @@ jQuery(document).ready(function() {
                                             endforeach;
                                             
                                         ?>
+                                            </tbody>
                                             </table>
                                         </fieldset>
                                         
