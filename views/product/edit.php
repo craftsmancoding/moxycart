@@ -585,14 +585,58 @@ jQuery(document).ready(function() {
             <input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]"  class="[+class+] parent-term-option" data-fs_child_id='.$option_id.' style="[+style+]" [+is_checked+][+extra+]/> [+label+]
             [+description+]');    
                                         print \Formbuilder\Form::dropdown("Options[meta][$option_id]", array('all_terms'=>'All Terms','omit_terms'=>'Omit Selected Terms','explicit_terms'=>'Specify Terms'), $data['product_options'][$option_id]['meta']);
+                                        
                                         ?>
                                         </div>
                                        
                                         <fieldset class="po-fset fset-<?php print $option_id; ?>">
+                                            <table>
+                                                <tr>
+                                                    <td></td>
+                                                    <td>Price</td>
+                                                    <td>Weight</td>
+                                                    <td>Code</td>
+                                                    <td>Category</td>
+                                                </tr>
                                         <?php
-                                            print \Formbuilder\Form::multicheck("Options[Terms][$option_id]", $terms, $data['product_options'][$option_id]['ProductOptionMeta'],array());
+                                            //print \Formbuilder\Form::multicheck("Options[Terms][$option_id]", $terms, $data['product_options'][$option_id]['ProductOptionMeta'],array());
                                             // '[+error+]                            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+is_checked+] [+extra+]/> [+option+]<br/>'
+                                            foreach ($terms as $term_id => $label):
+                                            ?>
+                                                <tr>
+                                                    <td>
+                                                        <?php
+                                                         print \Formbuilder\Form::checkbox("Options[Terms][$option_id][option_id]", 0, array('checked_value'=>$term_id,'label'=>$label));
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_price]", '', array());
+                                                        ?>
+                                                    </td>                                                    
+                                                    <td>
+                                                        <?php
+                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_weight]", '', array());
+                                                        ?>
+                                                    </td>                                                    
+                                                    <td>
+                                                        <?php
+                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_code]", '', array());
+                                                        ?>
+                                                    </td>                                                    
+
+                                                    <td>
+                                                        <?php
+                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_category]", '', array());
+                                                        ?>
+                                                    </td>                                                    
+
+                                                </tr>
+                                            <?php
+                                            endforeach;
+                                            
                                         ?>
+                                            </table>
                                         </fieldset>
                                         
                                     <?php
@@ -854,6 +898,13 @@ jQuery(document).ready(function() {
     <?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
     	<div id="taxonomies_tab" class="content"><br>
 
+                <legend>Terms</legend>
+                <div id="taxonomy_terms">
+                    <?php print \Formbuilder\Form::multicheck('Terms',$data['terms'],$data['product_terms']); ?>
+                </div>    
+
+                <br/>
+                
                 <span class="btn" id="taxonomy-btn">Show / Hide Taxonomies</span>
         
                 <?php /* ======== MODAL DIALOG BOX ======*/ ?>
@@ -862,11 +913,6 @@ jQuery(document).ready(function() {
                     <div id="taxonomy_list">
                         <?php print \Formbuilder\Form::multicheck('Taxonomies',$data['taxonomies'],$data['product_taxonomies']); ?>
                     </div>
-                    <legend>Terms</legend>
-                    <div id="taxonomy_terms">
-                        <?php print \Formbuilder\Form::multicheck('Terms',$data['terms'],$data['product_terms']); ?>
-                    </div>    
-
                 </div> 
     	</div>
     <?php endif; // moxycart.enable_taxonomies ?>

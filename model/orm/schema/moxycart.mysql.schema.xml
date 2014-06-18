@@ -298,6 +298,15 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 	<object class="ProductOptionMeta" table="product_option_meta" extends="xPDOSimpleObject">
 		<field key="productoption_id" dbtype="int" precision="11" phptype="integer" null="false"/>
 		<field key="oterm_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		
+		<!-- Product Option Modifiers: these can override the global settings on a per-product basis -->
+		<field key="mod_price" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>
+        <field key="mod_weight" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>
+        <field key="mod_code" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="mod_category" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+		
+		<field key="asset_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" length="" collation="A" null="false" />
 		</index>
@@ -308,7 +317,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		</index>
 		
         <aggregate alias="Term" class="OptionTerm" local="oterm_id" foreign="oterm_id" cardinality="one" owner="foreign" />
-        
+        <aggregate alias="Asset" class="Asset" local="asset_id" foreign="asset_id" cardinality="one" owner="foreign" />        
 	</object>
 	
     <!-- ! ProductTaxonomy -->
