@@ -569,7 +569,7 @@ jQuery(document).ready(function() {
                                      <h2>Product Options</h2>
                                      <p>Allow your visitors to select variations in your product.</p><br>
                                     <?php
-                                    // Special stuff here: we gotta force the field names to ensure that arrays are in sync.
+                                    // @#$%@#. Special stuff here: we gotta force the field names to ensure that arrays are in sync.
                                     foreach ($data['Options'] as $o):
                                         $option_id = $o['option_id'];
                                         $terms = array();
@@ -581,7 +581,7 @@ jQuery(document).ready(function() {
                                         ?>
                                         <div class="term-option-wrap">
                                         <?php
-                                        print \Formbuilder\Form::checkbox("Options[checked][$option_id]", isset($data['product_options'][$option_id]['checked']),array('label'=>sprintf('%s (%s)', $o['name'], $o['slug'])), '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
+                                        print \Formbuilder\Form::checkbox("Options[checked][$option_id]", $data['product_options'][$option_id]['checked'], array('label'=>sprintf('%s (%s)', $o['name'], $o['slug'])), '<input type="hidden" name="[+name+]" value="[+unchecked_value+]"/>
             <input type="checkbox" name="[+name+]" id="[+id+]" value="[+checked_value+]"  class="[+class+] parent-term-option" data-fs_child_id='.$option_id.' style="[+style+]" [+is_checked+][+extra+]/> [+label+]
             [+description+]');    
                                         print \Formbuilder\Form::dropdown("Options[meta][$option_id]", array('all_terms'=>'All Terms','omit_terms'=>'Omit Selected Terms','explicit_terms'=>'Specify Terms'), $data['product_options'][$option_id]['meta']);
@@ -601,27 +601,27 @@ jQuery(document).ready(function() {
                                         <?php
                                             //print \Formbuilder\Form::multicheck("Options[Terms][$option_id]", $terms, $data['product_options'][$option_id]['ProductOptionMeta'],array());
                                             // '[+error+]                            <input type="checkbox" name="[+name+]" id="[+id+]" value="[+value+]" class="[+class+]" style="[+style+]" [+is_checked+] [+extra+]/> [+option+]<br/>'
-                                            foreach ($terms as $term_id => $label):
+                                            foreach ($terms as $oterm_id => $label):
                                             ?>
                                                 <tr>
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::checkbox("Options[Terms][$option_id][option_id]", 0, array('checked_value'=>$term_id,'label'=>$label));
+                                                         print \Formbuilder\Form::checkbox("Options[Terms][$option_id][option_id][]", 0, array('checked_value'=>$oterm_id,'label'=>$label));
                                                         ?>
                                                     </td>
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_price]", '', array());
+                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_price][]", '', array());
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_weight]", '', array());
+                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_weight][]", '', array());
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_code]", '', array());
+                                                         print \Formbuilder\Form::text("Options[Terms][$option_id][mod_code][]", '', array());
                                                         ?>
                                                     </td>                                                    
 

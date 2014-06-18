@@ -81,8 +81,12 @@ Array
 
             [Terms] => Array
                 (
-                    [1] => 4
-                    [2] => 8
+                    [oterm_id] => Array()
+                    [mod_price] => Array()
+                    [mod_weight] => Array()
+                    [mod_code] => Array()
+                    [mod_category] => Array()
+                    [asset_id] => Array(...future...)
                 )
 
         )

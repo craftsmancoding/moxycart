@@ -367,12 +367,22 @@ class PageController extends BaseController {
         $c->where(array('product_id' => $product_id));
         $c->sortby('seq','ASC');        
         $POTs = $this->modx->getCollectionGraph('ProductOption','{"Meta":{}}', $c);
+
         foreach ($POTs as $p) {
+            $Terms = $this->modx->getCollection('OptionTerm',array('option_id'=>$p->get('option_id')));
+            foreach ($Terms as $t) {
+                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ] = $t->toArray();
+                $product_options[ $p->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['asset_id'] = ''; // future
+            } 
             $product_options[ $p->get('option_id') ]['checked'] = true;
             $product_options[ $p->get('option_id') ]['meta'] = $p->get('meta');
-            $product_options[ $p->get('option_id') ]['ProductOptionMeta'] = array();
+            
             foreach ($p->Meta as $m) {
-                $product_options[ $p->get('option_id') ]['ProductOptionMeta'][] = $m->get('oterm_id');
+                $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_price'] = $m->get('mod_price');
+                $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_weight'] = $m->get('mod_weight');
+                $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_code'] = $m->get('mod_code');
+                $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_category'] = $m->get('mod_category');
+                $product_options[ $p->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['asset_id'] = $m->get('asset_id');                
             }
         }
 //        print '<pre>'; print_r($product_options); print '</pre>'; exit;

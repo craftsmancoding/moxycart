@@ -216,7 +216,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 
 	</object>
 
-    <!-- ! Option Term -->
+    <!-- ! OptionTerm -->
     <!-- e.g. "Small", "Medium", "Large" -->
 	<object class="OptionTerm" table="option_terms" extends="xPDOObject">
     	<field key="oterm_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
