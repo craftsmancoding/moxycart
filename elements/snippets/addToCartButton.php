@@ -71,10 +71,10 @@ $c->where(array('ProductOption.product_id' => $product_id));
 $c->sortby('Option.seq','ASC');
 //$c->bindGraph('{"Option":{"Terms":{}},"Meta":{}}');
 //$c->prepare();
-//return 'xxxx<pre>'.$c->toSQL().'</pre>';
+//return <pre>'.$c->toSQL().'</pre>';
 $properties['options'] = '';
 
-if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}',$c)) {
+if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
 
     foreach ($Options as $o) {
             
