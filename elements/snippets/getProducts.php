@@ -53,6 +53,7 @@ unset($scriptProperties['outerTpl']);
 
 $P = new \Moxycart\Product($modx);
 
+
 if ($results = $P->all($scriptProperties)) {
     return $Snippet->format($results,$innerTpl,$outerTpl);    
 }

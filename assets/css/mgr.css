@@ -4493,6 +4493,7 @@ label {
   border: 1px solid #ddd;
   padding: 10px;
   border-radius: 5px;
+  width: 95%;
 }
 
 .product-option-wrap h2 {
@@ -4568,6 +4569,20 @@ table.products-tbl thead th {
 
 table.products-tbl td {
   font-size: 16px;
+}
+
+table.sub-terms td {
+  vertical-align: top;
+}
+table.sub-terms .checkboxlabel {
+  float: left !important;
+  width: 80px;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+table.sub-terms .checkbox {
+  float: left;
 }
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */

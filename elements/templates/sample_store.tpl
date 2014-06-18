@@ -229,7 +229,8 @@
 
 <!-- ISOTOPE GALLERY -->
 <div id="isotopeContainer" class="shop-product-list isotope">
-[[!getProducts? &store_id=`[[*id]]`]]
+
+[[#getProducts? &outerTpl=`<ul>[[+content]]</ul>` &innerTpl=`<li>[[+name]]</li>` &store_id=`[[*id]]`]]
 </div>
 <!-- !ISOTOPE GALLERY -->
 
