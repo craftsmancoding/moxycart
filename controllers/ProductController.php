@@ -202,6 +202,46 @@ Array
         ));
     }
 
+    /**
+     * Overriding for special compatibility for product data
+     * Used by autocomplete. Default limit is 25 terms
+     * http://www.pontikis.net/blog/jquery-ui-autocomplete-step-by-step
+     *
+     * results should be an array with id, value, label keys
+     *
+     * data will look like this:
+     *     "results":[{"id":"1","value":"2","label":"My Product"},...]
+     */
+    public function postSearch(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
+        // This doesn't work unless you add the namespace.
+        // Oddly, if you write it out (w/o a var), it works. wtf?
+        $classname = '\\Moxycart\\'.$this->model;
+        $Model = new $classname($this->modx);    
+
+        $scriptProperties['limit'] = $this->modx->getOption('limit',$scriptProperties,25);
+        //$results = $Model->all(array('name:like'=>'shirt','limit'=>25));
+        if (!$results = $Model->all($scriptProperties)) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'No results found: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
+            return $this->sendFail(array(
+                'msg'=>sprintf('%s not found', $this->model),
+                'params' => print_r($scriptProperties,true)
+            ));
+        }
+        
+        $data = array();
+        foreach ($results as $r) {
+            // The autocomplete needs these 3 (and ONLY these 3) items
+            $data[] = array(
+                'id' => $r['product_id'],
+                'value' => $r['name'],
+                'label' => strip_tags(sprintf('%s (%s)',$r['name'],$r['sku']))
+            );
+        }
+        $this->modx->log(\modX::LOG_LEVEL_INFO,'Success! Search results found: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
+        return $this->sendSuccess(array('results' => $data));
+    }
+
         
 }
 /*EOF*/

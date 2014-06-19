@@ -54,7 +54,7 @@ print $this->getMsg();
         <td>
             <span class="button btn" onclick="javascript:paint('optionedit',{option_id:<?php print $r->get('option_id'); ?>});">Edit</span>
             <span class="button btn" onclick="javascript:paint('optionterms',{option_id:<?php print $r->get('option_id'); ?>});">Manage Terms</span>
-            <span class="button btn" onclick="javascript:mapi('optiontype','delete',{option_id:<?php print $r->get('option_id'); ?>},function(response){ paint('options'); });">Delete</span>     
+            <span class="button btn" onclick="javascript:mapi('option','delete',{option_id:<?php print $r->get('option_id'); ?>},function(response){ paint('options'); });">Delete</span>     
         </td>
     </tr>
 <?php endforeach; ?>

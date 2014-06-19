@@ -16,7 +16,7 @@ print \Formbuilder\Form::open($data['baseurl'],array('id'=>'optiontype_edit'))
     ->text('slug', $data['slug'], array('label'=>'Slug','description'=>'Lowercase alphanumeric identifier with no spaces or special characters.','class'=>'input input-half'))
     ->text('name', $data['name'], array('label'=>'Name','description'=>'Human readable name for this list.','class'=>'input input-half'))
     ->text('description', $data['description'], array('label'=>'Description', 'description'=>'A brief description of the field.','class'=>'input input-half'))
-    ->html('<span class="btn moxycart-btn" onclick="javascript:submit_form(\'optiontype_edit\', \''.self::url('optiontype','edit').'\',\'options\');">Save</span>')   
+    ->html('<span class="btn moxycart-btn" onclick="javascript:submit_form(\'optiontype_edit\', \''.self::url('option','edit').'\',\'options\');">Save</span>')   
     ->html('<span class="btn btn-cancel" onclick="javascript:paint(\'options\');">Cancel</span>')
     //->submit('','Save',array('class'=>'btn moxycart-btn'))
     ->close();

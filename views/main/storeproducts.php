@@ -25,7 +25,10 @@
         </tr>
     </thead>
     <tbody>
-<?php foreach ($data['results'] as $r) :?>
+<?php foreach ($data['results'] as $r) :
+
+//    print '<pre>'; print_r($r); print '</pre>'; exit;
+?>
     <tr>
         <?php 
         // Configurable columns

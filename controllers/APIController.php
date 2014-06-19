@@ -147,19 +147,23 @@ class APIController extends \modExtraManagerController {
         $scriptProperties['limit'] = $this->modx->getOption('limit',$scriptProperties,25);
         //$results = $Model->all(array('name:like'=>'shirt','limit'=>25));
         if (!$results = $Model->all($scriptProperties)) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'No results found: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
             return $this->sendFail(array(
                 'msg'=>sprintf('%s not found', $this->model),
                 'params' => print_r($scriptProperties,true)
             ));
         }
+        
         $data = array();
         foreach ($results as $r) {
+            // The autocomplete needs these 3 (and ONLY these 3) items
             $data[] = array(
                 'id' => $r->getPrimaryKey(),
                 'value' => $r->get('name'),
                 'label' => strip_tags(sprintf('%s (%s)',$r->get('name'),$r->get('sku')))
             );
         }
+        $this->modx->log(\modX::LOG_LEVEL_INFO,'Success! Search results found: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         return $this->sendSuccess(array('results' => $data));
     }
 

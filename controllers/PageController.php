@@ -370,8 +370,9 @@ class PageController extends BaseController {
         $c->where(array('product_id' => $product_id));
         $c->sortby('seq','ASC');        
         $POTs = $this->modx->getCollection('ProductOption', $c);
-
+        $meta = array();
         foreach ($POTs as $p) {
+            $meta[ $p->get('option_id') ]['Terms'] = array(); // init
             $product_options[ $p->get('option_id') ]['option_id'] = $p->get('option_id');
             $product_options[ $p->get('option_id') ]['checked'] = true;
             $product_options[ $p->get('option_id') ]['meta'] = $p->get('meta');
@@ -380,7 +381,6 @@ class PageController extends BaseController {
         $this->setPlaceholder('product_options',$product_options);
 
         // product_option_meta
-        $meta = array();
         $c = $this->modx->newQuery('OptionTerm');
         $c->where(array('product_id' => $product_id));
         $c->sortby('seq','ASC');        

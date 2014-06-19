@@ -86,6 +86,7 @@ function product_init() {
     // customizations here for compatibility 
     jQuery('#search_products').autocomplete({
         source: (function() {
+//            console.log('Autocomplete...');
             var xhr;
             var url = controller_url("product","search");
             return function(request, response) {
@@ -95,15 +96,18 @@ function product_init() {
                 xhr = jQuery.ajax({
                     url: url,
                     data: {
-                        "name:like": request.term
+                        //"searchterm:like": request.term
+                        "searchterm": request.term
                     },
                     type: 'post',
                     dataType: 'json',
                     success: function(data) {
+                        console.log('Autocomplete search success.',data);
                         // Tricky because our data structure contains {"data":{"results":[{}]}}
                         response(data.data.results);
                     },
                     error: function() {
+                        console.log('Autocomplete search error.');
                         response([]);
                     }
                 });
@@ -166,10 +170,7 @@ function product_init() {
         modal: true,
         closeOnEscape: true,
         buttons: {
-            "Define New Field": function() {
-                jQuery( this ).dialog( "close" );
-            },
-            "Redraw Fields": function() {
+            "Ok": function() {
                 //Fields[field_id][]
                 var field_ids = [];
                 var field_id;
@@ -205,7 +206,7 @@ function product_init() {
                 
                 jQuery( this ).dialog( "close" );
             },
-            "Done": function() {
+            "Cancel": function() {
                 jQuery( this ).dialog( "close" );
             }
         }   
@@ -712,7 +713,7 @@ jQuery(document).ready(function() {
 	<div id="fields_tab" class="content">
 			<div id="product_fields">
 	                <?php if (!$data['product_fields']) : ?>
-				        <div class="danger" id="no_specs_msg">No Custom Fields Found</div>	                
+				        <div class="danger" id="no_specs_msg">No Custom Fields have been added to this product.</div>	                
 	                <?php endif; ?>
 	                
                     <?php foreach ($data['product_fields'] as $field_id => $f): ?>

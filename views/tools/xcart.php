@@ -424,63 +424,98 @@ foreach ($products as $r) {
         }
     }
     
-    // ProductOptions
-/*
-    if (isset($product_options['productid'])) {
-        if (!$PO = $this->modx->getObject('ProductOption', array('product_id'=>$P->get('product_id'), 'option_id'=> $product_options['productid']))) {
-            $PO = $this->modx->newObject('ProductOption', array('product_id'=>$P->get('product_id'), 'option_id'=> $product_options['productid']));
-            $PO->set('meta', 'all_terms');
-            $PO->save();
-        }
-    }
-*/
+    // !ProductOptions
     $classes = $xpdo->query("SELECT * FROM xcart_classes WHERE productid={$r['productid']}");
     foreach($classes as $c) {         
-        $O2 = new Option($this->modx);
+        $O2 = new \Moxycart\Option($this->modx);
         $slug = strtolower($c['class']);
-        $slug = trim(str_replace(array(' ','-'), '_', $slug));
+        $slug = preg_replace('/[^a-z0-9\-_]/', '_', strtolower($slug));
+//        $slug = trim(str_replace(array(' ','-','.','(',')'), '_', $slug));
+        $slug = trim($slug,'_');
         if (in_array($slug, $O2->reserved_words)) {
-            $slug = $slug . $c['classid'];
+            $slug = 'chain'.$slug;
         }
         
         if (!$O = $this->modx->getObject('Option', array('slug'=>$slug))) {
-            $O = $this->modx->newObject('Option', array('slug'=>$slug));
+            $O = $this->modx->newObject('Option');
+            $O->set('slug',$slug);
         }
         $O->set('name', $c['classtext']);
-        $O->save();
+        $result = $O->save();
+        $option_id = $O->getPrimaryKey();
+        if (!$result) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Error saving Option with slug: '.$slug,'','xcart',__LINE__); 
+            continue;
+        }
+        else {
+            $this->modx->log(\modX::LOG_LEVEL_INFO,'Option Created/Updated "'.$option_id,'','xcart',__LINE__); 
+        }
+        
         
         // For moxycart, we're going to treat each option list as an "explicit_terms" thing
-        if (!$PO = $this->modx->getObject('ProductOption', array('product_id'=> $product_id, 'option_id'=> $O->get('option_id')))) {
-            $PO = $this->modx->newObject('ProductOption', array('product_id'=> $product_id, 'option_id'=> $O->get('option_id')));
+        if (!$PO = $this->modx->getObject('ProductOption', array('product_id'=> $product_id, 'option_id'=> $option_id))) {
+            $PO = $this->modx->newObject('ProductOption', array('product_id'=> $product_id, 'option_id'=> $option_id));
         }
         $PO->set('meta', 'explicit_terms');
-        $PO->save();
+        $result = $PO->save();
+        $po_id = $PO->getPrimaryKey();
+        if (!$result) {
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Error saving ProductOption for product: '.$product_id. ' and option_id '.$O->get('option_id'),'','xcart',__LINE__); 
+            continue;        
+        }
+        else {
+            $this->modx->log(\modX::LOG_LEVEL_INFO,'ProductOption Created/Updated "'.$PO->getPrimaryKey(),'','xcart',__LINE__);         
+        }
         
         $classopts = $xpdo->query("SELECT * FROM xcart_class_options WHERE classid={$c['classid']}");
         foreach ($classopts as $o) {
             $termslug = $o['option_name']; 
-            $prefix = 'Length - ';
+            $prefix = 'Length -';
             if (substr($termslug, 0, strlen($prefix)) == $prefix) {
                 $termslug = substr($termslug, strlen($prefix));
             }
+            $termslug = trim($termslug,'_');
             $termname = trim($termslug);
-            $termslug = trim(str_replace(array(' ','-'), '_', strtolower($termslug)));        
-            if (!$OT = $this->modx->getObject('OptionTerm', array('slug'=>$termname,'option_id'=> $O->get('id')))) {
-                $OT = $this->modx->newObject('OptionTerm', array('slug'=>$termname,'option_id'=> $O->get('id')));
+            $termslug = preg_replace('/[^a-z0-9\-_]/', '_', strtolower($termslug));
+            //$termslug = trim(str_replace(array(' ','-','.','(',')','+'), '_', strtolower($termslug)));        
+            if (!$OT = $this->modx->getObject('OptionTerm', array('slug'=>$termslug,'option_id'=> $option_id))) {
+                $OT = $this->modx->newObject('OptionTerm');
             }
+            $OT->set('slug', $termslug);
+            $OT->set('option_id', $option_id);
             $OT->set('name', $termname);
-            $OT->save();
+            $result = $OT->save();
+            $oterm_id = $OT->getPrimaryKey();
+            if(!$OT->save()) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Error saving OptionTerm with slug: '.$termslug. print_r($OT->toArray(),true),'','xcart',__LINE__); 
+                continue;            
+            }
+            else {
+                $this->modx->log(\modX::LOG_LEVEL_INFO,'OptionTerm Created/Updated w slug "'.$termslug,'','xcart',__LINE__);         
+            }
             
             // Any option modifiers?  xCart seems to apply these on a per-product basis (?)
-            if (!$Mod = $this->modx->getObject('ProductOptionMeta', array('productoption_id'=>$PO->get('id'),'product_id'=>$product_id,'option_id'=>$O->get('option_id'),'oterm_id'=>$OT->get('oterm_id')))) {
-                $Mod = $this->modx->newObject('ProductOptionMeta', array('productoption_id'=>$PO->get('id'),'product_id'=>$product_id,'option_id'=>$O->get('option_id'),'oterm_id'=>$OT->get('oterm_id')));
+            if (!$Mod = $this->modx->getObject('ProductOptionMeta', array('productoption_id'=>$po_id,'product_id'=>$product_id,'option_id'=>$option_id,'oterm_id'=>$otype_id))) {
+                $Mod = $this->modx->newObject('ProductOptionMeta', array('productoption_id'=>$po_id,'product_id'=>$product_id,'option_id'=>$option_id,'oterm_id'=>$oterm_id));
             }
-            if ($o['price_modifier']) {
+            if (!$po_id || !$product_id || !$option_id || !$oterm_id) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Missing productoption_id, product_id, option_id, or oterm_id.  Will nog create ProductOptionMeta','','xcart',__LINE__); 
+                continue;                            
+            }
+            
+            if ($o['price_modifier'] > 0) {
                 $Mod->set('is_override', true);
                 $Mod->set('mod_price_type',':');
                 $Mod->set('mod_price', $o['price_modifier']);
             }
-            $Mod->save();
+            if(!$Mod->save()) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Error saving ProductOptionMeta'.print_r($Mod->toArray(),true),'','xcart',__LINE__); 
+                continue;           
+            }
+            else {
+                $this->modx->log(\modX::LOG_LEVEL_INFO,'ProductOptionMeta Created/Updated "'.$Mod->getPrimaryKey(),'','xcart',__LINE__);         
+            }
+            
         }
         
     }
