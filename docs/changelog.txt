@@ -1,5 +1,0 @@
-Changelog for MoxyCart.
-
-MoxyCart 0.0
-====================================
-Nothing to see here yet folks, just setting up the repository.
