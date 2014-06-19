@@ -1,7 +1,13 @@
-Moxycart Extra for MODx Revolution
-=======================================
+Moxycart
+========
 
 A turnkey FoxyCart eCommerce solution for MODX Revolution
+
+
+
+![Sample Store](https://raw.githubusercontent.com/wiki/craftsmancoding/moxycart/images/store-products.jpg "Taxonomies in Action")
+
+
 
 **Author:** Everett Griffiths everett@craftsmancoding.com [Craftsman Coding](http://craftsmancoding.com/plugins/moxycart)
 
