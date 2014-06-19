@@ -28,5 +28,8 @@ class OptionTerm extends BaseModel {
         return parent::save();
     }
 
+    public static function types() {
+        return array(':'=>':','+'=>'+','-'=>'-');
+    }
 }
 /*EOF*/

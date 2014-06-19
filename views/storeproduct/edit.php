@@ -13,11 +13,9 @@
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
-        //$this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
-
     
-    $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');
-	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+    
+	   $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
 		var product = '.$data['result']->toJson().';            
 		var controller_url = "'.$this->config['controller_url'].'";
         var use_editor = "'.$this->modx->getOption('use_editor').'";

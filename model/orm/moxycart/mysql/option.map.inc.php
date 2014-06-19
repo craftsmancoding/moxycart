@@ -9,6 +9,7 @@ $xpdo_meta_map['Option']= array (
     'option_id' => NULL,
     'slug' => NULL,
     'name' => NULL,
+    'type' => 'single_select',
     'description' => NULL,
     'seq' => NULL,
   ),
@@ -38,6 +39,15 @@ $xpdo_meta_map['Option']= array (
       'precision' => '32',
       'phptype' => 'string',
       'null' => false,
+    ),
+    'type' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '32',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => 'single_select',
+      'comment' => 'Future...e.g. menu options',
     ),
     'description' => 
     array (

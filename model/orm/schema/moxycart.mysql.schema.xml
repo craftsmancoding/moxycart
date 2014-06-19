@@ -196,6 +196,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<field key="option_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
 		<field key="slug" dbtype="varchar" precision="64" phptype="string" null="false" index="index" comment="unique lowercase slug"/>
 		<field key="name" dbtype="varchar" precision="32" phptype="string" null="false" />
+		<field key="type" dbtype="varchar" precision="32" phptype="string" null="false" default="single_select" comment="Future...e.g. menu options"/>
 		<field key="description" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="seq" dbtype="int" precision="4" phptype="integer" null="true" />
 
@@ -217,7 +218,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 	</object>
 
     <!-- ! OptionTerm -->
-    <!-- e.g. "Small", "Medium", "Large" -->
+    <!-- e.g. "Small", "Medium", "Large" (single_select and more?)-->
 	<object class="OptionTerm" table="option_terms" extends="xPDOObject">
     	<field key="oterm_id" dbtype="int" precision="11" phptype="integer" null="false" index="pk"  generated="native" />
 		<field key="option_id" dbtype="int" precision="11" phptype="integer" null="false"/>
@@ -225,9 +226,13 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
 
 		<!-- Product Option Modifiers https://wiki.foxycart.com/v/1.1/cheat_sheet#product_option_modifiers -->
+		<field key="mod_price_type" dbtype="varchar" precision="3" phptype="string" null="false" default="+" comment="control the modification type: +,-,:"/>
 		<field key="mod_price" dbtype="decimal" precision="8,2" phptype="float" null="false" default=""/>
+        <field key="mod_weight_type" dbtype="varchar" precision="3" phptype="string" null="false" default="+" comment="control the modification type: +,-,:"/>
         <field key="mod_weight" dbtype="decimal" precision="8,2" phptype="float" null="false" default=""/>
+        <field key="mod_code_type" dbtype="varchar" precision="3" phptype="string" null="false" default="+" comment="control the modification type: +,-,:"/>
         <field key="mod_code" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="mod_category_type" dbtype="varchar" precision="3" phptype="string" null="false" default="+" comment="control the modification type: +,-,:"/>
         <field key="mod_category" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         
 		<field key="seq" dbtype="tinyint" precision="3" phptype="integer" null="true" />
@@ -304,9 +309,13 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		
 		<field key="is_override" dbtype="tinyint" precision="1" phptype="integer" null="false" default="0" comment="If checked, apply the mods"/>
 		<!-- Product Option Modifiers: these can override the global settings on a per-product basis -->
+		<field key="mod_price_type" dbtype="varchar" precision="3" phptype="string" null="false" default="+" comment="control the modification type: +,-,:"/>
 		<field key="mod_price" dbtype="decimal" precision="8,2" phptype="float" null="false" default=""/>
+		<field key="mod_weight_type" dbtype="varchar" precision="3" phptype="string" null="false" default="+" comment="control the modification type: +,-,:"/>
         <field key="mod_weight" dbtype="decimal" precision="8,2" phptype="float" null="false" default=""/>
+        <field key="mod_code_type" dbtype="varchar" precision="3" phptype="string" null="false" default="+" comment="control the modification type: +,-,:"/>
         <field key="mod_code" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="mod_category_type" dbtype="varchar" precision="3" phptype="string" null="false" default="+" comment="control the modification type: +,-,:"/>
         <field key="mod_category" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
 		
 		<field key="asset_id" dbtype="int" precision="11" phptype="integer" null="false"/>

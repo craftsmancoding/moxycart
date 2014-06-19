@@ -257,6 +257,7 @@ foreach($extrafields as $x) {
 //------------------------------------------------------------------------------
 //! Options and Option Terms
 //------------------------------------------------------------------------------
+/*
 $this->modx->log(\modX::LOG_LEVEL_INFO,'=========== Beginning Import Options =============','','xcart',__LINE__);  
 $product_options = array(); // productid => OUR option_id
 $options = array(); // optionid => data
@@ -293,6 +294,7 @@ foreach ($rawoptions as $opt) {
     $T->set('name', $termname);
     $T->save();    
 }
+*/
 
 
 
@@ -423,12 +425,64 @@ foreach ($products as $r) {
     }
     
     // ProductOptions
+/*
     if (isset($product_options['productid'])) {
         if (!$PO = $this->modx->getObject('ProductOption', array('product_id'=>$P->get('product_id'), 'option_id'=> $product_options['productid']))) {
             $PO = $this->modx->newObject('ProductOption', array('product_id'=>$P->get('product_id'), 'option_id'=> $product_options['productid']));
             $PO->set('meta', 'all_terms');
             $PO->save();
         }
+    }
+*/
+    $classes = $xpdo->query("SELECT * FROM xcart_classes WHERE productid={$r['productid']}");
+    foreach($classes as $c) {         
+        $O2 = new Option($this->modx);
+        $slug = strtolower($c['class']);
+        $slug = trim(str_replace(array(' ','-'), '_', $slug));
+        if (in_array($slug, $O2->reserved_words)) {
+            $slug = $slug . $c['classid'];
+        }
+        
+        if (!$O = $this->modx->getObject('Option', array('slug'=>$slug))) {
+            $O = $this->modx->newObject('Option', array('slug'=>$slug));
+        }
+        $O->set('name', $c['classtext']);
+        $O->save();
+        
+        // For moxycart, we're going to treat each option list as an "explicit_terms" thing
+        if (!$PO = $this->modx->getObject('ProductOption', array('product_id'=> $product_id, 'option_id'=> $O->get('option_id')))) {
+            $PO = $this->modx->newObject('ProductOption', array('product_id'=> $product_id, 'option_id'=> $O->get('option_id')));
+        }
+        $PO->set('meta', 'explicit_terms');
+        $PO->save();
+        
+        $classopts = $xpdo->query("SELECT * FROM xcart_class_options WHERE classid={$c['classid']}");
+        foreach ($classopts as $o) {
+            $termslug = $o['option_name']; 
+            $prefix = 'Length - ';
+            if (substr($termslug, 0, strlen($prefix)) == $prefix) {
+                $termslug = substr($termslug, strlen($prefix));
+            }
+            $termname = trim($termslug);
+            $termslug = trim(str_replace(array(' ','-'), '_', strtolower($termslug)));        
+            if (!$OT = $this->modx->getObject('OptionTerm', array('slug'=>$termname,'option_id'=> $O->get('id')))) {
+                $OT = $this->modx->newObject('OptionTerm', array('slug'=>$termname,'option_id'=> $O->get('id')));
+            }
+            $OT->set('name', $termname);
+            $OT->save();
+            
+            // Any option modifiers?  xCart seems to apply these on a per-product basis (?)
+            if (!$Mod = $this->modx->getObject('ProductOptionMeta', array('productoption_id'=>$PO->get('id'),'product_id'=>$product_id,'option_id'=>$O->get('option_id'),'oterm_id'=>$OT->get('oterm_id')))) {
+                $Mod = $this->modx->newObject('ProductOptionMeta', array('productoption_id'=>$PO->get('id'),'product_id'=>$product_id,'option_id'=>$O->get('option_id'),'oterm_id'=>$OT->get('oterm_id')));
+            }
+            if ($o['price_modifier']) {
+                $Mod->set('is_override', true);
+                $Mod->set('mod_price_type',':');
+                $Mod->set('mod_price', $o['price_modifier']);
+            }
+            $Mod->save();
+        }
+        
     }
     
 }

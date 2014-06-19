@@ -10,9 +10,13 @@ $xpdo_meta_map['OptionTerm']= array (
     'option_id' => NULL,
     'slug' => NULL,
     'name' => NULL,
+    'mod_price_type' => '+',
     'mod_price' => 0,
+    'mod_weight_type' => '+',
     'mod_weight' => 0,
+    'mod_code_type' => '+',
     'mod_code' => '',
+    'mod_category_type' => '+',
     'mod_category' => '',
     'seq' => NULL,
   ),
@@ -50,6 +54,15 @@ $xpdo_meta_map['OptionTerm']= array (
       'phptype' => 'string',
       'null' => false,
     ),
+    'mod_price_type' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '3',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '+',
+      'comment' => 'control the modification type: +,-,:',
+    ),
     'mod_price' => 
     array (
       'dbtype' => 'decimal',
@@ -57,6 +70,15 @@ $xpdo_meta_map['OptionTerm']= array (
       'phptype' => 'float',
       'null' => false,
       'default' => 0,
+    ),
+    'mod_weight_type' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '3',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '+',
+      'comment' => 'control the modification type: +,-,:',
     ),
     'mod_weight' => 
     array (
@@ -66,6 +88,15 @@ $xpdo_meta_map['OptionTerm']= array (
       'null' => false,
       'default' => 0,
     ),
+    'mod_code_type' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '3',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '+',
+      'comment' => 'control the modification type: +,-,:',
+    ),
     'mod_code' => 
     array (
       'dbtype' => 'varchar',
@@ -73,6 +104,15 @@ $xpdo_meta_map['OptionTerm']= array (
       'phptype' => 'string',
       'null' => false,
       'default' => '',
+    ),
+    'mod_category_type' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '3',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '+',
+      'comment' => 'control the modification type: +,-,:',
     ),
     'mod_category' => 
     array (

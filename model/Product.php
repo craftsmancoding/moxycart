@@ -123,14 +123,6 @@ class Product extends BaseModel {
     }
 
     /**
-     *
-     *
-     */
-    public function options($product_id) {
-    
-    }
-    
-    /**
      * Load a product AND its fields from a given $url
      *
      * @param string $uri relative to MODX_BASE_URL e.g. "mystore/myproduct"
@@ -292,74 +284,6 @@ class Product extends BaseModel {
     //------------------------------------------------------------------------------
     //! Relations
     //------------------------------------------------------------------------------
-    /**
-     * Add relations to the current product.
-     * Exeptions are thrown if the product ids do not exist.
-     * 
-     * array(
-     *   array(
-     *       'related_id' => 53,    (required)
-     *       'type' => 'related',   (optional)
-     *   )
-     * )
-     * @param array $data array of ProductRelation records (minus the product_id b/c it's inferred)
-     */
-    public function addRelations(array $array) {
-        $this_product_id = $this->_verifyExisting();
-
-        foreach ($array as $r) {
-            if (!isset($r['related_id'])) {
-                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Missing related_id','',__CLASS__,__FUNCTION__,__LINE__); 
-                continue;
-            }
-            $r['product_id'] = $this_product_id;
-            
-            if (!$PR = $this->modx->getObject('ProductRelation', $r)) {
-                $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Existing ProductRelation not found: '.print_r($r,true) ,'',__CLASS__,__FUNCTION__,__LINE__); 
-                // Make sure related product exists
-                if (!$P = $this->modx->getObject('Product', $r['related_id'])) {
-                    throw new \Exception('Invalid related ID '.$id);    
-                }
-                $PR = $this->modx->newObject('ProductRelation');
-                $PR->fromArray($r);
-                if(!$PR->save()) {
-                    $this->modx->log(\modX::LOG_LEVEL_ERROR,'Error saving ProductRelation','',__CLASS__,__FUNCTION__,__LINE__); 
-                }
-            }
-        }
-        
-        return true;    
-    }
-
-    /**
-     * Remove relations to the current product.
-     * Exeptions are thrown if the product ids do not exist.
-     *
-     * @param array of related_id's
-     * @param string $type name of the type of relation, used for grouping.     
-     */
-    public function removeRelations(array $array, $type='related') {
-
-        $this_product_id = $this->_verifyExisting();
-        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Removing relations: '.implode(',',$array). ' from product_id '.$this_product_id,'',__CLASS__,__FILE__,__LINE__);        
-        foreach ($array as $related_id) {
-            $props = array(
-                'product_id'=> $this_product_id, 
-                'related_id'=> $related_id,
-                'type' => $type
-            );
-            if ($PR = $this->modx->getObject('ProductRelation', $props)) {
-                if (!$PR->remove()) {
-                    $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Error removing ProductRelation '.$PR->get('id'),'',__CLASS__,__FILE__,__LINE__);
-                }
-            }
-            else {
-                $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Could not find ProductRelation '.print_r($props,true),'',__CLASS__,__FILE__,__LINE__);
-            }
-        }
-        return true;
-    }
-    
     /**
      * Dictate relations to the current product.
      * This will remove all relations not in the given $array, add any new relations from the $array,
@@ -597,8 +521,8 @@ class Product extends BaseModel {
     //------------------------------------------------------------------------------
     //! Fields
     //------------------------------------------------------------------------------
-    /** 
-     * Add field data to a product.  We don't do this via addMany... shrugs.
+    /**
+     * Dictate fields for the current product. See $data structure:
      *
      * array(
      *      array(
@@ -606,60 +530,7 @@ class Product extends BaseModel {
      *          'value'=>'something'        (optional)
      *          'seq' => 1                  (optional)
      *      ),
-     * )
-     *
-     * @param array $data of ProductField data -- they omit the product_id since that is inherited
-     */
-    public function addFields(array $data) {
-        $this_product_id = $this->_verifyExisting();
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Fields:'.print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);  
-        foreach ($data as $r) {
-            if (!isset($r['field_id'])) {
-                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Missing field_id','',__CLASS__,__FUNCTION__,__LINE__); 
-                continue;
-            }
-            if (!$F = $this->modx->getObject('Field', $r['field_id'])) {
-                throw new \Exception('Invalid field ID '.$r['field_id']);    
-            }            
-
-            $props = array(
-                'product_id' => $this_product_id,
-                'field_id' => $r['field_id'] 
-            );
-
-            if (!$PF = $this->modx->getObject('ProductField', $props)) {                
-                $PF = $this->modx->newObject('ProductField', $props);
-            }
-            if (isset($r['value'])) $PF->set('value', $r['value']);
-            if (isset($r['seq'])) $PF->set('seq', $r['seq']);
-            $PF->save();
-        }
-
-        return true;    
-    }
-
-    /** 
-     * Remove fields from a product. We don't care here if the referenced taxonomy ids are valid or not.
-     * @param array $array of taxonomy page ids
-     */
-    public function removeFields(array $array) {
-        $this_product_id = $this->_verifyExisting();
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Fields remove ids:'.implode(',',$array),'',__CLASS__,__FUNCTION__,__LINE__);          
-        foreach ($array as $id) {
-            $props = array(
-                'product_id'=> $this_product_id, 
-                'field_id'=> $id
-            );
-            if ($PT = $this->modx->getObject('ProductField', $props)) {
-                $PT->remove();
-            }
-        }
-        return true;
-    
-    }
-
-    /**
-     * Dictate fields for the current product. See $data structure above @addFields()
+     * )     
      *
      * This will remove all fields not in the given $array, add any new relations from the $array,
      * it will order the relations based on the incoming $array order (seq will be set).
@@ -701,20 +572,6 @@ class Product extends BaseModel {
         return true;
     
     }
-
-
-    /** 
-     * get all Fields and Values for this product
-     * @param array $array of taxonomy page ids
-     */
-/*
-    public function getFields() {
-        $this_product_id = $this->_verifyExisting();
-
-        $pages = $this->modx->getCollectionGraph('ProductField','{"Field":{}}',$criteria);
-        return true;    
-    }
-*/
 
     //------------------------------------------------------------------------------
     //! Options

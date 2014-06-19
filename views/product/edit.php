@@ -614,26 +614,29 @@ jQuery(document).ready(function() {
                                                     </td>
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Meta[mod_price][$oterm_id]", $m['mod_price'], array('style'=>'width: 100px;','placeholder'=>'* inherit *'));
+                                                        print \Formbuilder\Form::dropdown("Meta[mod_price_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_price_type'],array('style'=>'width: 30px;'));
+                                                        print \Formbuilder\Form::text("Meta[mod_price][$oterm_id]", $m['mod_price'], array('style'=>'width: 50px;','placeholder'=>'* inherit *'));
 
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Meta[mod_weight][$oterm_id]", $m['mod_weight'], array('style'=>'width: 50px;','placeholder'=>'* inherit *'));
+                                                        print \Formbuilder\Form::dropdown("Meta[mod_weight_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_weight_type'],array('style'=>'width: 20px;'));
+                                                        print \Formbuilder\Form::text("Meta[mod_weight][$oterm_id]", $m['mod_weight'], array('style'=>'width: 30px;','placeholder'=>'* inherit *'));
 
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
-
-                                                         print \Formbuilder\Form::text("Meta[mod_code][$oterm_id]", $m['mod_code'], array('style'=>'width: 50px;','placeholder'=>'* inherit *'));
+                                                        print \Formbuilder\Form::dropdown("Meta[mod_code_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_code_type'],array('style'=>'width: 20px;'));
+                                                        print \Formbuilder\Form::text("Meta[mod_code][$oterm_id]", $m['mod_code'], array('style'=>'width: 30px;','placeholder'=>'* inherit *'));
                                                         ?>
                                                     </td>                                                    
 
                                                     <td>
                                                         <?php
-                                                         print \Formbuilder\Form::text("Meta[mod_category][$oterm_id]", $m['mod_category'], array('style'=>'width: 100px;','placeholder'=>'* inherit *'));
+                                                        print \Formbuilder\Form::dropdown("Meta[mod_category_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_category_type'],array('style'=>'width: 20px;'));
+                                                        print \Formbuilder\Form::text("Meta[mod_category][$oterm_id]", $m['mod_category'], array('style'=>'width: 50px;','placeholder'=>'* inherit *'));
                                                         ?>
                                                     </td>                                                    
 

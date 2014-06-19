@@ -30,10 +30,10 @@ class OptionTerm extends xPDOObject {
                 $mods = array();
                     if ($this->get('mod_price')) {
                         $price = $this->get('mod_price');
-                        if ($price[0] == '-') {
+                        if ($this->get('mod_price_type') == '-') {
                             $mods[] = 'p-'.$price;
                         }
-                        elseif ($price[0] == ';') {
+                        elseif ($this->get('mod_price_type') == ':') {
                             $mods[] = 'p:'.$price;                        
                         }
                         else {
@@ -42,10 +42,10 @@ class OptionTerm extends xPDOObject {
                     }
                     if ($this->get('mod_weight')) {
                         $weight = $this->get('mod_weight');
-                        if ($weight[0] == '-') {
+                        if ($this->get('mod_weight_type') == '-') {
                             $mods[] = 'w-'.$weight;
                         }
-                        elseif ($weight[0] == ';') {
+                        elseif ($this->get('mod_weight_type') == ':') {
                             $mods[] = 'w:'.$weight;                        
                         }
                         else {
@@ -54,10 +54,10 @@ class OptionTerm extends xPDOObject {
                     }
                     if ($this->get('mod_code')) {
                         $code = $this->get('mod_weight');
-                        if ($code[0] == '-') {
+                        if ($this->get('mod_code_type') == '-') {
                             $mods[] = 'c-'.$code;
                         }
-                        elseif ($code[0] == ';') {
+                        elseif ($this->get('mod_code_type') == ':') {
                             $mods[] = 'c:'.$code;                        
                         }
                         else {
@@ -66,10 +66,10 @@ class OptionTerm extends xPDOObject {
                     }
                     if ($this->get('mod_category')) {
                         $cat = $this->get('mod_category');
-                        if ($cat[0] == '-') {
+                        if ($this->get('mod_category_type') == '-') {
                             $mods[] = 'y-'.$cat;
                         }
-                        elseif ($cat[0] == ';') {
+                        elseif ($this->get('mod_category_type') == ':') {
                             $mods[] = 'y:'.$cat;                        
                         }
                         else {

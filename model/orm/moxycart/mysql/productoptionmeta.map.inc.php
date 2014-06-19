@@ -11,9 +11,13 @@ $xpdo_meta_map['ProductOptionMeta']= array (
     'option_id' => NULL,
     'oterm_id' => NULL,
     'is_override' => 0,
+    'mod_price_type' => '+',
     'mod_price' => 0,
+    'mod_weight_type' => '+',
     'mod_weight' => 0,
+    'mod_code_type' => '+',
     'mod_code' => '',
+    'mod_category_type' => '+',
     'mod_category' => '',
     'asset_id' => NULL,
   ),
@@ -56,6 +60,15 @@ $xpdo_meta_map['ProductOptionMeta']= array (
       'default' => 0,
       'comment' => 'If checked, apply the mods',
     ),
+    'mod_price_type' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '3',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '+',
+      'comment' => 'control the modification type: +,-,:',
+    ),
     'mod_price' => 
     array (
       'dbtype' => 'decimal',
@@ -63,6 +76,15 @@ $xpdo_meta_map['ProductOptionMeta']= array (
       'phptype' => 'float',
       'null' => false,
       'default' => 0,
+    ),
+    'mod_weight_type' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '3',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '+',
+      'comment' => 'control the modification type: +,-,:',
     ),
     'mod_weight' => 
     array (
@@ -72,6 +94,15 @@ $xpdo_meta_map['ProductOptionMeta']= array (
       'null' => false,
       'default' => 0,
     ),
+    'mod_code_type' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '3',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '+',
+      'comment' => 'control the modification type: +,-,:',
+    ),
     'mod_code' => 
     array (
       'dbtype' => 'varchar',
@@ -79,6 +110,15 @@ $xpdo_meta_map['ProductOptionMeta']= array (
       'phptype' => 'string',
       'null' => false,
       'default' => '',
+    ),
+    'mod_category_type' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '3',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '+',
+      'comment' => 'control the modification type: +,-,:',
     ),
     'mod_category' => 
     array (
