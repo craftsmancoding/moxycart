@@ -72,26 +72,26 @@ print \Formbuilder\Form::open($data['baseurl'])
                         <td>
                             <input type="hidden" name="oterm_id[]" value="<?php print $t->oterm_id; ?>" />
                             <input type="hidden" name="seq[]" value="<?php print $t->oterm_id; ?>" />
-                            <input type="text" name="slug[]" placeholder="slug" value="<?php print htmlentities($t->slug); ?>" />
+                            <input type="text" name="slug[]" placeholder="slug" style="width:100px;" value="<?php print htmlentities($t->slug); ?>" />
                         </td>
                         <td>
-                            <input type="text" name="name[]" placeholder="Name" value="<?php print htmlentities($t->name); ?>" />
+                            <input type="text" name="name[]" placeholder="Name" style="width:100px;" value="<?php print htmlentities($t->name); ?>" />
                         </td>
                         <td>
                             <?php print \Formbuilder\Form::dropdown('mod_price_type[]', \Moxycart\OptionTerm::types(), $t->mod_price_type); ?>
-                            <input type="text" name="mod_price[]"  class="input-half" placeholder="0" value="<?php print htmlentities($t->mod_price); ?>" />
+                            <input type="text" name="mod_price[]"  class="input-half" style="width:60px;" placeholder="0" value="<?php print htmlentities($t->mod_price); ?>" />
                         </td>
                         <td>
                             <?php print \Formbuilder\Form::dropdown('mod_weight_type[]', \Moxycart\OptionTerm::types(), $t->mod_weight_type); ?>
-                            <input type="text" name="mod_weight[]" class="input-half"  placeholder="0" value="<?php print htmlentities($t->mod_weight); ?>" />
+                            <input type="text" name="mod_weight[]" class="input-half"  style="width:60px;" placeholder="0" value="<?php print htmlentities($t->mod_weight); ?>" />
                         </td>    
                         <td>
                             <?php print \Formbuilder\Form::dropdown('mod_code_type[]', \Moxycart\OptionTerm::types(), $t->mod_code_type); ?>
-                            <input type="text" name="mod_code[]" placeholder="SKU" value="<?php print htmlentities($t->mod_code); ?>" />
+                            <input type="text" name="mod_code[]" style="width:100px;" placeholder="SKU" value="<?php print htmlentities($t->mod_code); ?>" />
                         </td>
                         <td>
                             <?php print \Formbuilder\Form::dropdown('mod_category_type[]', \Moxycart\OptionTerm::types(), $t->mod_category_type); ?>
-                            <input type="text" name="mod_category[]" placeholder="Default" value="<?php print htmlentities($t->mod_category); ?>" />
+                            <input type="text" name="mod_category[]" style="width:100px;" placeholder="Default" value="<?php print htmlentities($t->mod_category); ?>" />
                         </td>        
                         <td>
                             <span class="btn" onclick="javascript:remove_term.call(this,event);">x</span>

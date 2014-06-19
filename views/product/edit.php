@@ -402,9 +402,9 @@ jQuery(document).ready(function() {
             <?php
             if ($data['product_form_action'] == 'product_update'):
             ?>
-                <span class="btn" onclick="javascript:delete_product(<?php print $data['product_id']; ?>,'<?php print static::page('products'); ?>');">Delete</span>
                 <button class="btn" id="product_update" onclick="javascript:save_product('edit'); return false;">Save</button>
                 <a class="btn" href="<?php print static::page('productpreview',array('product_id'=>$data['product_id'])); ?>" target="_blank">View</a>
+                <span class="btn btn-danger" onclick="javascript:delete_product(<?php print $data['product_id']; ?>,'<?php print static::page('products'); ?>');">Delete</span>
             <?php    
             else:
             ?>

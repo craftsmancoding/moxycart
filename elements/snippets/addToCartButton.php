@@ -77,7 +77,10 @@ $properties['options'] = '';
 if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
 
     foreach ($Options as $o) {
-            
+        if (!is_object($o->Option)) {
+            $modx->log(modX::LOG_LEVEL_ERROR,'Product ID ('.$product_id.') tied to option ('.$o->get('option_id').') that does not exist?','','addToCartButton');
+            continue;
+        }
         $opt = '<label for="'.$o->Option->get('slug').'" class="'.$cssClassOptionLabel.'">'.$o->Option->get('name').'</label>'
             .'<select id="'.$o->Option->get('slug').'" name="'.$o->Option->get('slug').'" class="'.$cssClassOptionSelect.'">';      
       

@@ -235,17 +235,34 @@ h2.moxycart_cmp_heading {
 .moxycart-btn {
   background-color: hsl(80, 46%, 33%) !important;
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#90b643", endColorstr="#617a2d");
-  background-image: -khtml-gradient(linear, left top, left bottom, from(#90b643), to(#617a2d));
-  background-image: -moz-linear-gradient(top, #90b643, #617a2d);
-  background-image: -ms-linear-gradient(top, #90b643, #617a2d);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #90b643), color-stop(100%, #617a2d));
-  background-image: -webkit-linear-gradient(top, #90b643, #617a2d);
-  background-image: -o-linear-gradient(top, #90b643, #617a2d);
-  background-image: linear-gradient(#90b643, #617a2d);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f00006", endColorstr="#617a2d");
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#f00006), to(#617a2d));
+  background-image: -moz-linear-gradient(top, #f00006, #617a2d);
+  background-image: -ms-linear-gradient(top, #f00006, #617a2d);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f00006), color-stop(100%, #617a2d));
+  background-image: -webkit-linear-gradient(top, #f00006, #617a2d);
+  background-image: -o-linear-gradient(top, #f00006, #617a2d);
+  background-image: linear-gradient(#f00006, #617a2d);
   border-color: #617a2d #617a2d hsl(80, 46%, 29%);
   color: #fff !important;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.26);
+  -webkit-font-smoothing: antialiased;
+}
+
+.delete-btn {
+  background-color: hsl(0, 77%, 31%) !important;
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#e22121", endColorstr="#8b1212");
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#e22121), to(#8b1212));
+  background-image: -moz-linear-gradient(top, #e22121, #8b1212);
+  background-image: -ms-linear-gradient(top, #e22121, #8b1212);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e22121), color-stop(100%, #8b1212));
+  background-image: -webkit-linear-gradient(top, #e22121, #8b1212);
+  background-image: -o-linear-gradient(top, #e22121, #8b1212);
+  background-image: linear-gradient(#e22121, #8b1212);
+  border-color: #8b1212 #8b1212 hsl(0, 77%, 26%);
+  color: #fff !important;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.33);
   -webkit-font-smoothing: antialiased;
 }
 
