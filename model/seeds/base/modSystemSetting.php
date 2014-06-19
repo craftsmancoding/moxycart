@@ -51,6 +51,13 @@ return array(
 		'area' => 'moxycart:default'
     ),
     array(
+        'key'  =>     'moxycart.enable_related',
+		'value'=>     0,
+		'xtype'=>     'combo-boolean',
+		'namespace' => 'moxycart',
+		'area' => 'moxycart:default'
+    ),
+    array(
         'key'  =>     'moxycart.enable_taxonomies',
 		'value'=>     0,
 		'xtype'=>     'combo-boolean',

@@ -31,10 +31,10 @@ print $this->getMsg();
     <thead>
         <tr>
             <th>
-                Slug
+                Name
             </th>
             <th>
-                Name
+                Slug
             </th>
             <th>
                 Description
@@ -47,9 +47,9 @@ print $this->getMsg();
     <tr>
         <td>
             <input type="hidden" name="seq[]" value="<?php print $r->get('option_id'); ?>" />
-            <?php print $r->get('slug'); ?>
+            <?php print $r->get('name'); ?>
         </td>
-        <td><?php print $r->get('name'); ?></td>
+        <td><?php print $r->get('slug'); ?></td>
         <td><?php print $r->get('description'); ?></td>
         <td>
             <span class="button btn" onclick="javascript:paint('optionedit',{option_id:<?php print $r->get('option_id'); ?>});">Edit</span>

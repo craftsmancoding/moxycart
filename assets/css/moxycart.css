@@ -233,16 +233,16 @@ h2.moxycart_cmp_heading {
 }
 
 .moxycart-btn {
-  background-color: hsl(80, 46%, 33%) !important;
+  background-color: #658F1A !important;
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f00006", endColorstr="#617a2d");
-  background-image: -khtml-gradient(linear, left top, left bottom, from(#f00006), to(#617a2d));
-  background-image: -moz-linear-gradient(top, #f00006, #617a2d);
-  background-image: -ms-linear-gradient(top, #f00006, #617a2d);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f00006), color-stop(100%, #617a2d));
-  background-image: -webkit-linear-gradient(top, #f00006, #617a2d);
-  background-image: -o-linear-gradient(top, #f00006, #617a2d);
-  background-image: linear-gradient(#f00006, #617a2d);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#658F1A", endColorstr="#658F1A");
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#658F1A), to(#658F1A));
+  background-image: -moz-linear-gradient(top, #658F1A, #658F1A);
+  background-image: -ms-linear-gradient(top, #658F1A, #658F1A);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #658F1A), color-stop(100%, #658F1A));
+  background-image: -webkit-linear-gradient(top, #658F1A, #658F1A);
+  background-image: -o-linear-gradient(top, #658F1A, #658F1A);
+  background-image: linear-gradient(#658F1A, #658F1A);
   border-color: #617a2d #617a2d hsl(80, 46%, 29%);
   color: #fff !important;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.26);
@@ -454,10 +454,9 @@ hr {
 }
 
 .products-tbl tbody tr td:first-child img {
-  max-width: 300px !important;
+  max-width: 110px !important;
   width: 60%;
 }
-
 
 .ui-dialog-titlebar-close {
   background: #ddd url('../images/close-dialog.png') 4px 5px no-repeat;
@@ -473,13 +472,21 @@ hr {
 }
 
 table.products-tbl thead th {
-  font-size: 13px;
+  font-size: 12px;
   text-shadow: none !important;
-  letter-spacing: 0.5em;
+  letter-spacing: 0.09em;
+  font-weight:normal;
+}
+
+table.products-tbl tr:hover{
+	background-color:#ececec;	
 }
 
 table.products-tbl td {
-  font-size: 16px;
+  font-size: 14px;
+  border-bottom: 1px solid #ececec;
+  padding-top:10px;
+  padding-bottom:8px;
 }
 
 .po-fset {

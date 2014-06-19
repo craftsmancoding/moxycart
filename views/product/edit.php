@@ -71,6 +71,7 @@ function product_init() {
             var data = parse_tpl("product_image",response.data.fields);
             jQuery("#product_images").append(data);
             jQuery(".dz-preview").remove();
+            save_product(product_save_method);
        } 
        else {                           
             $(".dz-success-mark").hide();
@@ -402,9 +403,9 @@ jQuery(document).ready(function() {
             <?php
             if ($data['product_form_action'] == 'product_update'):
             ?>
+                <span class="btn" onclick="javascript:delete_product(<?php print $data['product_id']; ?>,'<?php print static::page('products'); ?>');">Delete</span>
                 <button class="btn" id="product_update" onclick="javascript:save_product('edit'); return false;">Save</button>
                 <a class="btn" href="<?php print static::page('productpreview',array('product_id'=>$data['product_id'])); ?>" target="_blank">View</a>
-                <span class="btn btn-danger" onclick="javascript:delete_product(<?php print $data['product_id']; ?>,'<?php print static::page('products'); ?>');">Delete</span>
             <?php    
             else:
             ?>
@@ -442,7 +443,9 @@ jQuery(document).ready(function() {
     		<li class="variations-link" ><a href="#variations_tab">Variations</a></li>
 		<?php endif; ?>
 		<li class="fields-link" ><a href="#fields_tab">Custom Fields</a></li>
+		<?php if ($this->modx->getOption('moxycart.enable_related')): ?>
 		<li class="related-link" ><a href="#related_tab">Related</a></li>
+		<?php endif; ?>
 		<?php if($this->modx->getOption('moxycart.enable_reviews')):?>
             <li class="reviews-link" ><a href="#reviews_tab">Reviews</a></li>
         <?php endif; ?>
@@ -629,28 +632,28 @@ jQuery(document).ready(function() {
                                                     <td>
                                                         <?php
                                                         print \Formbuilder\Form::dropdown("Meta[mod_price_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_price_type'],array('style'=>'width: 30px;'));
-                                                        print \Formbuilder\Form::text("Meta[mod_price][$oterm_id]", $m['mod_price'], array('style'=>'width: 50px;','placeholder'=>'* inherit *'));
+                                                        print \Formbuilder\Form::text("Meta[mod_price][$oterm_id]", $m['mod_price'], array('style'=>'width: 50px;'));
 
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
                                                         print \Formbuilder\Form::dropdown("Meta[mod_weight_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_weight_type'],array('style'=>'width: 20px;'));
-                                                        print \Formbuilder\Form::text("Meta[mod_weight][$oterm_id]", $m['mod_weight'], array('style'=>'width: 30px;','placeholder'=>'* inherit *'));
+                                                        print \Formbuilder\Form::text("Meta[mod_weight][$oterm_id]", $m['mod_weight'], array('style'=>'width: 30px;'));
 
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
                                                         print \Formbuilder\Form::dropdown("Meta[mod_code_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_code_type'],array('style'=>'width: 20px;'));
-                                                        print \Formbuilder\Form::text("Meta[mod_code][$oterm_id]", $m['mod_code'], array('style'=>'width: 30px;','placeholder'=>'* inherit *'));
+                                                        print \Formbuilder\Form::text("Meta[mod_code][$oterm_id]", $m['mod_code'], array('style'=>'width: 30px;'));
                                                         ?>
                                                     </td>                                                    
 
                                                     <td>
                                                         <?php
                                                         print \Formbuilder\Form::dropdown("Meta[mod_category_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_category_type'],array('style'=>'width: 20px;'));
-                                                        print \Formbuilder\Form::text("Meta[mod_category][$oterm_id]", $m['mod_category'], array('style'=>'width: 50px;','placeholder'=>'* inherit *'));
+                                                        print \Formbuilder\Form::text("Meta[mod_category][$oterm_id]", $m['mod_category'], array('style'=>'width: 50px;'));
                                                         ?>
                                                     </td>                                                    
 
@@ -747,6 +750,8 @@ jQuery(document).ready(function() {
 
 	</div>
 	
+	
+	<?php if ($this->modx->getOption('moxycart.enable_related')): ?>
 	<div id="related_tab" class="content">		
         <table class="table no-top-border">
             <tr>
@@ -794,8 +799,8 @@ jQuery(document).ready(function() {
                 </td>
             </tr>
         </table>
-
 	</div>
+	<?php endif; //related_tab ?>
 
     <?php if($this->modx->getOption('moxycart.enable_reviews')):?>
     <div id="reviews_tab" class="content">
@@ -917,7 +922,6 @@ jQuery(document).ready(function() {
     <?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
     	<div id="taxonomies_tab" class="content"><br>
 
-                <legend>Terms</legend>
                 <div id="taxonomy_terms">
                     <?php print \Formbuilder\Form::multicheck('Terms',$data['terms'],$data['product_terms']); ?>
                 </div>    

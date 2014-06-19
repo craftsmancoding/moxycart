@@ -27,13 +27,13 @@
     <thead>
         <tr>
             <th>
-                <!--a href="<?php print self::toggle('slug',$data['baseurl']); ?>">Slug</a-->
-                Slug
-            </th>
-            <th>
                 <!--a href="<?php print self::toggle('label',$data['baseurl']); ?>">Label</a-->
                 Label
             </th>
+            <th>
+                <!--a href="<?php print self::toggle('slug',$data['baseurl']); ?>">Slug</a-->
+                Slug
+            </th>            
             <th>
                 <!--a href="<?php print self::toggle('type',$data['baseurl']); ?>">Type</a-->
                 Type
@@ -50,9 +50,9 @@
     <tr>
         <td>
             <input type="hidden" name="seq[]" value="<?php print $r->get('field_id'); ?>" />
-            <?php print $r->get('slug'); ?>
+            <?php print $r->get('label'); ?>
         </td>
-        <td><?php print $r->get('label'); ?></td>
+        <td><?php print $r->get('slug'); ?></td>
         <td><?php print $r->get('type'); ?></td>
         <td><?php print $r->get('group'); ?>
         </td>

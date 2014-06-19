@@ -126,6 +126,11 @@ $_lang['setting_moxycart.categories'] = 'Foxycart Categories';
 $_lang['setting_moxycart.categories_desc'] = 'JSON array of Foxycart categories copied from the Foxycart dashboard (temporary until API is completed)';
 
 
+
+$_lang['setting_moxycart.enable_related'] = 'Enable Related Products';
+$_lang['setting_moxycart.enable_related_desc'] = 'You may wish to link one product with other similar products. This can make it easier for your customers to find similar products, or you use this to define product bundles.';
+
+
 $_lang['setting_moxycart.enable_variations'] = 'Enable Product Variations';
 $_lang['setting_moxycart.enable_variations_desc'] = 'Some shops require a more complicated setup that tracks prices and inventory counts (or other attributes) differently between variations of the same basic product (e.g. the Blue T-shirt costs more than the Red T-shirt).  Although you can manually create different products for each variation, Moxycart can help you track the matrix of variations under a single parent product.';
 

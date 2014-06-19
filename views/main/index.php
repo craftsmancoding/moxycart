@@ -15,13 +15,7 @@
 	            <span class="subline">Manage Products</span>
 	        </a>
 	    </li>	
-	    <li class="assets">
-	        <a href="<?php print self::page('assets'); ?>" title="Manage Assets">
-	            <span class="icon"></span>
-	            <span class="headline">Manage Assets</span>
-	            <span class="subline">Create/Manage Assets</span>
-	        </a>
-	    </li>
+
 	    <li class="fields">
 	        <a href="<?php print self::page('fields'); ?>" title="Manage Custom Fields">
 	            <span class="icon"></span>

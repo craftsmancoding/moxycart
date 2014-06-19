@@ -253,7 +253,8 @@ class PageController extends BaseController {
     		var product = '.json_encode($full_product_data).';            
             var use_editor = "'.$this->modx->getOption('use_editor').'";
             var assets_url = "'.self::url('asset','create',array(),'assman').'"; 
-            var assets_delete_url = "'.self::url('asset','delete',array(),'assman').'"; 
+            var assets_delete_url = "'.self::url('asset','delete',array(),'assman').'";
+            var product_save_method = "create"; 
             // Document read stuff has to be in here
             jQuery(document).ready(function() {
                 console.log("ready to init product.");
@@ -309,6 +310,7 @@ class PageController extends BaseController {
             var use_editor = "'.$this->modx->getOption('use_editor').'";
             var assets_url = "'.self::url('asset','create',array(),'assman').'"; 
             var assets_delete_url = "'.self::url('asset','delete',array(),'assman').'"; 
+            var product_save_method = "edit";            
             // Document read stuff has to be in here
             jQuery(document).ready(function() {
                 product_init();
