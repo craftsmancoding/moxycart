@@ -315,6 +315,18 @@ function save_product(method) {
     }
 }
 
+
+
+function delete_product(product_id,redirect) {
+    console.log('[delete_product] '+product_id);
+    if(confirm("Are you sure? This cannot be undone."))
+    {
+        mapi('product','delete',{product_id:product_id});
+        window.location = redirect;
+        return;
+    }
+}
+
 function select_thumb(asset_id,url) {
     console.log('[select_thumb] asset_id: %s thumb url: %s',asset_id,url);
     jQuery('#asset_id').val(asset_id);
@@ -390,6 +402,7 @@ jQuery(document).ready(function() {
             <?php
             if ($data['product_form_action'] == 'product_update'):
             ?>
+                <span class="btn" onclick="javascript:delete_product(<?php print $data['product_id']; ?>,'<?php print static::page('products'); ?>');">Delete</span>
                 <button class="btn" id="product_update" onclick="javascript:save_product('edit'); return false;">Save</button>
                 <a class="btn" href="<?php print static::page('productpreview',array('product_id'=>$data['product_id'])); ?>" target="_blank">View</a>
             <?php    
@@ -713,7 +726,7 @@ jQuery(document).ready(function() {
 	<div id="fields_tab" class="content">
 			<div id="product_fields">
 	                <?php if (!$data['product_fields']) : ?>
-				        <div class="danger" id="no_specs_msg">No Custom Fields have been added to this product.</div>	                
+				        <div class="danger" id="no_specs_msg">No Custom Fields have been added to this product. </div>	                
 	                <?php endif; ?>
 	                
                     <?php foreach ($data['product_fields'] as $field_id => $f): ?>
