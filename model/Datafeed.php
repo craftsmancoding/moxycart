@@ -164,6 +164,9 @@ class Datafeed {
     }
     
     /** 
+     * This node is a bit special because we normalize the transaction_detail_option bits and append them
+     * as additional key/value pairs for the TransactionDetail callbacks.
+     *
      * @param array of SimpleXMLElement objects
      * @return array of MODX Tax objects
      */
@@ -172,16 +175,21 @@ class Datafeed {
         foreach($array as $d) {
             $TransactionDetail = $this->modx->newObject('TransactionDetail');
             $TransactionDetail->fromArray((array) $d);
+            $details = $TransactionDetail->toArray();
             $options = array();
             if (isset($d->transaction_detail_options->transaction_detail_option)) {
                 foreach($d->transaction_detail_options->transaction_detail_option as $o) {
                     $TransactionDetailOption = $this->modx->newObject('TransactionDetailOption');
                     $TransactionDetailOption->fromArray((array) $o);
+                    // product_option_name
+                    // product_option_value
+                    $details[ $TransactionDetailOption->get('product_option_name') ] 
+                        = $TransactionDetailOption->get('product_option_value');
                     $options[] = $TransactionDetailOption;
                 }
                 $TransactionDetail->addMany($options);
             }
-            $this->executeCallbacks('product',$TransactionDetail->toArray());
+            $this->executeCallbacks('product',$details);
             $details[] = $TransactionDetail;
         }
         

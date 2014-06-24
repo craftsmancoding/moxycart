@@ -490,7 +490,9 @@ class Product extends BaseModel {
                     throw new \Exception('Invalid term ID '.$id);    
                 }
                 $PT = $this->modx->newObject('ProductTerm', $props);
-                $PT->save();
+                if (!$PT->save()) {
+                    
+                }
             }
         }
 
@@ -517,7 +519,39 @@ class Product extends BaseModel {
         return true;
     }
 
+
+
+    /**
+     * Dictate terms for the current product.
+     * This will remove all terms not in the given $array, add any new relations from the $array,
+     * it will order the relations based on the incoming $array order (seq will be set).
+     * Exeptions are thrown if the product ids do not exist.
+     *
+     * @param array $dictate'd related_id's
+     */
+    public function dictateTerms(array $dictate) {
+        $this_product_id = $this->_verifyExisting();
         
+        $props = array(
+            'product_id'=> $this_product_id,
+        );
+        
+        // Array of related_id's that are already defined
+        $existing = array();
+        if($ExistingColl = $this->modx->getObject('ProductTerm', $props)) {
+            $existing[] = $ExistingColl->get('term_id');   
+        }
+        
+        $to_remove = array_diff($existing,$dictate);
+        $to_add = array_diff($dictate,$existing);
+
+        $this->removeTerms($to_remove);
+        $this->addTerms($to_add);
+        
+        return true;
+    
+    }
+
     //------------------------------------------------------------------------------
     //! Fields
     //------------------------------------------------------------------------------
@@ -581,6 +615,10 @@ class Product extends BaseModel {
      * This will remove all fields not in the given $array, add any new option_id's from the $array.
 
      * Exeptions are thrown if the product ids do not exist.
+     * Data structure must be like so:
+     *  Array(
+     *      {$option_id} => Array('meta'=>'all_terms'),
+     *  )
      *
      * @param array $data related data
      */
@@ -593,17 +631,10 @@ class Product extends BaseModel {
             'product_id'=> $this_product_id, 
         );
         
-        // Get the existing relations
-        $existing = array();
-        if($Col = $this->modx->getIterator('ProductOption', $props)) {
-            foreach ($Col as $c) {
-                 $existing[] = $c->get('product_id');
-             }
-        }
-        
         $i = 0;
+        $dictate = array();
         foreach ($data as $option_id => $r) {
-            if ($r['checked'] == 0) {
+            if (isset($r['checked']) && $r['checked'] == 0) {
                 if ($PO = $this->modx->getObject('ProductOption', array('product_id'=>$this_product_id, 'option_id'=>$option_id))) {
                     if (!$PO->remove()) {
                         $this->modx->log(\modX::LOG_LEVEL_ERROR,'Unable to delete ProductOption for product_id '.$this_product_id.' option_id: '.$option_id,'',__CLASS__,__FUNCTION__,__LINE__); 
@@ -611,13 +642,28 @@ class Product extends BaseModel {
                 }
                 continue;
             }
+//            print_r($r); exit;
             if (!$PO = $this->modx->getObject('ProductOption', array('product_id'=>$this_product_id, 'option_id'=>$option_id))) {
                 $PO = $this->modx->newObject('ProductOption');
             }
             $PO->set('option_id', $option_id);
             $PO->set('meta', $r['meta']);
             $PO->set('product_id', $this_product_id);
-            $PO->save();
+            if(!$PO->save()) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR, 'Error dictating option: '.print_r($r,true),'',__CLASS__,__FILE__,__LINE__);
+            }
+            $dictate[] = $PO->get('id');
+        }
+        
+        $criteria = $this->modx->newQuery('ProductOption');
+        $criteria->where(array(
+            'product_id' => $this_product_id,
+            'id:NOT IN' => $dictate,
+        ));        
+        if ($Remove = $this->modx->getCollection('ProductOption', $criteria)) {
+            foreach ($Remove as $r) {
+                $r->remove();
+            }
         }
         
         return true;
@@ -785,6 +831,7 @@ class Product extends BaseModel {
      'Terms' => array(1,2,3),
      
      @param array $data (e.g. from $_POST)
+     @return 
      */
     public function saveRelated($data) {
         //$this->modx->setLogLevel(4);

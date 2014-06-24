@@ -47,9 +47,15 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
 
         $core_path = self::$modx->getOption('moxycart.core_path','',MODX_CORE_PATH.'components/moxycart/');
         self::$modx->addPackage('foxycart',$core_path.'model/orm/','foxy_');
-
     }
-
+    
+    public static function tearDownAfterClass() {
+        if ($Testdata = self::$modx->getCollection('Foxydata', array('api_key'=>'test'))) {
+            foreach ($Testdata as $T) {
+                $T->remove();
+            }    
+        }
+    }
 
     /**
      *
@@ -101,10 +107,10 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
         }
 
         $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
-        $result = $Datafeed->saveFoxyData($xml);
+        $result = $Datafeed->saveFoxyData($xml,$api_key);
         $this->assertEquals($result,'foxy'); 
         $Transaction = self::$modx->getObject('Transaction', array('id'=>'1234567890'));
-        $this->assertTrue((bool)$x);
+        $this->assertTrue((bool)$Transaction);
         $this->assertEquals($Transaction->get('customer_id'),'12345678');
         
         $transaction_id = $Transaction->get('transaction_id');
@@ -115,8 +121,6 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
         foreach ($TDs as $p) {
             $this->assertTrue(in_array($p->get('product_name'),$names));
         }
-        // $Datafeed->saveFoxyData($bogus_xml);
-        
     }
     
     
@@ -200,7 +204,9 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
         $result = $Datafeed->saveFoxyData($xml,$api_key);
         $this->assertEquals(self::$cnt,1); // transation x 1
 
-                
+        if ($Foxydata = self::$modx->getObject('Foxydata', array('api_key'=>$api_key))) {
+            $Foxydata->remove();
+        }                
     }
 
     /** 
@@ -224,6 +230,7 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
         // Test it without any post data
         $modx->request->parameters['POST'] = array();
         $actual = $modx->runSnippet('parseFoxycartDatafeed', $props);  
+
         // Look for a random string in our user-friendly response
         $this->assertNotFalse(strpos($actual, 'vmTsGsATTX6XrRfEwqpAnk8DHqjBhGPZD'));
 
@@ -248,6 +255,12 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
         $names = array('Ham Steak','5 Knives Sausage Sampler','Refrigerated Box');
         foreach ($TDs as $p) {
             $this->assertTrue(in_array($p->get('product_name'),$names));
+        }
+
+
+        // Delete from database if present
+        if ($Foxydata = $modx->getObject('Foxydata', array('api_key'=>$api_key))) {
+            $Foxydata->remove();
         }
 
 

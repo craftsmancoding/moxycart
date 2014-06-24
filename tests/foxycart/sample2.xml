@@ -93,10 +93,8 @@
           <product_delivery_type><![CDATA[flat_rate]]></product_delivery_type>
           <transaction_detail_options>
             <transaction_detail_option>
-              <product_option_name><![CDATA[sku]]></product_option_name>
-              <product_option_value><![CDATA[X-123]]></product_option_value>
-              <price_mod><![CDATA[0]]></price_mod>
-              <weight_mod><![CDATA[0.000]]></weight_mod>
+              <product_option_name><![CDATA[product_id]]></product_option_name>
+              <product_option_value><![CDATA[123]]></product_option_value>
             </transaction_detail_option>
           </transaction_detail_options>
         </transaction_detail>

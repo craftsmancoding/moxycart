@@ -290,44 +290,48 @@ class productTest extends \PHPUnit_Framework_TestCase {
         //! Options
         if (!self::$Option['color'] = self::$modx->getObject('Option', array('slug'=>'color'))) {
             self::$Option['color'] = self::$modx->newObject('Option');
-            self::$Option['color']->fromArray(array(
-                'slug' => 'color',
-                'name' => 'Color',
-                'description' => 'Testing Variation Type',
-                'seq' => 0,
-            ));
-            self::$Option['color']->save();
         }
+        self::$Option['color']->fromArray(array(
+            'slug' => 'color',
+            'name' => 'Color',
+            'description' => 'Testing Variation Type',
+            'seq' => 0,
+        ));
+        self::$Option['color']->save();
+
         if (!self::$Option['size'] = self::$modx->getObject('Option', array('slug'=>'size'))) {
             self::$Option['size'] = self::$modx->newObject('Option');
-            self::$Option['size']->fromArray(array(
-                'slug' => 'size',
-                'name' => 'Size',
-                'description' => 'Testing Variation Type',
-                'seq' => 0,
-            ));
-            self::$Option['size']->save();
         }        
+        self::$Option['size']->fromArray(array(
+            'slug' => 'size',
+            'name' => 'Size',
+            'description' => 'Testing Variation Type',
+            'seq' => 0,
+        ));
+        self::$Option['size']->save();
+
         if (!self::$Option['material'] = self::$modx->getObject('Option', array('slug'=>'material'))) {
             self::$Option['material'] = self::$modx->newObject('Option');
-            self::$Option['material']->fromArray(array(
-                'slug' => 'material',
-                'name' => 'Material',
-                'description' => 'Testing Variation Type',
-                'seq' => 0,
-            ));
-            self::$Option['material']->save();
         }
+        self::$Option['material']->fromArray(array(
+            'slug' => 'material',
+            'name' => 'Material',
+            'description' => 'Testing Variation Type',
+            'seq' => 0,
+        ));
+        self::$Option['material']->save();
+
         if (!self::$Option['printing'] = self::$modx->getObject('Option', array('slug'=>'printing'))) {
             self::$Option['printing'] = self::$modx->newObject('Option');
-            self::$Option['printing']->fromArray(array(
-                'slug' => 'printing',
-                'name' => 'Printing',
-                'description' => 'Testing Variation Type',
-                'seq' => 0,
-            ));
-            self::$Option['printing']->save();
         }        
+        self::$Option['printing']->fromArray(array(
+            'slug' => 'printing',
+            'name' => 'Printing',
+            'description' => 'Testing Variation Type',
+            'seq' => 0,
+        ));
+        self::$Option['printing']->save();
+
         //!OptionTerm : Colors
         if (!self::$OTerm['white'] = self::$modx->getObject('OptionTerm', array('slug'=>'white'))) {
             self::$OTerm['white'] = self::$modx->newObject('OptionTerm');
@@ -335,8 +339,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'option_id' => self::$Option['color']->get('option_id'),
                 'slug' => 'white',
                 'name' => 'White',
-                'sku_prefix' => '',
-                'sku_suffix' => '-WHI',
                 'seq' => 0,
             ));
             self::$OTerm['white']->save();
@@ -347,8 +349,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'option_id' => self::$Option['color']->get('option_id'),
                 'slug' => 'black',
                 'name' => 'Black',
-                'sku_prefix' => '',
-                'sku_suffix' => '-BLA',
                 'seq' => 0,
             ));
             self::$OTerm['black']->save();
@@ -359,8 +359,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'option_id' => self::$Option['color']->get('option_id'),
                 'slug' => 'red',
                 'name' => 'Red',
-                'sku_prefix' => '',
-                'sku_suffix' => '-RED',
                 'seq' => 0,
             ));
             self::$OTerm['red']->save();
@@ -373,8 +371,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'option_id' => self::$Option['size']->get('option_id'),
                 'slug' => 'small',
                 'name' => 'Small',
-                'sku_prefix' => '',
-                'sku_suffix' => '-S',
                 'seq' => 0,
             ));
             self::$OTerm['small']->save();
@@ -385,8 +381,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'option_id' => self::$Option['size']->get('option_id'),
                 'slug' => 'med',
                 'name' => 'Medium',
-                'sku_prefix' => '',
-                'sku_suffix' => '-M',
                 'seq' => 0,
             ));
             self::$OTerm['med']->save();
@@ -397,8 +391,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'option_id' => self::$Option['size']->get('option_id'),
                 'slug' => 'large',
                 'name' => 'Large',
-                'sku_prefix' => '',
-                'sku_suffix' => '-L',
                 'seq' => 0,
             ));
             self::$OTerm['large']->save();
@@ -411,8 +403,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'option_id' => self::$Option['material']->get('option_id'),
                 'slug' => 'cotton',
                 'name' => 'Cotton',
-                'sku_prefix' => '',
-                'sku_suffix' => '-CTN',
                 'seq' => 0,
             ));
             self::$OTerm['cotton']->save();
@@ -423,8 +413,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'option_id' => self::$Option['material']->get('option_id'),
                 'slug' => 'silk',
                 'name' => 'Silk',
-                'sku_prefix' => '',
-                'sku_suffix' => '-SLK',
                 'seq' => 0,
             ));
             self::$OTerm['silk']->save();
@@ -435,8 +423,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'option_id' => self::$Option['material']->get('option_id'),
                 'slug' => 'wool',
                 'name' => 'Wool',
-                'sku_prefix' => '',
-                'sku_suffix' => '-WOOL',
                 'seq' => 0,
             ));
             self::$OTerm['wool']->save();
@@ -449,8 +435,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'option_id' => self::$Option['printing']->get('option_id'),
                 'slug' => 'silkscreen',
                 'name' => 'Silk Screen',
-                'sku_prefix' => '',
-                'sku_suffix' => '-SCR',
                 'seq' => 0,
             ));
             self::$OTerm['silkscreen']->save();
@@ -461,8 +445,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'option_id' => self::$Option['printing']->get('option_id'),
                 'slug' => 'embossed',
                 'name' => 'Embossed',
-                'sku_prefix' => '',
-                'sku_suffix' => '-EMB',
                 'seq' => 0,
             ));
             self::$OTerm['embossed']->save();
@@ -473,8 +455,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
                 'option_id' => self::$Option['printing']->get('option_id'),
                 'slug' => 'gold',
                 'name' => 'gold',
-                'sku_prefix' => '',
-                'sku_suffix' => '-GLD',
                 'seq' => 0,
             ));
             self::$OTerm['gold']->save();
@@ -535,7 +515,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
      */
     public static function tearDownAfterClass() {
 
-/*
         self::$Store->remove();
         self::$Tax['A']->remove();
         self::$Tax['B']->remove();
@@ -566,7 +545,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
         self::$OTerm['silkscreen']->remove();
         self::$OTerm['gold']->remove();
         
-*/
 
     }
     
@@ -637,7 +615,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $One = $P->one(array(
             'store_id' => self::$Store->get('id'),
             'sku' => 'SOUTHPARK-TSHIRT'));        
-        $P->addRelations(array(-1,-2,-3));
+        $P->dictateRelations(array('product_id'=> -1));
     }
     
     /**
@@ -677,9 +655,8 @@ class productTest extends \PHPUnit_Framework_TestCase {
             $related_ids[] = $o['product_id'];
         }
 
-        $One->addRelations($related);
-        $result = $One->save();
-        $this->assertTrue($result);
+        $x = $One->dictateRelations($related);
+        $this->assertTrue($x);
 
         // Verify they all exist:
         $Collection = self::$modx->getCollection('ProductRelation', array('product_id'=>$product_id));
@@ -692,19 +669,19 @@ class productTest extends \PHPUnit_Framework_TestCase {
         }
         
         // Add duplicates, verify that nothing new was created.
-        $One->addRelations($related);
+        $One->dictateRelations($related);
         $cnt2 = self::$modx->getCount('ProductRelation', array('product_id'=>$product_id));
         $this->assertEquals(count($related), $cnt2);
         
         // Remove all but one
-        $odd_man_out = array_pop($related_ids);
-        $One->removeRelations($related_ids);
+        $odd_man_out = array_pop($related);
+        $One->dictateRelations($related);
         $cnt3 = self::$modx->getCount('ProductRelation', array('product_id'=>$One->get('product_id')));
         $this->assertEquals($cnt3, 1); // should be only one left
 
         // Remove all
-        array_push($related_ids, $odd_man_out);
-        $One->removeRelations($related_ids);
+        array_push($related, $odd_man_out);
+        $One->dictateRelations(array());
         $cnt3 = self::$modx->getCount('ProductRelation', array('product_id'=>$One->get('product_id')));
         $this->assertEquals($cnt3, 0); // Remove all
 
@@ -722,15 +699,6 @@ class productTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals($i, $PR->get('seq'));
             $i++;
         }
-
-        // Test the related snippet
-/*
-        global $modx;
-        $modx = self::$modx;
-        $props = array();
-        $modx->runSnippet('getRelatedProducts', $props);
-*/
-
     }    
 
     /**
@@ -849,6 +817,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         // Now, dictate the terms: this should add and remove
         $One->dictateTerms($terms);
         $cnt4 = self::$modx->getCount('ProductTerm', array('product_id'=>$One->get('product_id')));
+        //print_r($terms); exit;
         $this->assertEquals($cnt4, count($terms)); 
     }    
 
@@ -863,6 +832,8 @@ class productTest extends \PHPUnit_Framework_TestCase {
             'store_id' => self::$Store->get('id'),
             'sku' => 'SOUTHPARK-TSHIRT'));
             
+        $this->assertTrue( (bool) $One);
+        
         // Prep: Remove all Field Associations for this product
         if($Collection = self::$modx->getCollection('ProductField', array('product_id'=>$One->get('product_id')))) {
             foreach ($Collection as $C) {
@@ -882,11 +853,11 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $data[] = array('field_id' => self::$Field['two']->get('field_id'), 'value'=>'Dos');
         $data[] = array('field_id' => self::$Field['three']->get('field_id'), 'value'=>'Tres');
         
-        $One->addFields($data);
+        $One->dictateFields($data);
 
         // Verify they all exist:
         $Collection = self::$modx->getCollection('ProductField', array('product_id'=>$product_id));
-        $this->assertFalse(empty($Collection),'Product Fields were not added!');
+        $this->assertTrue((bool) $Collection,'Product Fields were not added!');
         $cnt = self::$modx->getCount('ProductField', array('product_id'=>$product_id));
         $this->assertEquals(count($fields), $cnt);
 
@@ -904,16 +875,10 @@ class productTest extends \PHPUnit_Framework_TestCase {
         
         // Add duplicates, verify that nothing new was created.
         $cnt1 = self::$modx->getCount('ProductField', array('product_id'=>$product_id));
-        $One->addFields($data);
+        $One->dictateFields($data);
         $cnt2 = self::$modx->getCount('ProductField', array('product_id'=>$product_id));
         $this->assertEquals($cnt1, $cnt2);
-        
-        // Remove 2
-        $cnt_before = self::$modx->getCount('ProductField', array('product_id'=>$One->get('product_id')));
-        $One->removeFields(array(self::$Field['two']->get('field_id'), self::$Field['three']->get('field_id')));
-        $cnt_after = self::$modx->getCount('ProductField', array('product_id'=>$One->get('product_id')));
-        $this->assertEquals($cnt_before-2, $cnt_after, 'Two fields should have been deleted'); // should be 2 fewer
-        
+                
         // Now, dictate the fields: this should remove one and add back two and three
         array_shift($data);
 
@@ -952,32 +917,31 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $product_id = $One->get('product_id');
         $this->assertFalse(empty($product_id));
         
-        $otypes = array();
-        $otypes[] = self::$Option['color']->get('option_id');
-        $otypes[] = self::$Option['size']->get('option_id');
-        $otypes[] = self::$Option['material']->get('option_id');
-        $otypes[] = self::$Option['printing']->get('option_id');
-        
-        $One->addOptions($otypes);
-        
+        $options = array();
+        $options[self::$Option['color']->get('option_id') ] = array('meta' => 'all_terms');
+        $options[self::$Option['size']->get('option_id') ] = array('meta' => 'all_terms');
+        $options[self::$Option['material']->get('option_id') ] = array('meta' => 'all_terms');
+        $options[self::$Option['printing']->get('option_id') ] = array('meta' => 'all_terms');
+
+        $One->dictateOptions($options);
+        //print_r($options); exit;
         // Verify they all exist:
         $Collection = self::$modx->getCollection('ProductOption', array('product_id'=>$product_id));
-        $this->assertFalse(empty($Collection),'Product Options were not added!');
+        $this->assertTrue( (bool) $Collection,'Product Options were not added!');
         $cnt = self::$modx->getCount('ProductOption', array('product_id'=>$product_id));
-        $this->assertEquals(count($otypes), $cnt);
-        foreach ($otypes as $id) {
+        $this->assertEquals(count($options), $cnt);
+        foreach ($options as $id => $o) {
             $PT = self::$modx->getObject('ProductOption', array('product_id'=>$product_id,'option_id'=>$id));
-            $this->assertFalse(empty($PT));
+            $this->assertTrue((bool) $PT, 'Product '.$product_id.' should be bound to option '.$id);
         }
         
         // Remove all but one
-        $odd_man_out = array_pop($otypes);
-
+        $odd_man_out = array_pop($options);
         
         // Now, dictate the fields: this should add and remove
-        $One->dictateOptions($otypes);
+        $One->dictateOptions($options);
         $cnt4 = self::$modx->getCount('ProductOption', array('product_id'=>$One->get('product_id')));
-        $this->assertEquals($cnt4, count($otypes)); 
+        $this->assertEquals($cnt4, count($options)); 
     } 
 
 
@@ -1204,7 +1168,7 @@ class productTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($qty > 2);
         
         $props = array(
-            'product_code' => $P->get('product_id'),
+            'product_id' => $P->get('product_id'),
             'product_quantity' => 2
         );
 
