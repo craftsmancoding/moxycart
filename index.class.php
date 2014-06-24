@@ -124,7 +124,16 @@ class IndexManagerController extends \Moxycart\BaseController {
         $modx->log(\modX::LOG_LEVEL_INFO,'[moxycart] Instantiating '.$class.' with config '.print_r($config,true),'',__FUNCTION__,__FILE__,__LINE__);
         
         // See Base::render() for how requests get handled.  
-        return new $class($modx,$config);
+        //return new $class($modx,$config);
+        try {
+            return new $class($modx,$config);
+        }
+        catch (\Exception $e) {
+            $class = '\\Moxycart\\ErrorController';
+            $config['method'] = 'getInstall';
+            return new $class($modx,$config);
+        }
+
 
     }
 }
