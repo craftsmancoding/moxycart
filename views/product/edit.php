@@ -308,7 +308,7 @@ function save_product(method) {
         mapi('product','create',values, function(response){
             console.debug(response);
             console.debug('Redirecting after successful create.');
-            //window.location.href = controller_url('page','productedit')+'&product_id='+response.data.id;    
+            window.location.href = controller_url('page','productedit')+'&product_id='+response.data.id;    
         });
 
     }

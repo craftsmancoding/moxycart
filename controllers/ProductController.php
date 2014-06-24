@@ -193,7 +193,11 @@ Array
             if (isset($scriptProperties[$k])) $scriptProperties[$k] = $Product->indexedToRecordset($scriptProperties[$k]);
         }
         $product_id = $Product->saveRelated($scriptProperties);
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'FOFFFF>>: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
+        if (!$product_id) {
+            return $this->sendFail(array('msg'=>'Error saving product.', 'errors'=>$Product->errors));
+        
+        }
+//        $this->modx->log(\modX::LOG_LEVEL_ERROR,'FOFFFF>>: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         return $this->sendSuccess(array(
             'msg' => sprintf('%s updated successfully.',$this->model),
             'id' => $product_id            

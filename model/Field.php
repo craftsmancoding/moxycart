@@ -50,9 +50,17 @@ class Field extends BaseModel {
                 $args['label'] = $attr['label'];
                 $args['description'] = $attr['description'];
                 $out = \Formbuilder\Form::checkbox($name,$value, $args);
+                $out->__toString(); // <-- force to string!
                 break;
             case 'text':
             case 'textarea':
+                $args['label'] = $attr['label'];
+                $args['description'] = $attr['description'];
+                $out = \Formbuilder\Form::$type($name,$value,$args);
+                $out->__toString(); // <-- force to string!
+                break;
+            case 'asset':
+                return 'ASDFA';
                 $args['label'] = $attr['label'];
                 $args['description'] = $attr['description'];
                 $out = \Formbuilder\Form::$type($name,$value,$args);
@@ -62,7 +70,7 @@ class Field extends BaseModel {
                 return false;
         }
         
-        return $out->__toString(); // <-- force to string!
+        return $out;
     
     }
     

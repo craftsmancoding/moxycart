@@ -54,7 +54,7 @@ class APIController extends \modExtraManagerController {
     
     /**
      * Send JSON error response. More serious than a fail, e.g. 
-     * When an exception is throw.
+     * When an exception is thrown.
      */
     public function sendError($message,$code=null, $data=null) {
         $out = array(
