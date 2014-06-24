@@ -162,6 +162,31 @@ function product_init() {
             }
         }   
     });
+
+    // Thumbnail Selection Modal
+    jQuery( "#generic_thumbnail_form" ).dialog({
+        autoOpen: false,
+        height: 330,
+        width: 500,
+        modal: true,
+        closeOnEscape: true,        
+        open: function( event, ui ) {
+            console.log('[generic_thumbnail_form] opened');
+            //jQuery('#generic_thumbnail_form_container').html('Tset...');
+            var preview;
+            for(var asset_id in product.RelData.Asset){
+                var A = product.RelData.Asset;
+                var data = parse_tpl("thumbnail_image_tpl",A[asset_id]);
+                preview = preview + data;
+            }
+            jQuery("#generic_thumbnail_form_container").html(preview);
+        },
+        buttons: {
+            "Done": function() {
+                jQuery( this ).dialog( "close" );
+            }
+        }   
+    });
     
     // Custom Field Selection Modal
     jQuery( "#custom_fields_form" ).dialog({
@@ -335,6 +360,14 @@ function select_thumb(asset_id,url) {
     jQuery('#thumbnail_img').attr('src', url);
     jQuery( "#thumbnail_form" ).dialog("close"); 
 }
+
+function select_image(asset_id,url) {
+    console.log('[select_image] asset_id: %s thumb url: %s',asset_id,url);
+//    jQuery('#asset_id').val(asset_id);
+//    jQuery('#thumbnail_img').attr('src', url);
+//    jQuery( "#thumbnail_form" ).dialog("close"); 
+}
+
 // Asset Trash can
 //function drag_drop_delete() {
 
@@ -395,6 +428,17 @@ jQuery(document).ready(function() {
 	</div>
 </li>
 </script>
+
+<script id="thumbnail_image_tpl" type="text/x-handlebars-template">
+<div class="asset_thumbnail_item">
+    <img src="{{thumbnail_url}}" 
+        alt="{{alt}}" 
+        width="{{thumbnail_width}}" 
+        height="{{thumbnail_height}}"
+        onclick="javascript:select_image({{asset_id}});"/>
+</div>
+</script>
+
 
 <div class="moxycart_canvas_inner clearfix">
 
@@ -508,6 +552,14 @@ jQuery(document).ready(function() {
     								                onclick="javascript:select_thumb(<?php print $a->get('asset_id'); ?>,'<?php print htmlentities($a->Asset->get('thumbnail_url')); ?>');"/>
 								            </div>
 								        <?php endforeach?>
+								    </div>
+								    
+								</div>
+
+								<?php /* ======== MODAL DIALOG BOX ======*/ ?>
+								<div id="generic_thumbnail_form" title="Select Thumbnail">
+								    <div class="asset_thumbnail_container" id="generic_thumbnail_form_container">
+
 								    </div>
 								    
 								</div>

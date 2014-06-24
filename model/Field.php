@@ -50,20 +50,20 @@ class Field extends BaseModel {
                 $args['label'] = $attr['label'];
                 $args['description'] = $attr['description'];
                 $out = \Formbuilder\Form::checkbox($name,$value, $args);
-                $out->__toString(); // <-- force to string!
+                $out = $out->__toString(); // <-- force to string!
                 break;
             case 'text':
             case 'textarea':
                 $args['label'] = $attr['label'];
                 $args['description'] = $attr['description'];
                 $out = \Formbuilder\Form::$type($name,$value,$args);
-                $out->__toString(); // <-- force to string!
+                $out = $out->__toString(); // <-- force to string!
                 break;
             case 'asset':
-                return 'ASDFA';
+                \Formbuilder\Form::register('asset', array($this, 'asset'));
                 $args['label'] = $attr['label'];
                 $args['description'] = $attr['description'];
-                $out = \Formbuilder\Form::$type($name,$value,$args);
+                $out = \Formbuilder\Form::asset($name,$value,$args);
                 break;
             default:
                 $this->modx->log(\modX::LOG_LEVEL_ERROR,'Unsupported field type: '.$type,'',__CLASS__,__FUNCTION__,__LINE__);  
@@ -72,6 +72,33 @@ class Field extends BaseModel {
         
         return $out;
     
+    }
+    
+    /**
+     * Custom callback function for the Formbuilder class
+     *
+     *
+     *
+     */
+    public function asset($name,$default='',$args=array(),$tpl=null) {
+        $id = \Formbuilder\Form::getId($name);
+        $label = \Formbuilder\Form::getLabel($id,$args['label'],'assetlabel');        
+        // javascript:jQuery(\'#generic_thumbnail_form\').dialog(\'open\');
+        return '<script>
+        for(var asset_id in product.RelData.Asset){
+            var A = product.RelData.Asset;
+//            console.log("Asset id"+asset_id+" "+ A[asset_id].width);
+        }
+        
+        </script>
+        '.$label.'
+
+        <div id="" style="border:1px dotted grey;width:240px;height:180px;">
+            <span onclick="javascript:jQuery(\'#generic_thumbnail_form\').dialog(\'open\');" style="cursor:pointer;">Click</span>
+            <input type="hidden" name="asset_id" id="asset_id" value=""/>
+
+        </div>
+        ';
     }
     
     /**
