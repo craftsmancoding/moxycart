@@ -21,5 +21,17 @@ class ErrorController extends BaseController {
         $this->setPlaceholders($scriptProperties);    
         return $this->fetchTemplate('error/404.php');
     }
+
+    /**
+     * Check important settings of moxycart moxycart.api_key and moxycart.domain
+     * they must have value/valid value
+     * @param array $scriptProperties
+     */
+    public function getInstall(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));  
+        $this->scriptProperties['_nolayout'] = true;
+        $this->setPlaceholders($scriptProperties); 
+        return $this->fetchTemplate('error/install.php');
+    }
 }
 /*EOF*/

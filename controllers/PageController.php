@@ -34,6 +34,7 @@ class PageController extends BaseController {
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js'); 
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/app.js');
+        $this->checkValidSetting();
     }
 
     /**
@@ -787,6 +788,24 @@ class PageController extends BaseController {
         $this->_setUIdata();
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('tools/xcart.php');
+    }
+
+    /**
+     * Catch system setting error : moxycart.domain and moxycart.api_key
+     */
+    public function checkValidSetting() {
+        $valid_domain = filter_var($this->modx->getOption('moxycart.domain'), FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
+        if(!$valid_domain) {
+            throw new \Exception('Invalid moxycart.domain');
+        }
+        $api_key = $this->modx->getOption('moxycart.api_key');
+        if($api_key == '' || strlen($api_key) != 60 || substr($api_key, 0, 6) != 'm42Ccf') {
+            throw new \Exception('Invalid moxycart.api_key');
+        }
+        
+        if(!$this->modx->getOption('friendly_urls') || !$this->modx->getOption('use_alias_path')) {
+            throw new \Exception('Friend URL must be enabled');
+        }
     }
         
 }
