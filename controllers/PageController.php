@@ -802,7 +802,6 @@ class PageController extends BaseController {
         if($api_key == '' || strlen($api_key) != 60 || substr($api_key, 0, 6) != 'm42Ccf') {
             throw new \Exception('Invalid moxycart.api_key');
         }
-
         
         if(!$this->modx->getOption('friendly_urls') || !$this->modx->getOption('use_alias_path')) {
             throw new \Exception('Friend URL must be enabled');

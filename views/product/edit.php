@@ -439,6 +439,7 @@ jQuery(document).ready(function() {
 	<ul id="moxytab" class="menu">
 		<li class="product-link active"><a href="#product">Product</a></li>
 		<li class="settings-link" ><a href="#settings_tab">Product Settings</a></li>
+        <li class="options-link" ><a href="#options_tab">Product Options</a></li>
 		<?php if($this->modx->getOption('moxycart.enable_variations')):?>
     		<li class="variations-link" ><a href="#variations_tab">Variations</a></li>
 		<?php endif; ?>
@@ -573,7 +574,55 @@ jQuery(document).ready(function() {
 								<label for="weight">Weight</label>
 								<input type="text" style="width:50%;" id="weight" name="weight" value=""/>
                                 
-                                <div class="product-option-wrap">
+                               
+    
+								
+                            </td>
+                            <td style="width:30%;;vertical-align: top;">
+                            	<label for="sku_vendor">Vendor SKU</label>
+                                <input type="text" style="width:90%;" name="sku_vendor" id="sku_vendor" value="">
+
+                                <label for="price_sale">Sale Price</label>
+                                <input type="text" style="width:90%;" name="price_sale" id="price_sale" value="">
+
+                                <label for="sale_start">Sale Start</label>
+								<div class="input-append date datepicker" data-date="<?php print date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
+											<span class="add-on"><i class="icon icon-calendar"></i></span>
+										  <input type="text" name="sale_start" id="sale_start" class="span3" maxlength="10" value="">
+										  
+								</div>
+
+								<label for="sale_end">Sale End</label>
+								<div class="input-append date datepicker" data-date="<?php print date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
+									<span class="add-on"><i class="icon icon-calendar"></i></span>
+										  <input type="text" name="sale_end" id="sale_end" class="span3" maxlength="10" value="">
+										  
+								</div>
+
+								<label for="qty_min">Qty Min</label>
+                                <input type="text" style="width:90%;" name="qty_min" id="qty_min" value="">
+
+                                <label for="qty_max">Qty Max</label>
+                                <input type="text" style="width:90%;" name="qty_max" id="qty_max" value="">
+
+                                 <label for="back_order_cap">Back Order Cap</label>
+                                <input type="text" style="width:90%;" name="back_order_cap" id="back_order_cap" value="">
+
+                            
+                                <label for="store_id">Product Container</label>
+								<?php
+								print \Formbuilder\Form::dropdown('store_id', $data['stores'], $data['store_id']);
+								?>
+                            	
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+	</div>
+
+    <div id="options_tab" class="content">
+       <div class="product-option-wrap">
                                      <h2>Product Options</h2>
                                      <p>Allow your visitors to select variations in your product.</p><br>
                                     <?php
@@ -646,14 +695,14 @@ jQuery(document).ready(function() {
                                                     <td>
                                                         <?php
                                                         print \Formbuilder\Form::dropdown("Meta[mod_code_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_code_type'],array('style'=>'width: 20px;'));
-                                                        print \Formbuilder\Form::text("Meta[mod_code][$oterm_id]", $m['mod_code'], array('style'=>'width: 30px;'));
+                                                        print \Formbuilder\Form::text("Meta[mod_code][$oterm_id]", $m['mod_code'], array('style'=>'width: 80px;'));
                                                         ?>
                                                     </td>                                                    
 
                                                     <td>
                                                         <?php
                                                         print \Formbuilder\Form::dropdown("Meta[mod_category_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_category_type'],array('style'=>'width: 20px;'));
-                                                        print \Formbuilder\Form::text("Meta[mod_category][$oterm_id]", $m['mod_category'], array('style'=>'width: 50px;'));
+                                                        print \Formbuilder\Form::text("Meta[mod_category][$oterm_id]", $m['mod_category'], array('style'=>'width: 150px;'));
                                                         ?>
                                                     </td>                                                    
 
@@ -669,52 +718,7 @@ jQuery(document).ready(function() {
                                     endforeach;
                                     ?>
                                 </div>
-                               
-    
-								
-                            </td>
-                            <td style="width:30%;;vertical-align: top;">
-                            	<label for="sku_vendor">Vendor SKU</label>
-                                <input type="text" style="width:90%;" name="sku_vendor" id="sku_vendor" value="">
-
-                                <label for="price_sale">Sale Price</label>
-                                <input type="text" style="width:90%;" name="price_sale" id="price_sale" value="">
-
-                                <label for="sale_start">Sale Start</label>
-								<div class="input-append date datepicker" data-date="<?php print date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
-											<span class="add-on"><i class="icon icon-calendar"></i></span>
-										  <input type="text" name="sale_start" id="sale_start" class="span3" maxlength="10" value="">
-										  
-								</div>
-
-								<label for="sale_end">Sale End</label>
-								<div class="input-append date datepicker" data-date="<?php print date('Y-m-d') ?>" data-date-format="yyyy-mm-dd">
-									<span class="add-on"><i class="icon icon-calendar"></i></span>
-										  <input type="text" name="sale_end" id="sale_end" class="span3" maxlength="10" value="">
-										  
-								</div>
-
-								<label for="qty_min">Qty Min</label>
-                                <input type="text" style="width:90%;" name="qty_min" id="qty_min" value="">
-
-                                <label for="qty_max">Qty Max</label>
-                                <input type="text" style="width:90%;" name="qty_max" id="qty_max" value="">
-
-                                 <label for="back_order_cap">Back Order Cap</label>
-                                <input type="text" style="width:90%;" name="back_order_cap" id="back_order_cap" value="">
-
-                            
-                                <label for="store_id">Product Container</label>
-								<?php
-								print \Formbuilder\Form::dropdown('store_id', $data['stores'], $data['store_id']);
-								?>
-                            	
-                            </td>
-                        </tr>
-                        
-                    </tbody>
-                </table>
-	</div>
+    </div>
 
     <?php if ($this->modx->getOption('moxycart.enable_variations')): ?>
     	<div id="variations_tab" class="content"><br>
