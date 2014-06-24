@@ -9,6 +9,12 @@ class ErrorController extends BaseController {
     public $loadHeader = false;
     public $loadFooter = false;
     public $loadBaseJavascript = false; // GFD... this can't be set at runtime.
+
+    function __construct(\modX &$modx,$config = array()) {
+        parent::__construct($modx,$config);
+        static::$x =& $modx;
+        $this->modx->regClientCSS($this->config['assets_url'].'css/moxycart.css');        
+    }
     
     /**
      * Any specific processing we want to do here. Return a string of html.
@@ -17,7 +23,7 @@ class ErrorController extends BaseController {
     public function get404(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
         //$this->addStandardLayout($scriptProperties);
-                $this->scriptProperties['_nolayout'] = true;
+        $this->scriptProperties['_nolayout'] = true;
         $this->setPlaceholders($scriptProperties);    
         return $this->fetchTemplate('error/404.php');
     }
@@ -30,7 +36,10 @@ class ErrorController extends BaseController {
     public function getInstall(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));  
         $this->scriptProperties['_nolayout'] = true;
+//        return print_r($this->config['errors'],true);
+//        $this->scriptProperties['_nolayout'] = true;
         $this->setPlaceholders($scriptProperties); 
+        $this->setPlaceholder('errors', $this->config['errors']);
         return $this->fetchTemplate('error/install.php');
     }
 }

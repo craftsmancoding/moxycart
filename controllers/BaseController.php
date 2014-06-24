@@ -67,6 +67,7 @@ class BaseController extends \modExtraManagerController {
     function __construct(\modX &$modx,$config = array()) {
         parent::__construct($modx,$config);
         static::$x =& $modx; // kinda dumb...
+
     }
     
     /**

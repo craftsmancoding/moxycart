@@ -68,6 +68,8 @@
 require_once dirname(__FILE__) .'/vendor/autoload.php';
 class IndexManagerController extends \Moxycart\BaseController {
 
+    public static $errors = array();
+    
     /**
      * This acts as a class loader.  Beware the difficulties with testing with the "new" keyword!!!
      * See composer.json's autoload section: Controller classes should be found in the controllers/ directory
@@ -123,18 +125,46 @@ class IndexManagerController extends \Moxycart\BaseController {
 
         $modx->log(\modX::LOG_LEVEL_INFO,'[moxycart] Instantiating '.$class.' with config '.print_r($config,true),'',__FUNCTION__,__FILE__,__LINE__);
         
-        // See Base::render() for how requests get handled.  
-        //return new $class($modx,$config);
-        try {
-            return new $class($modx,$config);
-        }
-        catch (\Exception $e) {
+        // See Base::render() for how requests get handled.          
+        if (!self::_checkSettings($modx)) {
             $class = '\\Moxycart\\ErrorController';
             $config['method'] = 'getInstall';
+            $config['errors'] = self::$errors;
             return new $class($modx,$config);
         }
-
+        
+        return new $class($modx,$config);
 
     }
+    
+    /**
+     * Ensure that our local settings are valid.
+     *      - moxycart.domain
+     *      - moxycart.api_key
+     */
+    private static function _checkSettings(\modX &$modx) {
+        $errors = array(); // collect 'em all!
+        $valid_domain = filter_var($modx->getOption('moxycart.domain'), FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
+        if(!$valid_domain) {
+            self::$errors[] = 'moxycart.domain must contain a valid URL';
+        }
+        $api_key = $modx->getOption('moxycart.api_key');
+        if(empty($api_key) || strlen($api_key) < 60 || substr($api_key, 0, 6) != 'm42Ccf') {
+            self::$errors[] = 'moxycart.api_key does not contain a valid Foxycart API key.';
+        }
+        
+        if(!$modx->getOption('friendly_urls') ) { // || !$modx->getOption('use_alias_path')) {
+            self::$errors[] = 'friendly_urls must be enabled for Moxycart to work.';
+        }
+        
+        if (!empty(self::$errors)) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    
 }
 /*EOF*/
