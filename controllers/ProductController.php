@@ -184,9 +184,7 @@ Array
      */
     public function postCreate(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
-        //exit;
-        // This doesn't work unless you add the namespace.
-        // Oddly, if you write it out (w/o a var), it works. wtf?
+        // Prep the string
         $classname = '\\Moxycart\\'.$this->model;
         $Product = new $classname($this->modx);    
 
@@ -195,7 +193,7 @@ Array
             if (isset($scriptProperties[$k])) $scriptProperties[$k] = $Product->indexedToRecordset($scriptProperties[$k]);
         }
         $product_id = $Product->saveRelated($scriptProperties);
-        
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,'FOFFFF>>: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         return $this->sendSuccess(array(
             'msg' => sprintf('%s updated successfully.',$this->model),
             'id' => $product_id            

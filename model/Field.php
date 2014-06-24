@@ -17,6 +17,7 @@ class Field extends BaseModel {
             'textarea'=>'Textarea',
             'checkbox'=>'Checkbox',
             'dropdown'=>'Dropdown',
+            'asset' => 'Asset (Image)'
             //'multicheck'=>'Multi-Check'
         );    
     }

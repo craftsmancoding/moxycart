@@ -4,7 +4,7 @@
  * @description Called as a per-product hook from the parseFoxycartDatafeed Snippet, this hook (snippet) will decrement the quantity of a product during each purchase.  The requires that the product_code passed to Foxycart is the Moxycart product ID.
  *
  * INPUT PARAMETERS:
- *  product_code : integer must match Moxycart product id
+ *  product_id : integer must match Moxycart product id
  *  product_quantity : iteger to indicate how many were purchased.
  *
  * When called as a per-product hook from the parseFoxycartDatafeed Snippet, a whole bunch more options will be passed, but they are 
@@ -20,7 +20,7 @@ require_once $core_path .'vendor/autoload.php';
 $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('updateInventory',$scriptProperties);
  
-$product_id = $modx->getOption('product_code', $scriptProperties);
+$product_id = $modx->getOption('product_id', $scriptProperties);
 $quantity_purchased = (int) $modx->getOption('product_quantity', $scriptProperties);
 
 $log = array(
