@@ -61,9 +61,7 @@ class Field extends BaseModel {
                 break;
             case 'asset':
                 \Formbuilder\Form::register('asset', array($this, 'asset'));
-                $args['label'] = $attr['label'];
-                $args['description'] = $attr['description'];
-                $out = \Formbuilder\Form::asset($name,$value,$args);
+                $out = \Formbuilder\Form::asset($name,$value,$attr);
                 break;
             default:
                 $this->modx->log(\modX::LOG_LEVEL_ERROR,'Unsupported field type: '.$type,'',__CLASS__,__FUNCTION__,__LINE__);  
@@ -80,24 +78,22 @@ class Field extends BaseModel {
      *
      *
      */
-    public function asset($name,$default='',$args=array(),$tpl=null) {
+    public function asset($name,$asset_id='',$args=array(),$tpl=null) {
         $id = \Formbuilder\Form::getId($name);
         $label = \Formbuilder\Form::getLabel($id,$args['label'],'assetlabel');        
         // javascript:jQuery(\'#generic_thumbnail_form\').dialog(\'open\');
-        return '<script>
-        for(var asset_id in product.RelData.Asset){
-            var A = product.RelData.Asset;
-//            console.log("Asset id"+asset_id+" "+ A[asset_id].width);
+        // onclick="javascript:jQuery(\'#generic_thumbnail_form\').dialog(\'open\');"
+        $img = '';
+        if ($asset_id) {
+            if ($A = $this->modx->getObject('Asset', $asset_id)) {
+                $img = sprintf('<img src="%s" />', $A->get('thumbnail_url'));
+            }
         }
-        
-        </script>
-        '.$label.'
+        return $label.'
 
-        <div id="" style="border:1px dotted grey;width:240px;height:180px;">
-            <span onclick="javascript:jQuery(\'#generic_thumbnail_form\').dialog(\'open\');" style="cursor:pointer;">Click</span>
-            <input type="hidden" name="asset_id" id="asset_id" value=""/>
-
+        <div id="field_id_'.$args['field_id'].'_thumb" style="border:1px dotted grey;width:'.$this->modx->getOption('assman.thumbnail_width').'px;height:'.$this->modx->getOption('assman.thumbnail_height').'px;" onclick="javascript:open_thumbail_modal(\''.$asset_id.'\',\'field_id_'.$args['field_id'].'_thumb\',\'field_id_'.$args['field_id'].'\');" style="cursor:pointer;">'.$img.'
         </div>
+        <input type="hidden" name="'.$name.'" id="field_id_'.$args['field_id'].'" value="'.$asset_id.'"/>
         ';
     }
     

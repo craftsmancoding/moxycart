@@ -25,7 +25,9 @@ class ProductController extends APIController {
         $P1 = $P->toArray('',false,false,true);
         if (isset($P1['Assets']) && is_array($P1['Assets'])) {
             foreach ($P1['Assets'] as $k => $v) {
-                $P1['RelData']['Asset'][ $v['Asset']['asset_id'] ] = $v['Asset'];
+                if (isset($v['Asset']['asset_id']) && $v['Asset']['asset_id']) {
+                    $P1['RelData']['Asset'][ $v['Asset']['asset_id'] ] = $v['Asset'];
+                }
             }
         }
         if (isset($P1['Options']) && is_array($P1['Options'])) {        

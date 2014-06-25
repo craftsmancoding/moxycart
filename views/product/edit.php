@@ -10,9 +10,11 @@
 
 .asset_thumbnail_item {
     border: 1px solid #E5E5E5;
-    height: 190px;
     padding: 5px;
+/*
+    height: 190px;
     width: 250px;
+*/
     
     display: inline-block;
     /* for ie7 */
@@ -164,6 +166,7 @@ function product_init() {
     });
 
     // Thumbnail Selection Modal
+/*
     jQuery( "#generic_thumbnail_form" ).dialog({
         autoOpen: false,
         height: 330,
@@ -173,11 +176,15 @@ function product_init() {
         open: function( event, ui ) {
             console.log('[generic_thumbnail_form] opened');
             //jQuery('#generic_thumbnail_form_container').html('Tset...');
-            var preview;
+            var preview = '';
             for(var asset_id in product.RelData.Asset){
-                var A = product.RelData.Asset;
-                var data = parse_tpl("thumbnail_image_tpl",A[asset_id]);
-                preview = preview + data;
+                if (asset_id){
+                    var A = product.RelData.Asset;
+                    if (typeof A[asset_id] !== "undefined") {
+                        console.log('Drawing '+asset_id);
+                        preview = preview + parse_tpl("thumbnail_image_tpl",A[asset_id]);
+                    }
+                }
             }
             jQuery("#generic_thumbnail_form_container").html(preview);
         },
@@ -187,6 +194,7 @@ function product_init() {
             }
         }   
     });
+*/
     
     // Custom Field Selection Modal
     jQuery( "#custom_fields_form" ).dialog({
@@ -361,10 +369,14 @@ function select_thumb(asset_id,url) {
     jQuery( "#thumbnail_form" ).dialog("close"); 
 }
 
-function select_image(asset_id,url) {
-    console.log('[select_image] asset_id: %s thumb url: %s',asset_id,url);
-//    jQuery('#asset_id').val(asset_id);
-//    jQuery('#thumbnail_img').attr('src', url);
+/**
+ * Select the given thumbnail: write the asset id back to the specified target 
+ */
+function select_image(asset_id,url,url_target,val_target) {
+    console.log('[select_image] asset_id: %s thumb url: %s target: %s',asset_id,url,url_target,val_target);
+    jQuery('#'+val_target).val(asset_id);
+    jQuery('#'+url_target).html('<img src="'+url+'" />');
+    jQuery.colorbox.close()
 //    jQuery( "#thumbnail_form" ).dialog("close"); 
 }
 
@@ -435,7 +447,7 @@ jQuery(document).ready(function() {
         alt="{{alt}}" 
         width="{{thumbnail_width}}" 
         height="{{thumbnail_height}}"
-        onclick="javascript:select_image({{asset_id}});"/>
+        onclick="javascript:select_image({{asset_id}},'{{{thumbnail_url}}}','{{url_target}}','{{val_target}}');"/>
 </div>
 </script>
 
@@ -559,7 +571,6 @@ jQuery(document).ready(function() {
 								<?php /* ======== MODAL DIALOG BOX ======*/ ?>
 								<div id="generic_thumbnail_form" title="Select Thumbnail">
 								    <div class="asset_thumbnail_container" id="generic_thumbnail_form_container">
-
 								    </div>
 								    
 								</div>

@@ -14,6 +14,37 @@ else {
 }
 
 /**
+ * Open colorbox
+ *
+ * @param target css selector where value (i.e. the asset_id) should be written
+ */
+function open_thumbail_modal(asset_id,url_target,val_target) {
+    console.log('[open_thumbail_modal]',asset_id,val_target);
+    var displayed = 0;
+    jQuery.colorbox({
+        inline:false, 
+        width:"50%",
+        height:settings.thumbnail_height,
+        html:function(){
+            console.log('generating colorbox html');
+            var preview = '';
+            for(var asset_id in product.RelData.Asset){
+                if (asset_id){
+                    var A = product.RelData.Asset;
+                    if (typeof A[asset_id] !== "undefined") {
+                        A[asset_id].url_target = url_target;
+                        A[asset_id].val_target = val_target;
+                        preview = preview + parse_tpl("thumbnail_image_tpl",A[asset_id]);
+                    }
+                }
+            }
+            return preview;
+        }
+    });
+    
+}
+
+/**
  * In its own function in case anything changes with
  * routing.
  * @param c string classname

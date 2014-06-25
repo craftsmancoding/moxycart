@@ -222,12 +222,7 @@ class assetTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($result, 'Failed to copy test image.');
         // Our disposable testing file:
         $filename = dirname(__FILE__).'/assets/support2.jpg';
-        $FILE = array(
-            'tmp_name' => $filename,
-            'name' =>'support2.jpg',
-            'sig' => md5_file($orig_filename)
-        );
-        return $FILE;
+
     }
     
     /**

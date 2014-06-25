@@ -6,7 +6,7 @@ jQuery(function() {
   
 function add_term() {
     jQuery('#no_terms_found').hide();
-    var data = jQuery('#template').val();
+    var data = jQuery('#term_tpl').html();
     jQuery('#option_terms tbody').append(data);
     jQuery('#option_terms tbody').sortable();
 }
@@ -55,8 +55,8 @@ print \Formbuilder\Form::open($data['baseurl'])
                 <td class="unmodifier">&nbsp;</td>
             </tr>
             <tr>
-                <th>Slug</th>
                 <th>Name</th>
+                <th>Slug</th>
                 <th class="modifier-th">Price</th>
                 <th class="modifier-th">Weight</th>
                 <th class="modifier-th">Code</th>
@@ -72,10 +72,10 @@ print \Formbuilder\Form::open($data['baseurl'])
                         <td>
                             <input type="hidden" name="oterm_id[]" value="<?php print $t->oterm_id; ?>" />
                             <input type="hidden" name="seq[]" value="<?php print $t->oterm_id; ?>" />
-                            <input type="text" name="slug[]" placeholder="slug" style="width:100px;" value="<?php print htmlentities($t->slug); ?>" />
+                            <input type="text" name="name[]" placeholder="Name" style="width:100px;" value="<?php print htmlentities($t->name); ?>" />
                         </td>
                         <td>
-                            <input type="text" name="name[]" placeholder="Name" style="width:100px;" value="<?php print htmlentities($t->name); ?>" />
+                            <input type="text" name="slug[]" placeholder="slug" style="width:100px;" value="<?php print htmlentities($t->slug); ?>" />
                         </td>
                         <td>
                             <?php print \Formbuilder\Form::dropdown('mod_price_type[]', \Moxycart\OptionTerm::types(), $t->mod_price_type); ?>
@@ -117,14 +117,15 @@ By putting the html here in a hidden field, we don't need to make extra ajax
 requests to get it.
 */
 ?>
-<textarea id="template" style="display:none;">
+<script id="term_tpl" type="text/x-handlebars-template">
 <tr>
     <td>
         <input type="hidden" name="oterm_id[]" value="" />
-        <input type="text" name="slug[]" placeholder="slug" value="" />
+        <input type="text" name="name[]" placeholder="Name" value="" />        
     </td>
     <td>
-        <input type="text" name="name[]" placeholder="Name" value="" />
+
+        <input type="text" name="slug[]" placeholder="slug" value="" />
     </td>
     <td>
         <input type="text" name="mod_price[]" class="input-half" placeholder="0" value="" />
@@ -142,6 +143,6 @@ requests to get it.
         <span class="btn" onclick="javascript:remove_term.call(this,event);">x</span>
     </td>
 </tr>
-</textarea>
+</script>
 
 </div>

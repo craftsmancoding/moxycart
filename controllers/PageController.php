@@ -297,20 +297,25 @@ class PageController extends BaseController {
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
         $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
+        $this->modx->regClientCSS($this->config['assets_url'].'css/colorbox.css');
         $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->config['assman_assets_url'].'js/dropzone.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
-      
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.colorbox.js');      
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     	   console.log("[moxycart] '.__FUNCTION__.'");
-    		var product = '.json_encode($full_product_data).';            
+    		var product = '.json_encode($full_product_data).';
             var use_editor = "'.$this->modx->getOption('use_editor').'";
             var assets_url = "'.self::url('asset','create',array(),'assman').'"; 
             var assets_delete_url = "'.self::url('asset','delete',array(),'assman').'"; 
+            var settings = {
+                "thumbnail_width":'.$this->modx->getOption('moxycart.thumbnail_width').',
+                "thumbnail_height":'.$this->modx->getOption('moxycart.thumbnail_height').'
+            };
             var product_save_method = "edit";            
             // Document read stuff has to be in here
             jQuery(document).ready(function() {
