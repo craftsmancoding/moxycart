@@ -150,21 +150,7 @@ function product_init() {
 		    return false;
 	    }
     });
-    
-    // Thumbnail Selection Modal
-    jQuery( "#thumbnail_form" ).dialog({
-        autoOpen: false,
-        height: 330,
-        width: 500,
-        modal: true,
-        closeOnEscape: true,        
-        buttons: {
-            "Done": function() {
-                jQuery( this ).dialog( "close" );
-            }
-        }   
-    });
-    
+        
     // Custom Field Selection Modal
     jQuery( "#custom_fields_form" ).dialog({
         autoOpen: false,
@@ -276,7 +262,7 @@ function product_init() {
     });
 
     // on page load, initialize fieldset state
-    $('.parent-term-option').each(function () {
+    jQuery('.parent-term-option').each(function () {
         var fs_child_id = jQuery(this).data('fs_child_id');
         if(jQuery(this).prop("checked")) {
             if(jQuery('#Options_meta__'+fs_child_id+'_').val() != 'all_terms') {
@@ -319,8 +305,6 @@ function save_product(method) {
     }
 }
 
-
-
 function delete_product(product_id,redirect) {
     console.log('[delete_product] '+product_id);
     if(confirm("Are you sure? This cannot be undone."))
@@ -329,13 +313,6 @@ function delete_product(product_id,redirect) {
         window.location = redirect;
         return;
     }
-}
-
-function select_thumb(asset_id,url) {
-    console.log('[select_thumb] asset_id: %s thumb url: %s',asset_id,url);
-    jQuery('#asset_id').val(asset_id);
-    jQuery('#thumbnail_img').attr('src', url);
-    jQuery( "#thumbnail_form" ).dialog("close"); 
 }
 
 /**
@@ -348,10 +325,6 @@ function select_image(asset_id,url,url_target,val_target) {
     jQuery.colorbox.close();
 }
 
-// Asset Trash can
-//function drag_drop_delete() {
-
-//}
 
 jQuery(document).ready(function() {
     // on change of the select terms option, hide/show fieldset
@@ -363,18 +336,6 @@ jQuery(document).ready(function() {
         }
     });
 });
-
-// show_child_options 
-// on change of the select terms option, hide/show fieldset
-/*function show_child_options() {
-    if(jQuery(this).val() != 'all_terms') {
-        jQuery(this).parent().next().show();
-    } else {
-        jQuery(this).parent().next().hide();
-    }
-}*/
-
-
 </script>
 
 <script id="related_product_template" type="text/x-handlebars-template">
