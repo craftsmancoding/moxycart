@@ -543,7 +543,7 @@ jQuery(document).ready(function() {
                             
 								<label for="thumbnail">Thumbnail</label>
 
-								<div id="thumbnail" style="border:1px dotted grey;width:240px;height:180px;" onclick="javascript:jQuery('#thumbnail_form').dialog('open');">
+								<div id="thumbnail" style="border:1px dotted grey;width:<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>px;height:<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>px;" onclick="javascript:jQuery('#thumbnail_form').dialog('open');">
 								    <input type="hidden" name="asset_id" id="asset_id" value=""/>
 								    <img id="thumbnail_img" 
 								        src="<?php print $data['thumbnail_url']; ?>" 

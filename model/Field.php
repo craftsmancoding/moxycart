@@ -85,13 +85,15 @@ class Field extends BaseModel {
         // onclick="javascript:jQuery(\'#generic_thumbnail_form\').dialog(\'open\');"
         $img = '';
         if ($asset_id) {
+            $Asset = new \Assman\Asset($this->modx);
             if ($A = $this->modx->getObject('Asset', $asset_id)) {
-                $img = sprintf('<img src="%s" />', $A->get('thumbnail_url'));
+                $url = $Asset->getThumbnailURL($A, $this->modx->getOption('moxycart.thumbnail_width'), $this->modx->getOption('moxycart.thumbnail_height'));
+                $img = sprintf('<img src="%s" />', $this->modx->getOption('assets_url').$this->modx->getOption('assman.library_path').$url);
             }
         }
         return $label.'
 
-        <div id="field_id_'.$args['field_id'].'_thumb" style="border:1px dotted grey;width:'.$this->modx->getOption('assman.thumbnail_width').'px;height:'.$this->modx->getOption('assman.thumbnail_height').'px;" onclick="javascript:open_thumbail_modal(\''.$asset_id.'\',\'field_id_'.$args['field_id'].'_thumb\',\'field_id_'.$args['field_id'].'\');" style="cursor:pointer;">'.$img.'
+        <div id="field_id_'.$args['field_id'].'_thumb" style="border:1px dotted grey;width:'.$this->modx->getOption('moxycart.thumbnail_width').'px;height:'.$this->modx->getOption('moxycart.thumbnail_height').'px;" onclick="javascript:open_thumbail_modal(\''.$asset_id.'\',\'field_id_'.$args['field_id'].'_thumb\',\'field_id_'.$args['field_id'].'\');" style="cursor:pointer;">'.$img.'
         </div>
         <input type="hidden" name="'.$name.'" id="field_id_'.$args['field_id'].'" value="'.$asset_id.'"/>
         ';

@@ -15,6 +15,8 @@ class ProductController extends APIController {
     public function postView(array $scriptProperties = array(),$raw=false) {
         $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
         //$Obj = new Product($this->modx);
+        $this->modx->setOption('assman.thumbnail_width', $this->modx->getOption('moxycart.thumbnail_width'));
+        $this->modx->setOption('assman.thumbnail_height', $this->modx->getOption('moxycart.thumbnail_height'));
         if (!$P = $this->modx->getObjectGraph('Product','{"Assets":{"Asset":{}},"Options":{"Option":{}},"Relations":{"Relation":{}}}',$product_id)) {
             return $this->sendFail('Product not found');
         }

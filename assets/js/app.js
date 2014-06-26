@@ -20,6 +20,7 @@ else {
  */
 function open_thumbail_modal(asset_id,url_target,val_target) {
     console.log('[open_thumbail_modal]',asset_id,val_target);
+    console.log('Thumb dimensions: %sx%s',settings.thumbnail_width,settings.thumbnail_height)
     var displayed = 0;
     jQuery.colorbox({
         inline:false, 
@@ -34,6 +35,9 @@ function open_thumbail_modal(asset_id,url_target,val_target) {
                     if (typeof A[asset_id] !== "undefined") {
                         A[asset_id].url_target = url_target;
                         A[asset_id].val_target = val_target;
+                        A[asset_id].thumbnail_width = settings.thumbnail_width;
+                        A[asset_id].thumbnail_height = settings.thumbnail_height;
+                        console.log('Parsing:', A[asset_id]);
                         preview = preview + parse_tpl("thumbnail_image_tpl",A[asset_id]);
                     }
                 }
