@@ -164,37 +164,6 @@ function product_init() {
             }
         }   
     });
-
-    // Thumbnail Selection Modal
-/*
-    jQuery( "#generic_thumbnail_form" ).dialog({
-        autoOpen: false,
-        height: 330,
-        width: 500,
-        modal: true,
-        closeOnEscape: true,        
-        open: function( event, ui ) {
-            console.log('[generic_thumbnail_form] opened');
-            //jQuery('#generic_thumbnail_form_container').html('Tset...');
-            var preview = '';
-            for(var asset_id in product.RelData.Asset){
-                if (asset_id){
-                    var A = product.RelData.Asset;
-                    if (typeof A[asset_id] !== "undefined") {
-                        console.log('Drawing '+asset_id);
-                        preview = preview + parse_tpl("thumbnail_image_tpl",A[asset_id]);
-                    }
-                }
-            }
-            jQuery("#generic_thumbnail_form_container").html(preview);
-        },
-        buttons: {
-            "Done": function() {
-                jQuery( this ).dialog( "close" );
-            }
-        }   
-    });
-*/
     
     // Custom Field Selection Modal
     jQuery( "#custom_fields_form" ).dialog({
@@ -376,8 +345,7 @@ function select_image(asset_id,url,url_target,val_target) {
     console.log('[select_image] asset_id: %s thumb url: %s target: %s',asset_id,url,url_target,val_target);
     jQuery('#'+val_target).val(asset_id);
     jQuery('#'+url_target).html('<img src="'+url+'" />');
-    jQuery.colorbox.close()
-//    jQuery( "#thumbnail_form" ).dialog("close"); 
+    jQuery.colorbox.close();
 }
 
 // Asset Trash can
@@ -538,29 +506,14 @@ jQuery(document).ready(function() {
                             
 								<label for="thumbnail">Thumbnail</label>
 
-								<div id="thumbnail" style="border:1px dotted grey;width:<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>px;height:<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>px;" onclick="javascript:jQuery('#thumbnail_form').dialog('open');">
+								<div id="thumbnail" style="border:1px dotted grey;width:<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>px;height:<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>px;" onclick="javascript:open_thumbail_modal('<?php $data['asset_id']; ?>','asset_thumbnail','asset_id');" style="cursor:pointer;">
 								    <input type="hidden" name="asset_id" id="asset_id" value=""/>
+								    <span id="asset_thumbnail">
 								    <img id="thumbnail_img" 
 								        src="<?php print $data['thumbnail_url']; ?>" 
 								        width="<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>" 
 								        height="<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>"/>
-								</div>
-								<?php /* ======== MODAL DIALOG BOX ======*/ ?>
-								<div id="thumbnail_form" title="Select Product Thumbnail">
-								    <div class="asset_thumbnail_container">
-								        <?php foreach ($data['product_assets'] as $a): 
-								                if (empty($a->Asset)) continue;
-								        ?>
-								            <div class="asset_thumbnail_item">
-    								            <img src="<?php print $a->Asset->get('thumbnail_url'); ?>" 
-    								                alt="<?php print $a->Asset->get('alt'); ?>" 
-    								                width="<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>" 
-    								                height="<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>"
-    								                onclick="javascript:select_thumb(<?php print $a->get('asset_id'); ?>,'<?php print htmlentities($a->Asset->get('thumbnail_url')); ?>');"/>
-								            </div>
-								        <?php endforeach?>
-								    </div>
-								    
+								    </span>
 								</div>
 
 								<?php /* ======== MODAL DIALOG BOX ======*/ ?>

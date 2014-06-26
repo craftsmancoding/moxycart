@@ -256,6 +256,10 @@ class PageController extends BaseController {
             var assets_url = "'.self::url('asset','create',array(),'assman').'"; 
             var assets_delete_url = "'.self::url('asset','delete',array(),'assman').'";
             var product_save_method = "create"; 
+            var settings = {
+                "thumbnail_width":'.$this->modx->getOption('moxycart.thumbnail_width').',
+                "thumbnail_height":'.$this->modx->getOption('moxycart.thumbnail_height').'
+            };
             // Document read stuff has to be in here
             jQuery(document).ready(function() {
                 console.log("ready to init product.");
@@ -330,6 +334,8 @@ class PageController extends BaseController {
         
         // thumbnail
         $thumbnail_url = '';
+        $this->modx->setOption('assman.thumbnail_width', $this->modx->getOption('moxycart.thumbnail_width'));
+        $this->modx->setOption('assman.thumbnail_height', $this->modx->getOption('moxycart.thumbnail_height'));        
         if($A = $this->modx->getObject('Asset', $result->asset_id)) {
             $thumbnail_url = $A->get('thumbnail_url');
         }
