@@ -409,11 +409,6 @@ jQuery(document).ready(function() {
 
 </script>
 
-<?php
-//------------------------------------------------------------------------------
-// ! Handlebar templates
-//------------------------------------------------------------------------------
-?>
 <script id="related_product_template" type="text/x-handlebars-template">
 <tr>
     <td>
@@ -434,7 +429,7 @@ jQuery(document).ready(function() {
 <script id="product_image" type="text/x-handlebars-template">
 <li class="li_product_image" id="product-asset-{{asset_id}}">
 	<div class="img-info-wrap">  
-        <img src="{{thumbnail_url}}?rand=<?php print uniqid(); ?>" alt="{{alt}}" width="" />
+        <img src="{{thumbnail_url}}" alt="{{alt}}" width="" />
 	    <input type="hidden" name="Assets[asset_id][]" value="{{asset_id}}" onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').dialog('open');" style="cursor:pointer;"/>
         <input type="hidden" id="asset_asset_id_{{asset_id}}" name="Assets[asset_id][]" class="asset_asset_id" value="{{asset_id}}" />
 	</div>
