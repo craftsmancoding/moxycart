@@ -24,10 +24,10 @@ function open_thumbail_modal(asset_id,url_target,val_target) {
     var displayed = 0;
     jQuery.colorbox({
         inline:false, 
-        width:"50%",
-        height:settings.thumbnail_height,
+        innerWidth:settings.thumbnail_width+30,
+        //height: 500,
+        innerHeight:settings.thumbnail_height+10,
         html:function(){
-            console.log('generating colorbox html');
             var preview = '';
             for(var asset_id in product.RelData.Asset){
                 if (asset_id){

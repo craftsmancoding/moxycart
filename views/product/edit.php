@@ -7,20 +7,6 @@
     overflow-y: hidden;
     white-space: nowrap;
 }
-
-.asset_thumbnail_item {
-    border: 1px solid #E5E5E5;
-    padding: 5px;
-/*
-    height: 190px;
-    width: 250px;
-*/
-    
-    display: inline-block;
-    /* for ie7 */
-    *display: inline;
-    zoom: 1;
-}
 </style>
 
 
@@ -365,14 +351,31 @@ jQuery(document).ready(function() {
 </li>
 </script>
 
+<!-- .asset_thumbnail_item-wrap  {
+  background: #fff;
+  border: 1px solid #ddd;
+  width: 117px;
+  float:left;
+  margin: 5px;
+}
+
+.asset_thumbnail_item  {
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+} -->
+
 <script id="thumbnail_image_tpl" type="text/x-handlebars-template">
-<div class="asset_thumbnail_item">
-    <img src="{{thumbnail_url}}" 
-        alt="{{alt}}" 
-        width="{{thumbnail_width}}" 
-        height="{{thumbnail_height}}"
-        onclick="javascript:select_image({{asset_id}},'{{{thumbnail_url}}}','{{url_target}}','{{val_target}}');"/>
+<div class="asset_thumbnail_item-wrap" style=" background: #fff;border: 1px solid #ddd;width: {{thumbnail_width}}px;height:{{thumbnail_height}}px;float:left;margin: 5px;">
+    <div class="asset_thumbnail_item">
+        <img src="{{thumbnail_url}}" 
+            alt="{{alt}}" 
+            width="{{thumbnail_width}}" 
+            height="{{thumbnail_height}}"
+            onclick="javascript:select_image({{asset_id}},'{{{thumbnail_url}}}','{{url_target}}','{{val_target}}');"/>
+    </div>
 </div>
+
 </script>
 
 
