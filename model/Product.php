@@ -123,6 +123,68 @@ class Product extends BaseModel {
     }
 
     /**
+     * For use in the manager: get a product and ALL of its related data for a complete record.
+     * We have to format the result very carefully so it plays nice when converted to JSON
+     * @param integer $product_id
+     * @return array (empty if product not found)
+     */
+    public function complete($product_id) {
+        // Ensure we generate the proper thumbnail dimensions by overloading config
+        $this->modx->setOption('assman.thumbnail_width', $this->modx->getOption('moxycart.thumbnail_width'));
+        $this->modx->setOption('assman.thumbnail_height', $this->modx->getOption('moxycart.thumbnail_height'));
+        
+        if (!$P = $this->modx->getObjectGraph('Product','{"Image":{}}',$product_id)) {
+            return array();
+        }
+
+        $out = $P->toArray('',false,false,true);
+        $out['Assets'] = array();
+        $out['Options'] = array();
+        $out['Fields'] = array();
+        $out['Relations'] = array();
+
+        $c = $this->modx->newQuery('ProductAsset');
+        $c->where(array('ProductAsset.product_id'=>$product_id));
+        $c->sortby('ProductAsset.seq','ASC');
+        if ($Assets = $this->modx->getCollectionGraph('ProductAsset','{"Asset":{}}', $c)) {
+            foreach ($Assets as $A) {
+                $out['Assets'][] = $A->toArray('',false,false,true);
+            }
+        }
+
+        $c = $this->modx->newQuery('ProductOption');
+        $c->where(array('ProductOption.product_id'=>$product_id));
+        $c->sortby('Option.seq','ASC');
+        if ($Options = $this->modx->getCollectionGraph('ProductOption','{"Option":{}}', $c)) {
+            foreach ($Options as $O) {
+                $out['Options'][] = $O->toArray('',false,false,true);
+            }
+        }
+
+        $c = $this->modx->newQuery('ProductField');
+        $c->where(array('ProductField.product_id'=>$product_id));
+        $c->sortby('Field.seq','ASC');
+        if ($Fields = $this->modx->getCollectionGraph('ProductField','{"Field":{}}', $c)) {
+            foreach ($Fields as $F) {
+                $out['Fields'][] = $F->toArray('',false,false,true);
+            }
+        }
+
+
+        $c = $this->modx->newQuery('ProductRelation');
+        $c->where(array('ProductRelation.product_id'=>$product_id));
+        $c->sortby('ProductRelation.seq','ASC');
+        if ($Relations = $this->modx->getCollectionGraph('ProductRelation','{"Relation":{}}', $c)) {
+            foreach ($Relations as $R) {
+                $out['Relations'][] = $R->toArray('',false,false,true);
+            }
+        }
+
+        //print '<pre>'; print json_encode($out, JSON_PRETTY_PRINT); print '</pre>'; exit;
+        return $out;
+    }
+    
+    /**
      * Load a product AND its fields from a given $url
      *
      * @param string $uri relative to MODX_BASE_URL e.g. "mystore/myproduct"
@@ -172,10 +234,6 @@ class Product extends BaseModel {
         // addOne not good enough?
     }
 
-
-    public function addAssetFromFile($path) {
-    
-    }
 
     //------------------------------------------------------------------------------
     //! Assets
@@ -242,10 +300,12 @@ class Product extends BaseModel {
      * @param array $dictate'd asset_id's
      */
     public function dictateAssets(array $data) {
+        $this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating assets: '.print_r($data,true),'',__CLASS__,__FILE__,__LINE__);
         $this_product_id = $this->_verifyExisting();
         
         // Get the ids of the ones we are dictating
+/*
         $dictate = array();
         foreach ($data as $r) {
             if (!isset($r['asset_id'])) {
@@ -276,6 +336,7 @@ class Product extends BaseModel {
 
         $this->removeAssets($to_remove);
         $this->addAssets($add_data); // also updates
+*/
         
         return true;
     }
@@ -655,11 +716,14 @@ class Product extends BaseModel {
             $dictate[] = $PO->get('id');
         }
         
+
         $criteria = $this->modx->newQuery('ProductOption');
-        $criteria->where(array(
-            'product_id' => $this_product_id,
-            'id:NOT IN' => $dictate,
-        ));        
+        $filter = array('product_id' => $this_product_id);
+        if (!empty($dictate)) {
+            $filter['id:NOT IN'] = $dictate; // this can't be empty
+        }
+        
+        $criteria->where($filter);        
         if ($Remove = $this->modx->getCollection('ProductOption', $criteria)) {
             foreach ($Remove as $r) {
                 $r->remove();

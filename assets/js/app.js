@@ -25,13 +25,13 @@ function draw_assets() {
     // TODO: filtering
 
     // JS Hashes do not preserve order. Thus the "Order" array
-    moxycart.product.RelData.Groups = [];
-    var arrayLength = moxycart.product.RelData.Order.length;
+    moxycart.product.AssetGroups = [];
+    var arrayLength = moxycart.product.Assets.length;
     for (var i = 0; i < arrayLength; i++) {
-        var asset_id = moxycart.product.RelData.Order[i];
-        jQuery('#product_assets').append( moxycart.tpls.asset(moxycart.product.RelData.Asset[asset_id]) );
-        if (moxycart.product.RelData.Asset[asset_id].group) {
-            moxycart.product.RelData.Groups.push(moxycart.product.RelData.Asset[asset_id].group);
+        var Asset = moxycart.product.Assets[i];
+        jQuery('#product_assets').append( moxycart.tpls.product_asset(Asset) );
+        if (Asset.group) {
+            moxycart.product.AssetGroups.push(Asset.group);
         }
     }
 /*    
@@ -87,6 +87,35 @@ function draw_assets() {
 }
 
 /**
+ * Open Asset colorbox
+ * This lets users edit a specific Asset
+ *
+ * @param integer asset_id
+ * @param url_target css selector where thumbnail img is to be shown
+ * @param val_target css selector where asset_id is to be written
+ */
+function open_asset_modal(asset_id) {
+    console.log('[open_asset_modal]',asset_id);
+    var displayed = 0;
+    jQuery.colorbox({
+        inline:false, 
+        width: "600",
+        //innerWidth:settings.thumbnail_width+30,
+        height: "90%",
+        //innerHeight:settings.thumbnail_height+10,
+        html:function(){
+
+            var arrayLength = moxycart.product.Assets.length;
+            for (var i = 0; i < arrayLength; i++) {
+                if (moxycart.product.Assets[i].asset_id == asset_id) {
+                    return moxycart.tpls.asset_modal(moxycart.product.Assets[i]);
+                }
+            }
+        }
+    });
+}
+
+/**
  * Open Thumbnail colorbox
  * This lets users select a product thumbnail or select an image for a custom image field.
  * It's a "film strip" modal.
@@ -97,8 +126,7 @@ function draw_assets() {
  */
 function open_thumbail_modal(asset_id,url_target,val_target) {
     console.log('[open_thumbail_modal]',asset_id,val_target);
-    console.log('Thumb dimensions: %sx%s',settings.thumbnail_width,settings.thumbnail_height)
-    var displayed = 0;
+//    console.log('Thumb dimensions: %sx%s',settings.thumbnail_width,settings.thumbnail_height)
     jQuery.colorbox({
         inline:false, 
         width: "50%",
@@ -107,22 +135,55 @@ function open_thumbail_modal(asset_id,url_target,val_target) {
         //innerHeight:settings.thumbnail_height+10,
         html:function(){
             var preview = '';
-            for(var asset_id in moxycart.product.RelData.Asset){
-                if (asset_id){
-                    var A = moxycart.product.RelData.Asset;
-                    if (typeof A[asset_id] !== "undefined") {
-                        A[asset_id].url_target = url_target;
-                        A[asset_id].val_target = val_target;
-                        A[asset_id].thumbnail_width = settings.thumbnail_width;
-                        A[asset_id].thumbnail_height = settings.thumbnail_height;
-                        preview = preview + parse_tpl("thumbnail_image_tpl",A[asset_id]);
-                    }
-                }
+            var arrayLength = moxycart.product.Assets.length;
+            for (var i = 0; i < arrayLength; i++) {
+                var Asset = moxycart.product.Assets[i];
+                Asset.url_target = url_target;
+                Asset.val_target = val_target;
+                preview = preview + moxycart.tpls.thumbnail_image(Asset);
             }
             return preview;
         }
     });
-    
+}
+
+/**
+ * Select the given thumbnail: write the asset id back to the specified target 
+ */
+function select_image(asset_id,url,url_target,val_target) {
+    console.log('[select_image] asset_id: %s thumb url: %s target: %s',asset_id,url,url_target,val_target);
+    jQuery('#'+val_target).val(asset_id);
+    jQuery('#'+url_target).html('<img src="'+url+'" />');
+    jQuery.colorbox.close();
+}
+
+/**
+ * Update an asset and its related data with data in the referenced form
+ */
+function update_asset(form_id) {
+    var ModalData = form2js(form_id, '.', false);
+    console.log('[update_asset] Modal Data:',ModalData);
+    var arrayLength = moxycart.product.Assets.length;
+    for (var i = 0; i < arrayLength; i++) {
+        if (moxycart.product.Assets[i].asset_id == ModalData.asset_id) {
+            console.log('Updating Asset: '+ModalData.asset_id);
+            
+            // This data here is specific to the Asset (not to the ProductAsset relation)
+            mapi('asset','edit',ModalData.Asset);
+            
+            for (var key in ModalData.Asset) {
+                moxycart.product.Assets[i].Asset[key] = ModalData.Asset[key];
+            }
+            delete ModalData.Asset;
+            
+            for (var key in ModalData) {
+                moxycart.product.Assets[i][key] = ModalData[key];
+            }
+            break;
+        }
+    }
+    draw_assets();
+    jQuery.colorbox.close();
 }
 
 /**

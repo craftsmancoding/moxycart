@@ -37,7 +37,10 @@ function product_init() {
     
     // Compile handlebars templates
     moxycart['tpls'] = {};
-    moxycart.tpls.asset = Handlebars.compile(jQuery('#product_asset').html());
+    moxycart.tpls.related_product = Handlebars.compile(jQuery('#related_product_tpl').html());
+    moxycart.tpls.product_asset = Handlebars.compile(jQuery('#product_asset_tpl').html());
+    moxycart.tpls.thumbnail_image = Handlebars.compile(jQuery('#thumbnail_image_tpl').html());
+    moxycart.tpls.asset_modal = Handlebars.compile(jQuery('#asset_modal_tpl').html());
     
     populate_form(moxycart.product);
 	jQuery('#moxytab').tabify();
@@ -105,7 +108,7 @@ function product_init() {
             }
         })(),
         select: function(event, ui) {
-            var content = parse_tpl('related_product_template',ui.item)
+            var content = parse_tpl('related_product_tpl',ui.item)
             jQuery('#product_relations').append(content);
             jQuery('#search_products').val('');
             event.preventDefault(); // clear out text
@@ -216,6 +219,7 @@ function product_init() {
             // Write all values temporarily to the modal
             jQuery('#modal_asset_title').val(moxycart.product.RelData.Asset[asset_id].title);
             jQuery('#modal_asset_alt').val(moxycart.product.RelData.Asset[asset_id].alt);
+            jQuery('#modal_asset_group').val(moxycart.product.RelData.Asset[asset_id].group);
             jQuery('#modal_asset_width').text(moxycart.product.RelData.Asset[asset_id].width);
             jQuery('#modal_asset_height').text(moxycart.product.RelData.Asset[asset_id].height);
             jQuery('#modal_asset_img').html('<img src="'+moxycart.product.RelData.Asset[asset_id].url+'" style="max-width:770px; height:auto;"/>');
@@ -230,15 +234,17 @@ function product_init() {
                 var asset_id = jQuery("#asset_edit_form").data('asset_id');
                 var title = jQuery('#modal_asset_title').val();
                 var alt = jQuery('#modal_asset_alt').val();
+                var group = jQuery('#modal_asset_group').val(); 
                 var is_active = jQuery('#modal_asset_is_active').val();
                 
                 // And back to the JSON (double-ouch)
                 moxycart.product.RelData.Asset[asset_id].title = title;
                 moxycart.product.RelData.Asset[asset_id].alt = alt;
+                moxycart.product.RelData.Asset[asset_id].group = group;
                 moxycart.product.RelData.Asset[asset_id].is_active = is_active;
                 jQuery('#asset_is_active_'+asset_id).val(is_active);
 
-                // This data here is specific to the Asset
+                // This data here is specific to the Asset (not to the ProductAsset relation)
                 mapi('asset','edit',{"asset_id":asset_id,"title":title,"alt":alt});
                 
                 jQuery( this ).dialog( "close" );
@@ -290,16 +296,6 @@ function delete_product(product_id,redirect) {
     }
 }
 
-/**
- * Select the given thumbnail: write the asset id back to the specified target 
- */
-function select_image(asset_id,url,url_target,val_target) {
-    console.log('[select_image] asset_id: %s thumb url: %s target: %s',asset_id,url,url_target,val_target);
-    jQuery('#'+val_target).val(asset_id);
-    jQuery('#'+url_target).html('<img src="'+url+'" />');
-    jQuery.colorbox.close();
-}
-
 
 jQuery(document).ready(function() {
     // on change of the select terms option, hide/show fieldset
@@ -313,7 +309,8 @@ jQuery(document).ready(function() {
 });
 </script>
 
-<script id="related_product_template" type="text/x-handlebars-template">
+<!-- !related_product_tpl -->
+<script id="related_product_tpl" type="text/x-handlebars-template">
 <tr>
     <td>
         <input type="hidden" name="Relations[related_id][]" value="{{id}}"/>
@@ -330,42 +327,104 @@ jQuery(document).ready(function() {
 </tr>
 </script>
 
-<script id="product_asset" type="text/x-handlebars-template">
+<!-- !product_asset_tpl 
+onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').dialog('open');"
+-->
+<script id="product_asset_tpl" type="text/x-handlebars-template">
 <li class="li_product_asset" id="product-asset-{{asset_id}}">
 	<div class="img-info-wrap">  
-        <img src="{{thumbnail_url}}" alt="{{alt}}" width="" onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').dialog('open');" style="cursor:pointer;"/>
-	    <input type="hidden" name="Assets[asset_id][]" value="{{asset_id}}"/>
-        <input type="hidden" id="asset_asset_id_{{asset_id}}" name="Assets[asset_id][]" class="asset_asset_id" value="{{asset_id}}" />
+        <img src="{{Asset.thumbnail_url}}" alt="{{alt}}" width="" onclick="javascript:open_asset_modal('{{asset_id}}');" style="cursor:pointer;"/>
+	    <input type="hidden" id="asset_asset_id_{{asset_id}}" name="Assets[asset_id][]" value="{{asset_id}}"/>
+	    <input type="hidden" id="asset_group_{{asset_id}}" name="Assets[group][]" value="{{Asset.group}}"/>
+	    <input type="hidden" id="asset_is_active_{{asset_id}}" name="Assets[is_active][]" value="{{Asset.is_active}}"/>	    
 	</div>
 </li>
 </script>
 
-<!-- .asset_thumbnail_item-wrap  {
-  background: #fff;
-  border: 1px solid #ddd;
-  width: 117px;
-  float:left;
-  margin: 5px;
-}
-
-.asset_thumbnail_item  {
-  width: 100px;
-  height: 100px;
-  overflow: hidden;
-} -->
-
+<!-- !thumbnail_image_tpl -->
 <script id="thumbnail_image_tpl" type="text/x-handlebars-template">
-<div class="asset_thumbnail_item-wrap" style=" background: #fff;border: 1px solid #ddd;width: {{thumbnail_width}}px;height:{{thumbnail_height}}px;float:left;margin: 5px;">
+<div class="asset_thumbnail_item-wrap" style=" background: #fff;border: 1px solid #ddd;width: {{Asset.thumbnail_width}}px;height:{{Asset.thumbnail_height}}px;float:left;margin: 5px;">
     <div class="asset_thumbnail_item">
-        <img src="{{thumbnail_url}}" 
-            alt="{{alt}}" 
-            width="{{thumbnail_width}}" 
-            height="{{thumbnail_height}}"
-            onclick="javascript:select_image({{asset_id}},'{{{thumbnail_url}}}','{{url_target}}','{{val_target}}');"/>
+        <img src="{{Asset.thumbnail_url}}" 
+            alt="{{Asset.alt}}" 
+            width="{{Asset.thumbnail_width}}" 
+            height="{{Asset.thumbnail_height}}"
+            onclick="javascript:select_image({{asset_id}},'{{{Asset.thumbnail_url}}}','{{url_target}}','{{val_target}}');"/>
     </div>
 </div>
-
 </script>
+
+<!-- !asset_modal_tpl -->
+<script id="asset_modal_tpl" type="text/x-handlebars-template">
+    <form id="asset_modal_form">
+    	<h3>Edit Asset ({{asset_id}})</h3>
+    	
+        <input type="hidden" name="asset_id" value="{{asset_id}}"/>
+        <input type="hidden" name="Asset.asset_id" value="{{asset_id}}"/>
+        
+            <div class="asset-edit-inner">
+                
+                <div class="clearfix">
+                    <div class="span70 pull-left">
+                        <div class="row-input">
+                             <label class="row-lbl" for="modal_asset_title">Title</label>
+                             <input class="row-field" type="text" name="Asset.title" id="modal_asset_title" value="{{Asset.title}}" />
+                        </div>
+                       
+                        
+                        <div class="row-input">
+                             <label class="row-lbl" for="modal_asset_alt">Alt</label>
+                            <input class="row-field" type="text" name="Asset.alt" id="modal_asset_alt" value="{{Asset.alt}}" />
+                        </div>
+    
+                        <div class="row-input">
+                             <label class="row-lbl" for="modal_asset_group">Group</label>
+                            <input class="row-field" type="text" name="group" id="modal_asset_group" value="{{group}}" />
+                        </div>
+                       
+                        
+                        <div class="row-input">
+                            <label class="row-lbl" for="modal_asset_is_active">Is Active?</label>
+                            <input type="hidden" name="is_active" value="0"/>
+                            <input class="row-field" type="checkbox" name="is_active" id="modal_asset_is_active" value="1" {{#if is_active}}checked="checked"{{/if}}/>
+                        </div>
+    
+                        <!--div class="row-input">
+                             <label class="row-lbl" for="modal_asset_thumbnail_override">Thumbnail Override</label>
+                            <input class="row-field" type="text" name="Asset.thumbnail_url" id="modal_asset_thumbnail_override" value="{{Asset.thumbnail_url}}" placeholder="http://"/>
+                        </div-->
+    
+                    </div>
+    
+                    <div class="span20 pull-left">
+                        <div class="row-input">
+                            <span id="modal_asset_thumb"><img src="{{Asset.thumbnail_url}}" /></span>
+                        </div>
+    
+                    </div>
+                </div>
+                
+                <div class="span100">
+                    <div class="row-input">
+                        <label class="row-lbl">Full Dimensions:</label> 
+                        <div class="non-input"><span id="modal_asset_width">{{Asset.width}}</span> x <span id="modal_asset_height">{{Asset.height}}</span></div>
+                    </div> 
+    
+                    <div class="row-input">
+                        <span id="modal_asset_img"><img src="{{Asset.url}}" width="{{Asset.width}}" height="{{Asset.height}}" /></span>
+                    </div>
+    
+                </div>
+            </div>
+    	</div>
+    	
+    	<span class="btn" onclick="javascript:update_asset('asset_modal_form');">Save</span>
+    	
+    	<span class="btn" onclick="javascript:jQuery.colorbox.close();">Cancel</span>
+    	
+    </form>
+</script>
+
 
 
 <div class="moxycart_canvas_inner clearfix">
@@ -840,6 +899,8 @@ jQuery(document).ready(function() {
             <input type="text" id="modal_asset_title" value="" />
             <label for="modal_asset_alt">Alt</label>
             <input type="text" id="modal_asset_alt" value="" />
+            <label for="modal_asset_group">Group</label>
+            <input type="text" id="modal_asset_group" value="" />
             <label for="modal_asset_is_active">Is Active?</label>
             <input type="checkbox" id="modal_asset_is_active" value="1" /> Is Active?
             <p>Dimensions: <span id="modal_asset_width"></span> x <span id="modal_asset_height"></span></p>

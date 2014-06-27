@@ -6,38 +6,70 @@
  */
 namespace Moxycart;
 class ProductController extends APIController {
+
     public $model = 'Product';     
 
     /**
-     * FULL-on data for this object, including all relations.
-     * FUTURE: build this so it returns the same format needed to submit a new field.
+     * FULL-on data for this object, including all relations. Gotta structure this
+     * very carefully so it plays nice when converted to JSON and has to be manipulated by JS.
+     *
      */
-    public function postView(array $scriptProperties = array(),$raw=false) {
+    public function postView(array $scriptProperties = array()) {
         $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
+
+        $P = new Product($this->modx);
+        $product = $P->complete($product_id);
+        if (empty($product)) {
+            return $this->sendFail('Product not found');
+        }
+
+        return $this->sendSuccess($product);
+
         //$Obj = new Product($this->modx);
         $this->modx->setOption('assman.thumbnail_width', $this->modx->getOption('moxycart.thumbnail_width'));
         $this->modx->setOption('assman.thumbnail_height', $this->modx->getOption('moxycart.thumbnail_height'));
+/*
         if (!$P = $this->modx->getObjectGraph('Product','{"Image":{},"Assets":{"Asset":{}},"Options":{"Option":{}},"Relations":{"Relation":{}}}',$product_id)) {
             return $this->sendFail('Product not found');
         }
+*/
+        // Only do 1:1 relations here
+        if (!$P = $this->modx->getObjectGraph('Product','{"Image":{}}',$product_id)) {
+            return $this->sendFail('Product not found');
+        }
+
         
         //$Coll = $this->modx->getCollection('ProductAsset', array('product_id'=> $product_id));
         //print '<pre>'; print_r($Coll->toArray()); print '</pre>'; exit;
         // Reindexing doesn't work in all cases (e.g. Relations reuse the keys)
         // so we push related records onto the 'RelData' index, keyed off their primary key, e.g.
         // $P['RelData']['Asset'][123]  stores record data for asset_id 123
-        $P1 = $P->toArray('',false,false,true);
+        $out = $P->toArray('',false,false,true);
+        $out['Assets'] = array();
+        $out['Options'] = array();
+        $out['Relations'] = array();
+//        print '<pre>'; print_r($P1); print '</pre>'; exit;  
+        $c = $this->modx->newQuery('ProductAsset');
+        $c->where(array('ProductAsset.product_id'=>$product_id));
+        $c->sortby('ProductAsset.seq','ASC');
+        if ($Assets = $this->modx->getCollectionGraph('ProductAsset','{"Asset":{}}', $c)) {
+            foreach ($Assets as $A) {
+                $out['Assets'][] = $A->toArray('',false,false,true);
+            }
+        }
 
+        print '<pre>'; print json_encode($out, JSON_PRETTY_PRINT); print '</pre>'; exit;
         if (isset($P1['Assets']) && is_array($P1['Assets'])) {
             foreach ($P1['Assets'] as $k => $v) {
                 if (isset($v['Asset']['asset_id']) && $v['Asset']['asset_id']) {
+                    $tmp_asset = $v['Asset'];
                     $P1['RelData']['Asset'][ $v['Asset']['asset_id'] ] = $v['Asset'];
                     $P1['RelData']['Order'][] = $v['Asset']['asset_id'];
                     $P1['RelData']['Groups'][] = $v['group'];
                 }
             }
         }
-        //print '<pre>'; print_r($P1); print '</pre>'; exit;
+        print '<pre>'; print_r($P1); print '</pre>'; exit;
         if (isset($P1['Options']) && is_array($P1['Options'])) {        
             foreach ($P1['Options'] as $k => $v) {
                 $P1['RelData']['Option'][ $v['Option']['option_id'] ] = $v['Option'];
@@ -157,7 +189,7 @@ Array
      */
     public function postEdit(array $scriptProperties = array()) {
         $this->modx->setLogLevel(4);
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         
         // This doesn't work unless you add the namespace.
         // Oddly, if you write it out (w/o a var), it works. wtf?
@@ -181,6 +213,9 @@ Array
         foreach($related_indices as $k) {
             if (isset($scriptProperties[$k])) $scriptProperties[$k] = $Product->indexedToRecordset($scriptProperties[$k]);
         }
+
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Restructured API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
+//        print_r($scriptProperties); exit;
         $product_id = $Product->saveRelated($scriptProperties);
         
         return $this->sendSuccess(array(

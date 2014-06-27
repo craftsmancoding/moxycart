@@ -248,7 +248,8 @@ class PageController extends BaseController {
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->config['assman_assets_url'].'js/dropzone.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
-      
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/form2js.js');
+        
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     		var product = '.json_encode($full_product_data).';            
@@ -288,9 +289,7 @@ class PageController extends BaseController {
             return $this->sendError('Page not found.');
         }
         $this->setPlaceholder('pagetitle', 'Edit Product: '.$result->get('name'));
-        $C = new ProductController($this->modx);
-        $full_product_data = $C->postView(array('product_id'=>$product_id),true); // TODO : move to model
-        
+        $full_product_data = $Obj->complete($product_id); 
         
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($result->toArray());
@@ -310,6 +309,7 @@ class PageController extends BaseController {
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->config['assman_assets_url'].'js/dropzone.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/form2js.js');        
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.colorbox.js');      
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
