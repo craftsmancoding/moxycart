@@ -57,12 +57,8 @@ function product_init() {
         console.log(response);
         if (response.status == "success") {
             console.log('response fields:',response.data.fields);
-            //var data = parse_tpl("product_asset",response.data.fields);
-            var asset_id = response.data.fields.asset_id;
-            moxycart.product.RelData.Order.push(asset_id);
-            moxycart.product.RelData.Asset[asset_id] = response.data.fields;
+            moxycart.product.Assets.push({Asset: response.data.fields });
             draw_assets();
-            //jQuery("#product_assets").append(data);
             jQuery(".dz-preview").remove();
             save_product(product_save_method);
        } 
@@ -201,59 +197,6 @@ function product_init() {
         closeOnEscape: true
     });
 
-
-    
-    // Edit Asset Form
-    jQuery( "#asset_edit_form" ).dialog({
-        autoOpen: false,
-        height: 600,
-        width: 800,
-        modal: true,
-        closeOnEscape: true,        
-        open: function(event, ui) {
-            // Sent the asset_id when the link is clicked, e.g. via
-            // onclick="javascript:jQuery('#asset_edit_form').data('asset_id', 123).dialog('open');"
-            var asset_id = jQuery("#asset_edit_form").data('asset_id')
-            console.log('[asset_edit_form dialog opened] : '+ asset_id);
-            console.debug(moxycart.product.RelData.Asset[asset_id]);
-            // Write all values temporarily to the modal
-            jQuery('#modal_asset_title').val(moxycart.product.RelData.Asset[asset_id].title);
-            jQuery('#modal_asset_alt').val(moxycart.product.RelData.Asset[asset_id].alt);
-            jQuery('#modal_asset_group').val(moxycart.product.RelData.Asset[asset_id].group);
-            jQuery('#modal_asset_width').text(moxycart.product.RelData.Asset[asset_id].width);
-            jQuery('#modal_asset_height').text(moxycart.product.RelData.Asset[asset_id].height);
-            jQuery('#modal_asset_img').html('<img src="'+moxycart.product.RelData.Asset[asset_id].url+'" style="max-width:770px; height:auto;"/>');
-            if (moxycart.product.RelData.Asset[asset_id].is_active == 1) {  
-                jQuery('#modal_asset_is_active').prop('checked', true);
-            }
-        },
-        buttons: {
-            "Save": function() {
-                // For meta-data specific to the *relation* (i.e. ProductAsset), write the values back to the form (ugh)
-                // For data specific to the *asset*, we have to fire off an Ajax request
-                var asset_id = jQuery("#asset_edit_form").data('asset_id');
-                var title = jQuery('#modal_asset_title').val();
-                var alt = jQuery('#modal_asset_alt').val();
-                var group = jQuery('#modal_asset_group').val(); 
-                var is_active = jQuery('#modal_asset_is_active').val();
-                
-                // And back to the JSON (double-ouch)
-                moxycart.product.RelData.Asset[asset_id].title = title;
-                moxycart.product.RelData.Asset[asset_id].alt = alt;
-                moxycart.product.RelData.Asset[asset_id].group = group;
-                moxycart.product.RelData.Asset[asset_id].is_active = is_active;
-                jQuery('#asset_is_active_'+asset_id).val(is_active);
-
-                // This data here is specific to the Asset (not to the ProductAsset relation)
-                mapi('asset','edit',{"asset_id":asset_id,"title":title,"alt":alt});
-                
-                jQuery( this ).dialog( "close" );
-            },
-            "Cancel": function() {
-                jQuery( this ).dialog( "close" );
-            }
-        }   
-    });
 
     // on page load, initialize fieldset state
     jQuery('.parent-term-option').each(function () {
@@ -647,7 +590,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 
     <div id="options_tab" class="content">
        <div class="product-option-wrap">
-                                     <h2>Product Options</h2>
+
                                      <p>Allow your visitors to select variations in your product.</p><br>
                                     <?php
                                     //print '<pre>'; print_r($data['Options']); print '</pre>'; exit;
@@ -889,49 +832,6 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
             </div>
 
         </div>
-
-        <?php // <span class="btn btn-custom" onclick="javascript:jQuery('#asset_edit_form').dialog('open');">Show / Hide Fields</span> ?>
-        
-		<?php /* ======== ASSET MODAL DIALOG BOX ======*/ ?>
-		<div id="asset_edit_form" title="Edit Asset">
-            <div id="asset_being_edited"></div>
-            <label for="modal_asset_title">Title</label>
-            <input type="text" id="modal_asset_title" value="" />
-            <label for="modal_asset_alt">Alt</label>
-            <input type="text" id="modal_asset_alt" value="" />
-            <label for="modal_asset_group">Group</label>
-            <input type="text" id="modal_asset_group" value="" />
-            <label for="modal_asset_is_active">Is Active?</label>
-            <input type="checkbox" id="modal_asset_is_active" value="1" /> Is Active?
-            <p>Dimensions: <span id="modal_asset_width"></span> x <span id="modal_asset_height"></span></p>
-            <span id="modal_asset_img"></span>
-		</div>		
-
-
-		<div class="modal fade" id="update-image">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Update Image</h4>
-
-                    <?php
-                    // This spinner image shows while the image is being loaded from ajax.
-                    ?>
-                    <div class="loader-ajax">
-                        <img src="<?php print $this->config['assets_url']; ?>images/gif-load.gif" alt="">
-                    </div>
-                    
-                  </div>
-
-                  <div class="update-container"></div>
-                 
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!--/.modal -->
-
-        
-
 	</div>
 
     <?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
