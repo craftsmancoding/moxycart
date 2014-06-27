@@ -144,36 +144,19 @@
   <h1>
     [[+name]]
   </h1>
-  <span class="product-code">Product Code: [[+product_id]]</span><br><br>
+  <span class="product-code">Product Code: [[+sku]]</span><br><br>
   <span class="price-old">$[[+price_strike_thru]]</span>&nbsp;&nbsp;<span class="price">$[[+calculated_price]]</span>
 </header>
 
     [[!addToCartButton]]
     
- <!--form role="form" class="foxycart shop-form form-horizontal" action="[[++moxycart.domain]]/cart" method="post" accept-charset="utf-8">
-	<input type="hidden" name="quantity" value="1" />
-	<input type="hidden" name="name" value="[[+name]]" />
-	<input type="hidden" name="price" value="[[+calculated_price]]" />
-	
-  <div class="form-group">
-    <label class="col-xs-2" for="quantity">Qty</label>
-
-    <div class="col-xs-2">
-      <input class="form-control spinner-quantity" id="quantity" required>
-    </div>
-  </div>
-
-	<input type="submit" class="btn btn-primary" value="Add to cart" class="submit" />
-<div class="clearfix"></div>
-	</form-->
-
 <div class="shop-product-single-social">
   <span class="social-label pull-left">Share this product</span>
 
   <div class="social-widget social-widget-mini social-widget-dark">
     <ul class="list-inline">
       <li>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=http://www.createit.pl"
+        <a href="https://www.facebook.com/sharer/sharer.php?u=http://craftsmancoding.com"
            onclick="window.open(this.href, 'facebook-share','width=580,height=296'); return false;"
            rel="nofollow"
            title="Facebook"
@@ -182,7 +165,7 @@
         </a>
       </li>
       <li>
-        <a href="http://twitter.com/share?text=CreateIT&amp;url=http://www.createit.pl"
+        <a href="http://twitter.com/share?text=Moxycart&amp;url=http://craftsmancoding.com"
            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235'); return false;"
            rel="nofollow"
            title=" Share on Twitter"
@@ -191,7 +174,7 @@
         </a>
       </li>
       <li>
-        <a href="https://plus.google.com/share?url=http://www.createit.pl"
+        <a href="https://plus.google.com/share?url=http://craftsmancoding.com"
            onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;"
            rel="nofollow"
            title="Google+"
@@ -200,7 +183,7 @@
         </a>
       </li>
       <li>
-        <a href="http://www.pinterest.com/pin/create/button/?url=http://www.createit.pl/&amp;media=http://www.createit.pl/[[++moxycart.assets_url]]images/templates/images/frontend/logo.png&amp;description=CreateIT"
+        <a href="http://www.pinterest.com/pin/create/button/?url=http://craftsmancoding.com/&amp;media=[[++moxycart.assets_url]]images/templates/images/frontend/logo.png&amp;description=Moxycart"
            onclick="window.open(this.href, 'pinterest-share', 'width=770,height=320'); return false;"
            rel="nofollow"
            title="Pinterest"

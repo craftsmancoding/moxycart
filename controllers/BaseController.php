@@ -185,25 +185,6 @@ class BaseController extends \modExtraManagerController {
             return parent::fetchTemplate($file);
         }
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'File: '.$file,'','BaseController::'.__FUNCTION__,'Line:'.__LINE__);
-        // WTF?  using regClientCSS here fails ONLY if you also use it in your view file. 
-        // Otherwise it works. W.T.F.?
-        //print $this->config['assets_url']; exit;
-/*
-        $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
-        $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
-        $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
-        $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
-*/
-
-/*
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/dropzone.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/multisortable.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/script.js');        
-*/
         
         // Late register here so controllers can add relevant bits of config data
         if ($this->client_config) {

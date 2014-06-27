@@ -297,6 +297,8 @@ class PageController extends BaseController {
         $this->setPlaceholder('result',$result);
         
         $this->_setUIdata();
+        // Register this in the moxycart variable
+        $this->client_config['product'] = $full_product_data;
         
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
@@ -312,7 +314,6 @@ class PageController extends BaseController {
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     	   console.log("[moxycart] '.__FUNCTION__.'");
-    		var product = '.json_encode($full_product_data).';
             var use_editor = "'.$this->modx->getOption('use_editor').'";
             var assets_url = "'.self::url('asset','create',array(),'assman').'"; 
             var assets_delete_url = "'.self::url('asset','delete',array(),'assman').'"; 

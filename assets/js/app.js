@@ -14,9 +14,86 @@ else {
 }
 
 /**
- * Open colorbox
+ * Draw a product's images and assets, obeying the system settings for thumb dimensions
+ * See also Asset Manager's app.js file & its draw_tab func.
+ */
+function draw_assets() {
+    console.log('[draw_assets]');
+    // var data = parse_tpl("product_image",response.data.fields);
+    
+    jQuery('#product_assets').html('');
+    // TODO: filtering
+
+    // JS Hashes do not preserve order. Thus the "Order" array
+    moxycart.product.RelData.Groups = [];
+    var arrayLength = moxycart.product.RelData.Order.length;
+    for (var i = 0; i < arrayLength; i++) {
+        var asset_id = moxycart.product.RelData.Order[i];
+        jQuery('#product_assets').append( moxycart.tpls.asset(moxycart.product.RelData.Asset[asset_id]) );
+        if (moxycart.product.RelData.Asset[asset_id].group) {
+            moxycart.product.RelData.Groups.push(moxycart.product.RelData.Asset[asset_id].group);
+        }
+    }
+/*    
+    //Groups.push(Assets[asset_id].group);
+    Groups = array_unique(Groups);
+    
+    jQuery('#asset_category_filters').html('<li class="all first"><a href="#">All</a></li>');
+    var arrayLength = Groups.length;
+    for (var i = 0; i < arrayLength; i++) {
+        if (Groups[i]) {
+            jQuery('#asset_category_filters').append( category_tpl({"group": Groups[i]}));
+        }
+    }  
+
+	jQuery("#product_assets").ele();
+*/
+    jQuery("#product_assets").disableSelection();
+    jQuery(".sortable").sortable({
+        connectWith: ".connectedSortable",
+    }).disableSelection();
+
+
+/*
+    // Filter product_assets
+    // Clone product_assets items to get a second collection for Quicksand plugin (image gallery)
+    var $portfolioClone = $("#product_assets").clone();
+    
+    // Attempt to call Quicksand on every click event handler
+    jQuery("#asset_category_filters a").click(function(e){
+        
+        jQuery("#asset_category_filters li").removeClass("current");
+        jQuery("#asset_category_filters li").removeClass("first"); 
+        
+        // Get the class attribute value of the clicked link
+        var $filterClass = $(this).parent().attr("class");
+
+        if ( $filterClass == "all" ) {
+            var $filteredPortfolio = $portfolioClone.find("li");
+        } else {
+            var $filteredPortfolio = $portfolioClone.find("li[data-type~=" + $filterClass + "]");
+        }
+        
+        // Call quicksand
+        jQuery("#product_assets").quicksand( $filteredPortfolio, { 
+            duration: 800, 
+            easing: 'swing' 
+        });
+
+        jQuery(this).parent().addClass("current");
+    })
+*/
+
+}
+
+/**
+ * Open Thumbnail colorbox
+ * This lets users select a product thumbnail or select an image for a custom image field.
+ * It's a "film strip" modal.
  *
- * @param target css selector where value (i.e. the asset_id) should be written
+ * @param integer asset_id
+ * @param url_target css selector where thumbnail img is to be shown
+ * @param val_target css selector where asset_id is to be written
  */
 function open_thumbail_modal(asset_id,url_target,val_target) {
     console.log('[open_thumbail_modal]',asset_id,val_target);
@@ -24,20 +101,20 @@ function open_thumbail_modal(asset_id,url_target,val_target) {
     var displayed = 0;
     jQuery.colorbox({
         inline:false, 
-        innerWidth:settings.thumbnail_width+30,
-        //height: 500,
-        innerHeight:settings.thumbnail_height+10,
+        width: "50%",
+        //innerWidth:settings.thumbnail_width+30,
+        height: "50%",
+        //innerHeight:settings.thumbnail_height+10,
         html:function(){
             var preview = '';
-            for(var asset_id in product.RelData.Asset){
+            for(var asset_id in moxycart.product.RelData.Asset){
                 if (asset_id){
-                    var A = product.RelData.Asset;
+                    var A = moxycart.product.RelData.Asset;
                     if (typeof A[asset_id] !== "undefined") {
                         A[asset_id].url_target = url_target;
                         A[asset_id].val_target = val_target;
                         A[asset_id].thumbnail_width = settings.thumbnail_width;
                         A[asset_id].thumbnail_height = settings.thumbnail_height;
-                        console.log('Parsing:', A[asset_id]);
                         preview = preview + parse_tpl("thumbnail_image_tpl",A[asset_id]);
                     }
                 }

@@ -19,6 +19,7 @@
  * Parameters
  * -----------------------------
  * @param integer $product_id of the product whose images you want. Defaults to the current product (if used in a product template)
+ * @param string $group name of the group - if set, results will be filtered to this group
  * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
  * @param boolean $is_active Get all active records only
@@ -37,7 +38,8 @@
  * [[!getProductImages? &product_id=`[[+product_id]]` &outerTpl=`sometpl` &innerTpl=`othertpl` &is_active=`1` &limit=`1`]]
  *
  * @package moxycart
- **/
+ */
+
 $assman_corepath = $modx->getOption('assman.core_path', null, MODX_CORE_PATH.'components/assman/');
 require_once $assman_corepath .'vendor/autoload.php';
 
@@ -60,13 +62,16 @@ if (!$product_id) {
     return 'product_id is required.';
 }
 
-
-$c = $modx->newQuery('ProductAsset');
-$c->where(array(
-    'ProductAsset.product_id'=>$product_id,
-    'ProductAsset.is_active'=>true,
+$criteria = array(
+    'product_id'=>$product_id,
+    'is_active'=>true,
     'Asset.is_image' => true,
-));
+);
+if (isset($scriptProperties['group'])) {
+    $criteria['ProductAsset.group'] = $scriptProperties['group'];
+}
+$c = $modx->newQuery('ProductAsset');
+$c->where($criteria);
 
 
 $c->sortby('ProductAsset.seq','ASC');

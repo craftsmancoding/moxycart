@@ -34,18 +34,15 @@ function remove_relation(product_id) {
  */
 function product_init() {
     console.log('[product_init]');
-
-    populate_form(product);
+    
+    // Compile handlebars templates
+    moxycart['tpls'] = {};
+    moxycart.tpls.asset = Handlebars.compile(jQuery('#product_asset').html());
+    
+    populate_form(moxycart.product);
 	jQuery('#moxytab').tabify();
-
-	// jQuery('.datepicker').datepicker("setValue", new Date()); // <-- always writes current date
-    // jQuery('.datepicker').datepicker(); // <-- shows "-001-11-30 00:00:00" for the default date
 	jQuery('.datepicker').datepicker();
-	jQuery("#product_images").sortable();
-    jQuery("#product_images").disableSelection();
-    jQuery(".sortable").sortable({
-        connectWith: ".connectedSortable",
-    }).disableSelection();
+    draw_assets();
 
 
     // Dropzone for Assets 
@@ -56,8 +53,13 @@ function product_init() {
         response = jQuery.parseJSON(response);
         console.log(response);
         if (response.status == "success") {
-            var data = parse_tpl("product_image",response.data.fields);
-            jQuery("#product_images").append(data);
+            console.log('response fields:',response.data.fields);
+            //var data = parse_tpl("product_asset",response.data.fields);
+            var asset_id = response.data.fields.asset_id;
+            moxycart.product.RelData.Order.push(asset_id);
+            moxycart.product.RelData.Asset[asset_id] = response.data.fields;
+            draw_assets();
+            //jQuery("#product_assets").append(data);
             jQuery(".dz-preview").remove();
             save_product(product_save_method);
        } 
@@ -208,16 +210,16 @@ function product_init() {
         open: function(event, ui) {
             // Sent the asset_id when the link is clicked, e.g. via
             // onclick="javascript:jQuery('#asset_edit_form').data('asset_id', 123).dialog('open');"
-            var asset_id = $("#asset_edit_form").data('asset_id')
-            //console.log('opened...'+ asset_id);
-            console.debug(product.RelData.Asset[asset_id]);
+            var asset_id = jQuery("#asset_edit_form").data('asset_id')
+            console.log('[asset_edit_form dialog opened] : '+ asset_id);
+            console.debug(moxycart.product.RelData.Asset[asset_id]);
             // Write all values temporarily to the modal
-            jQuery('#modal_asset_title').val(product.RelData.Asset[asset_id].title);
-            jQuery('#modal_asset_alt').val(product.RelData.Asset[asset_id].alt);
-            jQuery('#modal_asset_width').text(product.RelData.Asset[asset_id].width);
-            jQuery('#modal_asset_height').text(product.RelData.Asset[asset_id].height);
-            jQuery('#modal_asset_img').html('<img src="'+product.RelData.Asset[asset_id].url+'" style="max-width:770px; height:auto;"/>');
-            if (product.RelData.Asset[asset_id].is_active == 1) {  
+            jQuery('#modal_asset_title').val(moxycart.product.RelData.Asset[asset_id].title);
+            jQuery('#modal_asset_alt').val(moxycart.product.RelData.Asset[asset_id].alt);
+            jQuery('#modal_asset_width').text(moxycart.product.RelData.Asset[asset_id].width);
+            jQuery('#modal_asset_height').text(moxycart.product.RelData.Asset[asset_id].height);
+            jQuery('#modal_asset_img').html('<img src="'+moxycart.product.RelData.Asset[asset_id].url+'" style="max-width:770px; height:auto;"/>');
+            if (moxycart.product.RelData.Asset[asset_id].is_active == 1) {  
                 jQuery('#modal_asset_is_active').prop('checked', true);
             }
         },
@@ -225,15 +227,15 @@ function product_init() {
             "Save": function() {
                 // For meta-data specific to the *relation* (i.e. ProductAsset), write the values back to the form (ugh)
                 // For data specific to the *asset*, we have to fire off an Ajax request
-                var asset_id = $("#asset_edit_form").data('asset_id');
+                var asset_id = jQuery("#asset_edit_form").data('asset_id');
                 var title = jQuery('#modal_asset_title').val();
                 var alt = jQuery('#modal_asset_alt').val();
                 var is_active = jQuery('#modal_asset_is_active').val();
                 
                 // And back to the JSON (double-ouch)
-                product.RelData.Asset[asset_id].title = title;
-                product.RelData.Asset[asset_id].alt = alt;
-                product.RelData.Asset[asset_id].is_active = is_active;
+                moxycart.product.RelData.Asset[asset_id].title = title;
+                moxycart.product.RelData.Asset[asset_id].alt = alt;
+                moxycart.product.RelData.Asset[asset_id].is_active = is_active;
                 jQuery('#asset_is_active_'+asset_id).val(is_active);
 
                 // This data here is specific to the Asset
@@ -261,26 +263,13 @@ function product_init() {
 
 };
 
-/**
- * TODO: update API to get field form
- */
-function get_field_instance() {
-    var field_id = jQuery('#field_selector').val();
-    console.debug('[get_field_instance] field_id %s',field_id);
-    var url = controller_url('field','row');    
-    jQuery.get(url, {field_id:field_id}, function( response ) {
-        jQuery('#no_specs_msg').hide();
-        jQuery('#fields').append(response);
-    });
-}
 
 function save_product(method) {
     console.log('[save_product] '+method);
     var values = jQuery('#product_form').serialize();
     
     if (method == 'create') {
-        mapi('product','create',values, function(response){
-            console.debug(response);
+        mapi('product','create',values, function(response) {
             console.debug('Redirecting after successful create.');
             window.location.href = controller_url('page','productedit')+'&product_id='+response.data.id;    
         });
@@ -341,11 +330,11 @@ jQuery(document).ready(function() {
 </tr>
 </script>
 
-<script id="product_image" type="text/x-handlebars-template">
-<li class="li_product_image" id="product-asset-{{asset_id}}">
+<script id="product_asset" type="text/x-handlebars-template">
+<li class="li_product_asset" id="product-asset-{{asset_id}}">
 	<div class="img-info-wrap">  
-        <img src="{{thumbnail_url}}" alt="{{alt}}" width="" />
-	    <input type="hidden" name="Assets[asset_id][]" value="{{asset_id}}" onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').dialog('open');" style="cursor:pointer;"/>
+        <img src="{{thumbnail_url}}" alt="{{alt}}" width="" onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').dialog('open');" style="cursor:pointer;"/>
+	    <input type="hidden" name="Assets[asset_id][]" value="{{asset_id}}"/>
         <input type="hidden" id="asset_asset_id_{{asset_id}}" name="Assets[asset_id][]" class="asset_asset_id" value="{{asset_id}}" />
 	</div>
 </li>
@@ -832,22 +821,7 @@ jQuery(document).ready(function() {
 	<div id="assets_tab" class="content">	
         <div class="dropzone-wrap" id="image_upload">
 
-        	<ul class="clearfix" id="product_images">
-                <?php 
-                foreach ($data['product_assets'] as $a): 
-                    // This can fail catastrophically if the product_assets row refs an asset that has been deleted!
-                    if (empty($a->Asset)) continue;
-                ?>
-                    <li class="li_product_image" id="product-asset-<?php print $a->get('asset_id'); ?>">
-                    	<div class="img-info-wrap">
-                    		  <img src="<?php print $a->Asset->get('thumbnail_url'); ?>?rand=<?php print uniqid(); ?>" alt="<?php print $a->Asset->get('alt'); ?>" width="" onclick="javascript:jQuery('#asset_edit_form').data('asset_id', <?php print $a->get('asset_id'); ?>).dialog('open');" style="cursor:pointer;"/>
-                    	    <input type="hidden" id="asset_asset_id_<?php print $a->get('asset_id'); ?>" class="asset_asset_id" name="Assets[asset_id][]" value="<?php print $a->get('asset_id'); ?>" />
-                    	</div>
-                    </li>            
-                
-                <?php endforeach; ?>
-            </ul>
-
+        	<ul class="clearfix" id="product_assets"></ul>
 
         	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
 
