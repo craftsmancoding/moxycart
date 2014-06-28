@@ -830,7 +830,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 	<div id="assets_tab" class="content">	
         <div class="dropzone-wrap" id="image_upload">
 
-        	<ul class="clearfix" id="product_assets"></ul>
+        	<ul class="clearfix ui-sortable" id="product_assets"></ul>
 
         	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
 
