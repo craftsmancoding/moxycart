@@ -99,7 +99,7 @@ function open_asset_modal(asset_id) {
     var displayed = 0;
     jQuery.colorbox({
         inline:false, 
-        width: "600",
+        width: "850",
         //innerWidth:settings.thumbnail_width+30,
         height: "90%",
         //innerHeight:settings.thumbnail_height+10,
@@ -136,8 +136,8 @@ function open_thumbail_modal(asset_id,url_target,val_target) {
         inline:false, 
         width: "50%",
         //innerWidth:settings.thumbnail_width+30,
-        height: "50%",
-        //innerHeight:settings.thumbnail_height+10,
+        //height: "50%",
+        innerHeight:settings.thumbnail_height+10,
         html:function(){
             var preview = '';
             for (var i = 0; i < arrayLength; i++) {
