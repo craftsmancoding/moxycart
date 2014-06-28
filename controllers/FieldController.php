@@ -18,10 +18,17 @@ class FieldController extends APIController {
     public function postGenerate(array $scriptProperties = array()) {
     
         $field_id = (int) $this->modx->getOption('field_id',$scriptProperties);
+        $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
         $name = (int) $this->modx->getOption('name',$scriptProperties);        
         $Field = new Field($this->modx);
+        $value = '';
+        if ($product_id) {
+            if($ProductField = $this->modx->getObject('ProductField', array('field_id'=>$field_id,'product_id'=>$product_id))) {
+                $value = $ProductField->get('value');
+            }
+        }
         
-        $out = $Field->generate($field_id,'',$name);
+        $out = $Field->generate($field_id,$value,$name);
         if ($out === false) {
             return $this->sendError('Field not found.');
         }

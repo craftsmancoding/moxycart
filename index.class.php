@@ -149,8 +149,14 @@ class IndexManagerController extends \Moxycart\BaseController {
             self::$errors[] = 'moxycart.domain must contain a valid URL';
         }
         $api_key = $modx->getOption('moxycart.api_key');
-        if(empty($api_key) || strlen($api_key) < 60 || substr($api_key, 0, 6) != 'm42Ccf') {
-            self::$errors[] = 'moxycart.api_key does not contain a valid Foxycart API key.';
+        if(empty($api_key)) {
+            self::$errors[] = 'moxycart.api_key cannot be empty';
+        }
+        elseif(strlen($api_key) < 60) {
+            self::$errors[] = 'moxycart.api_key is too short to be Foxycart API key.';        
+        }
+        elseif (substr($api_key, 0, 6) != 'm42Ccf') {
+            self::$errors[] = 'moxycart.api_key must begin with "m42Ccf"';
         }
         
         if(!$modx->getOption('friendly_urls') ) { // || !$modx->getOption('use_alias_path')) {
