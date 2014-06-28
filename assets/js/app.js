@@ -34,6 +34,11 @@ function draw_assets() {
             moxycart.product.AssetGroups.push(Asset.group);
         }
     }
+
+    jQuery("#product_assets").sortable();
+    jQuery("#product_assets").disableSelection();
+    console.log('sortable...');
+    
 /*    
     //Groups.push(Assets[asset_id].group);
     Groups = array_unique(Groups);
@@ -45,13 +50,7 @@ function draw_assets() {
             jQuery('#asset_category_filters').append( category_tpl({"group": Groups[i]}));
         }
     }  
-
-	jQuery("#product_assets").ele();
 */
-    jQuery("#product_assets").disableSelection();
-    jQuery(".sortable").sortable({
-        connectWith: ".connectedSortable",
-    }).disableSelection();
 
 
 /*
@@ -95,22 +94,28 @@ function draw_assets() {
  * @param val_target css selector where asset_id is to be written
  */
 function open_asset_modal(asset_id) {
-    console.log('[open_asset_modal]',asset_id);
-    var displayed = 0;
+    console.log('[open_asset_modal] asset_id: '+ asset_id);
+    var content = '';
+    var arrayLength = moxycart.product.Assets.length;
+    for (var i = 0; i < arrayLength; i++) {
+        if (moxycart.product.Assets[i].asset_id == asset_id) {
+            content = moxycart.tpls.asset_modal(moxycart.product.Assets[i]);
+        }
+    }
+    if (content == '') {
+        alert('Asset data for asset_id '+asset_id+' not found.');
+        console.log(moxycart.product.Assets);
+        return;
+    }
+    
     jQuery.colorbox({
         inline:false, 
         width: "850",
-        //innerWidth:settings.thumbnail_width+30,
+        //innerWidth:moxycart.settings.thumbnail_width+30,
         height: "90%",
-        //innerHeight:settings.thumbnail_height+10,
+        //innerHeight:moxycart.settings.thumbnail_height+10,
         html:function(){
-
-            var arrayLength = moxycart.product.Assets.length;
-            for (var i = 0; i < arrayLength; i++) {
-                if (moxycart.product.Assets[i].asset_id == asset_id) {
-                    return moxycart.tpls.asset_modal(moxycart.product.Assets[i]);
-                }
-            }
+            return content;
         }
     });
 }
@@ -126,7 +131,7 @@ function open_asset_modal(asset_id) {
  */
 function open_thumbail_modal(asset_id,url_target,val_target) {
     console.log('[open_thumbail_modal]',asset_id,val_target);
-//    console.log('Thumb dimensions: %sx%s',settings.thumbnail_width,settings.thumbnail_height)
+//    console.log('Thumb dimensions: %sx%s',moxycart.settings.thumbnail_width,moxycart.settings.thumbnail_height)
     var arrayLength = moxycart.product.Assets.length;
     if (arrayLength < 1) {
         alert('You have not uploaded any assets yet.');
@@ -135,9 +140,9 @@ function open_thumbail_modal(asset_id,url_target,val_target) {
     jQuery.colorbox({
         inline:false, 
         width: "50%",
-        //innerWidth:settings.thumbnail_width+30,
+        //innerWidth:moxycart.settings.thumbnail_width+30,
         //height: "50%",
-        innerHeight:settings.thumbnail_height+10,
+        innerHeight:moxycart.settings.thumbnail_height+10,
         html:function(){
             var preview = '';
             for (var i = 0; i < arrayLength; i++) {
@@ -298,7 +303,7 @@ function populate_form(data) {
 function mapi(classname,methodname,data,callback) {
     data = typeof data !== 'undefined' ? data : {}; // default
     
-    console.debug('[mapi]',classname,methodname,data);
+    console.debug('[mapi]',classname,methodname);
     
     // We need to set some POST data, otherwise routing will fail.
     data._moxycart = Math.random()*10000000000000000;

@@ -37,14 +37,18 @@ function product_init() {
 
 
     // Dropzone for Assets 
-    var myDropzone = new Dropzone("div#image_upload", {url: assets_url});    
+    var myDropzone = new Dropzone("div#image_upload", {url: moxycart.assets_url});    
     // Refresh the list on success (append new tile to end)
     myDropzone.on("success", function(file,response) {
         response = jQuery.parseJSON(response);
         console.log('Dropzone Response',response);
         if (response.status == "success") {
-            console.log('response fields:',response.data.fields);
-            moxycart.product.Assets.push({Asset: response.data.fields });
+            console.log('Dropzone Success - response fields:',response.data.fields);
+            moxycart.product.Assets.push({
+                asset_id: response.data.fields.asset_id,
+                is_active: 1,
+                Asset: response.data.fields 
+            });
             draw_assets();
             jQuery(".dz-preview").remove();
             save_product(product_save_method);
@@ -261,15 +265,15 @@ jQuery(document).ready(function() {
 onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').dialog('open');"
 -->
 <script id="product_asset_tpl" type="text/x-handlebars-template">
-<li class="li_product_asset test" id="product-asset-{{asset_id}}">
+<li class="li_product_asset sortable" id="product-asset-{{Asset.asset_id}}">
 	<div class="img-info-wrap">  
-        <img src="{{Asset.thumbnail_url}}" alt="{{alt}}" width="{{Asset.thumbnail_width}}" height="{{Asset.thumbnail_height}}" onclick="javascript:open_asset_modal('{{asset_id}}');" style="cursor:pointer;"/>
-	    <input type="hidden" id="asset_asset_id_{{asset_id}}" name="Assets[asset_id][]" value="{{asset_id}}"/>
-	    <input type="hidden" id="asset_group_{{asset_id}}" name="Assets[group][]" value="{{Asset.group}}"/>
-	    <input type="hidden" id="asset_is_active_{{asset_id}}" name="Assets[is_active][]" value="{{Asset.is_active}}"/>	
+        <img src="{{Asset.thumbnail_url}}" alt="{{alt}}" width="{{Asset.thumbnail_width}}" height="{{Asset.thumbnail_height}}" onclick="javascript:open_asset_modal('{{Asset.asset_id}}');" style="cursor:pointer;"/>
+	    <input type="hidden" id="asset_asset_id_{{Asset.asset_id}}" name="Assets[asset_id][]" value="{{Asset.asset_id}}"/>
+	    <input type="hidden" id="asset_group_{{Asset.asset_id}}" name="Assets[group][]" value="{{Asset.group}}"/>
+	    <input type="hidden" id="asset_is_active_{{Asset.asset_id}}" name="Assets[is_active][]" value="{{Asset.is_active}}"/>	
         <div class="img-info-inner">
-            <p class="asset-id-ph"><span id="asset_title_{{asset_id}}">{{title}}</span> ({{asset_id}})</p>
-            <p class="asset-title-ph" id="asset_group_vis_{{asset_id}}">Group: <strong>{{group}}</strong></p>
+            <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{title}}</span> ({{Asset.asset_id}})</p>
+            <p class="asset-title-ph" id="asset_group_vis_{{Asset.asset_id}}">Group: <strong>{{group}}</strong></p>
         </div>    
 	</div>
 </li>

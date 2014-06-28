@@ -298,6 +298,12 @@ class PageController extends BaseController {
         $this->_setUIdata();
         // Register this in the moxycart variable
         $this->client_config['product'] = $full_product_data;
+        $this->client_config['assets_url'] = self::url('asset','create',array(),'assman');
+        $this->client_config['assets_delete_url'] = self::url('asset','delete',array(),'assman');
+        $this->client_config['settings'] = array(
+            'thumbnail_width' => $this->modx->getOption('moxycart.thumbnail_width'),
+            'thumbnail_height' => $this->modx->getOption('moxycart.thumbnail_height')
+        );
         
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
         $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
@@ -315,12 +321,6 @@ class PageController extends BaseController {
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     	   console.log("[moxycart] '.__FUNCTION__.'");
             var use_editor = "'.$this->modx->getOption('use_editor').'";
-            var assets_url = "'.self::url('asset','create',array(),'assman').'"; 
-            var assets_delete_url = "'.self::url('asset','delete',array(),'assman').'"; 
-            var settings = {
-                "thumbnail_width":'.$this->modx->getOption('moxycart.thumbnail_width').',
-                "thumbnail_height":'.$this->modx->getOption('moxycart.thumbnail_height').'
-            };
             var product_save_method = "edit";            
             // Document read stuff has to be in here
             jQuery(document).ready(function() {
