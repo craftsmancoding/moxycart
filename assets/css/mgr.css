@@ -4490,7 +4490,6 @@ label {
 
 
 .product-option-wrap {
-  border: 1px solid #ddd;
   padding: 10px;
   border-radius: 5px;
 }
@@ -4610,6 +4609,12 @@ table.sub-terms .checkbox {
 
 #asset_modal_form-inner {
   margin: 20px;
+}
+
+
+#modal_asset_img img {
+  margin: 0 auto;
+display: block;
 }
 
 .row-input .row-lbl {
