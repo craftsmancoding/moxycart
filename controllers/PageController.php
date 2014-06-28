@@ -113,7 +113,7 @@ class PageController extends BaseController {
         // fields (dropdown)
         $c = $this->modx->newQuery('Field');
         $c->sortby('seq','ASC');
-        $Fs = $this->modx->getCollection('Field'); 
+        $Fs = $this->modx->getCollection('Field',$c); 
         $fields = array();
         foreach ($Fs as $f) {
             $fields[ $f->get('field_id') ] = sprintf('%s (%s)',$f->get('label'),$f->get('slug'));

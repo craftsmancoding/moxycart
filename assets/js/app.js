@@ -127,6 +127,11 @@ function open_asset_modal(asset_id) {
 function open_thumbail_modal(asset_id,url_target,val_target) {
     console.log('[open_thumbail_modal]',asset_id,val_target);
 //    console.log('Thumb dimensions: %sx%s',settings.thumbnail_width,settings.thumbnail_height)
+    var arrayLength = moxycart.product.Assets.length;
+    if (arrayLength < 1) {
+        alert('You have not uploaded any assets yet.');
+        return;
+    }
     jQuery.colorbox({
         inline:false, 
         width: "50%",
@@ -135,7 +140,6 @@ function open_thumbail_modal(asset_id,url_target,val_target) {
         innerHeight:settings.thumbnail_height+10,
         html:function(){
             var preview = '';
-            var arrayLength = moxycart.product.Assets.length;
             for (var i = 0; i < arrayLength; i++) {
                 var Asset = moxycart.product.Assets[i];
                 Asset.url_target = url_target;

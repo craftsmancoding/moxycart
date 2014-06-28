@@ -1,15 +1,3 @@
-<style>
-/* http://jsfiddle.net/thirtydot/NTKK3/ */
-.asset_thumbnail_container {
-    height: 190px;
-    width: 480px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-}
-</style>
-
-
 <script>
 /**
  * Handlebars Parsing
@@ -52,9 +40,8 @@ function product_init() {
     var myDropzone = new Dropzone("div#image_upload", {url: assets_url});    
     // Refresh the list on success (append new tile to end)
     myDropzone.on("success", function(file,response) {
-
         response = jQuery.parseJSON(response);
-        console.log(response);
+        console.log('Dropzone Response',response);
         if (response.status == "success") {
             console.log('response fields:',response.data.fields);
             moxycart.product.Assets.push({Asset: response.data.fields });
@@ -149,35 +136,35 @@ function product_init() {
             "Ok": function() {
                 //Fields[field_id][]
                 var field_ids = [];
-                var field_id;
                 jQuery('#custom_fields_form input:checked').each(function() {
                     field_ids.push(jQuery(this).attr('value'));
                 });
+//                field_ids.reverse();
                 jQuery('#product_fields').html(''); // Blank it out
                 console.debug('Attaching field ids: ', field_ids);
                 var field_ids_cnt = field_ids.length;
                 for (var i = 0; i < field_ids_cnt; i++) {
                     var field_id = field_ids[i];
+                    console.log('Generating field '+field_id);
                     // Had to customize mapi...
                     //mapi('field','generate',{"field_id":field_id,"name":"Fields[field_id][]"});
                     // This MUST be outside of the .post call!!! Otherwise it will always be written with the last 
                     // field_id because js will execute BEFORE the postback occurs!!!
                     jQuery('#product_fields').append('<input type="hidden" name="Fields[field_id][]" value="'+field_id+'" />'); 
                     var url = controller_url('field','generate');    
-                    jQuery.post(url, {"field_id":field_id,"name":"Fields[value][]"}, function( response ) {
-                        if(response.status == 'fail') {                            
-                            var msg = 'Error:<br/>'+ response.data.error;
-                            return show_error(msg); 
-                        }
-                        else if (response.status == 'success') {
-                            console.debug('Drawing field.');
-                            jQuery('#product_fields').append(response.data); 
-                        }
-                    },'json')
-                    .fail(function() {
-                        console.error('[mapi] post to %s failed', url);
-                    });
-                    
+                    jQuery.post(url, {"field_id":field_id,"name":"Fields[value][]","product_id":moxycart.product.product_id}, function( response ) {
+                            if(response.status == 'fail') {                            
+                                var msg = 'Error:<br/>'+ response.data.error;
+                                return show_error(msg); 
+                            }
+                            else if (response.status == 'success') {
+                                console.debug('Drawing field.');
+                                jQuery('#product_fields').append(response.data); 
+                            }
+                        },'json')
+                        .fail(function() {
+                            console.error('[mapi] post to %s failed', url);
+                        });                        
                 }
                 
                 jQuery( this ).dialog( "close" );
