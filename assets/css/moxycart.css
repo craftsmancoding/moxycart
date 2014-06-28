@@ -490,6 +490,12 @@ table.products-tbl td {
 }
 
 
+img.inactive {
+    opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+
+
 
 .po-fset {
   display: none;

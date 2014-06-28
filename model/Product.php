@@ -148,7 +148,9 @@ class Product extends BaseModel {
         $c->sortby('ProductAsset.seq','ASC');
         if ($Assets = $this->modx->getCollectionGraph('ProductAsset','{"Asset":{}}', $c)) {
             foreach ($Assets as $A) {
-                $out['Assets'][] = $A->toArray('',false,false,true);
+                if (isset($A->Asset) && !empty($A->Asset)) {
+                    $out['Assets'][] = $A->toArray('',false,false,true);
+                }
             }
         }
 

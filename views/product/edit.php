@@ -109,7 +109,7 @@ function product_init() {
 			jQuery(this).addClass('over-trash');
 		},
 		out: function(event, ui) {
-			var id = $(ui.draggable).attr('id');
+			var id = jQuery(ui.draggable).attr('id');
 			jQuery(this).removeClass('over-trash');
 		},
 	    drop: function( event, ui ) {
@@ -117,17 +117,41 @@ function product_init() {
 
 	      	//var url = connector_url + 'image_save';
 	      	//var asset_id = $(ui.draggable).find('a').data('asset_id');	      	
-	      	var asset_id = jQuery(ui.draggable).find('input.asset_asset_id').val();	      
-	      	if (confirm("Are you Sure you want to Delete this Image?")) {
-	      		jQuery(this).removeClass('over-trash');
-	      		mapi('productasset','delete',{"asset_id":asset_id,"product_id":product.product_id});
-	      		jQuery('#product-asset-'+asset_id).remove();
-		    }
+	      	var asset_id = jQuery(ui.draggable).find('input').val();	      
+	      	delete_asset(asset_id);
 		    jQuery(this).removeClass('over-trash');
 
 		    return false;
 	    }
     });
+
+
+    // Delete Asset
+    // jQuery.colorbox.close();
+    jQuery( "#delete_asset_modal" ).dialog({
+        autoOpen: false,
+        open: function( event, ui ) {
+            jQuery.colorbox.close();     
+        },
+        height: 330,
+        width: 500,
+        modal: true,
+        closeOnEscape: true,
+        buttons: {
+            "Delete": function() {
+                alert('Delete: '+ jQuery(this).data('asset_id'));
+                jQuery( this ).dialog( "close" );
+            },
+            "Remove from Product": function() {
+                alert('Remove: '+ jQuery(this).data('asset_id'));
+                jQuery( this ).dialog( "close" );
+            },
+            "Cancel": function() {
+                jQuery( this ).dialog( "close" );
+            }
+        }   
+    });
+
         
     // Custom Field Selection Modal
     jQuery( "#custom_fields_form" ).dialog({
@@ -266,11 +290,11 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 -->
 <script id="product_asset_tpl" type="text/x-handlebars-template">
 <li class="li_product_asset sortable" id="product-asset-{{Asset.asset_id}}">
-	<div class="img-info-wrap">  
-        <img src="{{Asset.thumbnail_url}}" alt="{{alt}}" width="{{Asset.thumbnail_width}}" height="{{Asset.thumbnail_height}}" onclick="javascript:open_asset_modal('{{Asset.asset_id}}');" style="cursor:pointer;"/>
+	<div class="img-info-wrap">
+        <img src="{{Asset.thumbnail_url}}" alt="{{alt}}" width="{{Asset.thumbnail_width}}" height="{{Asset.thumbnail_height}}" onclick="javascript:open_asset_modal('{{Asset.asset_id}}');" class="{{#unless is_active}}inactive{{/unless}}" style="cursor:pointer;"/>
 	    <input type="hidden" id="asset_asset_id_{{Asset.asset_id}}" name="Assets[asset_id][]" value="{{Asset.asset_id}}"/>
 	    <input type="hidden" id="asset_group_{{Asset.asset_id}}" name="Assets[group][]" value="{{Asset.group}}"/>
-	    <input type="hidden" id="asset_is_active_{{Asset.asset_id}}" name="Assets[is_active][]" value="{{Asset.is_active}}"/>	
+	    <input type="hidden" id="asset_is_active_{{Asset.asset_id}}" name="Assets[is_active][]" value="{{is_active}}"/>	
         <div class="img-info-inner">
             <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{title}}</span> ({{Asset.asset_id}})</p>
             <p class="asset-title-ph" id="asset_group_vis_{{Asset.asset_id}}">Group: <strong>{{group}}</strong></p>
@@ -324,7 +348,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                             
                             <div class="row-input">
                                 <label class="row-lbl" for="modal_asset_is_active">Is Active?</label>
-                                <input type="hidden" name="is_active" value="0"/>
+                                <input type="hidden" name="is_active" value=""/>
                                 <input class="row-field" type="checkbox" name="is_active" id="modal_asset_is_active" value="1" {{#if is_active}}checked="checked"{{/if}}/>
                             </div>
         
@@ -360,6 +384,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
     	<div class="moxy-modal-controls">
             <span class="btn" onclick="javascript:update_asset('asset_modal_form');">Save</span>
             <span class="btn" onclick="javascript:jQuery.colorbox.close();">Cancel</span>
+            <span style="float:right; margin-right:10px;" class="btn" onclick="javascript:jQuery('#delete_asset_modal').data('asset_id', '{{asset_id}}').dialog('open');">Delete</span>
         </div>
     	
     	
@@ -830,6 +855,16 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
             </div>
 
         </div>
+
+        
+		<?php /* ======== DELETE DIALOG BOX ======*/ ?>
+		<div id="delete_asset_modal" title="Delete/Remove Asset">
+            <p>This asset might be used by other products or pages!</p>
+            <p>You can <strong>remove</strong> the image from this product,<br/>
+            or you can <strong>delete</strong> the asset.</p>
+            <p class="danger">Deleting cannot be undone!</p>
+		</div>
+        
 	</div>
 
     <?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
