@@ -4595,7 +4595,7 @@ table.sub-terms .checkbox {
 
 #cboxLoadedContent {
   padding: 20px;
-  background: #29292c !important;
+  background: #fff !important;
 }
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */
