@@ -274,12 +274,16 @@ jQuery(document).ready(function() {
 onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').dialog('open');"
 -->
 <script id="product_asset_tpl" type="text/x-handlebars-template">
-<li class="li_product_asset" id="product-asset-{{asset_id}}">
+<li class="li_product_asset test" id="product-asset-{{asset_id}}">
 	<div class="img-info-wrap">  
-        <img src="{{Asset.thumbnail_url}}" alt="{{alt}}" width="" onclick="javascript:open_asset_modal('{{asset_id}}');" style="cursor:pointer;"/>
+        <img src="{{Asset.thumbnail_url}}" alt="{{alt}}" width="{{Asset.thumbnail_width}}" height="{{Asset.thumbnail_height}}" onclick="javascript:open_asset_modal('{{asset_id}}');" style="cursor:pointer;"/>
 	    <input type="hidden" id="asset_asset_id_{{asset_id}}" name="Assets[asset_id][]" value="{{asset_id}}"/>
 	    <input type="hidden" id="asset_group_{{asset_id}}" name="Assets[group][]" value="{{Asset.group}}"/>
-	    <input type="hidden" id="asset_is_active_{{asset_id}}" name="Assets[is_active][]" value="{{Asset.is_active}}"/>	    
+	    <input type="hidden" id="asset_is_active_{{asset_id}}" name="Assets[is_active][]" value="{{Asset.is_active}}"/>	
+        <div class="img-info-inner">
+            <p class="asset-id-ph"><span id="asset_title_{{asset_id}}">{{title}}</span> ({{asset_id}})</p>
+            <p class="asset-title-ph" id="asset_group_vis_{{asset_id}}">Group: <strong>{{group}}</strong></p>
+        </div>    
 	</div>
 </li>
 </script>
@@ -363,8 +367,8 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
         	</div>
         </div>
     	<div class="moxy-modal-controls">
-            <span class="btn" onclick="javascript:update_asset('asset_modal_form');">Save</span>
-            <span class="btn" onclick="javascript:jQuery.colorbox.close();">Cancel</span>
+            <span class="bt" onclick="javascript:update_asset('asset_modal_form');">Save</span>
+            <span class="bt" onclick="javascript:jQuery.colorbox.close();">Cancel</span>
         </div>
     	
     	

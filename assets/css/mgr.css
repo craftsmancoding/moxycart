@@ -4314,8 +4314,6 @@ padding: 5px 20px;
   padding: 5px;
   margin: 10px;
   position: relative;
-  width: 100px;
-  height: 100px;
   -webkit-box-shadow: 0 8px 6px -6px #ddd;
      -moz-box-shadow: 0 8px 6px -6px #ddd;
           box-shadow: 0 8px 6px -6px #ddd;
@@ -4453,10 +4451,6 @@ div > input.x-form-field {
   margin-bottom: 0px !important;
 }
 
-.img-info-wrap {
-  height:98px;
-  overflow: hidden;
-}
 
 .img-info-wrap img {
   width: 100%;
@@ -4620,6 +4614,24 @@ display: block;
 .row-input .row-lbl {
   float: left !important;
 }
+
+.img-info-wrap {
+  position: relative;
+}
+
+.img-info-inner {
+  position: absolute;
+  bottom: 0px;
+  background: #000;
+  opacity: .50;
+  width: 100%;
+  color: #fff;
+}
+
+.img-info-inner p {
+  margin: 3px 5px;
+}
+
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */
 .clear:before, .clear:after,
