@@ -300,70 +300,73 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 <!-- !asset_modal_tpl -->
 <script id="asset_modal_tpl" type="text/x-handlebars-template">
     <form id="asset_modal_form">
-    	<h3>Edit Asset ({{asset_id}})</h3>
-    	
-        <input type="hidden" name="asset_id" value="{{asset_id}}"/>
-        <input type="hidden" name="Asset.asset_id" value="{{asset_id}}"/>
+        <div id="asset_modal_form-inner">
+        	<h3>Edit Asset ({{asset_id}})</h3>
+        	
+            <input type="hidden" name="asset_id" value="{{asset_id}}"/>
+            <input type="hidden" name="Asset.asset_id" value="{{asset_id}}"/>
+            
+                <div class="asset-edit-inner">
+                    
+                    <div class="clearfix">
+                        <div class="span70 pull-left">
+                            <div class="row-input">
+                                 <label class="row-lbl" for="modal_asset_title">Title</label>
+                                 <input class="row-field" type="text" name="Asset.title" id="modal_asset_title" value="{{Asset.title}}" />
+                            </div>
+                           
+                            
+                            <div class="row-input">
+                                 <label class="row-lbl" for="modal_asset_alt">Alt</label>
+                                <input class="row-field" type="text" name="Asset.alt" id="modal_asset_alt" value="{{Asset.alt}}" />
+                            </div>
         
-            <div class="asset-edit-inner">
-                
-                <div class="clearfix">
-                    <div class="span70 pull-left">
-                        <div class="row-input">
-                             <label class="row-lbl" for="modal_asset_title">Title</label>
-                             <input class="row-field" type="text" name="Asset.title" id="modal_asset_title" value="{{Asset.title}}" />
+                            <div class="row-input">
+                                 <label class="row-lbl" for="modal_asset_group">Group</label>
+                                <input class="row-field" type="text" name="group" id="modal_asset_group" value="{{group}}" />
+                            </div>
+                           
+                            
+                            <div class="row-input">
+                                <label class="row-lbl" for="modal_asset_is_active">Is Active?</label>
+                                <input type="hidden" name="is_active" value="0"/>
+                                <input class="row-field" type="checkbox" name="is_active" id="modal_asset_is_active" value="1" {{#if is_active}}checked="checked"{{/if}}/>
+                            </div>
+        
+                            <!--div class="row-input">
+                                 <label class="row-lbl" for="modal_asset_thumbnail_override">Thumbnail Override</label>
+                                <input class="row-field" type="text" name="Asset.thumbnail_url" id="modal_asset_thumbnail_override" value="{{Asset.thumbnail_url}}" placeholder="http://"/>
+                            </div-->
+        
                         </div>
-                       
-                        
-                        <div class="row-input">
-                             <label class="row-lbl" for="modal_asset_alt">Alt</label>
-                            <input class="row-field" type="text" name="Asset.alt" id="modal_asset_alt" value="{{Asset.alt}}" />
+        
+                        <div class="span20 pull-left">
+                            <div class="row-input">
+                                <span id="modal_asset_thumb"><img src="{{Asset.thumbnail_url}}" /></span>
+                            </div>
+        
                         </div>
-    
-                        <div class="row-input">
-                             <label class="row-lbl" for="modal_asset_group">Group</label>
-                            <input class="row-field" type="text" name="group" id="modal_asset_group" value="{{group}}" />
-                        </div>
-                       
-                        
-                        <div class="row-input">
-                            <label class="row-lbl" for="modal_asset_is_active">Is Active?</label>
-                            <input type="hidden" name="is_active" value="0"/>
-                            <input class="row-field" type="checkbox" name="is_active" id="modal_asset_is_active" value="1" {{#if is_active}}checked="checked"{{/if}}/>
-                        </div>
-    
-                        <!--div class="row-input">
-                             <label class="row-lbl" for="modal_asset_thumbnail_override">Thumbnail Override</label>
-                            <input class="row-field" type="text" name="Asset.thumbnail_url" id="modal_asset_thumbnail_override" value="{{Asset.thumbnail_url}}" placeholder="http://"/>
-                        </div-->
-    
                     </div>
-    
-                    <div class="span20 pull-left">
+                    
+                    <div class="span100">
                         <div class="row-input">
-                            <span id="modal_asset_thumb"><img src="{{Asset.thumbnail_url}}" /></span>
+                            <label class="row-lbl">Full Dimensions:</label> 
+                            <div class="non-input"><span id="modal_asset_width">{{Asset.width}}</span> x <span id="modal_asset_height">{{Asset.height}}</span></div>
+                        </div> 
+        
+                        <div class="row-input">
+                            <span id="modal_asset_img"><img src="{{Asset.url}}" width="{{Asset.width}}" height="{{Asset.height}}" /></span>
                         </div>
-    
+        
                     </div>
                 </div>
-                
-                <div class="span100">
-                    <div class="row-input">
-                        <label class="row-lbl">Full Dimensions:</label> 
-                        <div class="non-input"><span id="modal_asset_width">{{Asset.width}}</span> x <span id="modal_asset_height">{{Asset.height}}</span></div>
-                    </div> 
-    
-                    <div class="row-input">
-                        <span id="modal_asset_img"><img src="{{Asset.url}}" width="{{Asset.width}}" height="{{Asset.height}}" /></span>
-                    </div>
-    
-                </div>
-            </div>
-    	</div>
+        	</div>
+        </div>
+    	<div class="moxy-modal-controls">
+            <span class="btn" onclick="javascript:update_asset('asset_modal_form');">Save</span>
+            <span class="btn" onclick="javascript:jQuery.colorbox.close();">Cancel</span>
+        </div>
     	
-    	<span class="btn" onclick="javascript:update_asset('asset_modal_form');">Save</span>
-    	
-    	<span class="btn" onclick="javascript:jQuery.colorbox.close();">Cancel</span>
     	
     </form>
 </script>

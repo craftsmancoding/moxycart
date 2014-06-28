@@ -99,7 +99,7 @@ function open_asset_modal(asset_id) {
     var displayed = 0;
     jQuery.colorbox({
         inline:false, 
-        width: "600",
+        width: "850",
         //innerWidth:settings.thumbnail_width+30,
         height: "90%",
         //innerHeight:settings.thumbnail_height+10,
