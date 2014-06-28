@@ -131,8 +131,8 @@ function open_thumbail_modal(asset_id,url_target,val_target) {
         inline:false, 
         width: "50%",
         //innerWidth:settings.thumbnail_width+30,
-        height: "50%",
-        //innerHeight:settings.thumbnail_height+10,
+        //height: "50%",
+        innerHeight:settings.thumbnail_height+10,
         html:function(){
             var preview = '';
             var arrayLength = moxycart.product.Assets.length;

@@ -367,8 +367,8 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
         	</div>
         </div>
     	<div class="moxy-modal-controls">
-            <span class="bt" onclick="javascript:update_asset('asset_modal_form');">Save</span>
-            <span class="bt" onclick="javascript:jQuery.colorbox.close();">Cancel</span>
+            <span class="btn" onclick="javascript:update_asset('asset_modal_form');">Save</span>
+            <span class="btn" onclick="javascript:jQuery.colorbox.close();">Cancel</span>
         </div>
     	
     	
