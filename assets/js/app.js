@@ -98,11 +98,11 @@ function draw_assets() {
  */
 function open_asset_modal(asset_id) {
     console.log('[open_asset_modal] asset_id: '+ asset_id);
-    var content = '';
+    var Asset = '';
     var arrayLength = moxycart.product.Assets.length;
     for (var i = 0; i < arrayLength; i++) {
         if (moxycart.product.Assets[i].asset_id == asset_id) {
-            content = moxycart.tpls.asset_modal(moxycart.product.Assets[i]);
+            Asset = moxycart.product.Assets[i];
         }
     }
     if (content == '') {
@@ -115,10 +115,18 @@ function open_asset_modal(asset_id) {
         inline:false, 
         width: "850",
         //innerWidth:moxycart.settings.thumbnail_width+30,
-        height: "90%",
+//        height: "90%",
+        height: function(){
+            if (Asset.Asset.is_image) {
+                return "90%";
+            }
+            else {
+                return "50%";
+            }
+        },
         //innerHeight:moxycart.settings.thumbnail_height+10,
         html:function(){
-            return content;
+            return moxycart.tpls.asset_modal(Asset);
         }
     });
 }

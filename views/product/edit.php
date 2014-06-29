@@ -367,6 +367,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                         </div>
                     </div>
                     
+                    {{#if Asset.is_image}}
                     <div class="span100">
                         <div class="row-input">
                             <label class="row-lbl">Full Dimensions:</label> 
@@ -378,13 +379,16 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                         </div>
         
                     </div>
+                    {{/if}}
                 </div>
         	</div>
         </div>
     	<div class="moxy-modal-controls">
             <span class="btn" onclick="javascript:update_asset('asset_modal_form');">Save</span>
             <span class="btn" onclick="javascript:jQuery.colorbox.close();">Cancel</span>
-            <span style="float:right; margin-right:10px;" class="btn" onclick="javascript:jQuery('#delete_asset_modal').data('asset_id', '{{asset_id}}').dialog('open');">Delete</span>
+            <div style="float:right; padding-right:20px;">
+                <span class="btn" onclick="javascript:jQuery('#delete_asset_modal').data('asset_id', '{{asset_id}}').dialog('open');">Delete</span>
+            </div>
         </div>
     	
     	
