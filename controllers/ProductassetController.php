@@ -11,7 +11,7 @@ class ProductassetController extends APIController {
         
  
     /** 
-     * We need a product ID here and an asset_id
+     * Delete the asset and remove the association
      */
     public function postDelete(array $scriptProperties = array()) {    
 
@@ -36,6 +36,32 @@ class ProductassetController extends APIController {
 
         return $this->sendSuccess(array(
             'msg' => 'Asset Deleted successfully'
+        ));
+        
+    }
+
+
+    /** 
+     * Remove only the association
+     */
+    public function postRemove(array $scriptProperties = array()) {    
+
+        $product_id = (int) $this->modx->getOption('product_id', $scriptProperties);
+        $asset_id = (int) $this->modx->getOption('asset_id', $scriptProperties);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, print_r($scriptProperties,true),'','Moxycart OptionController:'.__FUNCTION__);
+        
+        // We must delete these separately because the relationship is not defined 
+        if ($PA = $this->modx->getObject('ProductAsset', array('product_id'=> $product_id, 'asset_id'=>$asset_id))) {
+            $PA->remove();
+        }
+        else {
+            // You may end up here if you attempt to delete an asset before the product has been saved.  I.e. the asset exists,
+            // but not the ProductAsset pivot record.  But we're not gonna could this condition as an error though.
+            // return $this->sendFail(array('msg'=>'Record not found for product_id '.$product_id .' and asset_id '.$asset_id));        
+        }
+
+        return $this->sendSuccess(array(
+            'msg' => 'Asset removed from product successfully'
         ));
         
     }

@@ -139,11 +139,38 @@ function product_init() {
         closeOnEscape: true,
         buttons: {
             "Delete": function() {
-                alert('Delete: '+ jQuery(this).data('asset_id'));
+                //alert('Delete: '+ jQuery(this).data('asset_id'));
+                var asset_id = jQuery(this).data('asset_id');
+                var product_id = moxycart.product.product_id;
+                mapi('productasset','delete',{
+                    asset_id: asset_id,
+                    product_id: product_id
+                });
+                var arrayLength = moxycart.product.Assets.length;
+                for (var i = 0; i < arrayLength; i++) {
+                    if (moxycart.product.Assets[i].asset_id == asset_id) {
+                        moxycart.product.Assets.splice(i,1); // unset
+                    }
+                }
+          		jQuery('#product-asset-'+asset_id).remove();
+          		draw_assets();
                 jQuery( this ).dialog( "close" );
             },
             "Remove from Product": function() {
-                alert('Remove: '+ jQuery(this).data('asset_id'));
+                var asset_id = jQuery(this).data('asset_id');
+                var product_id = moxycart.product.product_id;
+                mapi('productasset','remove',{
+                    asset_id: asset_id,
+                    product_id: product_id
+                });
+                var arrayLength = moxycart.product.Assets.length;
+                for (var i = 0; i < arrayLength; i++) {
+                    if (moxycart.product.Assets[i].asset_id == asset_id) {
+                        moxycart.product.Assets.splice(i,1); // unset
+                    }
+                }
+          		jQuery('#product-asset-'+asset_id).remove();
+          		draw_assets();
                 jQuery( this ).dialog( "close" );
             },
             "Cancel": function() {

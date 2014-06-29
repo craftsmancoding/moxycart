@@ -224,7 +224,7 @@ function delete_asset(asset_id) {
         var arrayLength = moxycart.product.Assets.length;
         for (var i = 0; i < arrayLength; i++) {
             if (moxycart.product.Assets[i].asset_id == asset_id) {
-                moxycart.product.Assets = moxycart.product.Assets.splice(i,1); // unset
+                moxycart.product.Assets.splice(i,1); // unset
             }
         }
   		jQuery('#product-asset-'+asset_id).remove();
