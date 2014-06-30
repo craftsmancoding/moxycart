@@ -58,10 +58,15 @@ $P = new \Moxycart\Product($modx);
 if ($help) {
     $Prod = $modx->newObject('Product');
     $Img = $modx->newObject('Asset');
-    $P->addOne($Img);
-    $vals = $Prod->toArray('',false,false,true);
-    $array = $P->flattenArray($vals);
-    return '<h3>Placeholders:</h3><pre>'.print_r(array_keys($array),true).'</pre>';
+    $vals = $Prod->toArray();
+    $Img = $modx->newObject('Asset');
+    $vals2 = $Img->toArray('Image.');
+    $vals = array_merge($vals,$vals2);
+    $out = '<div style="border:1px dotted grey; padding:10px;"><h3>getProducts Placeholders:</h3><pre>'; //.implode("\n",array_keys($vals)).'</pre>';
+    foreach ($vals as $v => $tmp) {
+        $out .= '&#91;&#91;&#43;'.$v.'&#93;&#93;'."\n";
+    }
+    return $out.'</pre></div>';
 }
 
 if ($results = $P->all($scriptProperties)) {
