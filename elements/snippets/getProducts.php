@@ -38,6 +38,8 @@ require_once $core_path .'vendor/autoload.php';
 $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('getProducts',$scriptProperties);
 
+$help = $modx->getOption('help',$scriptProperties);
+
 // Formatting Arguments:
 $innerTpl = $modx->getOption('innerTpl',$scriptProperties, 'ProductInnerTpl');
 $outerTpl = $modx->getOption('outerTpl',$scriptProperties, 'ProductOuterTpl');
@@ -53,6 +55,14 @@ unset($scriptProperties['outerTpl']);
 
 $P = new \Moxycart\Product($modx);
 
+if ($help) {
+    $Prod = $modx->newObject('Product');
+    $Img = $modx->newObject('Asset');
+    $P->addOne($Img);
+    $vals = $Prod->toArray('',false,false,true);
+    $array = $P->flattenArray($vals);
+    return '<h3>Placeholders:</h3><pre>'.print_r(array_keys($array),true).'</pre>';
+}
 
 if ($results = $P->all($scriptProperties)) {
     return $Snippet->format($results,$innerTpl,$outerTpl);    
