@@ -17,6 +17,7 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
         $this->addJavascript($assets_url . 'js/store.js');
         $this->addJavascript($assets_url.'js/jquery.min.js');
         $this->addJavascript($assets_url . 'js/app.js');
+//        $this->addCss($assets_url.'css/moxycart.css');
         
     	$B = new \Moxycart\BaseController($this->modx); 
         $this->client_config['connector_url'] = $B->url();

@@ -4548,19 +4548,26 @@ hr {
 }
 
 .products-tbl tbody tr td:first-child img {
-  max-width: 300px !important;
+  max-width: 110px !important;
   width: 60%;
-
 }
 
 table.products-tbl thead th {
-  font-size: 13px;
+  font-size: 12px;
   text-shadow: none !important;
-  letter-spacing: 0.5em;
+  letter-spacing: 0.09em;
+  font-weight:normal;
+}
+
+table.products-tbl tr:hover{
+	background-color:#ececec;	
 }
 
 table.products-tbl td {
-  font-size: 16px;
+  font-size: 14px;
+  border-bottom: 1px solid #ececec;
+  padding-top:10px;
+  padding-bottom:8px;
 }
 table.sub-terms th{
 	font-weight: normal !important;
