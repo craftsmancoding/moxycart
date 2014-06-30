@@ -50,11 +50,13 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
     }
     
     public static function tearDownAfterClass() {
+/*
         if ($Testdata = self::$modx->getCollection('Foxydata', array('api_key'=>'test'))) {
             foreach ($Testdata as $T) {
                 $T->remove();
             }    
         }
+*/
     }
 
     /**
@@ -122,6 +124,38 @@ class datafeedTest extends \PHPUnit_Framework_TestCase {
             $this->assertTrue(in_array($p->get('product_name'),$names));
         }
     }
+
+
+    public function testParseFoxycartXML2() {
+        $api_key = 'test';
+        $xml = file_get_contents( dirname(__FILE__).'/foxycart/sample2.xml');
+        
+        // Delete from database if present
+        if ($Foxydata = self::$modx->getObject('Foxydata', array('api_key'=>$api_key))) {
+            $Foxydata->remove();
+        }
+
+        $Datafeed = new \Foxycart\Datafeed(self::$modx, new \rc4crypt());
+        $result = $Datafeed->saveFoxyData($xml,$api_key);
+        $this->assertEquals($result,'foxy'); 
+        $Transaction = self::$modx->getObject('Transaction', array('id'=>'294143049'));
+        $this->assertTrue((bool)$Transaction);
+        $this->assertEquals($Transaction->get('customer_id'),'14945489');
+        $this->assertEquals($Transaction->get('store_version'),'1.1');
+        
+        $transaction_id = $Transaction->get('transaction_id');
+        
+        $TDs = self::$modx->getCollection('TransactionDetail', array('transaction_id'=>$transaction_id));
+        
+        $names = array('Demo Product');
+        foreach ($TDs as $p) {
+            $this->assertTrue(in_array($p->get('product_name'),$names));
+        }
+        
+        
+        
+    }
+
     
     
     /**

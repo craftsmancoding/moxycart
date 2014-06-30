@@ -920,7 +920,34 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
     <?php endif; // moxycart.enable_taxonomies ?>
 
     <div id="orders_tab" class="content">
-    
+        <table class="classy sub-terms">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Shipping Address</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Receipt</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($data['product_orders'] as $o): ?>
+                <tr>
+                    <td><?php print $o['TransactionDetail']['Transaction']['customer_first_name']; ?> <?php print $o['TransactionDetail']['Transaction']['customer_last_name']; ?><br/>
+                    <?php print $o['TransactionDetail']['Transaction']['shipping_address1']; ?><br/>
+                    <?php print $o['TransactionDetail']['Transaction']['shipping_address2']; ?><br/>
+                    <?php print $o['TransactionDetail']['Transaction']['shipping_city']; ?> <?php print $o['TransactionDetail']['Transaction']['shipping_state']; ?>, <?php print $o['TransactionDetail']['Transaction']['shipping_postal_code']; ?>
+                    </td>
+                    <td><?php print $o['TransactionDetail']['Transaction']['shipping_first_name']; ?> <?php print $o['TransactionDetail']['Transaction']['shipping_last_name']; ?><br/>
+                    <?php print $o['TransactionDetail']['Transaction']['customer_email']; ?></td>
+                    <td><?php print number_format($o['TransactionDetail']['product_price'],2); ?></td>
+                    <td><?php print $o['TransactionDetail']['product_quantity']; ?></td>
+                    <td><a href="<?php print $o['TransactionDetail']['Transaction']['receipt_url']; ?>">Click</a></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        
+        </table>
     </div>    
 
 </form>

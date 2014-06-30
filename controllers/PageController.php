@@ -29,6 +29,8 @@ class PageController extends BaseController {
         $this->client_config = array(
             'controller_url' => $this->config['controller_url']
         );
+
+        $this->modx->addPackage('foxycart',$this->config['core_path'].'model/orm/','foxy_');        
         $this->modx->regClientCSS($this->config['assets_url'].'css/moxycart.css');
         $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
@@ -333,7 +335,7 @@ class PageController extends BaseController {
 
         
         
-        // thumbnail
+        // thumbnail: Todo - wirte this w js
         $thumbnail_url = '';
         $this->modx->setOption('assman.thumbnail_width', $this->modx->getOption('moxycart.thumbnail_width'));
         $this->modx->setOption('assman.thumbnail_height', $this->modx->getOption('moxycart.thumbnail_height'));        
@@ -342,13 +344,6 @@ class PageController extends BaseController {
         }
         $this->setPlaceholder('thumbnail_url',$thumbnail_url);
                     
-        // assets
-        $c = $this->modx->newQuery('ProductAsset');
-        $c->where(array('ProductAsset.product_id' => $product_id));
-        $c->sortby('ProductAsset.seq','ASC');
-        $PA = $this->modx->getCollectionGraph('ProductAsset','{"Asset":{}}',$c);
-        $this->setPlaceholder('product_assets',$PA);
-        
         // product_fields
         $product_fields = array();
         $c = $this->modx->newQuery('ProductField');
@@ -392,7 +387,6 @@ class PageController extends BaseController {
             $product_options[ $p->get('option_id') ]['checked'] = true;
             $product_options[ $p->get('option_id') ]['meta'] = $p->get('meta');
         }
-        //print '<pre>'; print_r($product_options); print '</pre>'; exit;
         $this->setPlaceholder('product_options',$product_options);
 
         // product_option_meta
@@ -452,6 +446,21 @@ class PageController extends BaseController {
         }
         $this->setPlaceholder('product_terms',$product_terms);        
         
+        // ProductOrder
+        $product_orders = array();
+        $c = $this->modx->newQuery('TransactionDetailOption');
+        $c->where(array(
+            'product_option_name'=>'product_id',
+            'product_option_value' => $product_id
+        ));
+        $c->sortby('TransactionDetail.transaction_id','DESC');
+        if ($TDO = $this->modx->getCollectionGraph('TransactionDetailOption','{"TransactionDetail":{"Transaction":{}}}',$c)) {
+            foreach ($TDO as $t) {
+                $product_orders[] = $t->toArray('',false,false,true);
+            }
+        }
+        $this->setPlaceholder('product_orders',$product_orders);        
+//        print_r($product_orders); exit;
         
         return $this->fetchTemplate('product/edit.php');
     }
