@@ -30,11 +30,23 @@ class PageController extends BaseController {
             'controller_url' => $this->config['controller_url']
         );
 
-        $this->modx->addPackage('foxycart',$this->config['core_path'].'model/orm/','foxy_');        
+        $this->modx->addPackage('foxycart',$this->config['core_path'].'model/orm/','foxy_');
+                
         $this->modx->regClientCSS($this->config['assets_url'].'css/moxycart.css');
+        $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
+        $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
+        $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
+        $this->modx->regClientCSS($this->config['assets_url'].'css/colorbox.css');
+        
         $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js'); 
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
+        $this->modx->regClientStartupScript($this->config['assman_assets_url'].'js/dropzone.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/form2js.js');        
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.colorbox.js');      
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/app.js');
         
     }
@@ -215,64 +227,78 @@ class PageController extends BaseController {
     public function getProductCreate(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
 
-        $result = new Product($this->modx);
+
         $this->setPlaceholder('product_form_action', 'product_create');
         $this->setPlaceholder('pagetitle', 'Create New Product');
-        
         $store_id = (int) $this->modx->getOption('store_id',$scriptProperties);
-        $result->getDefaultValues($store_id);
 
+        $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+        $product_id = (int) $this->modx->getOption('product_id',$scriptProperties);
 
-        // TODO:
-        //$C = new ProductController($this->modx);
-        //$full_product_data = $C->postView(array('product_id'=>$product_id),true);
-        $full_product_data = $result->toArray();
-
-        // Related Data
-        $this->setPlaceholder('thumbnail_url','');
-        $this->setPlaceholder('product_option_types',array());
-        $this->setPlaceholder('product_assets',array());
-        $this->setPlaceholder('product_fields',array());        
-        $this->setPlaceholder('related_products',array());
-        
-        $this->_setUIdata();
+        $Obj = new Product($this->modx);
+        $this->setPlaceholder('pagetitle', 'Create Product');
+        $Obj->getDefaultValues($store_id);
+        $full_product_data = $Obj->complete($product_id); 
         
         $this->setPlaceholders($scriptProperties);
-        $this->setPlaceholders($result->toArray());
-        $this->setPlaceholder('result',$result);
-
-        $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
-        $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
-        $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
-        $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
-        $this->modx->regClientStartupScript($this->config['assman_assets_url'].'js/dropzone.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/form2js.js');
+        $this->setPlaceholders($Obj->toArray());
+        $this->setPlaceholder('result',$Obj);
         
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
+        $this->_setUIdata();
+        // Register this in the moxycart variable
+        $this->client_config['product'] = $full_product_data;
+        $this->client_config['assets_url'] = self::url('asset','create',array(),'assman');
+        $this->client_config['assets_delete_url'] = self::url('asset','delete',array(),'assman');
+        $this->client_config['settings'] = array(
+            'thumbnail_width' => $this->modx->getOption('moxycart.thumbnail_width'),
+            'thumbnail_height' => $this->modx->getOption('moxycart.thumbnail_height')
+        );
+        $this->client_config['product_save_method'] = 'create';
+
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
-    		var product = '.json_encode($full_product_data).';            
+    	   console.log("[moxycart] '.__FUNCTION__.'");
             var use_editor = "'.$this->modx->getOption('use_editor').'";
-            var assets_url = "'.self::url('asset','create',array(),'assman').'"; 
-            var assets_delete_url = "'.self::url('asset','delete',array(),'assman').'";
-            var product_save_method = "create"; 
-            var settings = {
-                "thumbnail_width":'.$this->modx->getOption('moxycart.thumbnail_width').',
-                "thumbnail_height":'.$this->modx->getOption('moxycart.thumbnail_height').'
-            };
             // Document read stuff has to be in here
             jQuery(document).ready(function() {
-                console.log("ready to init product.");
                 product_init();
             });
     		</script>');
         if ($this->modx->getOption('use_editor')) {
             $this->_load_tinyMCE();
         }
+
+            
+        // thumbnail: Todo - write this via js
+        $this->setPlaceholder('thumbnail_url','');
+                    
+        // product_fields
+        $this->setPlaceholder('product_fields',array());
+
+        // related_products
+        $this->setPlaceholder('related_products',array());
+        $PR = new ProductRelation($this->modx);
+        $this->setPlaceholder('relation_types',$PR->getTypes());
+                
+        // product_options
         $this->setPlaceholder('product_options',array());
+
+        // product_option_meta
+        $this->setPlaceholder('product_option_meta',array());
+                
+        // ProductTaxonomy
+        $this->setPlaceholder('product_taxonomies',array());        
+        
+        // Terms
+        $T = new Taxonomy($this->modx);
+        $terms = $T->getTaxonomiesAndTerms();
+        $this->setPlaceholder('terms',$terms);
+        
+        // ProductTerm
+        $this->setPlaceholder('product_terms',array());        
+        
+        // ProductOrder
+        $this->setPlaceholder('product_orders',array());        
+        
         return $this->fetchTemplate('product/edit.php');
 
     }    
@@ -306,24 +332,11 @@ class PageController extends BaseController {
             'thumbnail_width' => $this->modx->getOption('moxycart.thumbnail_width'),
             'thumbnail_height' => $this->modx->getOption('moxycart.thumbnail_height')
         );
-        
-        $this->modx->regClientCSS($this->config['assets_url'] . 'css/mgr.css');
-        $this->modx->regClientCSS($this->config['assets_url'] . 'css/dropzone.css');
-        $this->modx->regClientCSS($this->config['assets_url'].'css/datepicker.css');
-        $this->modx->regClientCSS($this->config['assets_url'].'css/colorbox.css');
-        $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
-        $this->modx->regClientStartupScript($this->config['assman_assets_url'].'js/dropzone.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/form2js.js');        
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.colorbox.js');      
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
+        $this->client_config['product_save_method'] = 'edit';
+
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     	   console.log("[moxycart] '.__FUNCTION__.'");
             var use_editor = "'.$this->modx->getOption('use_editor').'";
-            var product_save_method = "edit";            
             // Document read stuff has to be in here
             jQuery(document).ready(function() {
                 product_init();
@@ -333,9 +346,8 @@ class PageController extends BaseController {
             $this->_load_tinyMCE();
         }
 
-        
-        
-        // thumbnail: Todo - wirte this w js
+            
+        // thumbnail: Todo - write this via js
         $thumbnail_url = '';
         $this->modx->setOption('assman.thumbnail_width', $this->modx->getOption('moxycart.thumbnail_width'));
         $this->modx->setOption('assman.thumbnail_height', $this->modx->getOption('moxycart.thumbnail_height'));        
@@ -460,7 +472,6 @@ class PageController extends BaseController {
             }
         }
         $this->setPlaceholder('product_orders',$product_orders);        
-//        print_r($product_orders); exit;
         
         return $this->fetchTemplate('product/edit.php');
     }

@@ -51,7 +51,7 @@ function product_init() {
             });
             draw_assets();
             jQuery(".dz-preview").remove();
-            save_product(product_save_method);
+            save_product(moxycart.product_save_method);
        } 
        else {                           
             $(".dz-success-mark").hide();

@@ -208,6 +208,7 @@ function update_asset(form_id) {
     jQuery.colorbox.close();
 }
 
+// TODO: save this back to the db (separately from the parent product)
 function update_product_assets(x) {
     console.log('[update_product_assets]',x);
 }

@@ -134,7 +134,13 @@ class Product extends BaseModel {
         $this->modx->setOption('assman.thumbnail_height', $this->modx->getOption('moxycart.thumbnail_height'));
         
         if (!$P = $this->modx->getObjectGraph('Product','{"Image":{}}',$product_id)) {
-            return array();
+            return array(
+                'Image' => array(),
+                'Assets' => array(),
+                'Options' => array(),
+                'Fields' => array(),
+                'Relations' => array(),
+            );
         }
 
         $out = $P->toArray('',false,false,true);
