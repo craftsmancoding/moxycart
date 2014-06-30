@@ -1,3 +1,39 @@
+/**
+ * @param integer offset
+ * @param string sort column name
+ * @param string dir ASC|DESC 
+ */
+function get_products(offset,sort,dir) {
+    offset = typeof offset !== "undefined" ? offset : 0;
+    sort = typeof sort !== "undefined" ? sort : "name";
+    dir = typeof dir !== "undefined" ? dir : "ASC";
+    var searchterm = jQuery('#searchterm').val();
+    var url = moxycart.connector_url+"&class=page&method=storeproducts&offset="+offset+"&sort="+sort+"&dir="+dir+"&store_id="+moxycart.store_id+"&_nolayout=1";
+    if (searchterm) {
+        url = url + '&searchterm='+searchterm;
+    }
+    console.log("[Moxycart get_data()] requesting URL",url);
+	Ext.Ajax.request({
+        url: url,
+        params: {},
+        async:false,
+        success: function(response){
+            console.log("Success: Data received from "+url);
+            //console.log(response);
+            Ext.fly("store_products").update(response.responseText);
+        },
+        failure: function(response){
+            console.error("The request to "+url+" failed.", response);
+        }
+    });                
+}
+
+function show_all_products() {
+    jQuery('#searchterm').val('');
+    return get_products(0);
+}
+
+
 function renderProductContainer(isProductContainerCreate, config){
     console.debug('[Moxycart renderProductContainer] is product create? : ', isProductContainerCreate);
 	var tabPanel = Ext.getCmp("modx-resource-tabs");
@@ -28,7 +64,7 @@ function renderProductContainer(isProductContainerCreate, config){
 	tabPanel.insert(0, storeSettingsTab);
 
 	//Add products tab
-	var prductsTab = {
+	var productsTab = {
 		title: 'Products',
 		id: 'modx-resource-Products',
 		cls: 'modx-resource-tab',
@@ -58,7 +94,7 @@ function renderProductContainer(isProductContainerCreate, config){
             Ext.getCmp("modx-resource-content").show();
         }
     });
-	tabPanel.insert(0, prductsTab);
+	tabPanel.insert(0, productsTab);
 	tabPanel.setActiveTab(0);
 	tabPanel.doLayout();
 }
@@ -147,6 +183,7 @@ function getTemplateStore(dtmp){
 
 
 function getStoreSettingsFields(config){
+    console.log('[getStoreSettingsFields]');
 	MODx.activePage.config.record.properties = MODx.activePage.config.record.properties || {};
 	activeRecord = MODx.activePage.config.record.properties.moxycart || {};
 	getTemplateStore(activeRecord.product_template);

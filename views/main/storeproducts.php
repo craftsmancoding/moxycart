@@ -1,8 +1,5 @@
-
 <div class="clearfix">
     <a class="btn" href="<?php print static::url('page','productcreate',array('store_id'=>$data['store_id'])); ?>">Add Product</a> 
-    <!--a href="<?php print static::page('productcreate'); ?>" class="button btn moxycart-btn pull-left">Add Product</a-->
-    <!--span class="btn" onclick="javascript:paint('productinventory');">Manage Inventory</span-->
         <div class="pull-right">   
                 <input type="text" name="searchterm" id="searchterm" placeholder="Search..." value="<?php print htmlentities($data['searchterm']); ?>"/>    
                 <span class="button btn moxycart-btn" onclick="javascript:get_products(0);">Search</span>
@@ -13,6 +10,7 @@
 
 
 <?php if ($data['results']): ?>
+
 <table class="classy products-tbl" style="width: 100%; margin-top: 10px;">
     <thead>
         <tr>
@@ -25,10 +23,7 @@
         </tr>
     </thead>
     <tbody>
-<?php foreach ($data['results'] as $r) :
-
-//    print '<pre>'; print_r($r); print '</pre>'; exit;
-?>
+<?php foreach ($data['results'] as $r) : ?>
     <tr>
         <?php 
         // Configurable columns

@@ -586,7 +586,7 @@ class PageController extends BaseController {
      * @param array $scriptProperties
      */
     public function getIndex(array $scriptProperties = array()) {
-        $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+        $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__,__LINE__);
         return $this->fetchTemplate('main/index.php');
     }
 
@@ -761,6 +761,8 @@ class PageController extends BaseController {
      * @param array $scriptProperties
      */
     public function getStoreProducts(array $scriptProperties = array()) {
+//        return '<div>This is a  test...</div>';
+
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $store_id = (int) $this->modx->getOption('store_id', $scriptProperties);
         $this->client_config['store_id'] = $store_id;
@@ -778,7 +780,10 @@ class PageController extends BaseController {
         $this->setPlaceholder('offset', $offset);
         $this->setPlaceholder('results_per_page', $results_per_page);        
         $this->setPlaceholders($scriptProperties);
+//        return '<div>This is a  test...'.__LINE__.'</div>';
+//        return '<pre>'.print_r($results,true).'</pre>';
         return $this->fetchTemplate('main/storeproducts.php');
+
     }
 
     public function getStoreCreate(array $scriptProperties = array()) {
