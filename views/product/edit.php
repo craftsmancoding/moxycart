@@ -256,9 +256,13 @@ function product_init() {
 
 
 function save_product(method) {
-    console.log('[save_product] '+method);
+    if (moxycart.settings.load_tinymce) {
+        //console.log(Tiny.get('content').getContent());
+        jQuery('#content').val(tinyMCE.activeEditor.getContent());
+    }
+
     var values = jQuery('#product_form').serialize();
-    
+    console.log('[save_product] '+method, values);
     if (method == 'create') {
         mapi('product','create',values, function(response) {
             console.debug('Redirecting after successful create.');

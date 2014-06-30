@@ -65,9 +65,11 @@ class PageController extends BaseController {
 
         // Plugin not present.
         if (!$plugin) {
+            $this->client_config['settings']['load_tinymce'] = false;
             return '';
         }
-
+        $this->client_config['settings']['load_tinymce'] = true;
+        
         $tinyPath =  $this->modx->getOption('core_path').'components/tinymce/';
         $tinyUrl =  $this->modx->getOption('assets_url').'components/tinymce/';
 
@@ -84,11 +86,12 @@ class PageController extends BaseController {
        //$tinyproperties['resource'] =  $resource;
         $tiny->setProperties($tinyproperties);
         $tiny->initialize();
-
+        $this->config['use_tinymce'] = true;
+        // $('#question_html').val(tinyMCE.get('question_text').getContent());
          $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
             delete Tiny.config.setup; // remove manager specific initialization code (depending on ModExt)
             Ext.onReady(function() {
-                MODx.loadRTE();
+                MODx.loadRTE("content");
             });
         </script>');
     }
@@ -251,13 +254,13 @@ class PageController extends BaseController {
         $this->client_config['assets_delete_url'] = self::url('asset','delete',array(),'assman');
         $this->client_config['settings'] = array(
             'thumbnail_width' => $this->modx->getOption('moxycart.thumbnail_width'),
-            'thumbnail_height' => $this->modx->getOption('moxycart.thumbnail_height')
+            'thumbnail_height' => $this->modx->getOption('moxycart.thumbnail_height'),
+            'use_editor' => $this->modx->getOption('use_editor'),
         );
         $this->client_config['product_save_method'] = 'create';
-
+        
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     	   console.log("[moxycart] '.__FUNCTION__.'");
-            var use_editor = "'.$this->modx->getOption('use_editor').'";
             // Document read stuff has to be in here
             jQuery(document).ready(function() {
                 product_init();
@@ -330,13 +333,13 @@ class PageController extends BaseController {
         $this->client_config['assets_delete_url'] = self::url('asset','delete',array(),'assman');
         $this->client_config['settings'] = array(
             'thumbnail_width' => $this->modx->getOption('moxycart.thumbnail_width'),
-            'thumbnail_height' => $this->modx->getOption('moxycart.thumbnail_height')
+            'thumbnail_height' => $this->modx->getOption('moxycart.thumbnail_height'),
+            'use_editor' => $this->modx->getOption('use_editor'),
         );
         $this->client_config['product_save_method'] = 'edit';
 
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     	   console.log("[moxycart] '.__FUNCTION__.'");
-            var use_editor = "'.$this->modx->getOption('use_editor').'";
             // Document read stuff has to be in here
             jQuery(document).ready(function() {
                 product_init();
