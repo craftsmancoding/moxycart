@@ -70,6 +70,22 @@ if ($help) {
 }
 
 if ($results = $P->all($scriptProperties)) {
+    foreach ($results as &$r) {
+        $c = $modx->newQuery('ProductField');
+        $c->where(array(
+            'product_id' => $r['product_id'],
+            'Field.is_active' => true
+        ));
+        $c->sortby('Field.seq','ASC');    
+        
+        if($fields = $modx->getCollectionGraph('ProductField','{"Field":{}}',$c)) {
+            foreach ($fields as $f) {
+//                return  $f->Field->get('slug'); 
+                $r[ $f->Field->get('slug') ] = $f->get('value');
+            }
+        }
+    }
+//    return '<pre>' . print_r($results,true).'</pre>';
     return $Snippet->format($results,$innerTpl,$outerTpl);    
 }
 

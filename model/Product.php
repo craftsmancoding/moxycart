@@ -98,9 +98,17 @@ class Product extends BaseModel {
         }
 
         $out = array();
+//        if ($Products = $this->modx->getCollectionGraph('Product','{"Image":{},"ProductField":{"Field":{}}}',$criteria)) {
         if ($Products = $this->modx->getCollectionGraph('Product','{"Image":{}}',$criteria)) {
             foreach ($Products as $P) {
                 $att = $P->toArray('',false,false,true);
+                /*
+if ($P->ProductField) {
+                    foreach ($P->ProductField as $PF) {
+                        $att[ $PF->Field->get('slug') ] = $PF->get('value');
+                    }
+                }
+*/
                 if ($P->Image) {
                     $att['img'] = $P->Image->get('url');
                     $att['thumb'] = $P->Image->get('thumbnail_url');
