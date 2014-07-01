@@ -324,7 +324,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 	<div class="img-info-wrap">
         <img src="{{Asset.thumbnail_url}}" alt="{{alt}}" width="{{Asset.thumbnail_width}}" height="{{Asset.thumbnail_height}}" onclick="javascript:open_asset_modal('{{Asset.asset_id}}');" class="{{#unless is_active}}inactive{{/unless}}" style="cursor:pointer;"/>
 	    <input type="hidden" id="asset_asset_id_{{Asset.asset_id}}" name="Assets[asset_id][]" value="{{Asset.asset_id}}"/>
-	    <input type="hidden" id="asset_group_{{Asset.asset_id}}" name="Assets[group][]" value="{{Asset.group}}"/>
+	    <input type="hidden" id="asset_group_{{Asset.asset_id}}" name="Assets[group][]" value="{{group}}"/>
 	    <input type="hidden" id="asset_is_active_{{Asset.asset_id}}" name="Assets[is_active][]" value="{{is_active}}"/>	
         <div class="img-info-inner">
             <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{title}}</span> ({{Asset.asset_id}})</p>
