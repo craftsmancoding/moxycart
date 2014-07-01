@@ -186,7 +186,6 @@ if ($P->ProductField) {
             }
         }
 
-
         $c = $this->modx->newQuery('ProductRelation');
         $c->where(array('ProductRelation.product_id'=>$product_id));
         $c->sortby('ProductRelation.seq','ASC');

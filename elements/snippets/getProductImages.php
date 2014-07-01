@@ -87,4 +87,5 @@ if ($ProductAssets) {
 
 $modx->log(\modX::LOG_LEVEL_DEBUG, "No results found",'','getProducts',__LINE__);
 
-return 'No images found.';
+return;
+//return 'No images found.';
