@@ -130,4 +130,18 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
     }
 }
 
+// Script for dynamic price
+$modx->regClientHTMLBlock("
+    <script type='text/javascript'>
+var current_price = jQuery('.price').text();
+var current_price = Number(current_price.replace(/[^0-9\.]+/g,''));
+jQuery('.$cssClassOptionSelect').on('change',function() {
+   /* var select_id = jQuery(this).attr('id');
+    console.log(select_id);*/
+    current_price += jQuery(this).val();
+    //jQuery('.price').html(current_price);
+});
+console.log(current_price);
+</script>");
+
 return $modx->getChunk($tpl, $properties);
