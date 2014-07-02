@@ -26,7 +26,6 @@ class AssetController extends APIController {
         )     
      */
     public function postCreate(array $scriptProperties = array()) {
-        $this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API $_FILES: '.print_r($_FILES,true),'',__CLASS__,__FUNCTION__,__LINE__);
         $fieldname = $this->modx->getOption('fieldname', $scriptProperties,'file');
@@ -44,22 +43,21 @@ class AssetController extends APIController {
         }        
         
         try {
-            $Model = new \Assman\Asset($this->modx);    
+            $Model = $this->modx->newObject('Asset');
             $Asset = $Model->fromFile($_FILES[$fieldname]);
+            if ($Asset->save()) {
+                return $this->sendSuccess(array(
+                    'msg' => sprintf('%s created successfully.',$this->model),
+                    'class' => $this->model,
+                    'fields' => $Asset->toArray()
+                ));                
+            }            
+            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Error saving Asset '.print_r($_FILES[$fieldname],true).' '.print_r($Model->errors,true),'',__CLASS__,__FUNCTION__,__LINE__);
+            return $this->sendFail(array('errors'=> $Model->errors));
         }
         catch (\Exception $e) {
             return $this->sendFail(array('msg'=> $e->getMessage()));    
         }  
-        
-        if (!$Asset->save()) {
-            $this->modx->log(\modX::LOG_LEVEL_ERROR,'Error saving Asset '.print_r($_FILES[$fieldname],true).' '.print_r($Model->errors,true),'',__CLASS__,__FUNCTION__,__LINE__);
-            return $this->sendFail(array('errors'=> $Model->errors));
-        }            
-        return $this->sendSuccess(array(
-            'msg' => sprintf('%s created successfully.',$this->model),
-            'class' => $this->model,
-            'fields' => $Asset->toArray()
-        ));
     }
 
     /**
@@ -67,14 +65,10 @@ class AssetController extends APIController {
      */
     public function postEdit(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
-        // This doesn't work unless you add the namespace.
-        // Oddly, if you write it out (w/o a var), it works. wtf?
-        $classname = '\\Assman\\Asset';
-        $Model = new $classname($this->modx);    
+        
+        $id = (int) $this->modx->getOption('asset_id',$scriptProperties);
 
-        $id = (int) $this->modx->getOption($Model->getPK(),$scriptProperties);
-
-        if (!$Obj = $Model->find($id)) {
+        if (!$Obj = $Model = $this->modx->getObject('Asset',$id);) {
             return $this->sendFail(array('msg'=>sprintf('%s not found', $this->model)));
         }
         $Obj->fromArray($scriptProperties);

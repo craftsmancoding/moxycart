@@ -39,7 +39,8 @@ class PageController extends BaseController {
         $this->modx->regClientCSS($this->config['assets_url'].'css/colorbox.css');
         
         $this->modx->regClientCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
-        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
+//        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.min.js');
+        $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.js');        
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js'); 
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->config['assman_assets_url'].'js/dropzone.js');

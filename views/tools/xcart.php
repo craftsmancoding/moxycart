@@ -579,8 +579,8 @@ foreach ($image_tables as $tbl) {
             'is_active' => ($i['avail'] == 'Y') ? true : false, 
         );
         
-        $Asset = new \Assman\Asset($this->modx);
-        
+        $Asset = $this->modx->newObject('Asset');
+
         try {        
             $Asset = $Asset->fromFile($FILE);
             $this->modx->log(\modX::LOG_LEVEL_INFO,'Asset Created/Updated: '.$Asset->get('asset_id'),'','xcart',__LINE__);  

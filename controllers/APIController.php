@@ -18,7 +18,11 @@ class APIController extends \modExtraManagerController {
     public $templatesPaths = array();      
     public $model;
 
-
+    function __construct(\modX &$modx,$config = array()) {
+        parent::__construct($modx,$config);
+        header('Content-Type: application/json');
+    }
+    
     /**
      * Catch all for bad function requests -- our 404
      */

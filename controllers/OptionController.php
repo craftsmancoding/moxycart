@@ -11,7 +11,6 @@ class OptionController extends APIController {
         
  
     public function postTerms(array $scriptProperties = array()) {    
-        $this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, print_r($scriptProperties,true),'','Moxycart OptionController:'.__FUNCTION__);
         $OT = new Option($this->modx);
 /*

@@ -593,7 +593,6 @@ if ($P->ProductField) {
      * @param array $data related data
      */
     public function dictateOptions(array $data) {
-        //$this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating options: '.print_r($data,true),'',__CLASS__,__FILE__,__LINE__);
         $this_product_id = $this->_verifyExisting();
         
@@ -652,7 +651,6 @@ if ($P->ProductField) {
      * @param array $data related data
      */
     public function dictateMeta(array $data) {
-        //$this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating meta: '.print_r($data,true),'',__CLASS__,__FILE__,__LINE__);
         $this_product_id = $this->_verifyExisting();
         
@@ -807,7 +805,6 @@ if ($P->ProductField) {
      @return 
      */
     public function saveRelated($data) {
-        //$this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Save related data: '.print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);
         // Extra stuff is ignored... it doesn't matter here whether we're creating or updating an object
         $this->fromArray($data);
@@ -817,7 +814,7 @@ if ($P->ProductField) {
 
         $product_id = $this->getPrimaryKey(); // $this->get('product_id');
         if (isset($data['Assets'])) {
-            $Asset = new \Assman\Asset($this->modx);
+            $Asset = $this->modx->newObject('Asset');
             $Asset->dictateRelations($data['Assets'], $product_id, 'product_id', 'ProductAsset');
 //            $this->dictateAssets($data['Assets']);
         }
@@ -826,6 +823,7 @@ if ($P->ProductField) {
         if (isset($data['Meta'])) $this->dictateMeta($data['Meta']);
         if (isset($data['Relations'])) $this->dictateRelations($data['Relations']);
         if (isset($data['Taxonomies'])) $this->dictateTaxonomies($data['Taxonomies']);
+        if (isset($data['Terms'])) $this->dictateTerms($data['Terms']);
         
         return $product_id;
     }

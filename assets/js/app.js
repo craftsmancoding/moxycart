@@ -105,11 +105,6 @@ function open_asset_modal(asset_id) {
             Asset = moxycart.product.Assets[i];
         }
     }
-    if (content == '') {
-        alert('Asset data for asset_id '+asset_id+' not found.');
-        console.log(moxycart.product.Assets);
-        return;
-    }
     
     jQuery.colorbox({
         inline:false, 

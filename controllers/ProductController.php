@@ -188,7 +188,6 @@ Array
 
      */
     public function postEdit(array $scriptProperties = array()) {
-        $this->modx->setLogLevel(4);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         
         // This doesn't work unless you add the namespace.

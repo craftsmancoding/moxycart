@@ -40,8 +40,8 @@ function product_init() {
     var myDropzone = new Dropzone("div#image_upload", {url: moxycart.assets_url});    
     // Refresh the list on success (append new tile to end)
     myDropzone.on("success", function(file,response) {
-        response = jQuery.parseJSON(response);
         console.log('Dropzone Response',response);
+//        response = jQuery.parseJSON(response);
         if (response.status == "success") {
             console.log('Dropzone Success - response fields:',response.data.fields);
             moxycart.product.Assets.push({
@@ -322,7 +322,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 <script id="product_asset_tpl" type="text/x-handlebars-template">
 <li class="li_product_asset sortable" id="product-asset-{{Asset.asset_id}}">
 	<div class="img-info-wrap">
-        <img src="{{Asset.thumbnail_url}}" alt="{{alt}}" width="{{Asset.thumbnail_width}}" height="{{Asset.thumbnail_height}}" onclick="javascript:open_asset_modal('{{Asset.asset_id}}');" class="{{#unless is_active}}inactive{{/unless}}" style="cursor:pointer;"/>
+        <img src="{{Asset.thumbnail_url}}" alt="{{Asset.alt}}" width="{{Asset.thumbnail_width}}" height="{{Asset.thumbnail_height}}" onclick="javascript:open_asset_modal('{{Asset.asset_id}}');" class="{{#unless is_active}}inactive{{/unless}}" style="cursor:pointer;"/>
 	    <input type="hidden" id="asset_asset_id_{{Asset.asset_id}}" name="Assets[asset_id][]" value="{{Asset.asset_id}}"/>
 	    <input type="hidden" id="asset_group_{{Asset.asset_id}}" name="Assets[group][]" value="{{group}}"/>
 	    <input type="hidden" id="asset_is_active_{{Asset.asset_id}}" name="Assets[is_active][]" value="{{is_active}}"/>	
