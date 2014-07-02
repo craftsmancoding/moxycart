@@ -30,6 +30,10 @@ $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('addToCartButton',$scriptProperties);
 
 // Add script for dynamic pricing
+<<<<<<< HEAD
+=======
+// price markup must have .price as its class like <div class="price"></div>
+>>>>>>> 767fa086ecebdc66731eb77b996d1174fbe4667c
 $modx->regClientScript($assets_url.'js/AddToCartButton.js');
 
 $product_id = $modx->getOption('product_id', $scriptProperties, $modx->getPlaceholder('product_id'));
