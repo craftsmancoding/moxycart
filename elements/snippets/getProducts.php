@@ -70,6 +70,7 @@ if ($help) {
 }
 
 if ($results = $P->all($scriptProperties)) {
+    // Get Custom Fields
     foreach ($results as &$r) {
         $c = $modx->newQuery('ProductField');
         $c->where(array(
@@ -80,12 +81,11 @@ if ($results = $P->all($scriptProperties)) {
         
         if($fields = $modx->getCollectionGraph('ProductField','{"Field":{}}',$c)) {
             foreach ($fields as $f) {
-//                return  $f->Field->get('slug'); 
                 $r[ $f->Field->get('slug') ] = $f->get('value');
             }
         }
     }
-//    return '<pre>' . print_r($results,true).'</pre>';
+    
     return $Snippet->format($results,$innerTpl,$outerTpl);    
 }
 
