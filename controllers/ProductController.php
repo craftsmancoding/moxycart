@@ -208,7 +208,7 @@ Array
         //  Assets: has is_active
         //  Fields: has a value
         //  Relations: has a type
-        $related_indices = array('Assets','Fields','Relations','Options','Meta');
+        $related_indices = array('Assets','Fields','Relations','Options','Meta','Terms');
         foreach($related_indices as $k) {
             if (isset($scriptProperties[$k])) $scriptProperties[$k] = $Product->indexedToRecordset($scriptProperties[$k]);
         }

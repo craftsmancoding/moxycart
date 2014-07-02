@@ -443,54 +443,6 @@ if ($P->ProductField) {
     //------------------------------------------------------------------------------
     //! Terms
     //------------------------------------------------------------------------------
-    /** 
-     * Add terms to a product
-     * @param array $array of taxonomy page ids
-     */
-    public function addTerms(array $array) {
-        $this_product_id = $this->_verifyExisting();
-
-        foreach ($array as $id) {
-            $props = array(
-                'product_id'=> $this_product_id, 
-                'term_id'=> $id
-            );
-            if (!$PT = $this->modx->getObject('ProductTerm', $props)) {
-                if (!$T = $this->modx->getObject('Term', $id)) {
-                    throw new \Exception('Invalid term ID '.$id);    
-                }
-                $PT = $this->modx->newObject('ProductTerm', $props);
-                if (!$PT->save()) {
-                    
-                }
-            }
-        }
-
-        return true;    
-    }
-
-    /** 
-     * Remove terms from a product. We don't care here if the referenced taxonomy ids are valid or not.
-     * @param array $array of taxonomy page ids
-     */
-    public function removeTerms(array $array) {
-        $this_product_id = $this->_verifyExisting();
-        
-        foreach ($array as $id) {
-            $props = array(
-                'product_id'=> $this_product_id, 
-                'term_id'=> $id
-            );
-            if ($PT = $this->modx->getObject('ProductTerm', $props)) {
-                $PT->remove();
-            }
-        }
-        
-        return true;
-    }
-
-
-
     /**
      * Dictate terms for the current product.
      * This will remove all terms not in the given $array, add any new relations from the $array,
@@ -501,22 +453,33 @@ if ($P->ProductField) {
      */
     public function dictateTerms(array $dictate) {
         $this_product_id = $this->_verifyExisting();
-        
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Terms:'.print_r($dictate,true),'',__CLASS__,__FUNCTION__,__LINE__);  
         $props = array(
             'product_id'=> $this_product_id,
         );
-        
-        // Array of related_id's that are already defined
-        $existing = array();
-        if($ExistingColl = $this->modx->getObject('ProductTerm', $props)) {
-            $existing[] = $ExistingColl->get('term_id');   
-        }
-        
-        $to_remove = array_diff($existing,$dictate);
-        $to_add = array_diff($dictate,$existing);
 
-        $this->removeTerms($to_remove);
-        $this->addTerms($to_add);
+        $dictate = array();
+        foreach ($dictate as $term_id) {
+            $props = array('product_id'=>$this_product_id,'term_id'=>$term_id);
+            if(!$PT = $this->modx->getObject('ProductTerm', $props)) {
+                $PT = $this->modx->newObject('ProductTerm', $props);
+            }
+            $PT->save();
+        }
+
+        // Remove
+        $c = $this->modx->newQuery('ProductTerm');
+        if (empty($dictate)) {
+            $c->where(array('product_id' => $this_product_id));                    
+        }
+        else {
+            $c->where(array('product_id' => $this_product_id, 'term_id:NOT IN' => $dictate));
+        }
+        if($PT = $this->modx->getCollection('ProductTerm', $c)) {
+            foreach ($PT as $p) {
+                $p->remove();
+            }
+        }
         
         return true;
     
@@ -544,7 +507,7 @@ if ($P->ProductField) {
      */
     public function dictateFields(array $data) {
         $this_product_id = $this->_verifyExisting();
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,'Fields:'.print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);  
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Fields:'.print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);  
         $dictate = array();
         foreach($data as $r) {
             $dictate[] = $r['field_id'];
@@ -816,14 +779,18 @@ if ($P->ProductField) {
         if (isset($data['Assets'])) {
             $Asset = $this->modx->newObject('Asset');
             $Asset->dictateRelations($data['Assets'], $product_id, 'product_id', 'ProductAsset');
-//            $this->dictateAssets($data['Assets']);
         }
         if (isset($data['Fields'])) $this->dictateFields($data['Fields']);
         if (isset($data['Options'])) $this->dictateOptions($data['Options']);
         if (isset($data['Meta'])) $this->dictateMeta($data['Meta']);
         if (isset($data['Relations'])) $this->dictateRelations($data['Relations']);
         if (isset($data['Taxonomies'])) $this->dictateTaxonomies($data['Taxonomies']);
-        if (isset($data['Terms'])) $this->dictateTerms($data['Terms']);
+        if (isset($data['Terms'])) {
+            $this->dictateTerms($data['Terms']);
+        }
+        else {
+            $this->dictateTerms(array());
+        }
         
         return $product_id;
     }
