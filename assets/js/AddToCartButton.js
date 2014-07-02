@@ -33,7 +33,7 @@ function compute_price(options) {
  */
  function set_new_price() {
  	// Loop on all select option
- 	jQuery(".addcart-select").each(function()
+ 	jQuery(".cart-default-select").each(function()
 	{
 		options.push(jQuery(this).val());
 	});
