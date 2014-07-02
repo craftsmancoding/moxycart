@@ -24,9 +24,13 @@
  */
  
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+$assets_url = $modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
 require_once $core_path .'vendor/autoload.php';
 $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('addToCartButton',$scriptProperties);
+
+// Add script for dynamic pricing
+$modx->regClientScript($assets_url.'js/AddToCartButton.js');
 
 $product_id = $modx->getOption('product_id', $scriptProperties, $modx->getPlaceholder('product_id'));
 $submit = $modx->getOption('submit', $scriptProperties, 'Add to Cart');
@@ -82,7 +86,7 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             continue;
         }
         $opt = '<label for="'.$o->Option->get('slug').'" class="'.$cssClassOptionLabel.'">'.$o->Option->get('name').'</label>'
-            .'<select id="'.$o->Option->get('slug').'" name="'.$o->Option->get('slug').'" class="'.$cssClassOptionSelect.'">';      
+            .'<select id="'.$o->Option->get('slug').'" name="'.$o->Option->get('slug').'" onchange="javascript:onchange_price(this);" class="cart-default-select '.$cssClassOptionSelect.'">';      
       
         // all_terms,omit_terms,explicit_terms
         if ($o->get('meta') == 'all_terms') {
@@ -129,19 +133,5 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
         $properties['options'] = $properties['options'] . $opt;
     }
 }
-
-// Script for dynamic price
-$modx->regClientHTMLBlock("
-    <script type='text/javascript'>
-var current_price = jQuery('.price').text();
-var current_price = Number(current_price.replace(/[^0-9\.]+/g,''));
-jQuery('.$cssClassOptionSelect').on('change',function() {
-   /* var select_id = jQuery(this).attr('id');
-    console.log(select_id);*/
-    current_price += jQuery(this).val();
-    //jQuery('.price').html(current_price);
-});
-console.log(current_price);
-</script>");
 
 return $modx->getChunk($tpl, $properties);
