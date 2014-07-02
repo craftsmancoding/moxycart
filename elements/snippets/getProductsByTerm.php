@@ -47,6 +47,22 @@ $Products = $modx->getCollectionGraph('ProductTerm', '{"Product":{"Image":{}},"T
 
 //return $c->toSQL();
 if ($Products) {
+    // Get Custom Fields
+    foreach ($Products as $P) {
+        $c = $modx->newQuery('ProductField');
+        $c->where(array(
+            'product_id' => $P->get('product_id'),
+            'Field.is_active' => true
+        ));
+        $c->sortby('Field.seq','ASC');    
+        
+        if($fields = $modx->getCollectionGraph('ProductField','{"Field":{}}',$c)) {
+            foreach ($fields as $f) {
+                $slug = $f->Field->get('slug');
+                $P->set($slug, $f->get('value'));
+            }
+        }
+    }
     return $Snippet->format($Products,$innerTpl,$outerTpl);
 }
 
