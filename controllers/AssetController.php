@@ -68,7 +68,7 @@ class AssetController extends APIController {
         
         $id = (int) $this->modx->getOption('asset_id',$scriptProperties);
 
-        if (!$Obj = $Model = $this->modx->getObject('Asset',$id);) {
+        if (!$Obj = $Model = $this->modx->getObject('Asset',$id)) {
             return $this->sendFail(array('msg'=>sprintf('%s not found', $this->model)));
         }
         $Obj->fromArray($scriptProperties);
