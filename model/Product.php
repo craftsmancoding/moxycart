@@ -458,7 +458,6 @@ if ($P->ProductField) {
             'product_id'=> $this_product_id,
         );
 
-        $dictate = array();
         foreach ($dictate as $term_id) {
             $props = array('product_id'=>$this_product_id,'term_id'=>$term_id);
             if(!$PT = $this->modx->getObject('ProductTerm', $props)) {
