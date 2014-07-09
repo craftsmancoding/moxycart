@@ -337,12 +337,16 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 <!-- !thumbnail_image_tpl -->
 <script id="thumbnail_image_tpl" type="text/x-handlebars-template">
 <div class="asset_thumbnail_item-wrap" style=" background: #fff;border: 1px solid #ddd;width: {{Asset.thumbnail_width}}px;height:{{Asset.thumbnail_height}}px;float:left;margin: 5px;">
-    <div class="asset_thumbnail_item">
+    <div class="asset_thumbnail_item img-info-wrap">
         <img src="{{Asset.thumbnail_url}}" 
             alt="{{Asset.alt}}" 
             width="{{Asset.thumbnail_width}}" 
             height="{{Asset.thumbnail_height}}"
             onclick="javascript:select_image({{asset_id}},'{{{Asset.thumbnail_url}}}','{{url_target}}','{{val_target}}');"/>
+        <div class="img-info-inner">
+            <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{title}}</span> ({{Asset.asset_id}})</p>
+            <p class="asset-title-ph" id="asset_group_vis_{{Asset.asset_id}}"><strong>{{Asset.stub}}</strong></p>
+        </div>
     </div>
 </div>
 </script>
@@ -517,7 +521,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                             </td>
                             <td style="width:30%;vertical-align: top;">
                             
-								<label for="thumbnail">Thumbnail</label>
+								<label for="thumbnail">Primary Image</label>
 
 								<div id="thumbnail" style="border:1px dotted grey;width:<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>px;height:<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>px;" onclick="javascript:open_thumbail_modal('<?php $data['asset_id']; ?>','asset_thumbnail','asset_id');" style="cursor:pointer;">
 								    <input type="hidden" name="asset_id" id="asset_id" value=""/>

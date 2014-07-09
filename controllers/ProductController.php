@@ -24,68 +24,11 @@ class ProductController extends APIController {
         }
 
         return $this->sendSuccess($product);
-
-        //$Obj = new Product($this->modx);
-        $this->modx->setOption('assman.thumbnail_width', $this->modx->getOption('moxycart.thumbnail_width'));
-        $this->modx->setOption('assman.thumbnail_height', $this->modx->getOption('moxycart.thumbnail_height'));
-/*
-        if (!$P = $this->modx->getObjectGraph('Product','{"Image":{},"Assets":{"Asset":{}},"Options":{"Option":{}},"Relations":{"Relation":{}}}',$product_id)) {
-            return $this->sendFail('Product not found');
-        }
-*/
-        // Only do 1:1 relations here
-        if (!$P = $this->modx->getObjectGraph('Product','{"Image":{}}',$product_id)) {
-            return $this->sendFail('Product not found');
-        }
-
-        
-        //$Coll = $this->modx->getCollection('ProductAsset', array('product_id'=> $product_id));
-        //print '<pre>'; print_r($Coll->toArray()); print '</pre>'; exit;
-        // Reindexing doesn't work in all cases (e.g. Relations reuse the keys)
-        // so we push related records onto the 'RelData' index, keyed off their primary key, e.g.
-        // $P['RelData']['Asset'][123]  stores record data for asset_id 123
-        $out = $P->toArray('',false,false,true);
-        $out['Assets'] = array();
-        $out['Options'] = array();
-        $out['Relations'] = array();
-//        print '<pre>'; print_r($P1); print '</pre>'; exit;  
-        $c = $this->modx->newQuery('ProductAsset');
-        $c->where(array('ProductAsset.product_id'=>$product_id));
-        $c->sortby('ProductAsset.seq','ASC');
-        if ($Assets = $this->modx->getCollectionGraph('ProductAsset','{"Asset":{}}', $c)) {
-            foreach ($Assets as $A) {
-                $out['Assets'][] = $A->toArray('',false,false,true);
-            }
-        }
-
-        print '<pre>'; print json_encode($out, JSON_PRETTY_PRINT); print '</pre>'; exit;
-        if (isset($P1['Assets']) && is_array($P1['Assets'])) {
-            foreach ($P1['Assets'] as $k => $v) {
-                if (isset($v['Asset']['asset_id']) && $v['Asset']['asset_id']) {
-                    $tmp_asset = $v['Asset'];
-                    $P1['RelData']['Asset'][ $v['Asset']['asset_id'] ] = $v['Asset'];
-                    $P1['RelData']['Order'][] = $v['Asset']['asset_id'];
-                    $P1['RelData']['Groups'][] = $v['group'];
-                }
-            }
-        }
-        print '<pre>'; print_r($P1); print '</pre>'; exit;
-        if (isset($P1['Options']) && is_array($P1['Options'])) {        
-            foreach ($P1['Options'] as $k => $v) {
-                $P1['RelData']['Option'][ $v['Option']['option_id'] ] = $v['Option'];
-            }
-        }
-        if (isset($P1['Relations']) && is_array($P1['Relations'])) {
-            foreach ($P1['Relations'] as $k => $v) {
-                $P1['RelData']['Relation'][ $v['Relation']['product_id'] ] = $v['Relation'];
-            }
-        }
-        if ($raw) return $P1;
-        return $this->sendSuccess($P1);
     }
+    
     /**
      *
-When submitted via a form, the format is something like this:
+        When submitted via a form, the data format is something like this:
 Array
 (
     [name] => Another Sweater
@@ -214,7 +157,6 @@ Array
         }
 
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Restructured API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
-//        print_r($scriptProperties); exit;
         $product_id = $Product->saveRelated($scriptProperties);
         
         return $this->sendSuccess(array(
@@ -241,7 +183,6 @@ Array
             return $this->sendFail(array('msg'=>'Error saving product.', 'errors'=>$Product->errors));
         
         }
-//        $this->modx->log(\modX::LOG_LEVEL_ERROR,'FOFFFF>>: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         return $this->sendSuccess(array(
             'msg' => sprintf('%s updated successfully.',$this->model),
             'id' => $product_id            
@@ -288,6 +229,21 @@ Array
         return $this->sendSuccess(array('results' => $data));
     }
 
+
+    /**
+     * Handle Bulk Editing
+     *
+     *
+     */
+    public function postBulk(array $scriptProperties = array()) {
+
+        $Model = new \Moxycart\Product($this->modx);    
+        $data = $Model->indexedToRecordset($scriptProperties);
+        $this->modx->log(\modX::LOG_LEVEL_ERROR,print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);
+        $data = array('Woot');
+        return $this->sendFail(array('msg'=>'Error saving product.', 'errors'=>array('ASDfadf.')));        
+        return $this->sendSuccess(array('results' => $data));
+    }
         
 }
 /*EOF*/

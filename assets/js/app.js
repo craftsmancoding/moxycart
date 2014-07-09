@@ -127,6 +127,28 @@ function open_asset_modal(asset_id) {
 }
 
 /**
+ * Open Asset colorbox
+ * This lets users edit a specific Asset
+ *
+ * @param integer asset_id
+ * @param url_target css selector where thumbnail img is to be shown
+ * @param val_target css selector where asset_id is to be written
+ */
+function open_inventory_modal() {
+    console.log('[open_inventory_modal]');
+    
+    jQuery.colorbox({
+        inline:false, 
+        height: "90%",
+        href: moxycart.controller_url + '&class=page&method=productinventory&_nolayout=1',
+        onComplete: function(){
+            jQuery("#product_list").sortable();
+            jQuery("#product_list").disableSelection();
+        }
+    });
+}
+
+/**
  * Open Thumbnail colorbox
  * This lets users select a product thumbnail or select an image for a custom image field.
  * It's a "film strip" modal.

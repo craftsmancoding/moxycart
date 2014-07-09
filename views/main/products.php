@@ -6,7 +6,8 @@
 
 <div class="clearfix">
     <a href="<?php print static::page('productcreate'); ?>" class="button btn moxycart-btn pull-left">Add Product</a>
-    <!--span class="btn" onclick="javascript:paint('productinventory');">Manage Inventory</span-->
+    &nbsp;
+    <span class="btn btn-moxycart" onclick="javascript:open_inventory_modal();">Manage Inventory</span>
         <div class="pull-right">   
             <form action="<?php print static::page('products'); ?>" method="post">
                 <input type="text" name="searchterm" placeholder="Search..." value="<?php print $data['searchterm']; ?>"/>    
@@ -60,15 +61,5 @@
 $tpls = include 'pagination_tpls.php';
 $results_per_page = (int) $this->modx->getOption('moxycart.default_per_page','',$this->modx->getOption('default_per_page'));
 print \Pagination\Pager::links($data['count'], $data['offset'], $results_per_page, $data['baseurl'])->setTpls($tpls);
-
-
-/*
-print '<pre>';
-print 'Count: '.$data['count'].'<br/>';
-print 'Offset: '.$data['offset'].'<br/>';
-print 'Results per page: '. $results_per_page.'<br/>';
-print 'Print baseurl: '.$data['baseurl'].'<br/>';
-print '</pre>';
-*/
 ?>
 </div>
