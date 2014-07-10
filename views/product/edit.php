@@ -320,7 +320,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 	    <input type="hidden" id="asset_group_{{Asset.asset_id}}" name="Assets[group][]" value="{{group}}"/>
 	    <input type="hidden" id="asset_is_active_{{Asset.asset_id}}" name="Assets[is_active][]" value="{{is_active}}"/>	
         <div class="img-info-inner">
-            <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{Asset.title}}</span> ({{Asset.asset_id}})</p>
+            <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{group}}</span> ({{Asset.asset_id}})</p>
             <p class="asset-title-ph" id="asset_group_vis_{{Asset.asset_id}}"><strong>{{Asset.basename}}</strong></p>
         </div>    
 	</div>
@@ -337,7 +337,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
             height="{{Asset.thumbnail_height}}"
             onclick="javascript:select_image({{asset_id}},'{{{Asset.thumbnail_url}}}','{{url_target}}','{{val_target}}');"/>
         <div class="img-info-inner">
-            <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{title}}</span> ({{Asset.asset_id}})</p>
+            <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{group}}</span> ({{Asset.asset_id}})</p>
             <p class="asset-title-ph" id="asset_group_vis_{{Asset.asset_id}}"><strong>{{Asset.basename}}</strong></p>
         </div>
     </div>
