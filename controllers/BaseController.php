@@ -39,9 +39,6 @@ class BaseController extends \modExtraManagerController {
     
     private $core_path;
     private $assets_url;
-    private $mgr_url;
-    private $connector_url; 
-    private $mgr_connector_url; 
     private $jquery_url;
     public $max_image_width = 250;
     public $thumb_width = 100;
@@ -67,7 +64,6 @@ class BaseController extends \modExtraManagerController {
     function __construct(\modX &$modx,$config = array()) {
         parent::__construct($modx,$config);
         static::$x =& $modx; // kinda dumb...
-
     }
     
     /**

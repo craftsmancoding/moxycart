@@ -198,6 +198,8 @@ class PageController extends BaseController {
      */
     public function getProducts(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+        $scriptProperties['sort'] = $this->modx->getOption('sort',$scriptProperties,'Product.seq');;
+        $scriptProperties['dir'] = $this->modx->getOption('dir',$scriptProperties,'ASC');;
         $Obj = new Product($this->modx);
         $results = $Obj->all($scriptProperties);
 //        print $results; exit;
@@ -774,9 +776,10 @@ class PageController extends BaseController {
      * @param array $scriptProperties
      */
     public function getStoreProducts(array $scriptProperties = array()) {
-//        return '<div>This is a  test...</div>';
-
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+        $scriptProperties['sort'] = $this->modx->getOption('sort',$scriptProperties,'Product.seq');;
+        $scriptProperties['dir'] = $this->modx->getOption('dir',$scriptProperties,'ASC');;        
+
         $store_id = (int) $this->modx->getOption('store_id', $scriptProperties);
         $this->client_config['store_id'] = $store_id;
         $this->setPlaceholder('store_id', $store_id);
@@ -793,23 +796,7 @@ class PageController extends BaseController {
         $this->setPlaceholder('offset', $offset);
         $this->setPlaceholder('results_per_page', $results_per_page);        
         $this->setPlaceholders($scriptProperties);
-//        return '<div>This is a  test...'.__LINE__.'</div>';
-//        return '<pre>'.print_r($results,true).'</pre>';
         return $this->fetchTemplate('main/storeproducts.php');
-
-    }
-
-    public function getStoreCreate(array $scriptProperties = array()) {
-        $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
-        $this->scriptProperties['_nolayout'] = true;
-        return $this->fetchTemplate('main/storecreate.php');
-    }
-    
-    
-    
-    public function getTest(array $scriptProperties = array()) {
-        $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
-        return $this->fetchTemplate('main/test.php');
     }
     
     //------------------------------------------------------------------------------

@@ -43,7 +43,7 @@ jQuery(document).ready(function(){
                 <th>Price</th>
                 <th>Track</th>
                 <th>Qty</th>
-                <th>Modify (+/-)</th>
+                <th>(+/-)</th>
                 <th>Alert</th>
                 <th>Backorder Max</th>
             </tr>

@@ -135,7 +135,7 @@ function open_asset_modal(asset_id) {
  * @param val_target css selector where asset_id is to be written
  */
 function open_inventory_modal() {
-    console.log('[open_inventory_modal]');
+    console.log('[open_inventory_modal]',moxycart);
     
     jQuery.colorbox({
         inline:false,

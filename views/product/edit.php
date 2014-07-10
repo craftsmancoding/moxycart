@@ -114,9 +114,6 @@ function product_init() {
 		},
 	    drop: function( event, ui ) {
 	      	var id = jQuery(ui.draggable).attr('id');
-
-	      	//var url = connector_url + 'image_save';
-	      	//var asset_id = $(ui.draggable).find('a').data('asset_id');	      	
 	      	var asset_id = jQuery(ui.draggable).find('input').val();	      
 	      	delete_asset(asset_id);
 		    jQuery(this).removeClass('over-trash');
@@ -125,9 +122,7 @@ function product_init() {
 	    }
     });
 
-
     // Delete Asset
-    // jQuery.colorbox.close();
     jQuery( "#delete_asset_modal" ).dialog({
         autoOpen: false,
         open: function( event, ui ) {
@@ -139,7 +134,6 @@ function product_init() {
         closeOnEscape: true,
         buttons: {
             "Delete": function() {
-                //alert('Delete: '+ jQuery(this).data('asset_id'));
                 var asset_id = jQuery(this).data('asset_id');
                 var product_id = moxycart.product.product_id;
                 mapi('productasset','delete',{
@@ -202,7 +196,7 @@ function product_init() {
                     var field_id = field_ids[i];
                     console.log('Generating field '+field_id);
                     // Had to customize mapi...
-                    //mapi('field','generate',{"field_id":field_id,"name":"Fields[field_id][]"});
+                    // mapi('field','generate',{"field_id":field_id,"name":"Fields[field_id][]"});
                     // This MUST be outside of the .post call!!! Otherwise it will always be written with the last 
                     // field_id because js will execute BEFORE the postback occurs!!!
                     jQuery('#product_fields').append('<input type="hidden" name="Fields[field_id][]" value="'+field_id+'" />'); 
@@ -257,7 +251,6 @@ function product_init() {
 
 function save_product(method) {
     if (moxycart.settings.load_tinymce) {
-        //console.log(Tiny.get('content').getContent());
         jQuery('#content').val(tinyMCE.activeEditor.getContent());
     }
 
