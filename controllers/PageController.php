@@ -704,7 +704,20 @@ class PageController extends BaseController {
      */
     public function getOrders(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
-        $this->setPlaceholders($scriptProperties);
+        $Obj = new Transaction($this->modx);
+        $scriptProperties['is_test'] = '0';
+        $scriptProperties['is_hidden'] = '0';
+        $scriptProperties['sort'] = 'transaction_date';
+        $scriptProperties['dir'] = 'DESC';
+        $results = $Obj->all($scriptProperties);
+        // We need these for pagination
+        $count = $Obj->count($scriptProperties);
+        $offset = (int) $this->modx->getOption('offset',$scriptProperties,0);
+        $this->setPlaceholders($scriptProperties);      
+        $this->setPlaceholder('results', $results);
+        $this->setPlaceholder('count', $count);
+        $this->setPlaceholder('offset', $offset);
+        $this->setPlaceholder('baseurl', $this->page('orders'));
         return $this->fetchTemplate('main/orders.php');
     }
     
