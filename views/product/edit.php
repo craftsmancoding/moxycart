@@ -673,16 +673,12 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                 <thead>
                                                     <tr>
                                                         <th>&nbsp;</th>
-                                                        <th>Override?</th>
-                                                        <th>&nbsp;</th>
-                                                        <th>Price</th>
-                                                        <th>&nbsp;</th>
-                                                        <th>Weight</th>
-                                                        <th>&nbsp;</th>
-                                                        <th>Code</th>
-                                                        <th>&nbsp;</th>
-                                                        <th>Category</th>
                                                         <th>Thumb</th>
+                                                        <th>Override?</th>
+                                                        <th>Price</th>
+                                                        <th>Weight</th>
+                                                        <th>Code</th>
+                                                        <th>Category</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -701,6 +697,9 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                         ?>
                                                     </td>
                                                     <td>
+                                                        <img src="http://placehold.it/60x40" />
+                                                    </td>                                                    
+                                                    <td>
                                                         <?php
                                                         print \Formbuilder\Form::checkbox("Meta[is_override][$oterm_id]", $m['is_override'], array());
                                                         ?>
@@ -708,10 +707,6 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                     <td>
                                                         <?php
                                                         print \Formbuilder\Form::dropdown("Meta[mod_price_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_price_type'],array('style'=>'width: 40px;'));
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php
                                                         print \Formbuilder\Form::text("Meta[mod_price][$oterm_id]", $m['mod_price'], array('style'=>'width: 50px;'));
 
                                                         ?>
@@ -719,10 +714,6 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                     <td>
                                                         <?php
                                                         print \Formbuilder\Form::dropdown("Meta[mod_weight_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_weight_type'],array('style'=>'width: 40px;'));
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php
                                                         print \Formbuilder\Form::text("Meta[mod_weight][$oterm_id]", $m['mod_weight'], array('style'=>'width: 30px;'));
 
                                                         ?>
@@ -730,10 +721,6 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                     <td>
                                                         <?php
                                                         print \Formbuilder\Form::dropdown("Meta[mod_code_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_code_type'],array('style'=>'width: 40px;'));
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php
                                                         print \Formbuilder\Form::text("Meta[mod_code][$oterm_id]", $m['mod_code'], array('style'=>'width: 80px;'));
                                                         ?>
                                                     </td>                                                    
@@ -741,16 +728,9 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                     <td>
                                                         <?php
                                                         print \Formbuilder\Form::dropdown("Meta[mod_category_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_category_type'],array('style'=>'width: 40px;'));
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php
                                                         print \Formbuilder\Form::text("Meta[mod_category][$oterm_id]", $m['mod_category'], array('style'=>'width: 150px;'));
                                                         ?>
                                                     </td>                                                    
-                                                    <td>
-                                                        <img src="http://placehold.it/60x40" />
-                                                    </td>
                                                 </tr>
                                             <?php
                                             endforeach;
