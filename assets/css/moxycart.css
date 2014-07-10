@@ -506,6 +506,12 @@ img.inactive {
 
 }
 
+
+
+.prod-inventory-tbl tbody#product_list tr td input,
+.prod-inventory-tbl tbody#product_list tr td select {
+  margin: 4px 0px;
+}
 #product_bulk_editor {
   margin-bottom: 65px;
 }

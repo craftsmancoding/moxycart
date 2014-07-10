@@ -71,7 +71,7 @@ jQuery(document).ready(function(){
                 print \Formbuilder\Form::checkbox('track_inventory['.$r['product_id'].']', $r['track_inventory']);
                 ?>
                 </td>
-                <td class="pull-right"><?php print $r['qty_inventory']; ?></td>
+                <td class="pull-right"><p style="margin-top: 10px;"><?php print $r['qty_inventory']; ?></p></td>
                 <td>
                     <input type="text" name="change_inventory[<?php print $r['product_id']; ?>]" class="input-50 row-field" value=""/>
                 </td>
