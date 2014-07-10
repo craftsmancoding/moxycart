@@ -335,24 +335,11 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
             alt="{{Asset.alt}}" 
             width="{{Asset.thumbnail_width}}" 
             height="{{Asset.thumbnail_height}}"
-            onclick="javascript:select_image({{asset_id}},'{{{Asset.thumbnail_url}}}','{{url_target}}','{{val_target}}');"/>
+            onclick="javascript:select_image({{asset_id}},'{{{Asset.thumbnail_url}}}','{{url_target}}','{{val_target}}','{{desired_w}}','{{desired_h}}');"/>
         <div class="img-info-inner">
             <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{group}}</span> ({{Asset.asset_id}})</p>
             <p class="asset-title-ph" id="asset_group_vis_{{Asset.asset_id}}"><strong>{{Asset.basename}}</strong></p>
         </div>
-    </div>
-</div>
-</script>
-
-<!-- !option_image_tpl -->
-<script id="option_image_tpl" type="text/x-handlebars-template">
-<div class="asset_thumbnail_item-wrap" style=" background: #fff;border: 1px solid #ddd; width:60px;height:40px;float:left;margin: 5px;">
-    <div class="option_image_item img-info-wrap">
-        <img src="{{Asset.thumbnail_url}}" 
-            alt="{{Asset.alt}}" 
-            width="60" 
-            height="40"
-            onclick="javascript:select_image({{asset_id}},'{{{Asset.thumbnail_url}}}','{{url_target}}','{{val_target}}');"/>
     </div>
 </div>
 </script>
@@ -529,7 +516,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                             
 								<label for="thumbnail">Primary Image</label>
 
-								<div id="thumbnail" style="border:1px dotted grey;width:<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>px;height:<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>px;" onclick="javascript:open_thumbail_modal('<?php $data['asset_id']; ?>','asset_thumbnail','asset_id');" style="cursor:pointer;">
+								<div id="thumbnail" style="border:1px dotted grey;width:<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>px;height:<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>px;" onclick="javascript:open_thumbail_modal('asset_thumbnail','asset_id',<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>,<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>);" style="cursor:pointer;">
 								    <input type="hidden" name="asset_id" id="asset_id" value=""/>
 								    <span id="asset_thumbnail">
 								    <img id="thumbnail_img" 
@@ -710,15 +697,15 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                         ?>
                                                     </td>
                                                     <td>
-                                                        <!--img src="http://placehold.it/60x40" /-->
-                                                        
-                                                        <div style="border:1px dotted grey;width:60px;height:40px;" onclick="javascript:open_thumbail_modal('','meta_term_asset_<?php print $oterm_id; ?>','meta_term_asset_id_<?php print $oterm_id; ?>');" style="cursor:pointer;">
+                                                        <div style="border:1px dotted grey;width:60px;height:40px;" onclick="javascript:open_thumbail_modal('meta_term_asset_<?php print $oterm_id; ?>','meta_term_asset_id_<?php print $oterm_id; ?>',60,40);" style="cursor:pointer;">
                                                             <input type="hidden" name="Meta[asset_id][<?php print $oterm_id; ?>]" id="meta_term_asset_id_<?php print $oterm_id; ?>" value="<?php print $m['asset_id']; ?>"/>
                                                             <span id="meta_term_asset_<?php print $oterm_id; ?>">
-                                                            <!--img id="meta_term_img_<?php print $oterm_id; ?>" 
-                                                                src="" 
-                                                                width="60" 
-                                                                height="40"/-->
+                                                            <?php
+                                                            if ($m['asset_id'] && $A = $this->modx->getObject('Asset', $m['asset_id'])) {
+                                                                $url = $A->getThumbnailURL(60, 40);
+                                                                printf('<img src="%s" width="60" height="40"/>', $url);
+                                                            }
+                                                            ?>
                                                             </span>
                                                         </div>                                                        
                                                         

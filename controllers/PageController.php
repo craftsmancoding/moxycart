@@ -437,8 +437,8 @@ class PageController extends BaseController {
                     $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_weight'] = $m->get('mod_weight');
                     $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_code'] = $m->get('mod_code');
                     $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_category'] = $m->get('mod_category');
-                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['asset_id'] = $m->get('asset_id');                
                 }
+                $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['asset_id'] = $m->get('asset_id');
             }
         }
         //print '<pre>'; print_r($meta); print '</pre>'; exit;

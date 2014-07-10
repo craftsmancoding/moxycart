@@ -155,11 +155,13 @@ function open_inventory_modal() {
  * It's a "film strip" modal.
  *
  * @param integer asset_id
- * @param url_target css selector where thumbnail img is to be shown
- * @param val_target css selector where asset_id is to be written
+ * @param string url_target css selector where thumbnail img is to be shown
+ * @param string val_target css selector where asset_id is to be written
+ * @param integer desired_w for passing to the select_image
+ * @param integer desired_h for passing to the select_image
  */
-function open_thumbail_modal(asset_id,url_target,val_target) {
-    console.log('[open_thumbail_modal]',asset_id,val_target);
+function open_thumbail_modal(url_target,val_target,desired_w,desired_h) {
+    console.log('[open_thumbail_modal]',url_target,val_target);
 //    console.log('Thumb dimensions: %sx%s',moxycart.settings.thumbnail_width,moxycart.settings.thumbnail_height)
     var arrayLength = moxycart.product.Assets.length;
     if (arrayLength < 1) {
@@ -177,6 +179,8 @@ function open_thumbail_modal(asset_id,url_target,val_target) {
                 var Asset = moxycart.product.Assets[i];
                 Asset.url_target = url_target;
                 Asset.val_target = val_target;
+                Asset.desired_w = desired_w;
+                Asset.desired_h = desired_h;
                 preview = preview + moxycart.tpls.thumbnail_image(Asset);
             }
             return preview;
@@ -186,11 +190,17 @@ function open_thumbail_modal(asset_id,url_target,val_target) {
 
 /**
  * Select the given thumbnail: write the asset id back to the specified target 
+ * @param asset_id integer which asset?
+ * @param url string src of thumbnail (may not match the desried_w/h)
+ * @param url_target string CSS selector where we put the image
+ * @param val_target string CSS selector where we write the asset_id value
+ * @param desired_w integer width of the thumbnail we are writing
+ * @param desired_h integer height of the thumbnail we are writing
  */
-function select_image(asset_id,url,url_target,val_target) {
+function select_image(asset_id,url,url_target,val_target,desired_w,desired_h) {
     console.log('[select_image] asset_id: %s thumb url: %s target: %s',asset_id,url,url_target,val_target);
     jQuery('#'+val_target).val(asset_id);
-    jQuery('#'+url_target).html('<img src="'+url+'" />');
+    jQuery('#'+url_target).html('<img src="'+url+'" width="'+desired_w+'" height="'+desired_h+'"/>');
     jQuery.colorbox.close();
 }
 
