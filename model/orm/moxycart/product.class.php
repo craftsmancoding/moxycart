@@ -6,6 +6,7 @@ class Product extends xPDOObject {
      */
     public function __construct(xPDO & $xpdo) { 
         parent::__construct($xpdo);
+        $this->_fields['change_inventory'] = $this->get('change_inventory');
         $this->_fields['calculated_price'] = $this->get('calculated_price');
         $this->_fields['cache_lifetime'] = $this->get('cache_lifetime');
     }
@@ -30,12 +31,11 @@ class Product extends xPDOObject {
             return $calculated_price;            
         
         }
-        // Termines how long we can cache this for
+        // Determines how long we can cache this for
         elseif($k=='cache_lifetime') {
             $this->xpdo->log(modX::LOG_LEVEL_DEBUG, 'Calculating virtual field: cache_lifetime','',__CLASS__);
             $now = time();
             $sale_end = strtotime($this->get('sale_end'));
-//            print 'Sale end:'.$this->get('sale_end'); exit;
             if ($sale_end && $sale_end >= $now) {
                 return $sale_end - $now;                
             }
@@ -60,7 +60,22 @@ class Product extends xPDOObject {
             return parent::get($k, $format, $formatTemplate);
         }
     }
-            
+
+    /**
+     * Mutators
+     * We use "change_inventory"
+     */
+    public function set($k, $v= null, $vType= '') {     
+        if ($k == 'change_inventory') {
+            $v = (int) $v;
+            $qty = $this->get('qty_inventory');
+            return $this->set('qty_inventory', $qty + $v);
+        }
+        else {
+            return parent::set($k, $v, $vType);
+        }
+    }
+    
     /** 
      * We intercept this so we can ensure that the product always grab's the URI from the parent store
      * TODO: cache the lookup

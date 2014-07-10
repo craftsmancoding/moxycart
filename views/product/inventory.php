@@ -38,21 +38,49 @@ jQuery(document).ready(function(){
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Keywords</th>
+                <th>Template</th>
+                <th>Active</th>
                 <th>Price</th>
-                <th>Modify Inventory</th>
+                <th>Track</th>
+                <th>Qty</th>
+                <th>Modify (+/-)</th>
+                <th>Alert</th>
+                <th>Backorder Max</th>
             </tr>
         </thead>
         <tbody id="product_list">
         <?php foreach ($data['results'] as $r): ?>
             <tr class="">
-                <td>
-                    <input type="hidden" name="product_id[]" value="<?php print $r['product_id']; ?>"/>
-                    <input type="text" name="name[]" class="row-field" value="<?php print htmlentities($r['name']); ?>"/>
+                <td>    
+                    <input type="hidden" name="product_id[<?php print $r['product_id']; ?>]" value="<?php print $r['product_id']; ?>"/>
+                    <input type="text" name="name[<?php print $r['product_id']; ?>]" class="row-field" value="<?php print htmlentities($r['name']); ?>"/>
                 </td>
-                <td><input type="text" name="meta_keywords[]" class="row-field" value="<?php print htmlentities($r['meta_keywords']); ?>"/></td>
+                <td>
+                <?php
+                print \Formbuilder\Form::dropdown('template_id['.$r['product_id'].']', $data['templates'], $r['template_id']);
+                ?>
+                </td>
+                <td>
+                <?php
+                print \Formbuilder\Form::checkbox('is_active['.$r['product_id'].']', $r['is_active']);
+                ?>
+                </td>
                 <td><input type="text" name="price[]" class="row-field" value="<?php print htmlentities($r['price']); ?>"/></td>
-                <td><input type="text" name="inventory_change[]" class="row-field" value="0"/></td>
+                <td>
+                <?php
+                print \Formbuilder\Form::checkbox('track_inventory['.$r['product_id'].']', $r['track_inventory']);
+                ?>
+                </td>
+                <td class="pull-right"><?php print $r['qty_inventory']; ?></td>
+                <td>
+                    <input type="text" name="change_inventory[<?php print $r['product_id']; ?>]" class="row-field" value=""/>
+                </td>
+                <td>
+                    <input type="text" name="qty_alert[<?php print $r['product_id']; ?>]" class="row-field" value="<?php print $r['qty_alert']; ?>"/>
+                </td>
+                <td>
+                    <input type="text" name="qty_backorder_max[<?php print $r['product_id']; ?>]" class="row-field" value="<?php print $r['qty_backorder_max']; ?>"/>
+                </td>
             </tr>
         <?php endforeach; ?>
         </tbody>

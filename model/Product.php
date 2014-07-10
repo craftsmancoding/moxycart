@@ -84,9 +84,10 @@ class Product extends BaseModel {
         
         if ($limit) {
             $criteria->limit($limit, $offset); 
-            $criteria->sortby($sort,$dir);
         }
-    
+        if ($sort) {
+            $criteria->sortby($sort,$dir);
+        }    
         if ($debug) {
             $criteria->prepare();
             return $criteria->toSQL();

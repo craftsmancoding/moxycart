@@ -484,9 +484,18 @@ class PageController extends BaseController {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new Product($this->modx);
         $scriptProperties['limit'] = 0;
+        $scriptProperties['sort'] = 'Product.seq';
+        $scriptProperties['dir'] = 'ASC';
         $results = $Obj->all($scriptProperties);
         $count = $Obj->count($scriptProperties);
         $offset = (int) $this->modx->getOption('offset',$scriptProperties,0);
+        // We need this for dropdown Menus
+        $Ts = $this->modx->getCollection('modTemplate');
+        $templates = array();
+        foreach ($Ts as $t) {
+            $templates[$t->get('id')] = sprintf('%s (%s)',$t->get('templatename'),$t->get('id'));
+        }
+        $this->setPlaceholder('templates',$templates);        
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholder('results', $results);
         $this->setPlaceholder('count', $count);
