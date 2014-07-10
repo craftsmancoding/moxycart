@@ -34,7 +34,7 @@ jQuery(document).ready(function(){
 });
 </script>
 <form id="product_bulk_editor" action="<?php print static::url('product','bulk'); ?>" method="post">
-    <table class="classy">
+    <table class="prod-inventory-tbl classy">
         <thead>
             <tr>
                 <th>Name</th>
@@ -53,11 +53,11 @@ jQuery(document).ready(function(){
             <tr class="">
                 <td>    
                     <input type="hidden" name="product_id[<?php print $r['product_id']; ?>]" value="<?php print $r['product_id']; ?>"/>
-                    <input type="text" name="name[<?php print $r['product_id']; ?>]" class="row-field" value="<?php print htmlentities($r['name']); ?>"/>
+                    <input type="text" name="name[<?php print $r['product_id']; ?>]" class="row-field input-150" value="<?php print htmlentities($r['name']); ?>"/>
                 </td>
                 <td>
                 <?php
-                print \Formbuilder\Form::dropdown('template_id['.$r['product_id'].']', $data['templates'], $r['template_id']);
+                print \Formbuilder\Form::dropdown('template_id['.$r['product_id'].']', $data['templates'], $r['template_id'],array('class'=>'input-200'));
                 ?>
                 </td>
                 <td>
@@ -65,7 +65,7 @@ jQuery(document).ready(function(){
                 print \Formbuilder\Form::checkbox('is_active['.$r['product_id'].']', $r['is_active']);
                 ?>
                 </td>
-                <td><input type="text" name="price[]" class="row-field" value="<?php print htmlentities($r['price']); ?>"/></td>
+                <td><input type="text" name="price[]" class="input-50 row-field" value="<?php print htmlentities($r['price']); ?>"/></td>
                 <td>
                 <?php
                 print \Formbuilder\Form::checkbox('track_inventory['.$r['product_id'].']', $r['track_inventory']);
@@ -73,13 +73,13 @@ jQuery(document).ready(function(){
                 </td>
                 <td class="pull-right"><?php print $r['qty_inventory']; ?></td>
                 <td>
-                    <input type="text" name="change_inventory[<?php print $r['product_id']; ?>]" class="row-field" value=""/>
+                    <input type="text" name="change_inventory[<?php print $r['product_id']; ?>]" class="input-50 row-field" value=""/>
                 </td>
                 <td>
-                    <input type="text" name="qty_alert[<?php print $r['product_id']; ?>]" class="row-field" value="<?php print $r['qty_alert']; ?>"/>
+                    <input type="text" name="qty_alert[<?php print $r['product_id']; ?>]" class="input-50 row-field" value="<?php print $r['qty_alert']; ?>"/>
                 </td>
                 <td>
-                    <input type="text" name="qty_backorder_max[<?php print $r['product_id']; ?>]" class="row-field" value="<?php print $r['qty_backorder_max']; ?>"/>
+                    <input type="text" name="qty_backorder_max[<?php print $r['product_id']; ?>]" class="input-50 row-field" value="<?php print $r['qty_backorder_max']; ?>"/>
                 </td>
             </tr>
         <?php endforeach; ?>

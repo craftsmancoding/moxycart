@@ -138,7 +138,8 @@ function open_inventory_modal() {
     console.log('[open_inventory_modal]');
     
     jQuery.colorbox({
-        inline:false, 
+        inline:false,
+        width: "70%",
         height: "90%",
         href: moxycart.controller_url + '&class=page&method=productinventory&_nolayout=1',
         onComplete: function(){
