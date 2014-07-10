@@ -4632,6 +4632,8 @@ display: block;
   opacity: .22;
   width: 100%;
   color: #fff;
+  z-index:100;
+  padding: 2px 0;
 }
 
 .img-info-inner p {
