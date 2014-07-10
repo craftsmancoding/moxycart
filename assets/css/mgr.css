@@ -4575,6 +4575,9 @@ table.sub-terms th{
 table.sub-terms td {
   vertical-align: top;
 }
+table.sub-terms td:first-child {
+  width:17%;
+}
 table.sub-terms .checkboxlabel {
   float: left !important;
   width: 100px;
@@ -4584,7 +4587,7 @@ table.sub-terms .checkboxlabel {
 }
 
 table.sub-terms select {
-  margin: 0 5px 0 0;
+  margin: 0 5px 5px 0;
 }
 
 table.sub-terms .checkbox {
@@ -4629,7 +4632,7 @@ display: block;
   position: absolute;
   bottom: 0;
   background: #000;
-  opacity: .22;
+  background-color: rgba(0,0,0,0.3);
   width: 100%;
   color: #fff;
   z-index:100;
