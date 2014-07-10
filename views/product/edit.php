@@ -673,7 +673,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                 <thead>
                                                     <tr>
                                                         <th>&nbsp;</th>
-                                                        <th>Thumb</th>
+                                                        <th>Asset</th>
                                                         <th>Override?</th>
                                                         <th>Price</th>
                                                         <th>Weight</th>
