@@ -4450,6 +4450,8 @@ div > input.x-form-field {
 
 .img-info-wrap img {
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 #product_assets li.inactive {
   border: 1px solid #ddd;
@@ -4625,7 +4627,7 @@ display: block;
 
 .img-info-inner {
   position: absolute;
-  bottom: 5px;
+  bottom: 0;
   background: #000;
   opacity: .22;
   width: 100%;
@@ -4637,7 +4639,7 @@ display: block;
   float:left;
   font-size:12px;
 }
-.img-info-inner p#asset-id-ph{
+.img-info-inner p.asset-id-ph{
 	float: right;
 	font-size: 10px;	
 }
