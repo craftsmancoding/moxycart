@@ -46,6 +46,15 @@
 	            <span class="subline">Manage Settings</span>
 	        </a>
 	    </li>
+
+	   	<li class="orders">
+	        <a href="<?php print self::page('orders'); ?>" title="View Store Orders">
+	            <span class="icon"></span>
+	            <span class="headline">Orders</span>
+	            <span class="subline">View Orders</span>
+	        </a>
+	    </li>
+
 	</ul>
 	</div>
 </div>

@@ -696,16 +696,16 @@ class PageController extends BaseController {
 
 
     //------------------------------------------------------------------------------
-    //! Reports
+    //! Orders
     //------------------------------------------------------------------------------
     /**
      * Any specific processing we want to do here. Return a string of html.
      * @param array $scriptProperties
      */
-    public function getReports(array $scriptProperties = array()) {
+    public function getOrders(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $this->setPlaceholders($scriptProperties);
-        return $this->fetchTemplate('main/reports.php');
+        return $this->fetchTemplate('main/orders.php');
     }
     
     //------------------------------------------------------------------------------

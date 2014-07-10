@@ -186,6 +186,10 @@ h2.moxycart_cmp_heading {
     background: url(../images/product.png) no-repeat;
 }
 
+.orders .icon {
+    background: url(../images/orders.png) no-repeat;
+}
+
 .btn {
   display: inline-block;
   *display: inline;
