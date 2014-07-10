@@ -673,7 +673,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                 <thead>
                                                     <tr>
                                                         <th>&nbsp;</th>
-                                                        <th>Asset</th>
+                                                        <th>Image</th>
                                                         <th>Override?</th>
                                                         <th>Price</th>
                                                         <th>Weight</th>
@@ -725,7 +725,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                     <td>
                                                         <?php
                                                         print \Formbuilder\Form::dropdown("Meta[mod_weight_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_weight_type'],array('style'=>'width: 40px;'));
-                                                        print \Formbuilder\Form::text("Meta[mod_weight][$oterm_id]", $m['mod_weight'], array('style'=>'width: 30px;'));
+                                                        print \Formbuilder\Form::text("Meta[mod_weight][$oterm_id]", $m['mod_weight'], array('style'=>'width: 40px;'));
 
                                                         ?>
                                                     </td>                                                    

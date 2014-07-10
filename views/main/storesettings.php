@@ -17,7 +17,7 @@
         ?>
 
         <?php
-        print \Formbuilder\Form::checkbox('StoreSettings[track_inventory]',$data['track_inventory'],array('label'=>'Track Inventory','description'=>'Should product inventory be tracked by default?'));
+        print \Formbuilder\Form::dropdown('StoreSettings[track_inventory]',array('0'=>'No','1'=>'Yes'),$data['track_inventory'],array('label'=>'Track Inventory','description'=>'Should product inventory be tracked by default?'));
         ?>
 
         <h3>Custom Fields</h3>
