@@ -198,6 +198,8 @@ class PageController extends BaseController {
      */
     public function getProducts(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+        $scriptProperties['sort'] = $this->modx->getOption('sort',$scriptProperties,'Product.seq');;
+        $scriptProperties['dir'] = $this->modx->getOption('dir',$scriptProperties,'ASC');;
         $Obj = new Product($this->modx);
         $results = $Obj->all($scriptProperties);
 //        print $results; exit;
@@ -484,9 +486,18 @@ class PageController extends BaseController {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $Obj = new Product($this->modx);
         $scriptProperties['limit'] = 0;
+        $scriptProperties['sort'] = 'Product.seq';
+        $scriptProperties['dir'] = 'ASC';
         $results = $Obj->all($scriptProperties);
         $count = $Obj->count($scriptProperties);
         $offset = (int) $this->modx->getOption('offset',$scriptProperties,0);
+        // We need this for dropdown Menus
+        $Ts = $this->modx->getCollection('modTemplate');
+        $templates = array();
+        foreach ($Ts as $t) {
+            $templates[$t->get('id')] = sprintf('%s (%s)',$t->get('templatename'),$t->get('id'));
+        }
+        $this->setPlaceholder('templates',$templates);        
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholder('results', $results);
         $this->setPlaceholder('count', $count);
@@ -765,9 +776,10 @@ class PageController extends BaseController {
      * @param array $scriptProperties
      */
     public function getStoreProducts(array $scriptProperties = array()) {
-//        return '<div>This is a  test...</div>';
-
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+        $scriptProperties['sort'] = $this->modx->getOption('sort',$scriptProperties,'Product.seq');;
+        $scriptProperties['dir'] = $this->modx->getOption('dir',$scriptProperties,'ASC');;        
+
         $store_id = (int) $this->modx->getOption('store_id', $scriptProperties);
         $this->client_config['store_id'] = $store_id;
         $this->setPlaceholder('store_id', $store_id);
@@ -784,23 +796,7 @@ class PageController extends BaseController {
         $this->setPlaceholder('offset', $offset);
         $this->setPlaceholder('results_per_page', $results_per_page);        
         $this->setPlaceholders($scriptProperties);
-//        return '<div>This is a  test...'.__LINE__.'</div>';
-//        return '<pre>'.print_r($results,true).'</pre>';
         return $this->fetchTemplate('main/storeproducts.php');
-
-    }
-
-    public function getStoreCreate(array $scriptProperties = array()) {
-        $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
-        $this->scriptProperties['_nolayout'] = true;
-        return $this->fetchTemplate('main/storecreate.php');
-    }
-    
-    
-    
-    public function getTest(array $scriptProperties = array()) {
-        $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
-        return $this->fetchTemplate('main/test.php');
     }
     
     //------------------------------------------------------------------------------

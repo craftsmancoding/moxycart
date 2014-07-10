@@ -44,6 +44,7 @@ class Field extends BaseModel {
         switch ($type) {
             case 'dropdown':
                 $out = \Formbuilder\Form::dropdown($name,$args,$value, array('label'=>$attr['label'],'description'=>$attr['description']));
+                $out = $out->__toString(); // <-- force to string!
                 break;
             
             case 'checkbox':

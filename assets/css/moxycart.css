@@ -283,6 +283,22 @@ input[type="text"],
     width: 30%;
 }
 
+.input-200 {
+    width: 200px;
+}
+.input-150 {
+  width: 150px;
+}
+
+.input-100 {
+  width: 100px;
+}
+
+
+.input-50 {
+  width: 50px;
+}
+
 /**** Alerts*****/
 .danger {
     margin: 10px;
@@ -482,6 +498,22 @@ img.inactive {
 
 .po-fset {
   display: none;
+}
+
+.prod-inventory-tbl {
+  margin: 20px auto;
+  width: 95% !important;
+
+}
+
+
+
+.prod-inventory-tbl tbody#product_list tr td input,
+.prod-inventory-tbl tbody#product_list tr td select {
+  margin: 4px 0px;
+}
+#product_bulk_editor {
+  margin-bottom: 65px;
 }
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */

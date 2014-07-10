@@ -239,10 +239,26 @@ Array
 
         $Model = new \Moxycart\Product($this->modx);    
         $data = $Model->indexedToRecordset($scriptProperties);
-        $this->modx->log(\modX::LOG_LEVEL_ERROR,print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);
-        $data = array('Woot');
-        return $this->sendFail(array('msg'=>'Error saving product.', 'errors'=>array('ASDfadf.')));        
-        return $this->sendSuccess(array('results' => $data));
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG,print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);
+        $seq = 0;
+        foreach ($data as $p) {
+            if (!isset($p['product_id'])) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Bulk editing requires product_id!','',__CLASS__,__FUNCTION__,__LINE__);
+                continue;
+            }
+            if(!$Product = $this->modx->getObject('Product', $p['product_id'])) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'product_id not found: '.$p['product_id'],'',__CLASS__,__FUNCTION__,__LINE__);
+                continue;
+            }
+            $p['seq'] = $seq;
+            $Product->fromArray($p);
+            if (!$Product->save()) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Failed to save product: '.$p['product_id'],'',__CLASS__,__FUNCTION__,__LINE__);
+                continue;
+            }
+            $seq++;
+        }
+        return $this->sendSuccess(array('msg' => $seq.' products updated.'));
     }
         
 }

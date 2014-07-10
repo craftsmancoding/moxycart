@@ -135,10 +135,11 @@ function open_asset_modal(asset_id) {
  * @param val_target css selector where asset_id is to be written
  */
 function open_inventory_modal() {
-    console.log('[open_inventory_modal]');
+    console.log('[open_inventory_modal]',moxycart);
     
     jQuery.colorbox({
-        inline:false, 
+        inline:false,
+        width: "70%",
         height: "90%",
         href: moxycart.controller_url + '&class=page&method=productinventory&_nolayout=1',
         onComplete: function(){
@@ -165,12 +166,11 @@ function open_thumbail_modal(asset_id,url_target,val_target) {
         alert('You have not uploaded any assets yet.');
         return;
     }
+    //alert(moxycart.settings.thumbnail_height+10);
     jQuery.colorbox({
         inline:false, 
-        width: "50%",
-        //innerWidth:moxycart.settings.thumbnail_width+30,
-        //height: "50%",
-        innerHeight:moxycart.settings.thumbnail_height+10,
+        width: "80%",
+        height: "50%",
         html:function(){
             var preview = '';
             for (var i = 0; i < arrayLength; i++) {

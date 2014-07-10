@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/craftsmancoding/formbuilder.git",
-                "reference": "e4fd8c147f3c17f09efbab7dff4818f9122d615a"
+                "reference": "ac6fe339b46384c3dab5a6cdaf2a351a35bc98fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craftsmancoding/formbuilder/zipball/e4fd8c147f3c17f09efbab7dff4818f9122d615a",
-                "reference": "e4fd8c147f3c17f09efbab7dff4818f9122d615a",
+                "url": "https://api.github.com/repos/craftsmancoding/formbuilder/zipball/ac6fe339b46384c3dab5a6cdaf2a351a35bc98fd",
+                "reference": "ac6fe339b46384c3dab5a6cdaf2a351a35bc98fd",
                 "shasum": ""
             },
             "require": {
@@ -45,7 +45,7 @@
                 "source": "https://github.com/craftsmancoding/formbuilder/tree/master",
                 "issues": "https://github.com/craftsmancoding/formbuilder/issues"
             },
-            "time": "2014-06-04 07:28:00"
+            "time": "2014-07-10 00:39:04"
         },
         {
             "name": "craftsmancoding/pagination",
