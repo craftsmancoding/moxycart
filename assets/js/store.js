@@ -12,7 +12,7 @@ function get_products(offset,sort,dir) {
     if (searchterm) {
         url = url + '&searchterm='+searchterm;
     }
-    console.log("[Moxycart get_data()] requesting URL",url);
+    console.log("[Moxycart get_products()] requesting URL",url);
 	Ext.Ajax.request({
         url: url,
         params: {},
@@ -20,6 +20,26 @@ function get_products(offset,sort,dir) {
         success: function(response){
             console.log("Success: Data received from "+url);
             Ext.fly("store_products").update(response.responseText);
+        },
+        failure: function(response){
+            console.error("The request to "+url+" failed.", response);
+        }
+    });                
+}
+
+/**
+ * Get the settings for the current store
+ */
+function get_store_settings() {
+    var url = moxycart.controller_url+"&class=page&method=storesettings&store_id="+moxycart.store_id+"&_nolayout=1";
+    console.log("[Moxycart get_store_settings()] requesting URL",url);
+	Ext.Ajax.request({
+        url: url,
+        params: {},
+        async:false,
+        success: function(response){
+            console.log("Success: Data received from "+url);
+            Ext.fly("store_settings").update(response.responseText);
         },
         failure: function(response){
             console.error("The request to "+url+" failed.", response);

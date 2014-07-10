@@ -174,11 +174,14 @@ class PageController extends BaseController {
 
         $Os = $this->modx->getCollectionGraph('Option','{"Terms":{}}',$c);
         $Options = array();
+        $opts = array();
         foreach ($Os as $o) {
             $Options[] = $o->toArray('',false,false,true);
+            $opts[ $o->get('option_id') ] = sprintf('%s (%s)', $o->get('name'), $o->get('slug'));
         }
         //print_r($Options); exit;
         $this->setPlaceholder('Options',$Options);
+        $this->setPlaceholder('opts',$opts);
 
         // categories (foxycart)
         $this->setPlaceholder('categories',json_decode($this->modx->getOption('moxycart.categories'),true));
@@ -797,6 +800,17 @@ class PageController extends BaseController {
         $this->setPlaceholder('results_per_page', $results_per_page);        
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('main/storeproducts.php');
+    }
+    
+    
+    public function getStoreSettings(array $scriptProperties = array()) {
+        $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+
+        $store_id = (int) $this->modx->getOption('store_id', $scriptProperties);
+        $this->client_config['store_id'] = $store_id;
+        $this->setPlaceholder('store_id', $store_id);
+        $this->_setUIdata();
+        return $this->fetchTemplate('main/storesettings.php');    
     }
     
     //------------------------------------------------------------------------------

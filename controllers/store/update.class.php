@@ -12,7 +12,6 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
      */
     public function loadCustomCssJs() {
 
-        // return parent::loadCustomCssJs(); // uncomment to turn off all customizations 
         parent::loadCustomCssJs(); // load up the parent resource stuff we're trying to augment
         
         $assets_url = $this->modx->getOption('moxycart.assets_url', null, MODX_ASSETS_URL.'components/moxycart/');
@@ -29,9 +28,6 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
         $this->client_config['controller_url'] = $Page->url();
         $this->client_config['store_id'] = (int) (isset($_GET['id'])) ? $_GET['id'] : 0;
         
-        //$Page->scriptProperties['_nolayout'] = 1;
-        //$products = $Page->getProducts(array('_nolayout'=>1));
-        $custom_html2 = 'Settings Here!';
     	$this->addHtml('
 			<script type="text/javascript">
                 console.log("[Moxycart] Loading update.class.php");
@@ -41,15 +37,16 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
                         title: "Products",
                         id: "products-tab",
                         width: "95%",
-                        html: "<div id=\"store_products\"></div>"
+                        html: "<div id=\"store_products\" style=\"padding:20px;\"></div>"
                     });
                     Ext.getCmp("modx-resource-tabs").insert(1, {
-                        title: "Store Settings",
+                        title: "Defaults",
                         id: "store-settings-tab",
                         width: "95%",
-                        html: '.json_encode(utf8_encode("$custom_html2")).'
+                        html: "<div id=\"store_settings\"></div>"
                     });
                     show_all_products();
+                    get_store_settings();
 				});
 			</script>');
 
