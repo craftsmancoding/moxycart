@@ -43,7 +43,7 @@ class BaseModel {
     //public static $default_sort_dir = 'ASC';
 
     // Any array keys that define a control parameter and not a filter parameter
-    public $control_params = array('limit','offset','sort','dir','select');
+    public $control_params = array('limit','offset','sort','dir','select','debug');
     
     // Store any validation errors here
     public $errors = array();

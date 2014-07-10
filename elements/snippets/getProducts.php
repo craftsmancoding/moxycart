@@ -68,7 +68,7 @@ if ($help) {
     }
     return $out.'</pre></div>';
 }
-
+//return '<pre>'.print_r($scriptProperties,true).'</pre>';
 if ($results = $P->all($scriptProperties)) {
     // Get Custom Fields
     foreach ($results as &$r) {

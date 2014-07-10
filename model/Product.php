@@ -58,11 +58,12 @@ class Product extends BaseModel {
         $offset = (int) $this->modx->getOption('offset',$args,0);
         $sort = $this->quoteSort($this->modx->getOption('sort',$args,$this->default_sort_col));
         $dir = $this->modx->getOption('dir',$args,$this->default_sort_dir);
+        $debug = $this->modx->getOption('debug',$args);
         $select_cols = $this->modx->getOption('select',$args);
         
         // Clear out non-filter criteria
         $args = self::getFilters($args); 
-            
+//        return '<pre>'.print_r($args,true).'</pre>';
         $criteria = $this->modx->newQuery($this->xclass);
 
         if ($args) {
@@ -89,8 +90,10 @@ class Product extends BaseModel {
             $criteria->sortby($sort,$dir);
         }    
         if ($debug) {
+            $criteria->bindGraph('{"Image":{}}');
             $criteria->prepare();
-            return $criteria->toSQL();
+            print $criteria->toSQL();
+            exit;
         }
 
         // Both array and string input seem to work
@@ -101,8 +104,10 @@ class Product extends BaseModel {
         $out = array();
 //        if ($Products = $this->modx->getCollectionGraph('Product','{"Image":{},"ProductField":{"Field":{}}}',$criteria)) {
         if ($Products = $this->modx->getCollectionGraph('Product','{"Image":{}}',$criteria)) {
+
             foreach ($Products as $P) {
                 $att = $P->toArray('',false,false,true);
+//                print '<pre>'.print_r($att,true).'</pre>';
                 /*
 if ($P->ProductField) {
                     foreach ($P->ProductField as $PF) {
