@@ -4310,13 +4310,9 @@ padding: 5px 20px;
 
 #product_assets li.li_product_asset {
   float: left;
-  border: 1px solid #acacac;
-  padding: 5px;
+  border: 1px solid #eee;
   margin: 10px;
   position: relative;
-  -webkit-box-shadow: 0 8px 6px -6px #ddd;
-     -moz-box-shadow: 0 8px 6px -6px #ddd;
-          box-shadow: 0 8px 6px -6px #ddd;
 }
 
 
@@ -4624,19 +4620,26 @@ display: block;
 
 .img-info-wrap {
   position: relative;
+  max-height: 180px;
 }
 
 .img-info-inner {
   position: absolute;
-  bottom: 0px;
+  bottom: 5px;
   background: #000;
-  opacity: .50;
+  opacity: .22;
   width: 100%;
   color: #fff;
 }
 
 .img-info-inner p {
   margin: 3px 5px;
+  float:left;
+  font-size:12px;
+}
+.img-info-inner p#asset-id-ph{
+	float: right;
+	font-size: 10px;	
 }
 
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
