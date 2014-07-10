@@ -85,6 +85,7 @@ class Store extends modResource {
      * @param string $namespace
      * @return array
      */
+/*
     public function getProperties($namespace='core') {
         $properties = parent::getProperties($namespace);
         if (!empty($properties)) {
@@ -93,21 +94,20 @@ class Store extends modResource {
 
         // Properties defaults
         $properties = array (
-            'product_type'      => 'regular',
-            'product_template'  => $this->xpdo->getOption(
+            'type'      => 'regular',
+            'template_id'  => $this->xpdo->getOption(
                 'moxycart.default_product_template','',
                 $this->xpdo->getOption('default_template')
             ),
-            'sort_order'        => 'name',
-            'qty_alert'         => 0,
+            'category' => '',
             'track_inventory'   => 0,
-            'specs' => array (),
-            'variations' =>   array(),
-            'taxonomies' => array()
+            'fields' => array (),
+            'options' =>   array(),
         );
         
         return $properties;
     }
+*/
 
     /**
      *
@@ -271,17 +271,19 @@ class StoreCreateProcessor extends modResourceCreateProcessor {
      * @return boolean
      */
     public function beforeSave() {
-        $raw = $this->getProperties(); // <-- this will have raw values
-        $properties = $this->object->getProperties('moxycart'); //<-- we need to update these values
+//        $raw = $this->getProperties(); // <-- this will have raw values
+//        $properties = $this->object->getProperties('moxycart'); //<-- we need to update these values
         $this->object->set('class_key','Store');
         
+/*
         $properties['product_type'] = $this->modx->getOption('product_type',$raw);
         $properties['product_template'] = $this->modx->getOption('product_template',$raw);
         $properties['track_inventory'] = ($this->modx->getOption('track_inventory',$raw) == 'Yes')? 1:0;
         $properties['sort_order'] = $this->modx->getOption('sort_order',$raw);
         $properties['qty_alert'] = $this->modx->getOption('qty_alert',$raw);
+*/
 
-        $this->object->setProperties($properties,'moxycart');
+//        $this->object->setProperties($properties,'moxycart');
         return parent::beforeSave();
 
     }
@@ -326,10 +328,11 @@ class StoreUpdateProcessor extends modResourceUpdateProcessor {
      * @return boolean
      */
     public function beforeSave() {
-        $raw = $this->getProperties(); // <-- this will have raw values
-        $properties = $this->object->getProperties('moxycart'); //<-- we need to update these values
+//        $raw = $this->getProperties(); // <-- this will have raw values
+//        $properties = $this->object->getProperties('moxycart'); //<-- we need to update these values
         $this->object->set('class_key','Store');
         
+/*
         $properties['product_type'] = $this->modx->getOption('product_type',$raw);
         $properties['product_template'] = $this->modx->getOption('product_template',$raw);
         $properties['track_inventory'] = ($this->modx->getOption('track_inventory',$raw) == 'Yes')? 1:0;
@@ -352,8 +355,9 @@ class StoreUpdateProcessor extends modResourceUpdateProcessor {
                 $properties['variations'][substr($k,(11 - $len))] = $v;
             } 
         }
+*/
 
-        $this->object->setProperties($properties,'moxycart');
+//        $this->object->setProperties($properties,'moxycart');
         return parent::beforeSave();
     }
 

@@ -99,17 +99,10 @@ class Product extends BaseModel {
         }
 
         $out = array();
-//        if ($Products = $this->modx->getCollectionGraph('Product','{"Image":{},"ProductField":{"Field":{}}}',$criteria)) {
         if ($Products = $this->modx->getCollectionGraph('Product','{"Image":{}}',$criteria)) {
             foreach ($Products as $P) {
                 $att = $P->toArray('',false,false,true);
-                /*
-if ($P->ProductField) {
-                    foreach ($P->ProductField as $PF) {
-                        $att[ $PF->Field->get('slug') ] = $PF->get('value');
-                    }
-                }
-*/
+
                 if ($P->Image) {
                     $att['img'] = $P->Image->get('url');
                     $att['thumb'] = $P->Image->get('thumbnail_url');
@@ -684,9 +677,6 @@ if ($P->ProductField) {
                     $this->sort_order = (isset($properties['moxycart']['sort_order'])) ? $properties['moxycart']['sort_order'] : 'name';
                     $this->qty_alert = (isset($properties['moxycart']['qty_alert'])) ? $properties['moxycart']['qty_alert'] : 0;
                     $this->track_inventory = (isset($properties['moxycart']['track_inventory'])) ? $properties['moxycart']['track_inventory'] : 0;
-                    // addOne
-                    //$this->fields = (isset($properties['moxycart']['specs'])) ? $properties['moxycart']['specs'] : array();
-                    //$this->taxonomies = (isset($properties['moxycart']['taxonomies'])) ? $properties['moxycart']['taxonomies'] : array();
                 }
             }
             else {

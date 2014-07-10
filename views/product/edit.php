@@ -769,7 +769,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 	<div id="fields_tab" class="content">
 			<div id="product_fields">
 	                <?php if (!$data['product_fields']) : ?>
-				        <div class="danger" id="no_specs_msg">No Custom Fields have been added to this product. </div>	                
+				        <div class="danger" id="no_fields_msg">No Custom Fields have been added to this product. </div>	                
 	                <?php endif; ?>
 	                
                     <?php foreach ($data['product_fields'] as $field_id => $f): ?>
