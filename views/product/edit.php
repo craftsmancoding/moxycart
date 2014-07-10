@@ -320,14 +320,14 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 	    <input type="hidden" id="asset_group_{{Asset.asset_id}}" name="Assets[group][]" value="{{group}}"/>
 	    <input type="hidden" id="asset_is_active_{{Asset.asset_id}}" name="Assets[is_active][]" value="{{is_active}}"/>	
         <div class="img-info-inner">
-            <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{title}}</span> ({{Asset.asset_id}})</p>
+            <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{Asset.title}}</span> ({{Asset.asset_id}})</p>
             <p class="asset-title-ph" id="asset_group_vis_{{Asset.asset_id}}"><strong>{{Asset.basename}}</strong></p>
         </div>    
 	</div>
 </li>
 </script>
 
-<!-- !thumbnail_image_tpl -->
+<!-- !thumbnail_image_tpl (for thumb selection modal) -->
 <script id="thumbnail_image_tpl" type="text/x-handlebars-template">
 <div class="asset_thumbnail_item-wrap" style=" background: #fff;border: 1px solid #ddd;width: {{Asset.thumbnail_width}}px;height:{{Asset.thumbnail_height}}px;float:left;margin: 5px;">
     <div class="asset_thumbnail_item img-info-wrap">
@@ -340,6 +340,19 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
             <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{title}}</span> ({{Asset.asset_id}})</p>
             <p class="asset-title-ph" id="asset_group_vis_{{Asset.asset_id}}"><strong>{{Asset.basename}}</strong></p>
         </div>
+    </div>
+</div>
+</script>
+
+<!-- !option_image_tpl -->
+<script id="option_image_tpl" type="text/x-handlebars-template">
+<div class="asset_thumbnail_item-wrap" style=" background: #fff;border: 1px solid #ddd; width:60px;height:40px;float:left;margin: 5px;">
+    <div class="option_image_item img-info-wrap">
+        <img src="{{Asset.thumbnail_url}}" 
+            alt="{{Asset.alt}}" 
+            width="60" 
+            height="40"
+            onclick="javascript:select_image({{asset_id}},'{{{Asset.thumbnail_url}}}','{{url_target}}','{{val_target}}');"/>
     </div>
 </div>
 </script>
@@ -697,7 +710,18 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                         ?>
                                                     </td>
                                                     <td>
-                                                        <img src="http://placehold.it/60x40" />
+                                                        <!--img src="http://placehold.it/60x40" /-->
+                                                        
+                                                        <div style="border:1px dotted grey;width:60px;height:40px;" onclick="javascript:open_thumbail_modal('','meta_term_asset_<?php print $oterm_id; ?>','meta_term_asset_id_<?php print $oterm_id; ?>');" style="cursor:pointer;">
+                                                            <input type="hidden" name="Meta[asset_id][<?php print $oterm_id; ?>]" id="meta_term_asset_id_<?php print $oterm_id; ?>" value="<?php print $m['asset_id']; ?>"/>
+                                                            <span id="meta_term_asset_<?php print $oterm_id; ?>">
+                                                            <!--img id="meta_term_img_<?php print $oterm_id; ?>" 
+                                                                src="" 
+                                                                width="60" 
+                                                                height="40"/-->
+                                                            </span>
+                                                        </div>                                                        
+                                                        
                                                     </td>                                                    
                                                     <td>
                                                         <?php
