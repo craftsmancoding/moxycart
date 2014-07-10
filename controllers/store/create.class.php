@@ -15,24 +15,37 @@ class StoreCreateManagerController extends ResourceCreateManagerController {
 		//Add below for customization
         $this->addJavascript($assets_url . 'js/store.js');
         $this->addJavascript($assets_url.'js/jquery.min.js');
+        $this->addJavascript($assets_url . 'js/jquery.colorbox.js');
         $this->addJavascript($assets_url . 'js/app.js');
-        //$this->addCss($assets_url.'css/moxycart.css');
-        
-    	$B = new \Moxycart\BaseController($this->modx); 
-        $this->client_config['connector_url'] = $B->url();
-        $this->client_config['store_id'] = (int) (isset($_GET['id'])) ? $_GET['id'] : 0;
+        $this->addCss($assets_url.'css/colorbox.css');
 
+        $config = array();
+    	$Page = new \Moxycart\BaseController($this->modx, $config); 
+        $this->client_config['controller_url'] = $Page->url();
+        $this->client_config['store_id'] = (int) (isset($_GET['id'])) ? $_GET['id'] : 0;
+        $path = $this->modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+        $html = file_get_contents($path.'views/main/storewelcome.tpl');
     	$this->addHtml('
 			<script type="text/javascript">
                 console.log("[Moxycart] Loading update.class.php");
                 var moxycart = '.json_encode($this->client_config).';
-				isProductContainerCreate = true;
 				Ext.onReady(function(){
-					renderProductContainer(isProductContainerCreate, MODx.config);
-					get_data(0);
+                    Ext.getCmp("modx-resource-tabs").insert(0, {
+                        title: "Products",
+                        id: "products-tab",
+                        width: "95%",
+                         html: '.json_encode(utf8_encode("$html")).'
+                    });
+                    Ext.getCmp("modx-resource-tabs").insert(1, {
+                        title: "Defaults",
+                        id: "store-settings-tab",
+                        width: "95%",
+                        html: "<div id=\"store_settings\"></div>"
+                    });
+                    get_store_settings();
 				});
 			</script>');
-			
+
         $this->addCss($assets_url.'css/mgr.css');
 
     }

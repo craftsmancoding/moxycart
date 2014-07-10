@@ -412,9 +412,9 @@ class PageController extends BaseController {
 
         // product_option_meta
         $c = $this->modx->newQuery('OptionTerm');
-        $c->where(array('product_id' => $product_id));
+       // $c->where(array('product_id' => $product_id));
         $c->sortby('seq','ASC');        
-        $Terms = $this->modx->getCollectionGraph('OptionTerm', $c);
+        $Terms = $this->modx->getCollection('OptionTerm', $c);
 
         foreach ($Terms as $t) {
             // Global values

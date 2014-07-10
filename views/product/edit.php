@@ -468,8 +468,8 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 		
 	<ul id="moxytab" class="menu">
 		<li class="product-link active"><a href="#product">Product</a></li>
-		<li class="settings-link" ><a href="#settings_tab">Product Settings</a></li>
-        <li class="options-link" ><a href="#options_tab">Product Options</a></li>
+		<li class="settings-link" ><a href="#settings_tab">Settings</a></li>
+        <li class="options-link" ><a href="#options_tab">Options</a></li>
 		<?php if($this->modx->getOption('moxycart.enable_variations')):?>
     		<li class="variations-link" ><a href="#variations_tab">Variations</a></li>
 		<?php endif; ?>
@@ -674,10 +674,15 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                     <tr>
                                                         <th>&nbsp;</th>
                                                         <th>Override?</th>
+                                                        <th>&nbsp;</th>
                                                         <th>Price</th>
+                                                        <th>&nbsp;</th>
                                                         <th>Weight</th>
+                                                        <th>&nbsp;</th>
                                                         <th>Code</th>
+                                                        <th>&nbsp;</th>
                                                         <th>Category</th>
+                                                        <th>Thumb</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -702,32 +707,50 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                     </td>
                                                     <td>
                                                         <?php
-                                                        print \Formbuilder\Form::dropdown("Meta[mod_price_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_price_type'],array('style'=>'width: 30px;'));
+                                                        print \Formbuilder\Form::dropdown("Meta[mod_price_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_price_type'],array('style'=>'width: 40px;'));
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
                                                         print \Formbuilder\Form::text("Meta[mod_price][$oterm_id]", $m['mod_price'], array('style'=>'width: 50px;'));
 
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
-                                                        print \Formbuilder\Form::dropdown("Meta[mod_weight_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_weight_type'],array('style'=>'width: 20px;'));
+                                                        print \Formbuilder\Form::dropdown("Meta[mod_weight_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_weight_type'],array('style'=>'width: 40px;'));
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
                                                         print \Formbuilder\Form::text("Meta[mod_weight][$oterm_id]", $m['mod_weight'], array('style'=>'width: 30px;'));
 
                                                         ?>
                                                     </td>                                                    
                                                     <td>
                                                         <?php
-                                                        print \Formbuilder\Form::dropdown("Meta[mod_code_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_code_type'],array('style'=>'width: 20px;'));
+                                                        print \Formbuilder\Form::dropdown("Meta[mod_code_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_code_type'],array('style'=>'width: 40px;'));
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
                                                         print \Formbuilder\Form::text("Meta[mod_code][$oterm_id]", $m['mod_code'], array('style'=>'width: 80px;'));
                                                         ?>
                                                     </td>                                                    
 
                                                     <td>
                                                         <?php
-                                                        print \Formbuilder\Form::dropdown("Meta[mod_category_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_category_type'],array('style'=>'width: 20px;'));
+                                                        print \Formbuilder\Form::dropdown("Meta[mod_category_type][$oterm_id]", \Moxycart\OptionTerm::types(), $m['mod_category_type'],array('style'=>'width: 40px;'));
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
                                                         print \Formbuilder\Form::text("Meta[mod_category][$oterm_id]", $m['mod_category'], array('style'=>'width: 150px;'));
                                                         ?>
                                                     </td>                                                    
-
+                                                    <td>
+                                                        <img src="http://placehold.it/60x40" />
+                                                    </td>
                                                 </tr>
                                             <?php
                                             endforeach;
