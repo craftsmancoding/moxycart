@@ -328,7 +328,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 	    <input type="hidden" id="asset_is_active_{{Asset.asset_id}}" name="Assets[is_active][]" value="{{is_active}}"/>	
         <div class="img-info-inner">
             <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{title}}</span> ({{Asset.asset_id}})</p>
-            <p class="asset-title-ph" id="asset_group_vis_{{Asset.asset_id}}">Group: <strong>{{group}}</strong></p>
+            <p class="asset-title-ph" id="asset_group_vis_{{Asset.asset_id}}"><strong>{{Asset.basename}}</strong></p>
         </div>    
 	</div>
 </li>
@@ -345,7 +345,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
             onclick="javascript:select_image({{asset_id}},'{{{Asset.thumbnail_url}}}','{{url_target}}','{{val_target}}');"/>
         <div class="img-info-inner">
             <p class="asset-id-ph"><span id="asset_title_{{Asset.asset_id}}">{{title}}</span> ({{Asset.asset_id}})</p>
-            <p class="asset-title-ph" id="asset_group_vis_{{Asset.asset_id}}"><strong>{{Asset.stub}}</strong></p>
+            <p class="asset-title-ph" id="asset_group_vis_{{Asset.asset_id}}"><strong>{{Asset.basename}}</strong></p>
         </div>
     </div>
 </div>
@@ -376,7 +376,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                             </div>
         
                             <div class="row-input">
-                                 <label class="row-lbl" for="modal_asset_group">Group</label>
+                                <label class="row-lbl" for="modal_asset_group">Group</label>
                                 <input class="row-field" type="text" name="group" id="modal_asset_group" value="{{group}}" />
                             </div>
                            
