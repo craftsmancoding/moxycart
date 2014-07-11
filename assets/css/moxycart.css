@@ -336,17 +336,17 @@ label,
     float: left;
 }
 .description-txt {
-    margin-left: 150px;
+   /*  margin-left: 150px; */
     font-size: 12px;
     font-style: italic;
     color: #727272;
     margin-bottom: 10px;
 }
 
-#config {
+/* #config {
     margin-left: 150px;
 }
-
+ */
 table {
     width: 100%;
 }
