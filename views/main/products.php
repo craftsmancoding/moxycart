@@ -7,7 +7,7 @@
 <div class="clearfix">
     <a href="<?php print static::page('productcreate'); ?>" class="button btn moxycart-btn pull-left">Add Product</a>
     &nbsp;
-    <span class="btn btn-moxycart" onclick="javascript:open_inventory_modal();">Quick Edit</span>
+    <span class="btn btn-moxycart" onclick="javascript:open_inventory_modal(0);">Quick Edit</span>
         <div class="pull-right">   
             <form action="<?php print static::page('products'); ?>" method="post">
                 <input type="text" name="searchterm" placeholder="Search..." value="<?php print $data['searchterm']; ?>"/>    

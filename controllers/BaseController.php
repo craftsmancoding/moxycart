@@ -80,45 +80,6 @@ class BaseController extends \modExtraManagerController {
         return $Error->get404($args);
     }
   
-    /** 
-     * For iterative parsing of the Taxonomy/Terms properties
-     * 
-     {
-     "children":{
-        "44":{"alias":"popular","pagetitle":"Popular","published":true,"menuindex":0,"children":{
-            "48":{"alias":"geek","pagetitle":"geek","published":true,"menuindex":0,"children":[]}}},
-        "45":{"alias":"special","pagetitle":"Special","published":true,"menuindex":1,"children":[]}},
-        "children_ids":{"44":true,"45":true}
-     }
-        
-     convert this to a flat structure
-     
-     */
-    private function _get_subterms($props) {
-        $data = array();
-        $data['terms'] = '';
-        unset($props['children_ids']);
-        if (!empty($props['children'])) {
-            foreach($props['children'] as $term_id => $tdata) {
-                $tdata['class'] = 'taxonomy_term_item';
-                $tdata['terms'] = '';
-                $tdata['depth'] = str_repeat('&nbsp;', $this->depth * 2);
-                if (!empty($tdata['children'])) {
-                    $this->depth++;
-                    $tdata['terms'] = $this->_get_subterms($tdata);
-                    $tdata['class'] = 'taxonomy_parent_item';                    
-                }
-                $tdata['term_id'] = $term_id;
-                $tdata['is_checked'] = '';
-                if (isset($this->cache[$term_id])) {
-                    $tdata['is_checked'] = ' checked="checked"';
-                }
-                $data['terms'] .= $this->_load_view('product_term_item.php', $tdata);
-            }
-        }
-        
-        return $this->_load_view('product_term_list.php',$data);
-    }
     
     /**
      * Add the standard MODX manager layout to a response.
@@ -224,16 +185,6 @@ class BaseController extends \modExtraManagerController {
      */
     public function getLanguageTopics() {
         return array('moxycart:default');
-    }
-
-    /**
-     * Return a flash message
-     *
-     */
-    public function getMsg() {
-        $msg = (isset($_SESSION['msg'])) ? $_SESSION['msg'] : '';
-        unset($_SESSION['msg']);
-        return $msg;
     }
 
     /**
@@ -357,24 +308,6 @@ class BaseController extends \modExtraManagerController {
         return $Error->get404($args);
     }
 
-    /**
-     * Set a flash message
-     *
-     */
-    public function setMsg($msg,$type='success') {
-
-        $path = $this->modx->getOption('moxycart.core_path','', MODX_CORE_PATH.'components/moxycart/').'views/msgs/';
-        $file = $path.$type.'.php';
-		if (is_file($file)) {
-			ob_start();
-			include $file;
-			$_SESSION['msg'] = ob_get_clean();
-			return true; 
-		}
-		$this->modx->log(\modX::LOG_LEVEL_ERROR, 'View file does not exist: ' .$file, __FUNCTION__,__LINE__);
-		return $this->modx->lexicon('view_not_found', array('file'=> 'views/msgs/'.$type.'.php'));
-
-    }
 
     /**
      * Used to toggle sort parameters in column headers

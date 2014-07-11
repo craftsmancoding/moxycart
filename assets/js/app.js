@@ -14,6 +14,28 @@ else {
 }
 
 /**
+ * When upload happens (via dropzone), we need to add the asset and its info to the
+ * mix.  This must avoid duplicates!
+ * @param object fields asset data
+ */
+function add_asset(fields) {
+    console.log('[add_asset]', fields);
+    var arrayLength = moxycart.product.Assets.length;
+    for (var i = 0; i < arrayLength; i++) {
+        if (moxycart.product.Assets[i].asset_id == fields.asset_id) {
+            return; // already exists        
+        }
+    }
+    console.log('[add_asset] New asset - adding '+fields.asset_id);
+    // Add it on!
+    moxycart.product.Assets.push({
+        asset_id: fields.asset_id,
+        is_active: 1,
+        Asset: fields 
+    });
+}
+
+/**
  * Draw a product's images and assets, obeying the system settings for thumb dimensions
  * See also Asset Manager's app.js file & its draw_tab func.
  */
@@ -42,19 +64,6 @@ function draw_assets() {
     });
     jQuery("#product_assets").disableSelection();
     
-/*    
-    //Groups.push(Assets[asset_id].group);
-    Groups = array_unique(Groups);
-    
-    jQuery('#asset_category_filters').html('<li class="all first"><a href="#">All</a></li>');
-    var arrayLength = Groups.length;
-    for (var i = 0; i < arrayLength; i++) {
-        if (Groups[i]) {
-            jQuery('#asset_category_filters').append( category_tpl({"group": Groups[i]}));
-        }
-    }  
-*/
-
 
 /*
     // Filter product_assets
@@ -130,18 +139,16 @@ function open_asset_modal(asset_id) {
  * Open Asset colorbox
  * This lets users edit a specific Asset
  *
- * @param integer asset_id
- * @param url_target css selector where thumbnail img is to be shown
- * @param val_target css selector where asset_id is to be written
+ * @param integer store_id optional
  */
-function open_inventory_modal() {
+function open_inventory_modal(store_id) {
     console.log('[open_inventory_modal]',moxycart);
     
     jQuery.colorbox({
         inline:false,
         width: "70%",
         height: "90%",
-        href: moxycart.controller_url + '&class=page&method=productinventory&_nolayout=1',
+        href: moxycart.controller_url + '&class=page&method=productinventory&_nolayout=1&store_id='+store_id,
         onComplete: function(){
             jQuery("#product_list").sortable();
             jQuery("#product_list").disableSelection();
@@ -161,14 +168,14 @@ function open_inventory_modal() {
  * @param integer desired_h for passing to the select_image
  */
 function open_thumbail_modal(url_target,val_target,desired_w,desired_h) {
+    if(typeof desired_w === "undefined") desired_w = moxycart.settings.thumbnail_width;
+    if(typeof desired_h === "undefined") desired_h = moxycart.settings.thumbnail_height;
     console.log('[open_thumbail_modal]',url_target,val_target);
-//    console.log('Thumb dimensions: %sx%s',moxycart.settings.thumbnail_width,moxycart.settings.thumbnail_height)
     var arrayLength = moxycart.product.Assets.length;
     if (arrayLength < 1) {
         alert('You have not uploaded any assets yet.');
         return;
     }
-    //alert(moxycart.settings.thumbnail_height+10);
     jQuery.colorbox({
         inline:false, 
         width: "80%",
@@ -227,7 +234,6 @@ function update_asset(form_id) {
                 moxycart.product.Assets[i][key] = ModalData[key];
             }
             update_product_assets(ModalData);
-            //console.log('UPDATED ASSET:', moxycart.product.Assets[i]);
             break;
         }
     }
@@ -244,21 +250,6 @@ function delete_asset(asset_id) {
     console.log('[delete_asset] asset_id: '+asset_id);
     // TODO: conf. box with 2 options: delete vs. disassociate
     jQuery('#delete_asset_modal').data('asset_id', asset_id).dialog('open');
-    
-/*
-  	if (confirm("Are you Sure you want to Delete this Image?")) {
-  		jQuery(this).removeClass('over-trash');
-  		mapi('productasset','delete',{"asset_id":asset_id,"product_id":product.product_id});
-        var arrayLength = moxycart.product.Assets.length;
-        for (var i = 0; i < arrayLength; i++) {
-            if (moxycart.product.Assets[i].asset_id == asset_id) {
-                moxycart.product.Assets.splice(i,1); // unset
-            }
-        }
-  		jQuery('#product-asset-'+asset_id).remove();
-  		draw_assets();
-    }
-*/
 }
 
 /**

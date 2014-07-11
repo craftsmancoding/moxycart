@@ -34,8 +34,8 @@ Valid pagename can be any function in the PageController (minus the get/post pre
             <a class="<?php print ($_GET['method'] == 'reviews') ? 'current' : '' ; ?>" href="<?php print self::page('reviews'); ?>">Reviews</a>
         </li>
         <li class="moxycart_nav_item">
-            <!--span class="linklike" onclick="javascript:paint('reports');">Reports</span-->
-            <a class="<?php print ($_GET['method'] == 'reports') ? 'current' : '' ; ?>" href="<?php print self::page('reports'); ?>">Reports</a>
+            <!--span class="linklike" onclick="javascript:paint('orders');">Reports</span-->
+            <a class="<?php print ($_GET['method'] == 'orders') ? 'current' : '' ; ?>" href="<?php print self::page('orders'); ?>">Orders</a>
         </li>
         <li class="moxycart_nav_item">
             <!--span class="linklike" onclick="javascript:paint('settings');">Settings</span-->

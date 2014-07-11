@@ -43,6 +43,7 @@ class StoreCreateManagerController extends ResourceCreateManagerController {
                         html: "<div id=\"store_settings\"></div>"
                     });
                     get_store_settings();
+                    Ext.getCmp("modx-resource-tabs").setActiveTab("products-tab");
 				});
 			</script>');
 

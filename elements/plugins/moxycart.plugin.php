@@ -2,8 +2,7 @@
 /**
  * @name Moxycart
  * @description Multi-purpose plugin for Moxycart handling URL routing and manager customizations
- * @PluginEvents OnManagerPageInit,OnPageNotFound,OnBeforeCacheUpdate
- *
+ * @PluginEvents OnManagerPageInit,OnPageNotFound,OnBeforeCacheUpdate,OnDocFormSave
  */
  
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
@@ -61,4 +60,18 @@ switch ($modx->event->name) {
         $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin]','OnBeforeCacheUpdate');
         $modx->cacheManager->clean(array(xPDO::OPT_CACHE_KEY => $cache_dir));
         break;
-}
+    //------------------------------------------------------------------------------
+    //! OnDocFormSave
+    //------------------------------------------------------------------------------
+    case 'OnDocFormSave':
+        if ('Store' == $resource->get('class_key')) {
+            if ($storesettings = $resource->get('StoreSettings')) {
+                $modx->log(modX::LOG_LEVEL_DEBUG,print_r($storesettings,true),'','Moxycart Plugin:OnDocFormSave');
+                //$props = $resource->getProperties('moxycart');
+                //$props['moxycart'] = $storesettings;
+                $resource->setProperties($storesettings,'moxycart',true);
+                $resource->save();
+            }
+        }
+        break;
+}        

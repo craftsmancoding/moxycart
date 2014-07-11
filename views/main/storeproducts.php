@@ -1,7 +1,9 @@
+<div id="moxycart_msg"></div>
+
 <div class="clearfix">
     <a class="btn" href="<?php print static::url('page','productcreate',array('store_id'=>$data['store_id'])); ?>">Add Product</a> 
     &nbsp;
-    <span class="btn btn-moxycart" onclick="javascript:open_inventory_modal();">Quick Edit</span>
+    <span class="btn btn-moxycart" onclick="javascript:open_inventory_modal(<?php print $data['store_id']; ?>);">Quick Edit</span>
         <div class="pull-right">   
                 <input type="text" name="searchterm" id="searchterm" placeholder="Search..." value="<?php print htmlentities($data['searchterm']); ?>"/>    
                 <span class="button btn moxycart-btn" onclick="javascript:get_products(0);">Search</span>

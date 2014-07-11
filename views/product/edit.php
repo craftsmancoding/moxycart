@@ -41,25 +41,24 @@ function product_init() {
     // Refresh the list on success (append new tile to end)
     myDropzone.on("success", function(file,response) {
         console.log('Dropzone Response',response);
-//        response = jQuery.parseJSON(response);
         if (response.status == "success") {
             console.log('Dropzone Success - response fields:',response.data.fields);
-            moxycart.product.Assets.push({
+            add_asset(response.data.fields);
+            /*
+moxycart.product.Assets.push({
                 asset_id: response.data.fields.asset_id,
                 is_active: 1,
                 Asset: response.data.fields 
             });
+*/
             draw_assets();
             jQuery(".dz-preview").remove();
             save_product(moxycart.product_save_method);
        } 
        else {                           
-            $(".dz-success-mark").hide();
-            $(".dz-error-mark").show();
-            $(".moxy-msg").show();
-            $("#moxy-result").html("Failed");
-            $("#moxy-result-msg").html(response.data.msg);
-            $(".moxy-msg").delay(3200).fadeOut(400);
+            jQuery(".dz-success-mark").hide();
+            jQuery(".dz-error-mark").show();
+            show_error(response.data.msg);
        }
     });
 
@@ -191,6 +190,26 @@ function product_init() {
 //                field_ids.reverse();
                 jQuery('#product_fields').html(''); // Blank it out
                 console.debug('Attaching field ids: ', field_ids);
+
+                var url = controller_url('field','generatemulti');    
+                jQuery.post(url, 
+                    {"field_ids":field_ids,"product_id":moxycart.product.product_id}, function( response ) {
+                    if(response.status == 'fail') {                            
+                        var msg = 'Error:<br/>'+ response.data.error;
+                        return show_error(msg); 
+                    }
+                    else if (response.status == 'success') {
+                        console.debug('Drawing fields.');
+                        jQuery('#product_fields').append(response.data); 
+                    }
+                },'json')
+                .fail(function() {
+                    console.error('[mapi] post to %s failed', url);
+                });
+                                            
+
+
+/*
                 var field_ids_cnt = field_ids.length;
                 for (var i = 0; i < field_ids_cnt; i++) {
                     var field_id = field_ids[i];
@@ -199,9 +218,10 @@ function product_init() {
                     // mapi('field','generate',{"field_id":field_id,"name":"Fields[field_id][]"});
                     // This MUST be outside of the .post call!!! Otherwise it will always be written with the last 
                     // field_id because js will execute BEFORE the postback occurs!!!
-                    jQuery('#product_fields').append('<input type="hidden" name="Fields[field_id][]" value="'+field_id+'" />'); 
+                    //jQuery('#product_fields').append('<input type="hidden" name="Fields[field_id][]" value="'+field_id+'" />'); 
+                    jQuery('#product_fields').append('<input type="hidden" name="Fields[field_id]['+field_id+']" value="'+field_id+'" />'); 
                     var url = controller_url('field','generate');    
-                    jQuery.post(url, {"field_id":field_id,"name":"Fields[value][]","product_id":moxycart.product.product_id}, function( response ) {
+                    jQuery.post(url, {"field_id":field_id,"name":"Fields[value]["+field_id+"]","product_id":moxycart.product.product_id}, function( response ) {
                             if(response.status == 'fail') {                            
                                 var msg = 'Error:<br/>'+ response.data.error;
                                 return show_error(msg); 
@@ -215,6 +235,7 @@ function product_init() {
                             console.error('[mapi] post to %s failed', url);
                         });                        
                 }
+*/
                 
                 jQuery( this ).dialog( "close" );
             },
@@ -769,11 +790,11 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 	<div id="fields_tab" class="content">
 			<div id="product_fields">
 	                <?php if (!$data['product_fields']) : ?>
-				        <div class="danger" id="no_specs_msg">No Custom Fields have been added to this product. </div>	                
+				        <div class="danger" id="no_fields_msg">No Custom Fields have been added to this product. </div>	                
 	                <?php endif; ?>
 	                
                     <?php foreach ($data['product_fields'] as $field_id => $f): ?>
-                        <input type="hidden" name="Fields[field_id][]" value="<?php print $field_id; ?>" />
+                        <!-- input type="hidden" name="Fields[field_id][<?php print $field_id; ?>]" value="<?php print $field_id; ?>" /-->
                         <?php print $f; ?>
 
                     <?php endforeach; ?>

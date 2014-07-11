@@ -1,5 +1,6 @@
 <script>
 jQuery(document).ready(function(){
+    // onSubmit
     jQuery('#product_bulk_editor').submit(function(e){
         console.log('Bulk Editor Form Submitted.');
         var postData = jQuery(this).serializeArray();
@@ -13,12 +14,15 @@ jQuery(document).ready(function(){
             {
                 console.log(data);
                 if (data.status=="success") {
-                
+                    show_success('Update successful.');
+                    // update product list. Todo: AJAX
+                    jQuery.colorbox.close(); 
+                    location.reload(true);
                 }
                 else {
-                    alert('Fail');
+                    show_error('There was a problem updating the products.');
+                    jQuery.colorbox.close(); 
                 }
-
                 
             },
             error: function(jqXHR, textStatus, errorThrown) 
@@ -28,7 +32,7 @@ jQuery(document).ready(function(){
             }
         });
         e.preventDefault(); //STOP default action
-        e.unbind(); //unbind. to stop multiple form submit.
+        //e.unbind(); //unbind. to stop multiple form submit.
         return false;
     });
 });
@@ -65,7 +69,7 @@ jQuery(document).ready(function(){
                 print \Formbuilder\Form::checkbox('is_active['.$r['product_id'].']', $r['is_active']);
                 ?>
                 </td>
-                <td><input type="text" name="price[]" class="input-50 row-field" value="<?php print htmlentities($r['price']); ?>"/></td>
+                <td><input type="text" name="price[<?php print $r['product_id']; ?>]" class="input-50 row-field" value="<?php print htmlentities($r['price']); ?>"/></td>
                 <td>
                 <?php
                 print \Formbuilder\Form::checkbox('track_inventory['.$r['product_id'].']', $r['track_inventory']);

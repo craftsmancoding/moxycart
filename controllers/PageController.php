@@ -373,7 +373,7 @@ class PageController extends BaseController {
         $PF = $this->modx->getCollectionGraph('ProductField','{"Field":{}}',$c);
         $Field = new Field($this->modx);
         foreach ($PF as $f) {
-            if($tmp = $Field->generate($f->get('field_id'), $f->get('value'), 'Fields[value][]')) {
+            if($tmp = $Field->generate($f->get('field_id'), $f->get('value'), 'Fields[value]['.$f->get('field_id').']')) {
                 $product_fields[$f->get('field_id')] = $tmp;
             }
         }
@@ -487,6 +487,8 @@ class PageController extends BaseController {
 
      public function getProductInventory(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+        $store_id = (int) $this->modx->getOption('store_id', $scriptProperties);
+
         $Obj = new Product($this->modx);
         $scriptProperties['limit'] = 0;
         $scriptProperties['sort'] = 'Product.seq';
@@ -505,6 +507,7 @@ class PageController extends BaseController {
         $this->setPlaceholder('results', $results);
         $this->setPlaceholder('count', $count);
         $this->setPlaceholder('offset', $offset);
+        $this->setPlaceholder('store_id', $store_id);
 
         return $this->fetchTemplate('product/inventory.php');
     }    
@@ -704,7 +707,20 @@ class PageController extends BaseController {
      */
     public function getOrders(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
-        $this->setPlaceholders($scriptProperties);
+        $Obj = new Transaction($this->modx);
+        $scriptProperties['is_test'] = '0';
+        $scriptProperties['is_hidden'] = '0';
+        $scriptProperties['sort'] = 'transaction_date';
+        $scriptProperties['dir'] = 'DESC';
+        $results = $Obj->all($scriptProperties);
+        // We need these for pagination
+        $count = $Obj->count($scriptProperties);
+        $offset = (int) $this->modx->getOption('offset',$scriptProperties,0);
+        $this->setPlaceholders($scriptProperties);      
+        $this->setPlaceholder('results', $results);
+        $this->setPlaceholder('count', $count);
+        $this->setPlaceholder('offset', $offset);
+        $this->setPlaceholder('baseurl', $this->page('orders'));
         return $this->fetchTemplate('main/orders.php');
     }
     
@@ -807,9 +823,20 @@ class PageController extends BaseController {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
 
         $store_id = (int) $this->modx->getOption('store_id', $scriptProperties);
+
+        if ($store_id && $Store = $this->modx->getObject('Store', $store_id)) {
+            $settings = $Store->getProperties('moxycart');
+        }
+        else {
+            $Store = $this->modx->newObject('Store');
+            $settings = $Store->getDefaultProperties();
+        }
+        foreach ($settings as $k => $v){
+            $this->setPlaceholder('default.'.$k, $v);
+        }
         $this->client_config['store_id'] = $store_id;
         $this->setPlaceholder('store_id', $store_id);
-        $this->_setUIdata();
+        $this->_setUIdata(); 
         return $this->fetchTemplate('main/storesettings.php');    
     }
     

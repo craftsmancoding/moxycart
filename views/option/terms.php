@@ -28,10 +28,6 @@ function remove_term(event) {
 <div class="moxycart_canvas_inner">
 
 
-<?php
-print $this->getMsg();
-?>
-
 <span class="button btn moxycart-btn" onclick="javascript:add_term();">Add Term</span>
 
 <?php
