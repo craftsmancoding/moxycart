@@ -15,7 +15,9 @@ jQuery(document).ready(function(){
                 console.log(data);
                 if (data.status=="success") {
                     show_success('Update successful.');
+                    // update product list. Todo: AJAX
                     jQuery.colorbox.close(); 
+                    location.reload(true);
                 }
                 else {
                     show_error('There was a problem updating the products.');

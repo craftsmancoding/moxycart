@@ -38,7 +38,7 @@ class Field extends BaseModel {
         $attr = $F->toArray();
         
         if (!$name) {
-            $name = $attr['slug'];
+            $name = 'Fields[value]['.$field_id.']';
         }
         $args = json_decode($attr['config'], true);
         switch ($type) {
@@ -54,10 +54,15 @@ class Field extends BaseModel {
                 $out = $out->__toString(); // <-- force to string!
                 break;
             case 'text':
+                $args['label'] = $attr['label'];
+                $args['description'] = $attr['description'];
+                $out = \Formbuilder\Form::text($name,$value,$args);
+                $out = $out->__toString(); // <-- force to string!
+                break;
             case 'textarea':
                 $args['label'] = $attr['label'];
                 $args['description'] = $attr['description'];
-                $out = \Formbuilder\Form::$type($name,$value,$args);
+                $out = \Formbuilder\Form::textarea($name,$value,$args);
                 $out = $out->__toString(); // <-- force to string!
                 break;
             case 'asset':
@@ -68,7 +73,8 @@ class Field extends BaseModel {
                 $this->modx->log(\modX::LOG_LEVEL_ERROR,'Unsupported field type: '.$type,'',__CLASS__,__FUNCTION__,__LINE__);  
                 return false;
         }
-        
+        // We tag the field_id onto each and every generated field
+        $out .= '<input type="hidden" name="Fields[field_id]['.$field_id.']" value="'.$field_id.'"/>';
         return $out;
     
     }
@@ -87,14 +93,14 @@ class Field extends BaseModel {
         $img = '';
         if ($A = $this->modx->getObject('Asset', $asset_id)) {
             $url = $A->getThumbnailURL($this->modx->getOption('moxycart.thumbnail_width'), $this->modx->getOption('moxycart.thumbnail_height'));
-            $img = sprintf('<img src="%s" />', $url);
+            $img = sprintf('<img src="%s" width="%s" height="%s"/>', $url, $this->modx->getOption('moxycart.thumbnail_width'), $this->modx->getOption('moxycart.thumbnail_height'));
         }
 
-
+        // tpl
         return $label.'
-
-        <div id="field_id_'.$args['field_id'].'_thumb" style="border:1px dotted grey;width:'.$this->modx->getOption('moxycart.thumbnail_width').'px;height:'.$this->modx->getOption('moxycart.thumbnail_height').'px;" onclick="javascript:open_thumbail_modal(\''.$asset_id.'\',\'field_id_'.$args['field_id'].'_thumb\',\'field_id_'.$args['field_id'].'\');" style="cursor:pointer;">'.$img.'
+        <div id="field_id_'.$args['field_id'].'_thumb" style="border:1px dotted grey;width:'.$this->modx->getOption('moxycart.thumbnail_width').'px;height:'.$this->modx->getOption('moxycart.thumbnail_height').'px;" onclick="javascript:open_thumbail_modal(\'field_id_'.$args['field_id'].'_thumb\',\'field_id_'.$args['field_id'].'\');" style="cursor:pointer;">'.$img.'
         </div>
+        
         <input type="hidden" name="'.$name.'" id="field_id_'.$args['field_id'].'" value="'.$asset_id.'"/>
         ';
     }

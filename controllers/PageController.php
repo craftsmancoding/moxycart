@@ -373,7 +373,7 @@ class PageController extends BaseController {
         $PF = $this->modx->getCollectionGraph('ProductField','{"Field":{}}',$c);
         $Field = new Field($this->modx);
         foreach ($PF as $f) {
-            if($tmp = $Field->generate($f->get('field_id'), $f->get('value'), 'Fields[value][]')) {
+            if($tmp = $Field->generate($f->get('field_id'), $f->get('value'), 'Fields[value]['.$f->get('field_id').']')) {
                 $product_fields[$f->get('field_id')] = $tmp;
             }
         }
@@ -487,6 +487,8 @@ class PageController extends BaseController {
 
      public function getProductInventory(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
+        $store_id = (int) $this->modx->getOption('store_id', $scriptProperties);
+
         $Obj = new Product($this->modx);
         $scriptProperties['limit'] = 0;
         $scriptProperties['sort'] = 'Product.seq';
@@ -505,6 +507,7 @@ class PageController extends BaseController {
         $this->setPlaceholder('results', $results);
         $this->setPlaceholder('count', $count);
         $this->setPlaceholder('offset', $offset);
+        $this->setPlaceholder('store_id', $store_id);
 
         return $this->fetchTemplate('product/inventory.php');
     }    

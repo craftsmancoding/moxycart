@@ -191,6 +191,26 @@ function product_init() {
 //                field_ids.reverse();
                 jQuery('#product_fields').html(''); // Blank it out
                 console.debug('Attaching field ids: ', field_ids);
+
+                var url = controller_url('field','generatemulti');    
+                jQuery.post(url, 
+                    {"field_ids":field_ids,"product_id":moxycart.product.product_id}, function( response ) {
+                    if(response.status == 'fail') {                            
+                        var msg = 'Error:<br/>'+ response.data.error;
+                        return show_error(msg); 
+                    }
+                    else if (response.status == 'success') {
+                        console.debug('Drawing fields.');
+                        jQuery('#product_fields').append(response.data); 
+                    }
+                },'json')
+                .fail(function() {
+                    console.error('[mapi] post to %s failed', url);
+                });
+                                            
+
+
+/*
                 var field_ids_cnt = field_ids.length;
                 for (var i = 0; i < field_ids_cnt; i++) {
                     var field_id = field_ids[i];
@@ -199,9 +219,10 @@ function product_init() {
                     // mapi('field','generate',{"field_id":field_id,"name":"Fields[field_id][]"});
                     // This MUST be outside of the .post call!!! Otherwise it will always be written with the last 
                     // field_id because js will execute BEFORE the postback occurs!!!
-                    jQuery('#product_fields').append('<input type="hidden" name="Fields[field_id][]" value="'+field_id+'" />'); 
+                    //jQuery('#product_fields').append('<input type="hidden" name="Fields[field_id][]" value="'+field_id+'" />'); 
+                    jQuery('#product_fields').append('<input type="hidden" name="Fields[field_id]['+field_id+']" value="'+field_id+'" />'); 
                     var url = controller_url('field','generate');    
-                    jQuery.post(url, {"field_id":field_id,"name":"Fields[value][]","product_id":moxycart.product.product_id}, function( response ) {
+                    jQuery.post(url, {"field_id":field_id,"name":"Fields[value]["+field_id+"]","product_id":moxycart.product.product_id}, function( response ) {
                             if(response.status == 'fail') {                            
                                 var msg = 'Error:<br/>'+ response.data.error;
                                 return show_error(msg); 
@@ -215,6 +236,7 @@ function product_init() {
                             console.error('[mapi] post to %s failed', url);
                         });                        
                 }
+*/
                 
                 jQuery( this ).dialog( "close" );
             },
@@ -773,7 +795,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 	                <?php endif; ?>
 	                
                     <?php foreach ($data['product_fields'] as $field_id => $f): ?>
-                        <input type="hidden" name="Fields[field_id][]" value="<?php print $field_id; ?>" />
+                        <!-- input type="hidden" name="Fields[field_id][<?php print $field_id; ?>]" value="<?php print $field_id; ?>" /-->
                         <?php print $f; ?>
 
                     <?php endforeach; ?>

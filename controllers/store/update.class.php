@@ -48,6 +48,7 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
                     });
                     show_all_products();
                     get_store_settings();
+                    Ext.getCmp("modx-resource-tabs").setActiveTab("products-tab");
 				});
 			</script>');
 

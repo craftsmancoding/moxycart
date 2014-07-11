@@ -130,18 +130,16 @@ function open_asset_modal(asset_id) {
  * Open Asset colorbox
  * This lets users edit a specific Asset
  *
- * @param integer asset_id
- * @param url_target css selector where thumbnail img is to be shown
- * @param val_target css selector where asset_id is to be written
+ * @param integer store_id optional
  */
-function open_inventory_modal() {
+function open_inventory_modal(store_id) {
     console.log('[open_inventory_modal]',moxycart);
     
     jQuery.colorbox({
         inline:false,
         width: "70%",
         height: "90%",
-        href: moxycart.controller_url + '&class=page&method=productinventory&_nolayout=1',
+        href: moxycart.controller_url + '&class=page&method=productinventory&_nolayout=1&store_id='+store_id,
         onComplete: function(){
             jQuery("#product_list").sortable();
             jQuery("#product_list").disableSelection();
@@ -161,6 +159,8 @@ function open_inventory_modal() {
  * @param integer desired_h for passing to the select_image
  */
 function open_thumbail_modal(url_target,val_target,desired_w,desired_h) {
+    if(typeof desired_w === "undefined") desired_w = moxycart.settings.thumbnail_width;
+    if(typeof desired_h === "undefined") desired_h = moxycart.settings.thumbnail_height;
     console.log('[open_thumbail_modal]',url_target,val_target);
 //    console.log('Thumb dimensions: %sx%s',moxycart.settings.thumbnail_width,moxycart.settings.thumbnail_height)
     var arrayLength = moxycart.product.Assets.length;
