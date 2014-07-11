@@ -15,20 +15,24 @@
         <?php
         print \Formbuilder\Form::dropdown('StoreSettings[category]',$data['categories'],'',array('label'=>'Foxycart Category'));
         ?>
-
+        <div class="store-track-inventory clearfix">
         <?php
         print \Formbuilder\Form::checkbox('StoreSettings[track_inventory]',$data['track_inventory'],array('label'=>'Track Inventory','description'=>'Should product inventory be tracked by default?'));
         ?>
-
-        <h3>Custom Fields</h3>
-        <?php
-        print \Formbuilder\Form::multicheck('StoreSettings[fields]',$data['fields'],'',array());
-        ?>        
+        </div>
         
-        <h3>Options</h3>
-        <?php
-        print \Formbuilder\Form::multicheck('StoreSettings[options]',$data['opts'],'',array());
-        ?>
+        <div class="store-custom-fields">
+            <h3>Custom Fields</h3>
+            <?php
+            print \Formbuilder\Form::multicheck('StoreSettings[fields]',$data['fields'],'',array());
+            ?>        
+            
+            <h3>Options</h3>
+
+            <?php
+            print \Formbuilder\Form::multicheck('StoreSettings[options]',$data['opts'],'',array());
+            ?>
+        </div>
 
     </div>
 </div>
