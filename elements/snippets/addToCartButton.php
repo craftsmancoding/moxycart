@@ -91,7 +91,10 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
       
         // all_terms,omit_terms,explicit_terms
         if ($o->get('meta') == 'all_terms') {
-            $Terms = $modx->getCollection('OptionTerm', array('option_id'=>$o->get('option_id')));
+            $c = $modx->newQuery('OptionTerm');
+            $c->where(array('option_id'=>$o->get('option_id')));
+            $c->sortby('seq','ASC');
+            $Terms = $modx->getCollection('OptionTerm', $c);
             foreach ($Terms as $t) {
                 $opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
             }
@@ -104,6 +107,7 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             }
             $c = $modx->newQuery('OptionTerm');
             $c->where(array('option_id' => $o->get('option_id'),'oterm_id:NOT IN' => $omit));            
+            $c->sortby('seq','ASC');
             $Terms = $modx->getCollection('OptionTerm', $c);
             foreach ($Terms as $t) {
                 if (!in_array($t->get('oterm_id'), $omit)) {
@@ -117,7 +121,10 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             foreach ($Meta as $m) {
                 $explicit[ $m->get('oterm_id') ] = $m->toArray();
             }
-            $Terms = $modx->getCollection('OptionTerm', array('option_id'=>$o->get('option_id')));
+            $c = $modx->newQuery('OptionTerm');
+            $c->where(array('option_id'=>$o->get('option_id')));
+            $c->sortby('seq','ASC');
+            $Terms = $modx->getCollection('OptionTerm', $c);
             foreach ($Terms as $t) {
                 if (isset($explicit[ $t->get('oterm_id') ])) {
                     // setting the values on the OptionTerm object will tie into the custom logic in the xpdo optionterm.class.php
