@@ -510,8 +510,37 @@ img.inactive {
 
 }
 
+#product_fields p {
+    font-size: 12px;
+    font-style: italic;
+    color: #727272;
+    clear: both;
+}
 
+#product_fields label {
+  margin-top: 15px;
+}
+#product_fields input[type="text"],
+#product_fields select,
+#product_fields textarea {
+  margin-bottom: 0px;
+  width: 50%;
+}
 
+#product_fields input[type="checkbox"] {
+  margin-top: 15px;
+  float: left;
+}
+
+#product_fields .checkboxlabel {
+  margin-top: 15px;
+  margin-left: 10px;
+  float: left !important;
+}
+
+.show-hide-fields-btn {
+  margin-top: 20px;
+}
 .prod-inventory-tbl tbody#product_list tr td input,
 .prod-inventory-tbl tbody#product_list tr td select {
   margin: 4px 0px;
@@ -519,6 +548,8 @@ img.inactive {
 #product_bulk_editor {
   margin-bottom: 65px;
 }
+
+
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */
 .clear:before, .clear:after,

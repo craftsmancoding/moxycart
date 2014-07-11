@@ -788,7 +788,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 	<?php endif; //moxycart.enable_variations ?>
 	
 	<div id="fields_tab" class="content">
-			<div id="product_fields">
+			<div id="product_fields" class="clearfix">
 	                <?php if (!$data['product_fields']) : ?>
 				        <div class="danger" id="no_fields_msg">No Custom Fields have been added to this product. </div>	                
 	                <?php endif; ?>
@@ -800,7 +800,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                     <?php endforeach; ?>
             </div>
             
-        <span class="btn" onclick="javascript:jQuery('#custom_fields_form').dialog('open');">Show / Hide Fields</span>
+        <span class="btn show-hide-fields-btn" onclick="javascript:jQuery('#custom_fields_form').dialog('open');">Show / Hide Fields</span>
         
 		<?php /* ======== MODAL DIALOG BOX ======*/ ?>
 		<div id="custom_fields_form" title="Select Custom Fields">
