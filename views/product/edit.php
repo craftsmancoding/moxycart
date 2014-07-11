@@ -41,25 +41,24 @@ function product_init() {
     // Refresh the list on success (append new tile to end)
     myDropzone.on("success", function(file,response) {
         console.log('Dropzone Response',response);
-//        response = jQuery.parseJSON(response);
         if (response.status == "success") {
             console.log('Dropzone Success - response fields:',response.data.fields);
-            moxycart.product.Assets.push({
+            add_asset(response.data.fields);
+            /*
+moxycart.product.Assets.push({
                 asset_id: response.data.fields.asset_id,
                 is_active: 1,
                 Asset: response.data.fields 
             });
+*/
             draw_assets();
             jQuery(".dz-preview").remove();
             save_product(moxycart.product_save_method);
        } 
        else {                           
-            $(".dz-success-mark").hide();
-            $(".dz-error-mark").show();
-            $(".moxy-msg").show();
-            $("#moxy-result").html("Failed");
-            $("#moxy-result-msg").html(response.data.msg);
-            $(".moxy-msg").delay(3200).fadeOut(400);
+            jQuery(".dz-success-mark").hide();
+            jQuery(".dz-error-mark").show();
+            show_error(response.data.msg);
        }
     });
 

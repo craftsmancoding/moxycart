@@ -14,6 +14,28 @@ else {
 }
 
 /**
+ * When upload happens (via dropzone), we need to add the asset and its info to the
+ * mix.  This must avoid duplicates!
+ * @param object fields asset data
+ */
+function add_asset(fields) {
+    console.log('[add_asset]', fields);
+    var arrayLength = moxycart.product.Assets.length;
+    for (var i = 0; i < arrayLength; i++) {
+        if (moxycart.product.Assets[i].asset_id == fields.asset_id) {
+            return; // already exists        
+        }
+    }
+    console.log('[add_asset] New asset - adding '+fields.asset_id);
+    // Add it on!
+    moxycart.product.Assets.push({
+        asset_id: fields.asset_id,
+        is_active: 1,
+        Asset: fields 
+    });
+}
+
+/**
  * Draw a product's images and assets, obeying the system settings for thumb dimensions
  * See also Asset Manager's app.js file & its draw_tab func.
  */
@@ -42,19 +64,6 @@ function draw_assets() {
     });
     jQuery("#product_assets").disableSelection();
     
-/*    
-    //Groups.push(Assets[asset_id].group);
-    Groups = array_unique(Groups);
-    
-    jQuery('#asset_category_filters').html('<li class="all first"><a href="#">All</a></li>');
-    var arrayLength = Groups.length;
-    for (var i = 0; i < arrayLength; i++) {
-        if (Groups[i]) {
-            jQuery('#asset_category_filters').append( category_tpl({"group": Groups[i]}));
-        }
-    }  
-*/
-
 
 /*
     // Filter product_assets
@@ -162,13 +171,11 @@ function open_thumbail_modal(url_target,val_target,desired_w,desired_h) {
     if(typeof desired_w === "undefined") desired_w = moxycart.settings.thumbnail_width;
     if(typeof desired_h === "undefined") desired_h = moxycart.settings.thumbnail_height;
     console.log('[open_thumbail_modal]',url_target,val_target);
-//    console.log('Thumb dimensions: %sx%s',moxycart.settings.thumbnail_width,moxycart.settings.thumbnail_height)
     var arrayLength = moxycart.product.Assets.length;
     if (arrayLength < 1) {
         alert('You have not uploaded any assets yet.');
         return;
     }
-    //alert(moxycart.settings.thumbnail_height+10);
     jQuery.colorbox({
         inline:false, 
         width: "80%",
