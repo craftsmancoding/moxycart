@@ -1,7 +1,3 @@
-<?php
-print $this->getMsg();
-?>
-
 <div class="moxycart_canvas_inner">
     <h2 class="moxycart_cmp_heading">View Orders</h2>
 </div>

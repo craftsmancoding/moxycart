@@ -1,3 +1,5 @@
+<div id="moxycart_msg"></div>
+
 <div class="clearfix">
     <a class="btn" href="<?php print static::url('page','productcreate',array('store_id'=>$data['store_id'])); ?>">Add Product</a> 
     &nbsp;

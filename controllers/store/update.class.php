@@ -19,6 +19,7 @@ class StoreUpdateManagerController extends ResourceUpdateManagerController {
 		//Add below for customization
         $this->addJavascript($assets_url . 'js/store.js');
         $this->addJavascript($assets_url.'js/jquery.min.js');
+        $this->addJavascript($assets_url.'js/jquery-ui.js');
         $this->addJavascript($assets_url . 'js/jquery.colorbox.js');
         $this->addJavascript($assets_url . 'js/app.js');
         $this->addCss($assets_url.'css/colorbox.css');

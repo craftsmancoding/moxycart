@@ -81,18 +81,10 @@ class Store extends modResource {
     } 
 
     /**
-     * Override the parent function to get our special properties.
-     * @param string $namespace
      * @return array
      */
-/*
-    public function getProperties($namespace='core') {
-        $properties = parent::getProperties($namespace);
-        if (!empty($properties)) {
-            return $properties;
-        }
+    public function getDefaultProperties() {
 
-        // Properties defaults
         $properties = array (
             'type'      => 'regular',
             'template_id'  => $this->xpdo->getOption(
@@ -107,7 +99,6 @@ class Store extends modResource {
         
         return $properties;
     }
-*/
 
     /**
      *
@@ -136,6 +127,7 @@ class Store extends modResource {
         	}",
         );
 /*
+        // FUTURE TODO
         $menu[] = array(
             'text' => $this->xpdo->lexicon('download_create_here'),
             'handler' => "function(itm,e) { 
@@ -230,7 +222,6 @@ class Store extends modResource {
         if (!$this->isNew()) {    
             if($Products = $this->xpdo->getCollection('Product', array('store_id'=>$this->get('id')))) {
                 foreach ($Products as $P) {
-                    // $P = new \Moxycart\Product($this->xpdo, $P); // causes PHP Fatal error: Allowed memory size
                     $P->save();
                 }
             }
@@ -256,6 +247,7 @@ class StoreCreateProcessor extends modResourceCreateProcessor {
      */
     public function afterSave() {
         $this->object->set('class_key','Store');
+        $this->object->set('hide_children_in_tree', true);
         $this->object->set('cacheable',true);
         $this->object->set('isfolder',false);
         
@@ -271,19 +263,11 @@ class StoreCreateProcessor extends modResourceCreateProcessor {
      * @return boolean
      */
     public function beforeSave() {
-//        $raw = $this->getProperties(); // <-- this will have raw values
-//        $properties = $this->object->getProperties('moxycart'); //<-- we need to update these values
         $this->object->set('class_key','Store');
+        $this->object->set('hide_children_in_tree', true);
+        $this->object->set('cacheable',true);
+        $this->object->set('isfolder',false);
         
-/*
-        $properties['product_type'] = $this->modx->getOption('product_type',$raw);
-        $properties['product_template'] = $this->modx->getOption('product_template',$raw);
-        $properties['track_inventory'] = ($this->modx->getOption('track_inventory',$raw) == 'Yes')? 1:0;
-        $properties['sort_order'] = $this->modx->getOption('sort_order',$raw);
-        $properties['qty_alert'] = $this->modx->getOption('qty_alert',$raw);
-*/
-
-//        $this->object->setProperties($properties,'moxycart');
         return parent::beforeSave();
 
     }
@@ -313,57 +297,15 @@ class StoreUpdateProcessor extends modResourceUpdateProcessor {
      * Override modResourceUpdateProcessor::beforeSave to provide custom functionality, saving settings for the container
      * to a custom field in the DB.
      *
-     * The Post data comes thru flattened (boo)
-     *
-            [specs_4] => on
-            [specs_12] => on
-            [taxonomies_3] => on
-            [taxonomies_4] => on
-            [variations_1] => Option Only
-            [variations_2] => Variant
-            [variations_3]
-     * On the flip side, it should be available in JS via this path: MODx.activePage.config.record.properties.moxycart
-     *
      * {@inheritDoc}
      * @return boolean
      */
     public function beforeSave() {
-//        $raw = $this->getProperties(); // <-- this will have raw values
-//        $properties = $this->object->getProperties('moxycart'); //<-- we need to update these values
         $this->object->set('class_key','Store');
-        
-/*
-        $properties['product_type'] = $this->modx->getOption('product_type',$raw);
-        $properties['product_template'] = $this->modx->getOption('product_template',$raw);
-        $properties['track_inventory'] = ($this->modx->getOption('track_inventory',$raw) == 'Yes')? 1:0;
-        $properties['sort_order'] = $this->modx->getOption('sort_order',$raw);
-        $properties['qty_alert'] = $this->modx->getOption('qty_alert',$raw);
+        $this->object->set('hide_children_in_tree', true);
+        $this->object->set('cacheable',true);
+        $this->object->set('isfolder',false);
 
-        // Fresh start...
-        $properties['specs'] = array();
-        $properties['taxonomies'] = array();
-        $properties['variations'] = array();
-        foreach ($raw as $k => $v) {
-            $len = strlen($k);
-            if ($this->starts_with($k,'specs')) {
-                $properties['specs'][substr($k,(6 - $len))] = true;
-            }
-            if ($this->starts_with($k,'taxonomies')) {
-                $properties['taxonomies'][substr($k,(11 - $len))] = true;
-            }
-            if ($this->starts_with($k,'variations')) {
-                $properties['variations'][substr($k,(11 - $len))] = $v;
-            } 
-        }
-*/
-
-//        $this->object->setProperties($properties,'moxycart');
         return parent::beforeSave();
     }
-
-    // http://stackoverflow.com/questions/834303/php-startswith-and-endswith-functions
-    private function starts_with($haystack, $needle) {
-        return $needle === '' || strpos($haystack, $needle) === 0;
-    }
-
 }

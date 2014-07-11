@@ -67,9 +67,9 @@ switch ($modx->event->name) {
         if ('Store' == $resource->get('class_key')) {
             if ($storesettings = $resource->get('StoreSettings')) {
                 $modx->log(modX::LOG_LEVEL_DEBUG,print_r($storesettings,true),'','Moxycart Plugin:OnDocFormSave');
-                $props = $resource->getProperties('moxycart');
-                $props['moxycart'] = $storesettings;
-                $resource->setProperties($props);
+                //$props = $resource->getProperties('moxycart');
+                //$props['moxycart'] = $storesettings;
+                $resource->setProperties($storesettings,'moxycart',true);
                 $resource->save();
             }
         }

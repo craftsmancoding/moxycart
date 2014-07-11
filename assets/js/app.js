@@ -227,7 +227,6 @@ function update_asset(form_id) {
                 moxycart.product.Assets[i][key] = ModalData[key];
             }
             update_product_assets(ModalData);
-            //console.log('UPDATED ASSET:', moxycart.product.Assets[i]);
             break;
         }
     }
@@ -244,21 +243,6 @@ function delete_asset(asset_id) {
     console.log('[delete_asset] asset_id: '+asset_id);
     // TODO: conf. box with 2 options: delete vs. disassociate
     jQuery('#delete_asset_modal').data('asset_id', asset_id).dialog('open');
-    
-/*
-  	if (confirm("Are you Sure you want to Delete this Image?")) {
-  		jQuery(this).removeClass('over-trash');
-  		mapi('productasset','delete',{"asset_id":asset_id,"product_id":product.product_id});
-        var arrayLength = moxycart.product.Assets.length;
-        for (var i = 0; i < arrayLength; i++) {
-            if (moxycart.product.Assets[i].asset_id == asset_id) {
-                moxycart.product.Assets.splice(i,1); // unset
-            }
-        }
-  		jQuery('#product-asset-'+asset_id).remove();
-  		draw_assets();
-    }
-*/
 }
 
 /**

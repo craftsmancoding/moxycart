@@ -1,8 +1,3 @@
-<?php
-$a = (int) $_GET['a'];
-print $this->getMsg();
-?>
-
 <div class="moxycart_canvas_inner">
     <h2 class="moxycart_cmp_heading">Manage Product Options</h2>
 </div>

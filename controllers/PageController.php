@@ -820,9 +820,20 @@ class PageController extends BaseController {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
 
         $store_id = (int) $this->modx->getOption('store_id', $scriptProperties);
+
+        if ($store_id && $Store = $this->modx->getObject('Store', $store_id)) {
+            $settings = $Store->getProperties('moxycart');
+        }
+        else {
+            $Store = $this->modx->newObject('Store');
+            $settings = $Store->getDefaultProperties();
+        }
+        foreach ($settings as $k => $v){
+            $this->setPlaceholder('default.'.$k, $v);
+        }
         $this->client_config['store_id'] = $store_id;
         $this->setPlaceholder('store_id', $store_id);
-        $this->_setUIdata();
+        $this->_setUIdata(); 
         return $this->fetchTemplate('main/storesettings.php');    
     }
     

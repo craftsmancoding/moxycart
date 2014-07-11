@@ -8,10 +8,6 @@
 
 <div class="moxycart_canvas_inner">
 
-
-
-<?php print $this->getMsg(); ?>
-
 <?php if (isset($data['msg'])): ?>
     <div class="danger">
         <?php print $data['msg']; ?>
