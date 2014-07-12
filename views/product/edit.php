@@ -433,10 +433,16 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                  <label class="row-lbl" for="modal_asset_alt">Alt</label>
                                 <input class="row-field" type="text" name="Asset.alt" id="modal_asset_alt" value="{{Asset.alt}}" />
                             </div>
-        
+
                             <div class="row-input">
-                                <label class="row-lbl" for="modal_asset_group">Group</label>
-                                <input class="row-field" type="text" name="group" id="modal_asset_group" value="{{group}}" />
+                                 <label class="row-lbl" for="modal_asset_group">Group</label>
+                                 <select name="group" id="group-select">
+                                    <option></option>
+                                    {{#each Groups}}
+                                        <option>{{this}}</option>
+                                    {{/each}}
+                                 </select>
+                                <a href="{{manage_groups_url}}" class="btn">Manage Groups</a>
                             </div>
                            
                             

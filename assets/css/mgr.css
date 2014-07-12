@@ -1073,7 +1073,7 @@ legend + .control-group {
   /* IE7 inline-block hack */
 
   *zoom: 1;
-  padding: 10px 8px;
+  padding: 7px 8px;
   margin-bottom: 0;
   font-size: 14px;
   line-height: 20px;
@@ -4681,6 +4681,12 @@ display: block;
   color: #707070;
   display: block;
   clear: both;
+}
+
+#group-select {
+  width: 50%;
+  height: 28px;
+padding: 0px;
 }
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */
