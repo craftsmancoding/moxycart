@@ -170,7 +170,7 @@ moxycart.product.Assets.push({
             "Cancel": function() {
                 jQuery( this ).dialog( "close" );
             }
-        }   
+        }
     });
 
         

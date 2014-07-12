@@ -27,7 +27,8 @@ class PageController extends BaseController {
         static::$x =& $modx;
         // Set up any config data needed by the HTML client
         $this->client_config = array(
-            'controller_url' => $this->config['controller_url']
+            'controller_url' => $this->config['controller_url'],
+            'assman_controller_url' => self::url($class='',$method='index',$args=array(),$namespace='assman')
         );
 
         $this->modx->addPackage('foxycart',$this->config['core_path'].'model/orm/','foxy_');

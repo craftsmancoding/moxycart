@@ -115,6 +115,8 @@ function open_asset_modal(asset_id) {
         }
     }
     
+    Asset['Groups'] = assman.Groups;
+    Asset['manage_groups_url'] = moxycart.assman_controller_url +"&class=page&method=groups";
     jQuery.colorbox({
         inline:false, 
         width: "850",
@@ -131,7 +133,10 @@ function open_asset_modal(asset_id) {
         //innerHeight:moxycart.settings.thumbnail_height+10,
         html:function(){
             return moxycart.tpls.asset_modal(Asset);
-        }
+        },
+        onComplete: function() {
+            jQuery('#group-select').val(Asset.group);
+        } 
     });
 }
 
