@@ -44,11 +44,13 @@ class PageController extends BaseController {
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery-ui.js'); 
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.tabify.js');
         $this->modx->regClientStartupScript($this->config['assman_assets_url'].'js/dropzone.js');
+        $this->modx->regClientStartupScript($this->config['assman_assets_url'].'js/jquery.quicksand.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/bootstrap.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/form2js.js');        
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/jquery.colorbox.js');      
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/handlebars.js');
         $this->modx->regClientStartupScript($this->config['assets_url'].'js/app.js');
+
         
     }
 
@@ -343,6 +345,14 @@ class PageController extends BaseController {
             'use_editor' => $this->modx->getOption('use_editor'),
         );
         $this->client_config['product_save_method'] = 'edit';
+
+
+        $A = $this->modx->newObject('Asset');
+        $assman['Groups'] = $A->getAssetGroups();
+        $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+                var assman = '.json_encode($assman).';
+            </script>');
+
 
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     	   console.log("[moxycart] '.__FUNCTION__.'");

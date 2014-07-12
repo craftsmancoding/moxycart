@@ -29,7 +29,8 @@ function product_init() {
     moxycart.tpls.product_asset = Handlebars.compile(jQuery('#product_asset_tpl').html());
     moxycart.tpls.thumbnail_image = Handlebars.compile(jQuery('#thumbnail_image_tpl').html());
     moxycart.tpls.asset_modal = Handlebars.compile(jQuery('#asset_modal_tpl').html());
-    
+    moxycart.tpls.category = Handlebars.compile(jQuery('#asset_group_tpl').html());
+
     populate_form(moxycart.product);
 	jQuery('#moxytab').tabify();
 	jQuery('.datepicker').datepicker();
@@ -267,6 +268,45 @@ moxycart.product.Assets.push({
         }
     });
 
+
+    //List all Categories From Asset Manager
+    jQuery('#asset_category_filters').html('<li class="all first"><a href="#">All</a></li>');
+    var arrayLength = assman.Groups.length;
+    for (var i = 0; i < arrayLength; i++) {
+        if (assman.Groups[i]) {
+            jQuery('#asset_category_filters').append( moxycart.tpls.category({"group": assman.Groups[i]}));        
+        }
+    } 
+
+    // Filter product_assets
+    // Clone product_assets items to get a second collection for Quicksand plugin (image gallery)
+    var $portfolioClone = jQuery("#product_assets").clone();
+    
+    // Attempt to call Quicksand on every click event handler
+    jQuery("#asset_category_filters a").click(function(e){
+        
+        jQuery("#asset_category_filters li").removeClass("current");
+        jQuery("#asset_category_filters li").removeClass("first"); 
+        
+        // Get the class attribute value of the clicked link
+        var $filterClass = jQuery(this).parent().attr("class");
+
+        if ( $filterClass == "all" ) {
+            var $filteredPortfolio = $portfolioClone.find("li");
+        } else {
+            var $filteredPortfolio = $portfolioClone.find("li[data-type~=" + $filterClass + "]");
+        }
+        
+        // Call quicksand
+        jQuery("#product_assets").quicksand( $filteredPortfolio, { 
+            duration: 800, 
+            easing: 'swing' 
+        });
+
+        jQuery(this).parent().addClass("current");
+    })
+    
+
 };
 
 
@@ -312,6 +352,11 @@ jQuery(document).ready(function() {
 });
 </script>
 
+<!--Assets Category-->
+<script id="asset_group_tpl" type="text/x-handlebars-template">
+    <li class="{{group}}"><a href="#">{{group}}</a></li>
+</script>
+
 <!-- !related_product_tpl -->
 <script id="related_product_tpl" type="text/x-handlebars-template">
 <tr>
@@ -334,7 +379,7 @@ jQuery(document).ready(function() {
 onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').dialog('open');"
 -->
 <script id="product_asset_tpl" type="text/x-handlebars-template">
-<li class="li_product_asset sortable" id="product-asset-{{Asset.asset_id}}">
+<li class="li_product_asset sortable" data-id="{{Asset.asset_id}}" data-type="{{group}}" id="product-asset-{{Asset.asset_id}}" style="cursor:pointer;">
 	<div class="img-info-wrap">
         <img src="{{Asset.thumbnail_url}}" alt="{{Asset.alt}}" width="{{Asset.thumbnail_width}}" height="{{Asset.thumbnail_height}}" onclick="javascript:open_asset_modal('{{Asset.asset_id}}');" class="{{#unless is_active}}inactive{{/unless}}" style="cursor:pointer;"/>
 	    <input type="hidden" id="asset_asset_id_{{Asset.asset_id}}" name="Assets[asset_id][]" value="{{Asset.asset_id}}"/>
@@ -424,7 +469,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                         </div> 
         
                         <div class="row-input">
-                            <span id="modal_asset_img"><img src="{{Asset.url}}" width="{{Asset.width}}" height="{{Asset.height}}" /></span>
+                            <span id="modal_asset_img"><img src="{{Asset.url}}" width="{{Asset.width}}" /></span>
                         </div>
         
                     </div>
@@ -911,6 +956,9 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
     <?php endif; // moxycart.enable_reviews ?>
     
 	<div id="assets_tab" class="content">	
+
+        <ul id="asset_category_filters"></ul>
+
         <div class="dropzone-wrap" id="image_upload">
 
         	<ul class="clearfix ui-sortable" id="product_assets"></ul>

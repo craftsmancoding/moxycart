@@ -550,6 +550,10 @@ img.inactive {
 }
 
 
+#asset_modal_form-inner {
+  padding-bottom: 50px;
+}
+
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */
 .clear:before, .clear:after,
