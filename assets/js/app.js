@@ -147,13 +147,14 @@ function open_asset_modal(asset_id) {
  * @param integer store_id optional
  */
 function open_inventory_modal(store_id) {
-    console.log('[open_inventory_modal]',moxycart);
+    var url = moxycart.controller_url + '&class=page&method=productinventory&_nolayout=1&store_id='+store_id;
+    console.log('[open_inventory_modal]',url);
     
     jQuery.colorbox({
         inline:false,
         width: "70%",
         height: "90%",
-        href: moxycart.controller_url + '&class=page&method=productinventory&_nolayout=1&store_id='+store_id,
+        href: url,
         onComplete: function(){
             jQuery("#product_list").sortable();
             jQuery("#product_list").disableSelection();
