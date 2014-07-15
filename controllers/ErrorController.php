@@ -22,7 +22,6 @@ class ErrorController extends BaseController {
      */
     public function get404(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
-        //$this->addStandardLayout($scriptProperties);
         $this->scriptProperties['_nolayout'] = true;
         $this->setPlaceholders($scriptProperties);    
         return $this->fetchTemplate('error/404.php');
@@ -36,8 +35,6 @@ class ErrorController extends BaseController {
     public function getInstall(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));  
         $this->scriptProperties['_nolayout'] = true;
-//        return print_r($this->config['errors'],true);
-//        $this->scriptProperties['_nolayout'] = true;
         $this->setPlaceholders($scriptProperties); 
         $this->setPlaceholder('errors', $this->config['errors']);
         return $this->fetchTemplate('error/install.php');
