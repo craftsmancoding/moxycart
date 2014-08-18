@@ -15,7 +15,12 @@
             <?php foreach ($data['errors'] as $e): ?>            
                     <li><?php print $e; ?></li>
             <?php endforeach; ?>
-        </ul>
+        </ul>    
+        <hr/>
+        <p>You must <a href="<?php print MODX_MANAGER_URL . '?a=70'; ?>">edit your System Settings</a>.</p>
     </div>
+    
+    
+    
 </div>
 <?php include dirname(dirname(__FILE__)).'/footer.php';  ?>

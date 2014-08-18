@@ -499,7 +499,9 @@ class PageController extends BaseController {
      public function getProductInventory(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
         $store_id = (int) $this->modx->getOption('store_id', $scriptProperties);
-
+        if (!$store_id) {
+            unset($scriptProperties['store_id']);
+        }
         $Obj = new Product($this->modx);
         $scriptProperties['limit'] = 0;
         $scriptProperties['sort'] = 'Product.seq';
@@ -814,6 +816,9 @@ class PageController extends BaseController {
         $this->client_config['store_id'] = $store_id;
         $this->setPlaceholder('store_id', $store_id);
         $this->scriptProperties['_nolayout'] = true;
+        if (!$store_id) {
+            unset($scriptProperties['store_id']);
+        }
         $Obj = new Product($this->modx);
         $results = $Obj->all($scriptProperties);
         $count = $Obj->count($scriptProperties);

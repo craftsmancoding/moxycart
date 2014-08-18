@@ -155,7 +155,7 @@ class MoxycartIndexManagerController extends \Moxycart\BaseController {
             self::$errors[] = 'moxycart.api_key cannot be empty';
         }
         elseif(strlen($api_key) < 60) {
-            self::$errors[] = 'moxycart.api_key is too short to be Foxycart API key.';        
+            self::$errors[] = 'moxycart.api_key is too short to be a Foxycart API key.';        
         }
         elseif (substr($api_key, 0, 6) != 'm42Ccf') {
             self::$errors[] = 'moxycart.api_key must begin with "m42Ccf"';
