@@ -245,6 +245,7 @@ class BaseController extends \modExtraManagerController {
         unset($filters['class']);
         unset($filters['method']);
         unset($filters['_nolayout']);
+
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Calling Controller: ' .get_class($this).'::'.$method.' data: '.print_r($filters,true));
         $placeholders = $this->$method($filters);
         

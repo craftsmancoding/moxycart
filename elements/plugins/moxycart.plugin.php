@@ -4,7 +4,7 @@
  * @description Multi-purpose plugin for Moxycart handling URL routing and manager customizations
  * @PluginEvents OnManagerPageInit,OnPageNotFound,OnBeforeCacheUpdate,OnDocFormSave
  */
- 
+
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
 include_once $core_path .'vendor/autoload.php';
 $cache_dir = 'moxycart';
@@ -74,4 +74,4 @@ switch ($modx->event->name) {
             }
         }
         break;
-}        
+}

@@ -1,7 +1,7 @@
 {
     "name": "craftsmancoding/moxycart",
     "description": "A turnkey FoxyCart eCommerce solution for MODX Revolution.",
-    "type": "library",
+    "type": "modx-package",
     "keywords": ["modx", "foxycart", "ecommerce"],
     "homepage": "http://github.com/craftsmancoding/moxycart",
     "license": "GPL-2.0",
@@ -59,7 +59,7 @@
     "extra": {
         "package_name": "Moxycart",
         "namespace": "moxycart",
-        "version": "0.9.0",
+        "version": "0.9.1",
         "release": "dev",
         "category":"Moxycart",
         "core_path": "",

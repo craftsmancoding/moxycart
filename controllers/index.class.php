@@ -1,5 +1,7 @@
 <?php
 /**
+ * MODX 2.3.x
+ *
  * This is what MODX calls our "base controller". Per MODx parlance, this file must reside in the 
  * directory defined as the namespace's core path.  After that tip-of-the-hat politeness to the MODX
  * "rules", we head off the map on our own custom path: all manager requests to our own classes (see 
@@ -63,10 +65,10 @@
  *
  * @package moxycart
  */
- 
+
 // Gotta do this here because we don't have a reliable event for this. 
-require_once dirname(__FILE__) .'/vendor/autoload.php';
-class IndexManagerController extends \Moxycart\BaseController {
+require_once dirname(dirname(__FILE__)) .'/vendor/autoload.php';
+class MoxycartIndexManagerController extends \Moxycart\BaseController {
 
     public static $errors = array();
     
