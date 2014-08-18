@@ -40,6 +40,7 @@ $c = $modx->newQuery('ProductTerm');
 $c->where(array(
     'Term.published'=>true,
     'ProductTerm.term_id'=>$term_id,
+    'Product.is_active'=>1,
 ));
 $c->sortby('Product.seq','ASC');
 
@@ -52,7 +53,7 @@ if ($Products) {
         $c = $modx->newQuery('ProductField');
         $c->where(array(
             'product_id' => $P->get('product_id'),
-            'Field.is_active' => true
+            'Field.is_active' => 1
         ));
         $c->sortby('Field.seq','ASC');    
         
