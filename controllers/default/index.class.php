@@ -1,6 +1,8 @@
 <?php
 /**
  * MODX 2.3.x
+ * Groan... this redundant file "catches" requests that do not get handled by the main index.class.php...
+ * still figuring out the routing for CMPS in 2.3...
  *
  * This is what MODX calls our "base controller". Per MODx parlance, this file must reside in the 
  * directory defined as the namespace's core path.  After that tip-of-the-hat politeness to the MODX
@@ -67,16 +69,13 @@
  */
 
 // Gotta do this here because we don't have a reliable event for this. 
-require_once dirname(dirname(__FILE__)) .'/vendor/autoload.php';
+require_once dirname(dirname(dirname(__FILE__))) .'/vendor/autoload.php';
 // MoxycartIndexManagerController is used when the namespace and action are read correctly...
 // MODX looks for IndexManagerController when the search hits a snag somehow
-class MoxycartIndexManagerController extends \Moxycart\BaseController {
+class IndexManagerController extends \Moxycart\BaseController {
 
     public static $errors = array();
     
-    public static function getInstanceDeprecated(\modX &$modx, $className, array $config = array()) {
-        return self::getInstance($modx,$className,$config);
-    }
     /**
      * This acts as a class loader.  Beware the difficulties with testing with the "new" keyword!!!
      * See composer.json's autoload section: Controller classes should be found in the controllers/ directory
@@ -89,9 +88,10 @@ class MoxycartIndexManagerController extends \Moxycart\BaseController {
      * @param array array config
      * @return instance of a controller object
      */
-    public static function getInstance(\modX &$modx, $className, array $config = array()) {
+    public static function getInstanceDeprecated(\modX &$modx, $className, array $config = array()) {
 //        $modx->setLogLevel(3);
         $config['method'] = (isset($_REQUEST['method'])) ? $_REQUEST['method'] : 'index';
+
         $class = (isset($_REQUEST['class'])) ? $_REQUEST['class'] : 'Page'; // Default Controller
         
         if (!is_scalar($class)) {
