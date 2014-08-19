@@ -13,16 +13,14 @@ Valid pagename can be any function in the PageController (minus the get/post pre
         <div class=" x-panel container x-panel-noborder">
             <div class="x-panel-bwrap">
 
-                
+
                     <div id="moxycart_header" class="clearfix">
                         <ul id="moxycart_nav">
+          
                             <li class="moxycart_nav_item">
-                                <strong>Manage:</strong>
-                            </li>
-                            <!--li class="moxycart_nav_item moxycart_nav_home"-->
                                 <!--span class="linklike" onclick="javascript:paint('index');">Home</span-->
-                                <!--a href="<?php print self::page('index'); ?>">Home</a-->
-                            <!--/li-->
+                                <a class="<?php print ($_GET['method'] == 'index') ? 'current' : '' ; ?>" href="<?php print self::page('index'); ?>">Manage</a>
+                            </li>
                             <li class="moxycart_nav_item">
                                 <!--span class="linklike" onclick="javascript:paint('products');">Products</span-->
                                 <a class="<?php print ($_GET['method'] == 'products') ? 'current' : '' ; ?>" href="<?php print self::page('products'); ?>">Products</a>

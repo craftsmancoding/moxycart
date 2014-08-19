@@ -7,7 +7,7 @@
 #moxycart_header a,
 #moxycart_canvas a,
 .moxycart_nav_item a {
-  color: #727272;
+  color: #3697cd;
   text-decoration: none;
 }
 
@@ -50,10 +50,17 @@ h2.moxycart_cmp_heading {
 .moxycart_nav_item {
     display:inline;
     padding: 10px;
+    color: #3697cd;
+    font-size: 13px;
 }
 
+.moxycart_nav_item a {
+  color: #3697cd;
+}
 .moxycart_nav_item a.current {
-  font-weight: bold;
+  background: #fff;
+  padding: 7px 10px;
+  border-top: 3px solid #3697cd;
 }
 /* not sure if we need this... */
 .moxycart_nav_home {
@@ -121,6 +128,7 @@ h2.moxycart_cmp_heading {
     border-radius: 5px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
+    color: #727272;
 }
 #moxycart_buttons ul li a:hover {
   background: #3697cd;
