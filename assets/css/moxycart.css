@@ -220,22 +220,6 @@ h2.moxycart_cmp_heading {
    font-size: 10px;
 }
 
-.delete-btn {
-  background-color: hsl(0, 77%, 31%) !important;
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#e22121", endColorstr="#8b1212");
-  background-image: -khtml-gradient(linear, left top, left bottom, from(#e22121), to(#8b1212));
-  background-image: -moz-linear-gradient(top, #e22121, #8b1212);
-  background-image: -ms-linear-gradient(top, #e22121, #8b1212);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e22121), color-stop(100%, #8b1212));
-  background-image: -webkit-linear-gradient(top, #e22121, #8b1212);
-  background-image: -o-linear-gradient(top, #e22121, #8b1212);
-  background-image: linear-gradient(#e22121, #8b1212);
-  border-color: #8b1212 #8b1212 hsl(0, 77%, 26%);
-  color: #fff !important;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.33);
-  -webkit-font-smoothing: antialiased;
-}
 
 .btn-cancel {
   margin-left: 10px;
@@ -331,10 +315,23 @@ label,
     margin-left: 150px;
 }
  */
-table {
+
+table.classy {
     width: 100%;
 }
-table thead a {
+
+table.classy thead {
+    background: #e4e9ee; 
+}
+
+table.classy thead tr th {
+  padding: 15px 5px;
+  color: #696969;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+table.classy thead a {
     color: #fff;
 }
 
