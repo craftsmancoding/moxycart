@@ -1,17 +1,19 @@
 <div id="moxycart_msg"></div>
 
-<div class="clearfix">
-    <a class="btn" href="<?php print static::url('page','productcreate',array('store_id'=>$data['store_id'])); ?>">Add Product</a> 
-    &nbsp;
-    <span class="btn btn-moxycart" onclick="javascript:open_inventory_modal(<?php print $data['store_id']; ?>);">Quick Edit</span>
-        <div class="pull-right">   
-                <input type="text" name="searchterm" id="searchterm" placeholder="Search..." value="<?php print htmlentities($data['searchterm']); ?>"/>    
-                <span class="button btn moxycart-btn" onclick="javascript:get_products(0);">Search</span>
-                <span class="btn" onclick="javascript:show_all_products();">Show All</span>
+    <div class="clearfix">
+        <h2 class="moxycart_cmp_heading pull-left" id="moxycart_pagetitle">Manage Products</h2>
+        <div class="pull-right">
+              <a class="btn btn-primary" href="<?php print static::url('page','productcreate',array('store_id'=>$data['store_id'])); ?>">Add Product</a> 
+        &nbsp;
+        <span class="btn btn-moxycart" onclick="javascript:open_inventory_modal(<?php print $data['store_id']; ?>);">Quick Edit</span>
         </div>
+    </div>
 
+<div class="search-form-wrap">
+        <input type="text" name="searchterm" id="searchterm" class="search-input2" placeholder="Search..." value="<?php print htmlentities($data['searchterm']); ?>"/>    
+    <span class="button btn moxycart-btn" onclick="javascript:get_products(0);">Search</span>
+    <span class="btn" onclick="javascript:show_all_products();">Show All</span>
 </div>
-
 
 <?php if ($data['results']): ?>
 
@@ -35,7 +37,7 @@
             <td><?php print $r[$k]; ?></td>
         <?php endforeach; ?>
         
-        <td><a href="<?php print static::url('page','productedit',array('product_id'=>$r['product_id'])); ?>" class="btn">Edit</a> <a href="<?php print static::url('page','productpreview',array('product_id'=>$r['product_id'])); ?>" class="btn">Preview</a></td>
+        <td><a href="<?php print static::url('page','productedit',array('product_id'=>$r['product_id'])); ?>" class="btn btn-mini btn-info">Edit</a> <a href="<?php print static::url('page','productpreview',array('product_id'=>$r['product_id'])); ?>" class="btn btn-mini">Preview</a></td>
     </tr>
 <?php endforeach; ?>
     </tbody>

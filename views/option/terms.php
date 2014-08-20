@@ -28,7 +28,7 @@ function remove_term(event) {
 <div class="moxycart_canvas_inner">
 
 
-<span class="button btn moxycart-btn" onclick="javascript:add_term();">Add Term</span>
+<span class="button btn moxycart-btn btn-primary" onclick="javascript:add_term();">Add Term</span>
 
 <?php
 /*
@@ -90,7 +90,7 @@ print \Formbuilder\Form::open($data['baseurl'])
                             <input type="text" name="mod_category[]" style="width:100px;" placeholder="Default" value="<?php print htmlentities($t->mod_category); ?>" />
                         </td>        
                         <td>
-                            <span class="btn" onclick="javascript:remove_term.call(this,event);">x</span>
+                            <span class="btn btn-info btn-mini" onclick="javascript:remove_term.call(this,event);">x</span>
                         </td>
                     </tr>
                 <?php endforeach; ?>

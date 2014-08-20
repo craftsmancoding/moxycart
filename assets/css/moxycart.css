@@ -345,20 +345,20 @@ tr:nth-child(even) {background: #f5f6f9}
 tr:nth-child(odd) {background: #fff}
 
 .unmodifier {
-  background: #5f5f5f;
+
 }
 
 .modifier {
-  color: #fff !important;
+  color: #696969 !important;
   text-transform: uppercase;
   font-weight: bold;
-  background: #888888;
+  background: #c1cdd9;
   text-align: center;
   font-size: 12px !important;
 }
 
 .modifier-th {
-  background: #888888 !important;
+  background: #c1cdd9 !important;
 }
 
 

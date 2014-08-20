@@ -18,6 +18,6 @@
         <input type="text" name="terms[][mod_category]" placeholder="Default" value="" />
     </td>        
     <td>
-        <span class="button" onclick="javascript:remove_term();">x</span>
+        <span class="button btn-info" onclick="javascript:remove_term();">x</span>
     </td>
 </tr>
