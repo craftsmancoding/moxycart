@@ -19,7 +19,7 @@ Valid pagename can be any function in the PageController (minus the get/post pre
           
                             <li class="moxycart_nav_item">
                                 <!--span class="linklike" onclick="javascript:paint('index');">Home</span-->
-                                <a class="<?php print ($_GET['method'] == 'index') ? 'current' : '' ; ?>" href="<?php print self::page('index'); ?>">Manage</a>
+                                <a class="<?php print ($_GET['method'] == 'index' || !isset($_GET['method'])) ? 'current' : '' ; ?>" href="<?php print self::page('index'); ?>">Manage</a>
                             </li>
                             <li class="moxycart_nav_item">
                                 <!--span class="linklike" onclick="javascript:paint('products');">Products</span-->
