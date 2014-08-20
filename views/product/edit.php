@@ -588,7 +588,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                             
 								<label for="thumbnail">Primary Image</label>
 
-								<div id="thumbnail" style="border:1px dotted grey;width:<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>px;height:<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>px;" onclick="javascript:open_thumbail_modal('asset_thumbnail','asset_id',<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>,<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>);" style="cursor:pointer;">
+								<div id="thumbnail" style="border:1px solid #eee;margin-bottom:25px;width:<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>px;height:<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>px;" onclick="javascript:open_thumbail_modal('asset_thumbnail','asset_id',<?php print $this->modx->getOption('moxycart.thumbnail_width'); ?>,<?php print $this->modx->getOption('moxycart.thumbnail_height'); ?>);" style="cursor:pointer;">
 								    <input type="hidden" name="asset_id" id="asset_id" value=""/>
 								    <span id="asset_thumbnail">
 								    <img id="thumbnail_img" 
