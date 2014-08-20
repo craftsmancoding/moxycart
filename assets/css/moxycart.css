@@ -471,7 +471,6 @@ table.products-tbl tr:hover{
 
 table.products-tbl td {
   font-size: 14px;
-  border-bottom: 1px solid #ececec;
   padding-top:10px;
   padding-bottom:8px;
 }
@@ -536,6 +535,19 @@ img.inactive {
 
 #asset_modal_form-inner {
   padding-bottom: 50px;
+}
+
+.search-product{
+  margin-left: 20px;
+  margin-top: 10px;
+  margin-bottom: -5px;
+}
+.search-input {
+  width: 80%;
+}
+
+.moxycart_canvas_inner-products {
+  padding-top: 0px;
 }
 
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.

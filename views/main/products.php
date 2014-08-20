@@ -1,24 +1,24 @@
-<div class="moxycart_canvas_inner">
-    <h2 class="moxycart_cmp_heading" id="moxycart_pagetitle">Manage Products</h2>
+<div class="moxycart_canvas_inner clearfix">
+    <h2 class="moxycart_cmp_heading pull-left" id="moxycart_pagetitle">Manage Products</h2>
+    <div class="pull-right">
+         <a href="<?php print static::page('productcreate'); ?>" class="button btn moxycart-btn btn-primary pull-left">Add Product</a>
+        &nbsp;
+        <span class="btn btn-moxycart" onclick="javascript:open_inventory_modal(0);">Quick Edit</span>
+    </div>
 </div>
 
-<div class="moxycart_canvas_inner">
-
-<div class="clearfix">
-    <a href="<?php print static::page('productcreate'); ?>" class="button btn moxycart-btn btn-primary pull-left">Add Product</a>
-    &nbsp;
-    <span class="btn btn-moxycart" onclick="javascript:open_inventory_modal(0);">Quick Edit</span>
-        <div class="pull-right">   
-            <form action="<?php print static::page('products'); ?>" method="post">
-                <input type="text" name="searchterm" placeholder="Search..." value="<?php print $data['searchterm']; ?>"/>    
-                <input type="submit" class="button btn moxycart-btn" value="Search"/>
-                <a href="<?php print static::page('products'); ?>" class="btn">Show All</a>
-            </form>
-            
-        </div>
-
+<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder">
+<p>Here you can Manage Products, Add Edit and Preview</p>
 </div>
 
+ 
+    <form action="<?php print static::page('products'); ?>" method="post" class="search-product">
+        <input type="text" name="searchterm" placeholder="Search..." class="search-input" value="<?php print $data['searchterm']; ?>"/>    
+        <input type="submit" class="button btn moxycart-btn" value="Search"/>
+        <a href="<?php print static::page('products'); ?>" class="btn">Show All</a>
+    </form>
+
+<div class="moxycart_canvas_inner moxycart_canvas_inner-products">
 
 <?php if ($data['results']): ?>
 <table class="classy products-tbl">
