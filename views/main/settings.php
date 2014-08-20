@@ -42,6 +42,6 @@
         </tbody>
     </table>
     <br>
-    <a class="button btn moxycart-btn" href="<?php print MODX_MANAGER_URL; ?>?a=70">See all Settings</a>
+    <a class="button btn moxycart-btn btn-primary" href="<?php print MODX_MANAGER_URL; ?>?a=70">See all Settings</a>
 
 </div>

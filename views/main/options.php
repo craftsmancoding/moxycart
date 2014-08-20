@@ -8,7 +8,7 @@
 
 
 <div class="clearfix">
-     <span class="btn moxycart-btn pull-left" onclick="javascript:paint('optioncreate');">Add Option</span>
+     <span class="btn moxycart-btn pull-left btn-primary" onclick="javascript:paint('optioncreate');">Add Option</span>
 
 
         <div class="pull-right">   
@@ -47,9 +47,9 @@
         <td><?php print $r->get('slug'); ?></td>
         <td><?php print $r->get('description'); ?></td>
         <td>
-            <span class="button btn" onclick="javascript:paint('optionedit',{option_id:<?php print $r->get('option_id'); ?>});">Edit</span>
-            <span class="button btn" onclick="javascript:paint('optionterms',{option_id:<?php print $r->get('option_id'); ?>});">Manage Terms</span>
-            <span class="button btn" onclick="javascript:mapi('option','delete',{option_id:<?php print $r->get('option_id'); ?>},function(response){ paint('options'); });">Delete</span>     
+            <span class="button btn btn-mini" onclick="javascript:paint('optionedit',{option_id:<?php print $r->get('option_id'); ?>});">Edit</span>
+            <span class="button btn btn-mini" onclick="javascript:paint('optionterms',{option_id:<?php print $r->get('option_id'); ?>});">Manage Terms</span>
+            <span class="button btn btn-mini" onclick="javascript:mapi('option','delete',{option_id:<?php print $r->get('option_id'); ?>},function(response){ paint('options'); });">Delete</span>     
         </td>
     </tr>
 <?php endforeach; ?>
@@ -57,7 +57,7 @@
 </table>
 <br>
 
-<input type="submit" class="button btn" value="Save Order"/>
+<input type="submit" class="button btn btn-info" value="Save Order"/>
 
 </form>
 <?php else: ?>

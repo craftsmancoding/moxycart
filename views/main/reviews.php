@@ -38,8 +38,8 @@
         <td><?php print $r->get('rating'); ?></td>
         <td><?php print $r->get('state'); ?></td>
         <td>
-            <span class="button btn" onclick="javascript:paint('reviewedit',{review_id:<?php print $r->get('review_id'); ?>});">Edit</span>
-            <span class="button btn" onclick="javascript:mapi('review','delete',{review_id:<?php print $r->get('review_id'); ?>},'reviews');">Delete</span>
+            <span class="button btn btn-mini" onclick="javascript:paint('reviewedit',{review_id:<?php print $r->get('review_id'); ?>});">Edit</span>
+            <span class="button btn btn-mini" onclick="javascript:mapi('review','delete',{review_id:<?php print $r->get('review_id'); ?>},'reviews');">Delete</span>
         </td>
     </tr>
 <?php endforeach; ?>

@@ -9,7 +9,7 @@
 
 <div class="clearfix">
 
-    <span class="button btn moxycart-btn pull-left" onclick="javascript:paint('fieldcreate');">Add Custom Field</span>
+    <span class="button btn moxycart-btn pull-left btn-primary" onclick="javascript:paint('fieldcreate');">Add Custom Field</span>
 
         <div class="pull-right">   
             <form action="<?php print static::page('fields'); ?>" method="post">
