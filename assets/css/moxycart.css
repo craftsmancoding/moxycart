@@ -320,12 +320,12 @@ table.classy {
     width: 100%;
 }
 
-table.classy thead {
-    background: #e4e9ee; 
+table.classy thead tr {
+    background: #e4e9ee !important; 
 }
 
 table.classy thead tr th {
-  padding: 15px 5px;
+  padding: 12px 5px;
   color: #696969;
   font-weight: bold;
   font-size: 12px;
@@ -339,6 +339,9 @@ table thead a:hover {
     color: #fff;
     text-decoration: underline;
 }
+
+tr:nth-child(even) {background: #f5f6f9}
+tr:nth-child(odd) {background: #fff}
 
 .unmodifier {
   background: #5f5f5f;
