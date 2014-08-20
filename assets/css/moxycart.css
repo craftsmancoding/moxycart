@@ -194,6 +194,7 @@ h2.moxycart_cmp_heading {
   font-weight: normal;
   font-size: 14px;
   text-shadow: none !important;
+  cursor: pointer !important;
 }
 
 .btn-primary {

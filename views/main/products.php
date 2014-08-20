@@ -1,7 +1,7 @@
 <div class="moxycart_canvas_inner clearfix">
     <h2 class="moxycart_cmp_heading pull-left" id="moxycart_pagetitle">Manage Products</h2>
     <div class="pull-right">
-         <a href="<?php print static::page('productcreate'); ?>" class="button btn moxycart-btn btn-primary pull-left">Add Product</a>
+         <a href="<?php print static::page('productcreate'); ?>" class="button btn moxycart-btn btn-primary">Add Product</a>
         &nbsp;
         <span class="btn btn-moxycart" onclick="javascript:open_inventory_modal(0);">Quick Edit</span>
     </div>
