@@ -516,11 +516,11 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
             endif;
             ?>
             <!--span class="button btn" onclick="javascript:paint('products');">&laquo; Back to Product List</span-->
-            <?php if ($data['store_id']) : ?>
-                <a href="<?php print MODX_MANAGER_URL .'?a=30&id='.$data['store_id']; ?>" class="button btn">&laquo; Back to Product List</a>            
-            <?php else: ?>
+            <?php // if ($data['store_id']) : ?>
+                <!-- a href="<?php //print MODX_MANAGER_URL .'?a=resource/update&id='.$data['store_id']; ?>" class="button btn">&laquo; Back to Product List</a-->            
+            <?php //else: ?>
                 <a href="<?php print static::page('products'); ?>" class="button btn">&laquo; Back to Product List</a>
-            <?php endif; ?>
+            <?php // endif; ?>
         </div>
 
 </div>
