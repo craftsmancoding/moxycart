@@ -122,10 +122,10 @@
 .table-striped tbody tr:nth-child(odd) th {
   background-color: #f9f9f9;
 }
-.table-hover tbody tr:hover td,
+/* .table-hover tbody tr:hover td,
 .table-hover tbody tr:hover th {
   background-color: #f5f5f5;
-}
+} */
 table [class*=span],
 .row-fluid table [class*=span] {
   display: table-cell;
@@ -352,7 +352,7 @@ input[type="color"],
   -moz-border-radius: 2px;
   border-radius: 2px;
   margin-bottom: 13px;
-  background: #fbfbfb !important;
+ 
 }
 
 textarea:focus,
@@ -374,7 +374,6 @@ input[type="color"]:focus,
   border-color: #9caf78;
   outline: 0;
   outline: thin dotted \9;
-  background-color: #fbfbfb !important;
   /* IE6-9 */
 }
 
@@ -406,7 +405,7 @@ input[type="color"],
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  background-color: #fbfbfb;
+  
 
 
 }
@@ -3840,46 +3839,20 @@ padding: 5px 20px;
   text-decoration: none; 
   margin-right: -2px;
   font-size: 12px;
-  
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8aae4b", endColorstr="#658f1a");
-  background-image: -khtml-gradient(linear, left top, left bottom, from(#8aae4b), to(#658f1a));
-  background-image: -moz-linear-gradient(top, #8aae4b, #658f1a);
-  background-image: -ms-linear-gradient(top, #8aae4b, #658f1a);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #8aae4b), color-stop(100%, #658f1a));
-  background-image: -webkit-linear-gradient(top, #8aae4b, #658f1a);
-  background-image: -o-linear-gradient(top, #8aae4b, #658f1a);
-  background-image: linear-gradient(#8aae4b, #658f1a);
-  border-color: #8aae4b #658f1a hsl(80, 46%, 29%);
-  color: #fff !important;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.26);
-  border-radius: 5px 5px 0 0; 
-  -moz-border-radius: 5px 5px 0 0; 
-  -webkit-border-radius: 5px 5px 0 0; 
-  border: 1px solid #999999;
-  border-bottom: none;
-
-
-
 }
 
 .menu li.active a {
   border-bottom: 1px solid #fff;
+    border: 1px solid #eeeeee;
+  border-bottom: none;
+  border-top: 3px solid #3697cd;
 }
 .menu li a:hover {
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#769e30", endColorstr="#4b7109");
-  background-image: -khtml-gradient(linear, left top, left bottom, from(#769e30), to(#4b7109));
-  background-image: -moz-linear-gradient(top, #769e30, #4b7109);
-  background-image: -ms-linear-gradient(top, #769e30, #4b7109);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #769e30), color-stop(100%, #4b7109));
-  background-image: -webkit-linear-gradient(top, #769e30, #4b7109);
-  background-image: -o-linear-gradient(top, #769e30, #4b7109);
-  background-image: linear-gradient(#769e30, #4b7109);
+
 }
 
 .menu li.active a { background: #fff; color: #666666 !important;  text-shadow: none;}
-.content {  border: 1px solid #999999;background: #fff; padding: 15px 10px 10px; }
+.content {  border: 1px solid #eeeeee;background: #fff; padding: 15px 10px 10px; }
 
 .icon-store .x-tree-node-icon {
     background-image: url(../images/cart-icon.png) !important;
@@ -4168,9 +4141,6 @@ table.products-tbl thead th {
   font-weight:normal;
 }
 
-table.products-tbl tr:hover{
-	background-color:#ececec;	
-}
 
 table.products-tbl td {
   font-size: 14px;

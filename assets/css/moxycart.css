@@ -199,11 +199,13 @@ h2.moxycart_cmp_heading {
 .btn-primary {
   background: #2aa798;
   color: #fff !important;
+  border: 1px solid #2aa798;
 }
 
 .btn-info {
   background: #556c88;
   color: #fff !important;
+   border: 1px solid #556c88;
 }
 
 .btn-primary:hover {
@@ -238,7 +240,6 @@ input[type="text"],
     -ms-border-radius: 2px;
     -khtml-border-radius: 2px;
     border-radius: 2px;
-    background-color: #fbfbfb;
     border-color: #CCCCCC;
 }
 
@@ -463,10 +464,6 @@ table.products-tbl thead th {
   text-shadow: none !important;
   letter-spacing: 0.09em;
   font-weight:normal;
-}
-
-table.products-tbl tr:hover{
-	background-color:#ececec;	
 }
 
 table.products-tbl td {

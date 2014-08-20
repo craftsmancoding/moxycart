@@ -484,7 +484,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
         	</div>
         </div>
     	<div class="moxy-modal-controls">
-            <span class="btn" onclick="javascript:update_asset('asset_modal_form');">Save</span>
+            <span class="btn btn-primary" onclick="javascript:update_asset('asset_modal_form');">Save</span>
             <span class="btn" onclick="javascript:jQuery.colorbox.close();">Cancel</span>
             <div style="float:right; padding-right:20px;">
                 <span class="btn" onclick="javascript:jQuery('#delete_asset_modal').data('asset_id', '{{asset_id}}').dialog('open');">Delete</span>
@@ -506,7 +506,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
             if ($data['product_form_action'] == 'product_update'):
             ?>
                 <span class="btn" onclick="javascript:delete_product(<?php print $data['product_id']; ?>,'<?php print static::page('products'); ?>');">Delete</span>
-                <button class="btn" id="product_update" onclick="javascript:save_product('edit'); return false;">Save</button>
+                <button class="btn btn-primary" id="product_update" onclick="javascript:save_product('edit'); return false;">Save</button>
                 <a class="btn" href="<?php print static::page('productpreview',array('product_id'=>$data['product_id'])); ?>" target="_blank">View</a>
             <?php    
             else:
