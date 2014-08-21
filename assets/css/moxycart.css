@@ -358,8 +358,16 @@ tr:nth-child(odd) {background: #fff}
   font-size: 12px !important;
 }
 
+#option_terms .modifier{
+	background: none;	
+}
+
 .modifier-th {
   background: #c1cdd9 !important;
+}
+
+#option_terms .modifier-th {
+  background: #3F4850 !important;
 }
 
 

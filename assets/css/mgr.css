@@ -4164,6 +4164,7 @@ table.sub-terms select {
 
 table.sub-terms .checkbox {
   float: left;
+  margin-top: 9px;
 }
 
 #cboxLoadedContent {
@@ -4318,6 +4319,10 @@ border-bottom: 2px solid #3F4850;
 width: 100%;
 }
 
+table#option_terms{
+	border:none;	
+}
+
 table.classy thead th {
 background-color: #3F4850;
 color: #FFFFFF;
@@ -4334,6 +4339,10 @@ table.classy {
 
 table.classy thead tr {
     background: #e4e9ee !important; 
+}
+
+table#option_terms thead tr {
+    background: none !important; 
 }
 
 table.classy thead tr th {
