@@ -12,7 +12,8 @@
  *
  * @param integer $product_id (defaults to current product)
  * @param string $submit text/image to show as the submit button. If an image, a full URL with http:// must be specified. (default: Add to Cart)
- * @param string $soldout text/image to show if inventory tracking is enabled and the qty is below the backorder max. If an image, a full URL with http:// must be specified.  (default: Sold Out)
+ * @param string $backorderSubmit text/image to show when you're in backorder territory: inventory qty is below zero, but within your backorder threshold. (default: to the $submit)
+ * @param string $soldout text/image to show when product purchase is not possible due to inventory tracking being disabled or the inventory qty is below the backorder max. If an image, a full URL with http:// must be specified.  (default: Sold Out)
  * @param string $cssClassSoldout optional class for the soldout image
  * @param string $cssClassSubmit optional class for the submit
  * @param string $cssClassOptionLabel optional class for the label around the option label
@@ -35,6 +36,7 @@ $modx->regClientScript($assets_url.'js/AddToCartButton.js');
 
 $product_id = $modx->getOption('product_id', $scriptProperties, $modx->getPlaceholder('product_id'));
 $submit = $modx->getOption('submit', $scriptProperties, 'Add to Cart');
+$backorderSubmit = $modx->getOption('backorderSubmit', $scriptProperties, $submit);
 $soldout = $modx->getOption('soldout', $scriptProperties, 'Sold Out');
 $tpl = $modx->getOption('tpl', $scriptProperties, 'BuyButton');
 $cssClassSoldout = $modx->getOption('cssClassSoldout', $scriptProperties);
@@ -54,12 +56,17 @@ $inventory = (int) $P->get('qty_inventory');
 $backorder_max = (int) $P->get('qty_backorder_max');
 $modx->log(modX::LOG_LEVEL_DEBUG,'Product '.$product_id.'; Track Inventory: '.$P->get('track_inventory').' Inventory: '.$inventory.' Backorder max: '.$backorder_max,'','addToCartButton');
 if ($P->get('track_inventory')) {
+    // We've exhausted the inventory and the backorder threshold
     if(($inventory + $backorder_max) <=  0) {
         if(filter_var($soldout, FILTER_VALIDATE_URL)) {
             $modx->log(modX::LOG_LEVEL_INFO,'Sold Out of product '.$product_id.'; Inventory: '.$inventory.' Backorder max: '.$backorder_max,'','addToCartButton');
             $soldout = sprintf('<img src="%s" alt="Sold Out" class="%s"/>',$soldout,$cssClassSoldout);    
         }
         return $soldout;
+    }
+    // Are we in backorder territory?
+    if ($inventory <= 0) {
+        $submit = $backorderSubmit;
     }
 }
 
