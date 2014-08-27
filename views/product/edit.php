@@ -699,8 +699,8 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                 <label for="qty_max">Qty Max</label>
                                 <input type="text" style="width:90%;" name="qty_max" id="qty_max" value="">
 
-                                 <label for="back_order_cap">Back Order Cap</label>
-                                <input type="text" style="width:90%;" name="back_order_cap" id="back_order_cap" value="">
+                                 <label for="qty_backorder_max">Back Order Cap</label>
+                                <input type="text" style="width:90%;" name="qty_backorder_max" id="qty_backorder_max" value="">
 
                             
                                 <label for="store_id">Product Container</label>
