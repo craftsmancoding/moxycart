@@ -33,6 +33,8 @@ require_once $core_path .'vendor/autoload.php';
 $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('getProductTerms',$scriptProperties);
 
+$innerTpl = $modx->getOption('innerTpl', $scriptProperties, '<li>[[+term]]-[[+term_id]]</li>'); 
+$outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</ul>'); 
 
 $product_id = $modx->getOption('product_id',$scriptProperties, $modx->getPlaceholder('product_id'));
 $taxonomy_id_raw = trim($modx->getOption('taxonomy_id',$scriptProperties));
@@ -66,8 +68,11 @@ if ($taxonomy_ids) {
 
 $c->sortby('Term.menuindex','ASC');
 
-$Products = $modx->getCollectionGraph('ProductTerm', '{"Term":{}}',$c);
+$ProductTerms = $modx->getCollectionGraph('ProductTerm', '{"Term":{}}',$c);
 
+if ($ProductTerms) {
+    return $Snippet->format($ProductTerms,$innerTpl,$outerTpl);    
+}
 
 
 /*
