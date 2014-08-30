@@ -33,7 +33,7 @@ require_once $core_path .'vendor/autoload.php';
 $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('getProductTerms',$scriptProperties);
 
-$innerTpl = $modx->getOption('innerTpl', $scriptProperties, '<li>[[+term]]-[[+term_id]]</li>'); 
+$innerTpl = $modx->getOption('innerTpl', $scriptProperties, '<li>[[+term_id]]=[[+Term.pagetitle]]</li>'); 
 $outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</ul>'); 
 
 $product_id = $modx->getOption('product_id',$scriptProperties, $modx->getPlaceholder('product_id'));
@@ -52,11 +52,19 @@ if ($taxonomy_id_raw) {
     }
 }
 
+
 $c = $modx->newQuery('ProductTerm');
 $c->where(array(
-    'Term.published'=>true,
-    'ProductTerm.term_id'=>$term_id,
+    'Term.publiched'=> true,
+    'product_id'=>$product_id
 ));
+print $c->toSQL();
+/*$c->prepare();
+print $c->toSQL();
+die();*/
+
+
+
 
 // TODO: Support taxonomy-filtering of deeply-nested terms.
 // WARNING: This will fail when matching nested terms that are not immediate children of the taxonomy
@@ -68,8 +76,9 @@ if ($taxonomy_ids) {
 
 $c->sortby('Term.menuindex','ASC');
 
-$ProductTerms = $modx->getCollectionGraph('ProductTerm', '{"Term":{}}',$c);
 
+
+$ProductTerms = $modx->getCollectionGraph('ProductTerm','{"Term":{}}',$c);
 if ($ProductTerms) {
     return $Snippet->format($ProductTerms,$innerTpl,$outerTpl);    
 }
