@@ -34,6 +34,7 @@ $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('getByTerm',$scriptProperties);
 
 $term_id = $modx->getOption('term_id', $scriptProperties, $modx->resource->get('id'));
+$exclude_id = $modx->getOption('exclude_id', $scriptProperties,0);
 $innerTpl = $modx->getOption('innerTpl', $scriptProperties, '<li><a href="[[+Product.uri]]">[[+Product.name]] ([[+Product.sku]])</a></li>'); 
 $outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</ul>'); 
 $c = $modx->newQuery('ProductTerm');
@@ -41,6 +42,7 @@ $c->where(array(
     'Term.published'=>true,
     'ProductTerm.term_id'=>$term_id,
     'Product.is_active'=>1,
+    'Product.product_id:!='=>$exclude_id,
 ));
 $c->sortby('Product.seq','ASC');
 
