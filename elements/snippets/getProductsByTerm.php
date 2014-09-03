@@ -37,6 +37,8 @@ $term_id = $modx->getOption('term_id', $scriptProperties, $modx->resource->get('
 $exclude_id = $modx->getOption('exclude_id', $scriptProperties,0);
 $innerTpl = $modx->getOption('innerTpl', $scriptProperties, '<li><a href="[[+Product.uri]]">[[+Product.name]] ([[+Product.sku]])</a></li>'); 
 $outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</ul>'); 
+$noResult = $modx->getOption('noResult', $scriptProperties, 'No Products found for term_id.'); 
+
 $c = $modx->newQuery('ProductTerm');
 $c->where(array(
     'Term.published'=>true,
@@ -69,4 +71,5 @@ if ($Products) {
     return $Snippet->format($Products,$innerTpl,$outerTpl);
 }
 
-return 'No Products found for term_id '.$term_id;
+
+return $noResult;
