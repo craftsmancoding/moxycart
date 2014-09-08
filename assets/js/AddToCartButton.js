@@ -12,6 +12,11 @@ function compute_price(options) {
 	var total = original_price;
 	$.each(options, function( index, price ) {
 	 	console.log(price);
+	 	var start = price.indexOf('|');
+	 	var end = price.length - 1;
+	 	var removeprice = price.slice(start,end);
+	 	price = price.replace(removeprice,'');
+	 	console.log(price);
 		match = price.match(/\{([^)]+)\}/g);	
 		if(match) {
 			var	match = match[0].substring(1, match[0].length-1),
