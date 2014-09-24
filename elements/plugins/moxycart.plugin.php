@@ -29,6 +29,12 @@ switch ($modx->event->name) {
 
         // Trim the base url off the front of the request uri
         $uri = preg_replace('/^'.preg_quote(MODX_BASE_URL,'/').'/','', $_SERVER['REQUEST_URI']);
+        $x_uri = explode('/', $uri);
+        if(count($x_uri) > 2) {
+            unset($x_uri[0]);
+            $uri = implode('/', $x_uri);
+        }
+
         $modx->log(modX::LOG_LEVEL_DEBUG,'[moxycart plugin] URI requested : '.$uri,'','moxycart Plugin:OnPageNotFound');
         $modx->addPackage('moxycart',$core_path.'model/orm/','moxy_');
 //        print_r($modx->request->parameters['GET']); exit;
