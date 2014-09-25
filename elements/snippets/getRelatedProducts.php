@@ -22,6 +22,7 @@ $in_menu = !$modx->getOption('show_hidden',$scriptProperties, false); // in_menu
 $innerTpl = $modx->getOption('innerTpl', $scriptProperties, '<li><a href="[[+Relation.uri]]">[[+Relation.name]] ([[+Relation.sku]])</a></li>'); 
 $outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</ul>'); 
 
+$scriptProperties['content_ph'] = $modx->getOption('content_ph',$scriptProperties, 'content');
 
 if (!$product_id) {
     return 'Missing Product ID';
@@ -39,5 +40,5 @@ $Products = $modx->getCollectionGraph('ProductRelation', '{"Relation":{"Image":{
 
 //return $c->toSQL();
 if ($Products) {
-    return $Snippet->format($Products,$innerTpl,$outerTpl);
+    return $Snippet->format($Products,$innerTpl,$outerTpl,$scriptProperties['content_ph']);
 }

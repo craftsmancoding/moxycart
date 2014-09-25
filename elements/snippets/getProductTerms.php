@@ -32,7 +32,7 @@ $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'compon
 require_once $core_path .'vendor/autoload.php';
 $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('getProductTerms',$scriptProperties);
-
+$scriptProperties['content_ph'] = $modx->getOption('content_ph',$scriptProperties, 'content');
 $innerTpl = $modx->getOption('innerTpl', $scriptProperties, '<li>[[+term_id]]=[[+Term.pagetitle]]</li>'); 
 $outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</ul>'); 
 
@@ -80,7 +80,7 @@ $c->sortby('Term.menuindex','ASC');
 
 $ProductTerms = $modx->getCollectionGraph('ProductTerm','{"Term":{}}',$c);
 if ($ProductTerms) {
-    return $Snippet->format($ProductTerms,$innerTpl,$outerTpl);    
+    return $Snippet->format($ProductTerms,$innerTpl,$outerTpl,$scriptProperties['content_ph']);    
 }
 
 

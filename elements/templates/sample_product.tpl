@@ -24,6 +24,8 @@
   <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/style.css">
 
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
   <script src="[[++moxycart.assets_url]]js/templates/bootstrap/js/html5shiv.js"></script>
@@ -114,24 +116,36 @@
 <article class="row shop-product-single">
 <div class="col-md-6 space-right-20">
 
-[[getProductImages? &product_id=`[[+product_id]]` &is_active=`1` &limit=`0`]]
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery.cycle/3.03/jquery.cycle.all.min.js"></script>
+  
+    <script type="text/javascript">
+        $(function() {
+            $('.image-box').cycle({ 
+                fx:     'fade', 
+                speed:  300,
+                containerResize: 0,
+                slideResize: 1,
+                next:   '.image-box', 
+                timeout: 0,
+                pager:  '.dpimages-icons-box',              
+                // callback fn that creates a thumbnail to use as pager anchor 
+                pagerAnchorBuilder: function(idx, slide) { 
+                    return '<div class="individual-thumb-box"><a href="javascript: void(0)"><img src="' + slide.src + '" alt="" /></a></div>';
+                } 
+            });         
+        });
+        
+        
+        //Grab the height of the image on resize, and apply that height to the parent div
+        $(window).resize(function() {
+            var imageHeight2 = $(".image-box img").height();
+            $(".image-box img").parent().css('height', imageHeight2);
+        }); 
+        
+    </script>
 
-	[[#getProductImages:gte=`1`:then=`
-		 <!-- thumbnailSlider -->
-		  <div class="thumbnailSlider">
-		    <div class="flexslider flexslider-thumbnails">
-		      <ul class="slides">
-		       [[#getProductImages? &product_id=`[[+product_id]]` &innerTpl=`ProductImage` &is_active=`1` &limit=`0`]]
-		      </ul>
-		    </div>
-
-		    <ul class="smallThumbnails clearfix">
-		    	[[#getProductImages? &product_id=`[[+product_id]]` &innerTpl=`ProductImageThumb` &firstClass=`active` &is_active=`1` &limit=`0`]]
-		    </ul>
-		  </div>
-		  <!-- / thumbnailSlider -->
-	`? &product_id=`[[+product_id]]` &total=`1` &limit=`0`]]
- 
+    [[getProductImages? &innerTpl=`<img id="product_thumbnail" src="[[+Asset.url]]" alt="">` &outerTpl=`ProductImageOuter` &is_active=`1`]]   
+  
 
 </div>
 <div class="clearfix visible-sm visible-xs space-30"></div>
@@ -316,7 +330,6 @@
 
 <!-- SCRIPTS -->
 <!-- core -->
-<script src="[[++moxycart.assets_url]]js/jquery.min.js"></script>
 <script src="[[++moxycart.assets_url]]js/templates/bootstrap/js/bootstrap.min.js"></script>
 
 <!-- !core -->

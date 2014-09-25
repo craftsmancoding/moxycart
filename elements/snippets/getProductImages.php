@@ -56,6 +56,7 @@ $outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</u
 // Default Arguments:
 $scriptProperties['is_active'] = (bool) $modx->getOption('is_active',$scriptProperties, 1);
 $scriptProperties['limit'] = (int) $modx->getOption('limit',$scriptProperties, null);
+$scriptProperties['content_ph'] = $modx->getOption('content_ph',$scriptProperties, 'content');
 $product_id = (int) $modx->getOption('product_id',$scriptProperties, $modx->getPlaceholder('product_id'));
 
 if (!$product_id) {
@@ -81,7 +82,7 @@ if ($scriptProperties['limit']) {
 $ProductAssets = $modx->getCollectionGraph('ProductAsset','{"Asset":{}}', $c);
 
 if ($ProductAssets) {
-    return $Snippet->format($ProductAssets,$innerTpl,$outerTpl);    
+    return $Snippet->format($ProductAssets,$innerTpl,$outerTpl,$scriptProperties['content_ph']);    
 }
 
 

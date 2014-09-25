@@ -73,7 +73,8 @@ class Snippet {
      * @param string formatting $outerTpl formatting string OR chunk name (optional)
      * @return string
      */
-    public function format($records,$innerTpl,$outerTpl=null) {
+    public function format($records,$innerTpl,$outerTpl=null,$content_ph) {
+
         if (empty($records)) {
             return '';
         }
@@ -106,7 +107,7 @@ class Snippet {
 
         
         if ($outerTpl) {
-            $props = array('content'=>$out);
+            $props = array($content_ph=>$out);
             // Formatting String
             if (!$outerChunk = $this->modx->getObject('modChunk', array('name' => $outerTpl))) {  
                 $uniqid = uniqid();

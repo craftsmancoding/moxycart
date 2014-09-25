@@ -43,7 +43,7 @@ $help = $modx->getOption('help',$scriptProperties);
 // Formatting Arguments:
 $innerTpl = $modx->getOption('innerTpl',$scriptProperties, 'ProductInnerTpl');
 $outerTpl = $modx->getOption('outerTpl',$scriptProperties, 'ProductOuterTpl');
-
+$scriptProperties['content_ph'] = $modx->getOption('content_ph',$scriptProperties, 'content');
 // Default Arguments:
 $scriptProperties['is_active'] = $modx->getOption('is_active',$scriptProperties, 1);
 
@@ -86,7 +86,7 @@ if ($results = $P->all($scriptProperties)) {
         }
     }
     
-    return $Snippet->format($results,$innerTpl,$outerTpl);    
+    return $Snippet->format($results,$innerTpl,$outerTpl,$scriptProperties['content_ph']);    
 }
 
 $modx->log(\modX::LOG_LEVEL_DEBUG, "No results found",'','getProducts',__LINE__);

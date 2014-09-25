@@ -40,7 +40,7 @@ $limit = (int) $modx->getOption('limit', $scriptProperties);
 $start = (int) $modx->getOption('start', $scriptProperties); 
 $sort = $modx->getOption('sort', $scriptProperties,'pagetitle');
 $dir = $modx->getOption('dir', $scriptProperties,'ASC'); 
-
+$scriptProperties['content_ph'] = $modx->getOption('content_ph',$scriptProperties, 'content');
 $criteria = $modx->newQuery('Taxonomy');
 $criteria->where(array('class_key'=>'Taxonomy','published'=>true));
 
@@ -51,7 +51,7 @@ $criteria->sortby($sort,$dir);
 $results = $modx->getCollection('Taxonomy',$criteria);
 
 if ($results) {
-    return $Snippet->format($results,$innerTpl,$outerTpl);    
+    return $Snippet->format($results,$innerTpl,$outerTpl,$scriptProperties['content_ph']);    
 }
 
 $modx->log(\modX::LOG_LEVEL_DEBUG, "No results found",'','Snippet getTaxonomies');
