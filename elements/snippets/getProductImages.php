@@ -57,7 +57,9 @@ $outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</u
 $scriptProperties['is_active'] = (bool) $modx->getOption('is_active',$scriptProperties, 1);
 $scriptProperties['limit'] = (int) $modx->getOption('limit',$scriptProperties, null);
 $scriptProperties['content_ph'] = $modx->getOption('content_ph',$scriptProperties, 'content');
+
 $product_id = (int) $modx->getOption('product_id',$scriptProperties, $modx->getPlaceholder('product_id'));
+$js_paths = $modx->getOption('js_paths',$scriptProperties,null);
 
 if (!$product_id) {
     return 'product_id is required.';
@@ -82,6 +84,29 @@ if ($scriptProperties['limit']) {
 $ProductAssets = $modx->getCollectionGraph('ProductAsset','{"Asset":{}}', $c);
 
 if ($ProductAssets) {
+	if(!is_null($js_paths)) {
+		$js_paths = explode(',', $js_paths);
+		if (!empty($js_paths)) {
+			foreach ($js_paths as $js) {
+				$modx->regClientScript($js);
+			}
+			
+		}
+	}
+
+	if(!is_null($css_paths)) {
+		$css_paths = explode(',', $css_paths);
+		if (!empty($css_paths)) {
+			foreach ($css_paths as $cs) {
+				$modx->regClientCSS($cs);
+			}
+			
+		}
+	}
+	
+	
+	
+	
     return $Snippet->format($ProductAssets,$innerTpl,$outerTpl,$scriptProperties['content_ph']);    
 }
 

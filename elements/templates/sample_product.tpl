@@ -1,6 +1,9 @@
 <!-- 
 @templatename Sample Product
 @description A sample Moxycart template for formatting a single product.
+For Product Image we used cycle plugin
+http://jquery.malsup.com/cycle/
+You can use whatever plugins you like, just include it on your product template or add a comma seprated paths for &js_paths=`` or &css_paths=`` on getProductImages
 -->
 <!DOCTYPE html>
 <html>
@@ -116,35 +119,14 @@
 <article class="row shop-product-single">
 <div class="col-md-6 space-right-20">
 
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery.cycle/3.03/jquery.cycle.all.min.js"></script>
-  
-    <script type="text/javascript">
-        $(function() {
-            $('.image-box').cycle({ 
-                fx:     'fade', 
-                speed:  300,
-                containerResize: 0,
-                slideResize: 1,
-                next:   '.image-box', 
-                timeout: 0,
-                pager:  '.dpimages-icons-box',              
-                // callback fn that creates a thumbnail to use as pager anchor 
-                pagerAnchorBuilder: function(idx, slide) { 
-                    return '<div class="individual-thumb-box"><a href="javascript: void(0)"><img src="' + slide.src + '" alt="" /></a></div>';
-                } 
-            });         
-        });
-        
-        
-        //Grab the height of the image on resize, and apply that height to the parent div
-        $(window).resize(function() {
-            var imageHeight2 = $(".image-box img").height();
-            $(".image-box img").parent().css('height', imageHeight2);
-        }); 
-        
-    </script>
-
-    [[getProductImages? &innerTpl=`<img id="product_thumbnail" src="[[+Asset.url]]" alt="">` &outerTpl=`ProductImageOuter` &is_active=`1`]]   
+    
+    [[getProductImages? 
+      &innerTpl=`<img id="product_thumbnail" src="[[+Asset.url]]" alt="">` 
+      &css_paths=`[[++moxycart.assets_url]]css/templates/product_images.css` 
+      &js_paths=`http://cdnjs.cloudflare.com/ajax/libs/jquery.cycle/3.03/jquery.cycle.all.min.js,[[++moxycart.assets_url]]js/templates/product_images.js` 
+      &outerTpl=`ProductImageOuter` 
+      &is_active=`1`
+    ]]   
   
 
 </div>
@@ -351,7 +333,5 @@
 
 <script src="[[++moxycart.assets_url]]js/templates/main.js"></script>
 <script src="//cdn.foxycart.com/fireproofsocks/foxycart.colorbox.js?ver=2" type="text/javascript" charset="utf-8"></script>
-
-
 </body>
 </html>

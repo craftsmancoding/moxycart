@@ -1,0 +1,51 @@
+/* Icons box */
+
+/* ============================================================================= */
+/* ! FOR THE RECORD - This section is a pile of shite. Here's how I got the thumbnails to resize dynamically:  */
+/*  - Commented out the default width settings for the thumbnail container div via PHP (noted below) */
+/*  - The HUGE factor here was that the thumbnails themselves have no individually containing divs I had to put divs around each thumb, 
+/*    then specify the width and right margin of those divs using Ethan Marcotte's formula from responsive book (target divided by context). */
+/*  - I then specified a slightly different div for each 4th thumb, with no margin right. */
+/*  - And last but not least, I added our fave max-width setting to the <A> TAG AROUND EACH THUMB, to get scaling to work in FF/IE. */
+/* =========================================================================== */
+
+.dpimages-icons-box {
+  /***
+  THE WIDTH OF THIS DIV IS SET IN THE ADMIN IN THE DETAILED PRODUCT IMAGE SETTINGS AND IS DEFINED BY 
+  THE NUMBER OF THUMBNAILS YOU SPECIFY ARE SUPPOSED TO FIT IN THE BOX.
+  I REMOVED THIS SETTING BY FINDING THE SPOT IT IS SET IN SITE/MODULES/DETAILED_PRODUCT_IMAGES/PRODUCT_IMAGES.PHP
+  ***/
+  padding:0;
+}
+
+  .dpimages-icons-box .individual-thumb-box{
+    width:13%;    
+    margin-top:2.3%;
+    margin-right:2.755%;
+    float:left;     
+  }
+  .dpimages-icons-box .narrow-individual-thumb-box{
+    width:13%;  
+    margin-top:2.3%;
+    float:left;
+  }
+
+  /* MAKES SCALING WORK IN FF / IE */
+  .dpimages-icons-box .individual-thumb-box a, .dpimages-icons-box .narrow-individual-thumb-box a{
+    padding:0;
+    max-width:100% !important;
+  }
+
+
+.dpimages-icons-box a:link,
+.dpimages-icons-box a:visited,
+.dpimages-icons-box a:hover,
+.dpimages-icons-box a:active
+{
+  display: block;
+  outline-style: none;
+  float: left;
+}
+
+.dpimages-icons-box a:hover {
+}
