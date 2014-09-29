@@ -225,12 +225,13 @@
   </div>
 </div>
 <div class="clearfix"></div>
+
 <div class="col-xs-12">
 
 <!-- ISOTOPE GALLERY -->
-<div id="isotopeContainer" class="shop-product-list isotope">
+<div id="isotopeContainerx" class="shop-product-list isotopex">
 
-[[#getProducts? &outerTpl=`<ul>[[+content]]</ul>` &innerTpl=`<li>[[+name]]</li>` &store_id=`[[*id]]`]]
+[[getProducts? &outerTpl=`<ul>[[+content_products]]</ul>` &content_ph=`content_products` &innerTpl=`<li>[[+name]]</li>` &store_id=`[[*id]]`]]
 </div>
 <!-- !ISOTOPE GALLERY -->
 

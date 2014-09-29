@@ -43,15 +43,17 @@ $help = $modx->getOption('help',$scriptProperties);
 // Formatting Arguments:
 $innerTpl = $modx->getOption('innerTpl',$scriptProperties, 'ProductInnerTpl');
 $outerTpl = $modx->getOption('outerTpl',$scriptProperties, 'ProductOuterTpl');
-$scriptProperties['content_ph'] = $modx->getOption('content_ph',$scriptProperties, 'content');
+$content_ph = $modx->getOption('content_ph',$scriptProperties, 'content');
 // Default Arguments:
 $scriptProperties['is_active'] = $modx->getOption('is_active',$scriptProperties, 1);
+
 
 // Filter out formatting/control arguments:
 unset($scriptProperties['log_level']);
 unset($scriptProperties['log_target']);
 unset($scriptProperties['innerTpl']);
 unset($scriptProperties['outerTpl']);
+unset($scriptProperties['content_ph']);
 
 $P = new \Moxycart\Product($modx);
 
@@ -69,7 +71,9 @@ if ($help) {
     return $out.'</pre></div>';
 }
 
+
 if ($results = $P->all($scriptProperties)) {
+
     // Get Custom Fields
     foreach ($results as &$r) {
         $c = $modx->newQuery('ProductField');
@@ -86,7 +90,7 @@ if ($results = $P->all($scriptProperties)) {
         }
     }
     
-    return $Snippet->format($results,$innerTpl,$outerTpl,$scriptProperties['content_ph']);    
+    return $Snippet->format($results,$innerTpl,$outerTpl,$content_ph);    
 }
 
 $modx->log(\modX::LOG_LEVEL_DEBUG, "No results found",'','getProducts',__LINE__);
