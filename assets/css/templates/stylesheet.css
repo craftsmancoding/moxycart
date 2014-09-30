@@ -21,3 +21,7 @@
 	color: #222222;
 	text-decoration: none;
 }
+
+.item-col:nth-child(3n+1){
+    clear:left
+} 
