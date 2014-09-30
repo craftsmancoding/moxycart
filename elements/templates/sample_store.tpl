@@ -25,7 +25,7 @@
     <div class="col-md-12 clearfix">
       <div class="top-links pull-right">
          <a href="[[++moxycart.domain]]/cart?cart-view" class="cart"><span class="glyphicon glyphicon-shopping-cart"></span>&nbsp;<span aria-hidden="true" data-icon="&#xe006;"></span>  <span id="fc_quantity">0</span> items : $<span id="fc_total_price">0.00</span></a>&nbsp;&nbsp;
-        <a href="#" class="cart"><span class="glyphicon glyphicon-share"></span>&nbsp;Checkout</a>
+        <a href="[[++moxycart.domain]]cart?cart=checkout" class="cart"><span class="glyphicon glyphicon-share"></span>&nbsp;Checkout</a>
       </div>
     </div>
   </div>
