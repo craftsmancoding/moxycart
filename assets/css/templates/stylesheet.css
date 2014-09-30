@@ -25,3 +25,7 @@
 .item-col:nth-child(3n+1){
     clear:left
 } 
+
+.images-col {
+	border-right: 1px dotted #ddd;
+}

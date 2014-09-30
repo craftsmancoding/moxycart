@@ -5,6 +5,22 @@ For Product Image we used cycle plugin
 http://jquery.malsup.com/cycle/
 You can use whatever plugins you like, just include it on your product template or add a comma seprated paths for &js_paths=`` or &css_paths=`` on getProductImages
 -->
+
+<!-- 
+@templatename Sample Product
+@description A sample Moxycart template for formatting a single product.
+For Product Image we used cycle plugin
+http://jquery.malsup.com/cycle/
+You can use whatever plugins you like, just include it on your product template or add a comma seprated paths for &js_paths=`` or &css_paths=`` on getProductImages
+-->
+<!-- 
+@templatename Sample Product
+@description A sample Moxycart template for formatting a single product.
+For Product Image we used cycle plugin
+http://jquery.malsup.com/cycle/
+You can use whatever plugins you like, just include it on your product template or add a comma seprated paths for &js_paths=`` or &css_paths=`` on getProductImages
+-->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,323 +31,89 @@ You can use whatever plugins you like, just include it on your product template 
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
-  <title>[[+name]] - Moxycart Sample Product</title>
+  <title>[[*pagetitle]] - Moxycart Sample Store</title>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="[[++moxycart.assets_url]]css/templates/stylesheet.css">
 
-<link rel="stylesheet" href="//cdn.foxycart.com/static/scripts/colorbox/1.3.23/style1_fc/colorbox.css?ver=1" type="text/css" media="screen" charset="utf-8" />
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/flexslider.css">
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/chosen.css">
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/jquery-ui-1.10.3.custom.min.css">
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/prettyPhoto.css">
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/font-awesome.css">
-
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/bootstrap.css">
-  <link rel="stylesheet" type="text/css" href="[[++moxycart.assets_url]]css/templates/style.css">
-
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-
-  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!--[if lt IE 9]>
-  <script src="[[++moxycart.assets_url]]js/templates/bootstrap/js/html5shiv.js"></script>
-  <script src="[[++moxycart.assets_url]]js/templates/bootstrap/js/respond.min.js"></script>
-  <![endif]-->
 
 </head>
 <body>
-<div class="wrapper">
 
-<header id="MainNav">
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 clearfix">
+      <div class="top-links pull-right">
+         <a href="[[++moxycart.domain]]/cart?cart-view" class="cart"><span class="glyphicon glyphicon-shopping-cart"></span>&nbsp;<span aria-hidden="true" data-icon="&#xe006;"></span>  <span id="fc_quantity">0</span> items : $<span id="fc_total_price">0.00</span></a>&nbsp;&nbsp;
+        <a href="#" class="cart"><span class="glyphicon glyphicon-share"></span>&nbsp;Checkout</a>
+      </div>
+    </div>
+  </div>
+</div>
+ <div class="navbar navbar-inverse" role="navigation">
   <div class="container">
-    <div class="row">
-      <section class="col-md-12" id="TopBar">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#"><img src="[[++moxycart.assets_url]]/images/templates/logo.png" alt=""></a>
+    </div>
+    <div class="collapse navbar-collapse navbar-right">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/">Home</a></li>
+        <li><a href="/sample-store">Shop</a></li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div>
+</div>
 
-        <!-- SHOPPING CART -->
-        <div class="shopping-cart-widget pull-right">
-           <a href="[[++moxycart.domain]]/cart?cart-view" class="btn btn-link pull-right">
-            <span aria-hidden="true" data-icon="&#xe006;"></span>  <span id="fc_quantity">0</span> items : $<span id="fc_total_price">0.00</span>
-          </a>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="starter-template text-center">
+            <h1>Moxycart: Your turn-key eCommerce Solution for MODx</h1>
+            <p class="lead">Use this template as a way to quickly start your store template using moxycart.<br> You will see all snippets sample in the core of this file..</p>
+            <a href="https://github.com/craftsmancoding/moxycart/wiki" class="btn btn-primary btn-lg">Visit Wiki Page</a>
+          </div>
         </div>
-        <!-- !SHOPPING CART -->
-      </section>
-      <nav class="navbar navbar-default">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle btn btn-primary">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="[[++site_url]]"><img src="[[++moxycart.assets_url]]images/templates/images/logo.png" alt=" "></a>
-        </div>
+      </div>
 
-        <div class="navbar-collapse navbar-main-collapse" role="navigation">
+        <hr>
 
-         <ul class="nav navbar-nav">
-            <li class="first"><a href="[[++site_url]]" title="Home">Home</a></li>
-            <li><a href="/[[~[[+store_id]]]]">Shop</a></li>
-            </ul>
+        <div class="row main-row">
 
-          <form class="navbar-form navbar-right navbar-search" role="search">
-            <div class="form-group">
-              <label class="sr-only" for="navbar-search">Your search</label>
-              <input type="search" id="navbar-search" class="form-control">
+            <div class="col-md-8 images-col">
+                  [[getProductImages? 
+                    &innerTpl=`<img id="product_thumbnail" src="[[+Asset.url]]" alt="">` 
+                    &css_paths=`[[++moxycart.assets_url]]css/templates/product.css` 
+                    &js_paths=`http://cdnjs.cloudflare.com/ajax/libs/jquery.cycle/3.03/jquery.cycle.all.min.js,[[++moxycart.assets_url]]js/templates/product.js` 
+                    &outerTpl=`ProductImageOuter` 
+                    &is_active=`1`
+                  ]]
+    
             </div>
-            <button class="btn btn-default navbar-search">
-              <span class="fa fa-search">
-                  <span class="sr-only">Search</span>
-              </span>
-            </button>
-          </form>
+
+
+            <div class="left-content col-md-4 clearfix">
+
+
+
+            <h1>[[+name]]</h1>
+            <p class="product-code">Product Code: [[+sku]] ($[[+calculated_price]])</p>
+
+            [[!addToCartButton]]
+            <br>
+            [[+content]]
+
+            </div>
+
         </div>
-        <!-- /.navbar-collapse -->
-      </nav>
-    </div>
-  </div>
-</header>
+    </div><!-- /.container -->
 
-<section id="Content" role="main">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
-<div class="container">
-
-  <!-- SECTION EMPHASIS 1 -->
-  <!-- FULL WIDTH -->
-</div>
-<!-- !container -->
-<div class="full-width section-emphasis-1 page-header page-header-short">
-  <div class="container">
-    <header class="row">
-      <div class="col-md-12">
-        <!-- BREADCRUMBS -->
-        <ul class="breadcrumbs list-inline pull-right">
-          <li><a href="/">Home</a></li>
-          <li><a href="/[[~[[+store_id]]]]">Shop</a></li>
-          <li>[[+name]]</li>
-        </ul>
-        <!-- !BREADCRUMBS -->
-      </div>
-    </header>
-  </div>
-</div>
-<!-- !full-width -->
-<div class="container">
-<!-- !FULL WIDTH -->
-<!-- !SECTION EMPHASIS 1 -->
-
-<article class="row shop-product-single">
-<div class="col-md-6 space-right-20">
-
-    
-    [[getProductImages? 
-      &innerTpl=`<img id="product_thumbnail" src="[[+Asset.url]]" alt="">` 
-      &css_paths=`[[++moxycart.assets_url]]css/templates/product_images.css` 
-      &js_paths=`http://cdnjs.cloudflare.com/ajax/libs/jquery.cycle/3.03/jquery.cycle.all.min.js,[[++moxycart.assets_url]]js/templates/product_images.js` 
-      &outerTpl=`ProductImageOuter` 
-      &is_active=`1`
-    ]]   
-  
-
-</div>
-<div class="clearfix visible-sm visible-xs space-30"></div>
-<div class="col-md-6 space-left-20">
-<header>
-  <span class="rating" data-score="[[!getProductReviewsRating? &product_id=`[[+product_id]]` &state=`approved`]]"></span>
-  <a href="#reviews">([[getProductReviews? &product_id=`[[+product_id]]` &total=`1` &limit=`0`]]) Customer Reviews</a>
-  <a href="#reviews">Write a review</a>
-
-  <h1>
-    [[+name]]
-  </h1>
-  <span class="product-code">Product Code: [[+sku]]</span><br><br>
-  <span class="price-old">$[[+price_strike_thru]]</span>&nbsp;&nbsp;<span class="price">$[[+calculated_price]]</span>
-</header>
-
-    [[!addToCartButton]]
-    
-<div class="shop-product-single-social">
-  <span class="social-label pull-left">Share this product</span>
-
-  <div class="social-widget social-widget-mini social-widget-dark">
-    <ul class="list-inline">
-      <li>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=http://craftsmancoding.com"
-           onclick="window.open(this.href, 'facebook-share','width=580,height=296'); return false;"
-           rel="nofollow"
-           title="Facebook"
-           class="fb">
-          <span class="sr-only">Facebook</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://twitter.com/share?text=Moxycart&amp;url=http://craftsmancoding.com"
-           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235'); return false;"
-           rel="nofollow"
-           title=" Share on Twitter"
-           class="tw">
-          <span class="sr-only">Twitter</span>
-        </a>
-      </li>
-      <li>
-        <a href="https://plus.google.com/share?url=http://craftsmancoding.com"
-           onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530'); return false;"
-           rel="nofollow"
-           title="Google+"
-           class="gp">
-          <span class="sr-only">Google+</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://www.pinterest.com/pin/create/button/?url=http://craftsmancoding.com/&amp;media=[[++moxycart.assets_url]]images/templates/images/frontend/logo.png&amp;description=Moxycart"
-           onclick="window.open(this.href, 'pinterest-share', 'width=770,height=320'); return false;"
-           rel="nofollow"
-           title="Pinterest"
-           class="pt">
-          <span class="sr-only">Pinterest</span>
-        </a>
-      </li>
-      <li>
-        <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=http://developer.linkedin.com&amp;title=LinkedIn%20Developer%20Network&amp;summary=My%20favorite%20developer%20program&amp;source=LinkedIn"
-           onclick="window.open(this.href, 'linkedin-share', 'width=600,height=439'); return false;"
-           rel="nofollow"
-           title="LinkedIn" class="in">
-          <span class="sr-only">LinkedIn</span>
-        </a>
-      </li>
-    </ul>
-  </div>
-</div>
-<div class="tabs">
-  <ul class="nav nav-tabs">
-    <li class="active"><a href="#description" data-toggle="tab">Description</a></li>
-    <li><a href="#reviews" data-toggle="tab">([[getProductReviews? &product_id=`[[+product_id]]` &total=`1` &limit=`0`]]) Customer Reviews</a></li>
-  </ul>
-
-  <div class="tab-content">
-    <div class="tab-pane fade in active" id="description">
-      [[+content]]
-    </div>
-    <section class="tab-pane fade" id="reviews">
-      [[getProductReviews? &product_id=`[[+product_id]]` &innerTpl=`ProductReview` &limit=`0` &state=`approved`]]
-
-      [[writeReview? &tpl=`MoxycartProductFullReview` &product_id=`[[+product_id]]`]]
-      
-    </section>
-  </div>
-</div>
-</div>
-</article>
-</div>
-</section>
-
-<div class="clearfix visible-xs visible-sm"></div>
-<!-- fixes floating problems when mobile menu is visible -->
-
-<footer>
-  <div class="container">
-    <section class="row">
-      <div class="col-md-3 col-sm-6">
-        <h3 class="strong-header">
-          Company
-        </h3>
-
-        <div class="link-widget">
-          <ul class="list-unstyled">
-            <li><a href="13-pages-about.html">About us</a></li>
-            <li><a href="#">Jobs</a></li>
-            <li><a href="#">Affiliates</a></li>
-            <li><a href="16-pages-contact.html">Contact</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="col-md-3 col-sm-6">
-        <h3 class="strong-header">
-          Help
-        </h3>
-
-        <div class="link-widget">
-          <ul class="list-unstyled">
-            <li><a href="10-a-shop-customer-service-track-order.html">Track order</a></li>
-            <li><a href="10-b-shop-customer-service-faq.html">FAQs</a></li>
-            <li><a href="#">Shipping info</a></li>
-            <li><a href="#">Payment</a></li>
-            <li><a href="#">Returns</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="col-md-3 col-sm-6">
-        <h3 class="strong-header">
-          Quick links
-        </h3>
-
-        <div class="link-widget">
-          <ul class="list-unstyled">
-            <li><a href="#">Size guide</a></li>
-            <li><a href="09-a-shop-account-dashboard.html">My account</a></li>
-            <li><a href="09-e-shop-account-my-wishlist.html">Wishlist</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="col-md-3 col-sm-6">
-        <h3 class="strong-header">
-          Follow us
-        </h3>
-
-        <div class="social-widget">
-          <ul class="list-inline">
-            <li><a href="#" class="fb"><span class="sr-only">Facebook</span></a></li>
-            <li><a href="#" class="tw"><span class="sr-only">Twitter</span></a></li>
-            <li><a href="#" class="gp"><span class="sr-only">Google+</span></a></li>
-            <li><a href="#" class="pt"><span class="sr-only">Pinterest</span></a></li>
-            <li><a href="#" class="in"><span class="sr-only">LinkedIn</span></a></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-    <hr>
-    <section class="row">
-      <div class="col-md-12">
-        <span class="copyright pull-left">&copy; 2014 Decima Store</span>
-        <ul class="payment-methods list-inline pull-right">
-          <li>
-            <span class="payment-visa"><span class="sr-only">Visa</span></span>
-          </li>
-          <li>
-            <span class="payment-mastercard"><span class="sr-only">MasterCard</span></span>
-          </li>
-          <li>
-            <span class="payment-paypal"><span class="sr-only">PayPal</span></span>
-          </li>
-          <li>
-            <span class="payment-americanexpress"><span class="sr-only">American Express</span></span>
-          </li>
-        </ul>
-      </div>
-    </section>
-  </div>
-</footer>
-
-</div>
-
-<!-- SCRIPTS -->
-<!-- core -->
-<script src="[[++moxycart.assets_url]]js/templates/bootstrap/js/bootstrap.min.js"></script>
-
-<!-- !core -->
-
-<!-- plugins -->
-<script src="[[++moxycart.assets_url]]js/templates/jquery.flexslider-min.js"></script>
-
-<script src="[[++moxycart.assets_url]]js/templates/jquery.isotope.min.js"></script>
-<script src="[[++moxycart.assets_url]]js/templates/jquery.ba-bbq.min.js"></script>
-
-<script src="[[++moxycart.assets_url]]js/templates/jquery-ui-1.10.3.custom.min.js"></script>
-
-<script src="[[++moxycart.assets_url]]js/templates/jquery.raty.min.js"></script>
-
-<script src="[[++moxycart.assets_url]]js/templates/jquery.prettyPhoto.js"></script>
-
-<script src="[[++moxycart.assets_url]]js/templates/chosen.jquery.min.js"></script>
-<!-- !plugins -->
-
-<script src="[[++moxycart.assets_url]]js/templates/main.js"></script>
-<script src="//cdn.foxycart.com/fireproofsocks/foxycart.colorbox.js?ver=2" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

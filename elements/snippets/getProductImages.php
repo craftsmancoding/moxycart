@@ -60,6 +60,7 @@ $scriptProperties['content_ph'] = $modx->getOption('content_ph',$scriptPropertie
 
 $product_id = (int) $modx->getOption('product_id',$scriptProperties, $modx->getPlaceholder('product_id'));
 $js_paths = $modx->getOption('js_paths',$scriptProperties,null);
+$css_paths = $modx->getOption('css_paths',$scriptProperties,null);
 
 if (!$product_id) {
     return 'product_id is required.';

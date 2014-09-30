@@ -6,7 +6,7 @@
 	<div class="image-box">
 		[[+content]]
 	</div>
-	<div class="dpimages-icons-box"></div>
+	<div class="dpimages-icons-box clearfix"></div>
 	<br style="clear:both;">
 </div>
 <!-- end .image -->
