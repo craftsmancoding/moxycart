@@ -1,0 +1,23 @@
+.navbar {
+	min-height: 100px;
+	border-radius: 0px !important;
+	-moz-border-radius: 0px !important;
+	-webkit-border-radius: 0px !important;
+}
+
+.navbar-nav {
+	margin-top: 25px;
+}
+
+.main-row {
+	margin-top: 30px;
+}
+
+.top-links {
+	padding: 10px 0px;
+}
+
+.top-links a {
+	color: #222222;
+	text-decoration: none;
+}
