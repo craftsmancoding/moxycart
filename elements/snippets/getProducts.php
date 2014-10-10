@@ -47,7 +47,6 @@ $content_ph = $modx->getOption('content_ph',$scriptProperties, 'content');
 // Default Arguments:
 $scriptProperties['is_active'] = $modx->getOption('is_active',$scriptProperties, 1);
 
-
 // Filter out formatting/control arguments:
 unset($scriptProperties['log_level']);
 unset($scriptProperties['log_target']);
@@ -70,10 +69,9 @@ if ($help) {
     }
     return $out.'</pre></div>';
 }
+$results = $P->all($scriptProperties);
 
-
-if ($results = $P->all($scriptProperties)) {
-
+if ($results) {
     // Get Custom Fields
     foreach ($results as &$r) {
         $c = $modx->newQuery('ProductField');
@@ -81,7 +79,7 @@ if ($results = $P->all($scriptProperties)) {
             'product_id' => $r['product_id'],
             'Field.is_active' => true
         ));
-        $c->sortby('seq','ASC');    
+        $c->sortby('Field.seq','ASC');    
         
         if($fields = $modx->getCollectionGraph('ProductField','{"Field":{}}',$c)) {
             foreach ($fields as $f) {

@@ -10,6 +10,7 @@
 namespace Moxycart;
 class Product extends BaseModel {
 
+
     public $xclass = 'Product';
     public $default_sort_col = 'name'; 
     // Searches in the manager using "searchterm" will trigger a LIKE search matching any of these columns
@@ -60,7 +61,7 @@ class Product extends BaseModel {
         $dir = $this->modx->getOption('dir',$args,$this->default_sort_dir);
         $debug = $this->modx->getOption('debug',$args);
         $select_cols = $this->modx->getOption('select',$args);
-        
+
         // Clear out non-filter criteria
         $args = self::getFilters($args); 
 //        return '<pre>'.print_r($args,true).'</pre>';

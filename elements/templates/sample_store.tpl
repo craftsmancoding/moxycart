@@ -76,7 +76,7 @@
 
             <div class="left-content col-md-9 clearfix">
 
-              [[getProducts? &outerTpl=`[[+products]]` &content_ph=`products` &innerTpl=`ProductInnerTpl` &store_id=`[[*id]]` &limit=`0`]]
+              [[getProducts? &outerTpl=`[[+products]]` &sort=`Product.seq` &content_ph=`products` &innerTpl=`ProductInnerTpl` &store_id=`[[*id]]` &limit=`0`]]
 
             </div>
 

@@ -162,7 +162,7 @@ class BaseModel {
      * @return mixed xPDO iterator (i.e. a collection, but memory efficient) or SQL query string
      */
     public function all($args,$debug=false) {
-    
+
         // If you get this error: "Call to a member function getOption() on a non-object", it could mean:
         // 1) you tried to call this method statically, e.g. Product::all()
         // 2) you forgot to initialize the class and pass a modx instance to the contructor (dependency injection!)
