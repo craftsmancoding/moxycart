@@ -81,7 +81,7 @@ if ($results = $P->all($scriptProperties)) {
             'product_id' => $r['product_id'],
             'Field.is_active' => true
         ));
-        $c->sortby('Field.seq','ASC');    
+        $c->sortby('seq','ASC');    
         
         if($fields = $modx->getCollectionGraph('ProductField','{"Field":{}}',$c)) {
             foreach ($fields as $f) {
