@@ -454,7 +454,10 @@ class PageController extends BaseController {
         }
         //print '<pre>'; print_r($meta); print '</pre>'; exit;
         $this->setPlaceholder('product_option_meta',$meta);
-                
+    
+        $product_terms = $this->getForm($product_id);  
+        $this->setPlaceholder('product_terms',$product_terms);
+
         // ProductTaxonomy
         $product_taxonomies = array();
         if ($PTs = $this->modx->getCollection('ProductTaxonomy', array('product_id'=>$product_id))) {
@@ -463,20 +466,7 @@ class PageController extends BaseController {
             }
         }
         $this->setPlaceholder('product_taxonomies',$product_taxonomies);        
-        
-        // Terms
-        $T = new Taxonomy($this->modx);
-        $terms = $T->getTaxonomiesAndTerms();
-        $this->setPlaceholder('terms',$terms);
-        
-        // ProductTerm
-        $product_terms = array();
-        if ($PTs = $this->modx->getCollection('ProductTerm', array('product_id'=>$product_id))) {
-            foreach($PTs as $pt) {
-                $product_terms[] = $pt->get('term_id');
-            }
-        }
-        $this->setPlaceholder('product_terms',$product_terms);        
+
         
         // ProductOrder
         $product_orders = array();
@@ -494,6 +484,94 @@ class PageController extends BaseController {
         $this->setPlaceholder('product_orders',$product_orders);        
         
         return $this->fetchTemplate('product/edit.php');
+    }
+
+     /**
+     * getForm
+     *
+     * @param integer $product_id current MODX resource
+     * @return string HTML form.
+     */
+    public function getForm($product_id)
+    {
+        $current_values = $this->getProductTerms($product_id);
+        return $this->buildForm($current_values);
+    }
+
+    /**
+     * @param array $current_values
+     * @return string
+     */
+    public function buildForm($current_values)
+    {
+        $out = '';
+        $c = $this->modx->newQuery('Taxonomy');
+        $c->where(array('published' => true, 'class_key' => 'Taxonomy'));
+        $c->sortby('menuindex', 'ASC');
+
+        if ($Ts = $this->modx->getCollection('Taxonomy', $c))
+        {
+            foreach ($Ts as $t)
+            {
+                $out .= '<fieldset><legend>' . $t->get('pagetitle') . '</legend>';
+                $properties = $t->get('properties');
+                if ($children = $this->modx->getOption('children', $properties, array()))
+                {
+                    $out .= $this->getFieldItems($current_values, $children); // 1st time
+                }
+
+                $out .= '</fieldset>';
+            }
+        }
+        return $out;
+    }
+
+        /**
+     * Build the contents of the fieldset -- this is one of those wormhole functions
+     * @param $current_values array of term_ids
+     * @param $children
+     * @param $indent_multiplier integer
+     * @param $class
+     * @return mixed
+     */
+    public function getFieldItems($current_values,$children, $indent_multiplier = 0, $class = '')
+    {
+        $out = '';
+        foreach ($children as $page_id => $def) {
+            $indent = str_repeat('--', $indent_multiplier);
+            if (isset($def['published']) && $def['published'])
+            {
+                $checked = (in_array($page_id,$current_values)) ? ' checked="checked"' : '';
+                $out .= $indent . ' <input type="checkbox" name="Terms[]" id="terms' . $this->i . '" value="' . $page_id . '"
+                    class="multicheck' . $class . '" style=""  '.$checked.'/>
+                    <label for="terms' . $this->i . '" class="multichecklabel">' . $def['pagetitle'] . '</label><br/>';
+                $this->i = $this->i + 1;
+                if (!empty($def['children'])) {
+                    $class = $class . ' term' . $page_id;
+                    $out .= $this->getFieldItems($current_values,$def['children'], $indent_multiplier+1, $class);
+                }
+            }
+            $indent_multiplier--;
+        }
+
+        return $out;
+    }
+
+    /**
+     * Get an array of term_ids for any associations with the given product_id
+     * @param integer $product_id
+     * @return array
+     */
+    public function getProductTerms($product_id)
+    {
+        $out = array();
+        if ($Terms =  $this->modx->getCollection('ProductTerm', array('product_id'=>$product_id))) {
+            foreach ($Terms as $t) {
+                $out[] = $t->get('term_id');
+            }
+        }
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, "productTerms for page " . $page_id . ': ' . print_r($out, true), '', __CLASS__);
+        return $out;
     }
 
      public function getProductInventory(array $scriptProperties = array()) {

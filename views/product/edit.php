@@ -992,12 +992,12 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
     	<div id="taxonomies_tab" class="content"><br>
 
                 <div id="taxonomy_terms">
-                    <?php print \Formbuilder\Form::multicheck('Terms',$data['terms'],$data['product_terms']); ?>
+                    <?php print $data['product_terms']; ?>
                 </div>    
 
                 <br/>
                 
-                <span class="btn" onclick="javascript:jQuery('#taxonomy-modal').dialog('open');" id="taxonomy-btn">Show / Hide Taxonomies</span>
+            <span class="btn" onclick="javascript:jQuery('#taxonomy-modal').dialog('open');" id="taxonomy-btn">Show / Hide Taxonomies</span>
         
                 <?php /* ======== MODAL DIALOG BOX ======*/ ?>
                 <div id="taxonomy-modal" style="display:none;" title="Select Taxonomy">
