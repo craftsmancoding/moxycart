@@ -37,32 +37,6 @@ function product_init() {
     draw_assets();
 
 
-    // Dropzone for Assets 
-    var myDropzone = new Dropzone("div#image_upload", {url: moxycart.assets_url});    
-    // Refresh the list on success (append new tile to end)
-    myDropzone.on("success", function(file,response) {
-        console.log('Dropzone Response',response);
-        if (response.status == "success") {
-            console.log('Dropzone Success - response fields:',response.data.fields);
-            add_asset(response.data.fields);
-            /*
-moxycart.product.Assets.push({
-                asset_id: response.data.fields.asset_id,
-                is_active: 1,
-                Asset: response.data.fields 
-            });
-*/
-            draw_assets();
-            jQuery(".dz-preview").remove();
-            save_product(moxycart.product_save_method);
-       } 
-       else {                           
-            jQuery(".dz-success-mark").hide();
-            jQuery(".dz-error-mark").show();
-            show_error(response.data.msg);
-       }
-    });
-
     // ProductRelation Autocomplete
     // customizations here for compatibility 
     jQuery('#search_products').autocomplete({
@@ -965,6 +939,37 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
     </div>
     <?php endif; // moxycart.enable_reviews ?>
     
+
+    <?php if ($data['product_form_action'] == 'product_update'): ?>
+    <script>
+        jQuery(document).ready(function() {
+                // Dropzone for Assets 
+                var myDropzone = new Dropzone("div#image_upload", {url: moxycart.assets_url});    
+                // Refresh the list on success (append new tile to end)
+                myDropzone.on("success", function(file,response) {
+                    console.log('Dropzone Response',response);
+                    if (response.status == "success") {
+                        console.log('Dropzone Success - response fields:',response.data.fields);
+                        add_asset(response.data.fields);
+                        /*
+            moxycart.product.Assets.push({
+                            asset_id: response.data.fields.asset_id,
+                            is_active: 1,
+                            Asset: response.data.fields 
+                        });
+            */
+                        draw_assets();
+                        jQuery(".dz-preview").remove();
+                        save_product(moxycart.product_save_method);
+                   } 
+                   else {                           
+                        jQuery(".dz-success-mark").hide();
+                        jQuery(".dz-error-mark").show();
+                        show_error(response.data.msg);
+                   }
+                });
+        });
+    </script>
 	<div id="assets_tab" class="content">	
 
         <ul id="asset_category_filters"></ul>
@@ -991,27 +996,30 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 		</div>
         
 	</div>
+    <?php endif; ?>
 
-    <?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
-    	<div id="taxonomies_tab" class="content"><br>
+    <?php if ($data['product_form_action'] == 'product_update'): ?>
+        <?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
+        	<div id="taxonomies_tab" class="content"><br>
 
-                <div id="taxonomy_terms">
-                    <?php print $data['product_terms']; ?>
-                </div>    
+                    <div id="taxonomy_terms">
+                        <?php print $data['product_terms']; ?>
+                    </div>    
 
-                <br/>
-                
-            <span class="btn" onclick="javascript:jQuery('#taxonomy-modal').dialog('open');" id="taxonomy-btn">Show / Hide Taxonomies</span>
-        
-                <?php /* ======== MODAL DIALOG BOX ======*/ ?>
-                <div id="taxonomy-modal" style="display:none;" title="Select Taxonomy">
-                   <legend>Enable Taxonomies</legend>
-                    <div id="taxonomy_list">
-                        <?php print \Formbuilder\Form::multicheck('Taxonomies',$data['taxonomies'],$data['product_taxonomies']); ?>
-                    </div>
-                </div> 
-    	</div>
-    <?php endif; // moxycart.enable_taxonomies ?>
+                    <br/>
+                    
+                <span class="btn" onclick="javascript:jQuery('#taxonomy-modal').dialog('open');" id="taxonomy-btn">Show / Hide Taxonomies</span>
+            
+                    <?php /* ======== MODAL DIALOG BOX ======*/ ?>
+                    <div id="taxonomy-modal" style="display:none;" title="Select Taxonomy">
+                       <legend>Enable Taxonomies</legend>
+                        <div id="taxonomy_list">
+                            <?php print \Formbuilder\Form::multicheck('Taxonomies',$data['taxonomies'],$data['product_taxonomies']); ?>
+                        </div>
+                    </div> 
+        	</div>
+        <?php endif; // moxycart.enable_taxonomies ?>
+    <?php endif; ?>
 
     <div id="orders_tab" class="content">
         <table class="classy sub-terms">
