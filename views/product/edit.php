@@ -552,10 +552,14 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 		<?php if($this->modx->getOption('moxycart.enable_reviews')):?>
             <li class="reviews-link" ><a href="#reviews_tab">Reviews</a></li>
         <?php endif; ?>
-		<li class="assets-link" ><a href="#assets_tab">Assets</a></li>
-		<?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
-    		<li class="taxonomies-link" ><a href="#taxonomies_tab">Taxonomies</a></li>
-		<?php endif; ?>
+        <?php if ($data['product_form_action'] == 'product_update'): ?>
+		  <li class="assets-link" ><a href="#assets_tab">Assets</a></li>
+        <?php endif; ?>
+         <?php if ($data['product_form_action'] == 'product_update'): ?>
+    		<?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
+        		<li class="taxonomies-link" ><a href="#taxonomies_tab">Taxonomies</a></li>
+    		<?php endif; ?>
+         <?php  endif; ?> 
 		<li class="orders-link" ><a href="#orders_tab">View Orders</a></li>
 	</ul>
 
@@ -961,53 +965,57 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
     </div>
     <?php endif; // moxycart.enable_reviews ?>
     
-	<div id="assets_tab" class="content">	
+     <?php if ($data['product_form_action'] == 'product_update'): ?>
+    	<div id="assets_tab" class="content">	
 
-        <ul id="asset_category_filters"></ul>
+            <ul id="asset_category_filters"></ul>
 
-        <div class="dropzone-wrap" id="image_upload">
+            <div class="dropzone-wrap" id="image_upload">
 
-        	<ul class="clearfix ui-sortable" id="product_assets"></ul>
+            	<ul class="clearfix ui-sortable" id="product_assets"></ul>
 
-        	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
+            	<div class="dz-default dz-message"><span>Drop files here to upload</span></div>
 
-             <div id="trash-can" class="drop-delete">
-                <span>Drag Image Here to Delete</span>
+                 <div id="trash-can" class="drop-delete">
+                    <span>Drag Image Here to Delete</span>
+                </div>
+
             </div>
 
-        </div>
-
-        
-		<?php /* ======== DELETE DIALOG BOX ======*/ ?>
-		<div id="delete_asset_modal" title="Delete/Remove Asset">
-            <p>This asset might be used by other products or pages!</p>
-            <p>You can <strong>remove</strong> the image from this product,<br/>
-            or you can <strong>delete</strong> the asset.</p>
-            <p class="danger">Deleting cannot be undone!</p>
-		</div>
-        
-	</div>
-
-    <?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
-    	<div id="taxonomies_tab" class="content"><br>
-
-                <div id="taxonomy_terms">
-                    <?php print $data['product_terms']; ?>
-                </div>    
-
-                <br/>
-                
-            <span class="btn" onclick="javascript:jQuery('#taxonomy-modal').dialog('open');" id="taxonomy-btn">Show / Hide Taxonomies</span>
-        
-                <?php /* ======== MODAL DIALOG BOX ======*/ ?>
-                <div id="taxonomy-modal" style="display:none;" title="Select Taxonomy">
-                   <legend>Enable Taxonomies</legend>
-                    <div id="taxonomy_list">
-                        <?php print \Formbuilder\Form::multicheck('Taxonomies',$data['taxonomies'],$data['product_taxonomies']); ?>
-                    </div>
-                </div> 
+            
+    		<?php /* ======== DELETE DIALOG BOX ======*/ ?>
+    		<div id="delete_asset_modal" title="Delete/Remove Asset">
+                <p>This asset might be used by other products or pages!</p>
+                <p>You can <strong>remove</strong> the image from this product,<br/>
+                or you can <strong>delete</strong> the asset.</p>
+                <p class="danger">Deleting cannot be undone!</p>
+    		</div>
+            
     	</div>
-    <?php endif; // moxycart.enable_taxonomies ?>
+    <?php  endif; ?>
+    
+     <?php if ($data['product_form_action'] == 'product_update'): ?>
+        <?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
+        	<div id="taxonomies_tab" class="content"><br>
+
+                    <div id="taxonomy_terms">
+                        <?php print $data['product_terms']; ?>
+                    </div>    
+
+                    <br/>
+                    
+                <span class="btn" onclick="javascript:jQuery('#taxonomy-modal').dialog('open');" id="taxonomy-btn">Show / Hide Taxonomies</span>
+            
+                    <?php /* ======== MODAL DIALOG BOX ======*/ ?>
+                    <div id="taxonomy-modal" style="display:none;" title="Select Taxonomy">
+                       <legend>Enable Taxonomies</legend>
+                        <div id="taxonomy_list">
+                            <?php print \Formbuilder\Form::multicheck('Taxonomies',$data['taxonomies'],$data['product_taxonomies']); ?>
+                        </div>
+                    </div> 
+        	</div>
+        <?php endif; // moxycart.enable_taxonomies ?>
+    <?php endif; ?>
 
     <div id="orders_tab" class="content">
         <table class="classy sub-terms">
