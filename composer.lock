@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4f23aeb2cf8ff17d3f4d2f76431f86b7",
+    "hash": "c53d232e0312f2f7cac8059307afea36",
     "packages": [
         {
             "name": "craftsmancoding/formbuilder",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/craftsmancoding/formbuilder.git",
-                "reference": "ac6fe339b46384c3dab5a6cdaf2a351a35bc98fd"
+                "reference": "5cd6e0605f16a52d76256c710b9c68e8a29c3295"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craftsmancoding/formbuilder/zipball/ac6fe339b46384c3dab5a6cdaf2a351a35bc98fd",
-                "reference": "ac6fe339b46384c3dab5a6cdaf2a351a35bc98fd",
+                "url": "https://api.github.com/repos/craftsmancoding/formbuilder/zipball/5cd6e0605f16a52d76256c710b9c68e8a29c3295",
+                "reference": "5cd6e0605f16a52d76256c710b9c68e8a29c3295",
                 "shasum": ""
             },
             "require": {
@@ -45,7 +45,7 @@
                 "source": "https://github.com/craftsmancoding/formbuilder/tree/master",
                 "issues": "https://github.com/craftsmancoding/formbuilder/issues"
             },
-            "time": "2014-07-10 00:39:04"
+            "time": "2014-10-08 02:32:56"
         },
         {
             "name": "craftsmancoding/pagination",
@@ -53,12 +53,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/craftsmancoding/pagination.git",
-                "reference": "43f28d2fdb3a376bd6c0718d53ba039b5f4288e1"
+                "reference": "bfecefbe1db76bc2adb51a18e5a8e7ef8de2631a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craftsmancoding/pagination/zipball/43f28d2fdb3a376bd6c0718d53ba039b5f4288e1",
-                "reference": "43f28d2fdb3a376bd6c0718d53ba039b5f4288e1",
+                "url": "https://api.github.com/repos/craftsmancoding/pagination/zipball/bfecefbe1db76bc2adb51a18e5a8e7ef8de2631a",
+                "reference": "bfecefbe1db76bc2adb51a18e5a8e7ef8de2631a",
                 "shasum": ""
             },
             "require": {
@@ -84,7 +84,7 @@
                 "source": "https://github.com/craftsmancoding/pagination/tree/master",
                 "issues": "https://github.com/craftsmancoding/pagination/issues"
             },
-            "time": "2014-05-08 16:45:57"
+            "time": "2014-10-16 05:38:01"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -92,12 +92,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ezyang/htmlpurifier.git",
-                "reference": "80ebd4322e3b98bc25c3ed3effe99a1653bc00fc"
+                "reference": "cd60294ada5245c5835baebf0dbb3f44ee851317"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/80ebd4322e3b98bc25c3ed3effe99a1653bc00fc",
-                "reference": "80ebd4322e3b98bc25c3ed3effe99a1653bc00fc",
+                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/cd60294ada5245c5835baebf0dbb3f44ee851317",
+                "reference": "cd60294ada5245c5835baebf0dbb3f44ee851317",
                 "shasum": ""
             },
             "require": {
@@ -120,8 +120,7 @@
                 {
                     "name": "Edward Z. Yang",
                     "email": "admin@htmlpurifier.org",
-                    "homepage": "http://ezyang.com",
-                    "role": "Developer"
+                    "homepage": "http://ezyang.com"
                 }
             ],
             "description": "Standards compliant HTML filter written in PHP",
@@ -129,15 +128,11 @@
             "keywords": [
                 "html"
             ],
-            "time": "2014-02-04 20:17:24"
+            "time": "2014-08-31 11:12:38"
         }
     ],
-    "packages-dev": [
-
-    ],
-    "aliases": [
-
-    ],
+    "packages-dev": [],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
         "ezyang/htmlpurifier": 20,
@@ -148,7 +143,5 @@
     "platform": {
         "php": ">=5.3"
     },
-    "platform-dev": [
-
-    ]
+    "platform-dev": []
 }

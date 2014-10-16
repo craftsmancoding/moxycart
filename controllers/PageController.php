@@ -551,7 +551,7 @@ class PageController extends BaseController {
                     $out .= $this->getFieldItems($current_values,$def['children'], $indent_multiplier+1, $class);
                 }
             }
-            $indent_multiplier--;
+            //$indent_multiplier--;
         }
 
         return $out;

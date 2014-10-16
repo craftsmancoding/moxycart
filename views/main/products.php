@@ -60,7 +60,6 @@
 // Pagination : see the get_data function in the controllers/store/upudate.class.php
 $tpls = include 'pagination_tpls.php';
 $results_per_page = (int) $this->modx->getOption('moxycart.default_per_page','',$this->modx->getOption('default_per_page'));
-print \Pagination\Pager::style('form');
 print \Pagination\Pager::links($data['count'], $data['offset'], $results_per_page, $data['baseurl'])->setTpls($tpls);
 ?>
 </div>
