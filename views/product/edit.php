@@ -734,6 +734,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                 <tbody>
                                                 
                                             <?php
+                                            if(!empty($data['product_option_meta'][$option_id]['Terms'])) :
                                             // Option Meta Data
                                             foreach ($data['product_option_meta'][$option_id]['Terms'] as $oterm_id => $m):
                                                 // We gotta ref an arbitrary integer as a placeholder in the POST array to keep arrays in sync
@@ -795,6 +796,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                 </tr>
                                             <?php
                                             endforeach;
+                                            endif;
                                             ?>
                                             </tbody>
                                             </table>
