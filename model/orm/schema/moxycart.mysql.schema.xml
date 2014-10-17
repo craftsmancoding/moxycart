@@ -30,7 +30,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="template_id" dbtype="int" precision="11" phptype="integer" null="true" />
         <field key="asset_id" dbtype="int" precision="11" phptype="integer" null="true" comment="Primary thumbnail image"/>
         <field key="name" dbtype="varchar" precision="60" phptype="string" null="false" />
-        <field key="title" dbtype="varchar" precision="60" phptype="string" null="false" comment="For the webpage"/>
+        <field key="title" dbtype="varchar" precision="150" phptype="string" null="false" comment="For the webpage"/>
         <field key="meta_keywords" dbtype="varchar" precision="255" phptype="string" null="false" default="" comment="For plugging search terms"/>
         <field key="description" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />
