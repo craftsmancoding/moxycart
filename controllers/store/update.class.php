@@ -1,4 +1,7 @@
 <?php
+// MODX doesn't seem to load this correctly via plugin all the time...
+$core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
+require_once $core_path .'vendor/autoload.php';
 require_once $modx->getOption('manager_path',null,MODX_MANAGER_PATH).'controllers/default/resource/update.class.php';
 
 class StoreUpdateManagerController extends ResourceUpdateManagerController {
