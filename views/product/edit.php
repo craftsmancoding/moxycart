@@ -248,7 +248,7 @@ function product_init() {
     var arrayLength = assman.Groups.length;
     for (var i = 0; i < arrayLength; i++) {
         if (assman.Groups[i]) {
-            jQuery('#asset_category_filters').append( moxycart.tpls.category({"group": assman.Groups[i]}));        
+            jQuery('#asset_category_filters').append( moxycart.tpls.category({"group": assman.Groups[i]}) );
         }
     } 
 
@@ -515,7 +515,9 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 	<ul id="moxytab" class="menu">
 		<li class="product-link active"><a href="#product">Product</a></li>
 		<li class="settings-link" ><a href="#settings_tab">Settings</a></li>
-        <li class="options-link" ><a href="#options_tab">Options</a></li>
+        <?php if ($data['product_form_action'] == 'product_update'): ?>
+            <li class="options-link" ><a href="#options_tab">Options</a></li>
+        <?php endif; ?>
 		<?php if($this->modx->getOption('moxycart.enable_variations')):?>
     		<li class="variations-link" ><a href="#variations_tab">Variations</a></li>
 		<?php endif; ?>
@@ -696,7 +698,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
     <div id="options_tab" class="content">
        <div class="product-option-wrap">
 
-                                     <p>Allow your visitors to select variations in your product.</p><br>
+                                     <p>Allow your visitors to select variations in your product. <a href="https://github.com/craftsmancoding/moxycart/wiki/Option-Terms">More info...</a></p><br>
                                     <?php
                                     //print '<pre>'; print_r($data['Options']); print '</pre>'; exit;
                                     // @#$%@#. Special stuff here: we gotta force the field names to ensure that arrays are in sync.

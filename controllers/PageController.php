@@ -270,7 +270,14 @@ class PageController extends BaseController {
             'use_editor' => $this->modx->getOption('use_editor'),
         );
         $this->client_config['product_save_method'] = 'create';
-        
+
+        //
+        $A = $this->modx->newObject('Asset');
+        $assman['Groups'] = $A->getAssetGroups();
+        $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+                var assman = '.json_encode($assman).';
+            </script>');
+
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     	   console.log("[moxycart] '.__FUNCTION__.'");
             // Document read stuff has to be in here
@@ -573,7 +580,7 @@ class PageController extends BaseController {
                 $out[] = $t->get('term_id');
             }
         }
-        $this->modx->log(\modX::LOG_LEVEL_DEBUG, "productTerms for page " . $page_id . ': ' . print_r($out, true), '', __CLASS__);
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, "productTerms for product " . $product_id . ': ' . print_r($out, true), '', __CLASS__);
         return $out;
     }
 

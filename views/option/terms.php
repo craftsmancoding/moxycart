@@ -27,8 +27,9 @@ function remove_term(event) {
 </div>
 
 <div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Define which terms should appear in your option list.
-        Optionally, you can trigger modifications to the price, weight, SKU code, or Foxycart category when a specific term is selected.
-        <br/>See <a href=""https://github.com/craftsmancoding/moxycart/wiki/Option-Terms">Option Terms</a> in the Wiki for more info.</p></div>
+        Optionally, you here is where you can set global modifications to the price, weight, SKU code, or the Foxycart category when a specific term is selected.
+        You can also set modifications on a per-product basis by editing the options on a product page.
+        <br/>See <a href="https://github.com/craftsmancoding/moxycart/wiki/Option-Terms">Option Terms</a> in the Wiki for more info.</p></div>
 
 <div class="moxycart_canvas_inner">
 
