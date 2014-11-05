@@ -1,7 +1,7 @@
 <?php
 /**
  * @name getProductImages
- * @description Returns a list of product_images.
+ * @description Returns a list of images associated with the given product.
  *
  * 
  * Available Placeholders

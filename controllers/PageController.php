@@ -56,11 +56,12 @@ class PageController extends BaseController {
     }
 
     /**
-    * Load TinyMCE
-    * Add modx-richtext class on textarea
-    * @param
-    * @return
-    **/
+     * Load TinyMCE
+     * Add modx-richtext class on textarea
+     *
+     * @internal param $
+     * @return string
+     */
     private function _load_tinyMCE() 
     {
         $_REQUEST['a'] = '';  /* fixes E_NOTICE bug in TinyMCE */
@@ -201,6 +202,8 @@ class PageController extends BaseController {
     /**
      *
      * @param array $scriptProperties
+     *
+     * @return rendered
      */
     public function getProducts(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
