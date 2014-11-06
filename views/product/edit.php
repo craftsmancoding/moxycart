@@ -699,6 +699,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
        <div class="product-option-wrap">
 
                                      <p>Allow your visitors to select variations in your product. <a href="https://github.com/craftsmancoding/moxycart/wiki/Option-Terms">More info...</a></p><br>
+                                    <!--span onclick="javascript:open_option_modal();">Option Modal</span-->
                                     <?php
                                     //print '<pre>'; print_r($data['Options']); print '</pre>'; exit;
                                     // @#$%@#. Special stuff here: we gotta force the field names to ensure that arrays are in sync.

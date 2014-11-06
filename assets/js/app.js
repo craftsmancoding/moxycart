@@ -201,6 +201,18 @@ function open_thumbail_modal(url_target,val_target,desired_w,desired_h) {
     });
 }
 
+function open_option_modal()
+{
+    jQuery.colorbox({
+        inline:false,
+        width: "80%",
+        height: "50%",
+        html:function(){
+            return '<h1>Product Option</h1> <p>Edit here...</p>';
+        }
+    });
+}
+
 /**
  * Select the given thumbnail: write the asset id back to the specified target 
  * @param asset_id integer which asset?

@@ -16,11 +16,13 @@ class Product extends BaseModel {
     // Searches in the manager using "searchterm" will trigger a LIKE search matching any of these columns
     public $search_columns = array('name','title','meta_keywords','description','content','sku'); 
     private $product_id;
-    
+
     /**
      * Verify that the existing product is in fact an existing, valid, persisted product
      * and not a new, unsaved product.
-     * @return integer product_id
+     *
+     * @throws \Exception
+     * @return int product_id
      */
     private function _verifyExisting() {
     
@@ -46,7 +48,7 @@ class Product extends BaseModel {
      * it will not return an empty array if it has no results. See
      * https://github.com/modxcms/revolution/issues/11373
      *
-     * @param array $arguments (including filters)
+     * @param array $args (including filters)
      * @param boolean $debug
      * @return mixed xPDO iterator (i.e. a collection, but memory efficient) or SQL query string
      */
