@@ -20,9 +20,12 @@
  * -----------------------------
  * @param integer $product_id of the product whose images you want. Defaults to the current product (if used in a product template)
  * @param string $group name of the group - if set, results will be filtered to this group
+ * @param string $js_paths comma separated values for custom js plugins or script to add effect on images
+ * @param string $css_paths comma separated values for custom css to format images
  * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
  * @param boolean $is_active Get all active records only
+ * @param mixed $omit comma-separated list of assets to omit from the results (or an array of ids), e.g. pass [[+asset_id]] to omit the primary image. Default: null
  * @param int $limit Limit the records to be shown (if set to 0, all records will be pulled)
 // * @param int $firstClass set CSS class name on the first item (Optional)
  *
@@ -57,6 +60,7 @@ $outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</u
 $scriptProperties['is_active'] = (bool) $modx->getOption('is_active',$scriptProperties, 1);
 $scriptProperties['limit'] = (int) $modx->getOption('limit',$scriptProperties, null);
 $scriptProperties['content_ph'] = $modx->getOption('content_ph',$scriptProperties, 'content');
+$scriptProperties['omit'] = $modx->getOption('omit',$scriptProperties, null);
 
 $product_id = (int) $modx->getOption('product_id',$scriptProperties, $modx->getPlaceholder('product_id'));
 $js_paths = $modx->getOption('js_paths',$scriptProperties,null);
@@ -71,6 +75,11 @@ $criteria = array(
     'is_active'=>true,
     'Asset.is_image' => true,
 );
+if ($scriptProperties['omit']) {
+	$asset_ids = (is_array($scriptProperties['omit'])) ? $scriptProperties['omit'] : array_map('trim', explode(',', $scriptProperties['omit']));
+	$criteria['ProductAsset.asset_id:NOT IN'] = $asset_ids;
+}
+
 if (isset($scriptProperties['group'])) {
     $criteria['ProductAsset.group'] = $scriptProperties['group'];
 }
