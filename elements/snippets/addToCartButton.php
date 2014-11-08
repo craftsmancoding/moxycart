@@ -104,8 +104,8 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
         }
 
         $opt = str_replace(
-            array('[[+slug]]','[[+cssClassOptionLabel]]','[[+name]]','[[+cssClassOptionSelect]]'),
-            array($o->Option->get('slug'), $cssClassOptionLabel,$o->Option->get('name'),$cssClassOptionSelect),
+            array('[[+slug]]','[[!+slug]]','[[+cssClassOptionLabel]]','[[+name]]','[[!+name]]','[[+cssClassOptionSelect]]'),
+            array($o->Option->get('slug'),$o->Option->get('slug'), $cssClassOptionLabel,$o->Option->get('name'),$o->Option->get('name'),$cssClassOptionSelect),
             $selectBeforeTpl);
 
         // all_terms,omit_terms,explicit_terms
