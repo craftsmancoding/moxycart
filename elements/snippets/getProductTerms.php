@@ -15,6 +15,7 @@
  * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
  * @param int $limit Limit the result
+ * @param boolean $debug -- force raw Query to be returned
  *
  * Variables
  * ---------
@@ -38,6 +39,7 @@ $outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</u
 
 $product_id = $modx->getOption('product_id',$scriptProperties, $modx->getPlaceholder('product_id'));
 $taxonomy_id_raw = trim($modx->getOption('taxonomy_id',$scriptProperties));
+$debug = $modx->getOption('debug',$scriptProperties, false);
 
 if (!$product_id) {
     return 'Missing Product ID';
@@ -55,13 +57,15 @@ if ($taxonomy_id_raw) {
 
 $c = $modx->newQuery('ProductTerm');
 $c->where(array(
-    'Term.publiched'=> true,
+    'Term.published'=> true,
     'product_id'=>$product_id
 ));
-print $c->toSQL();
-/*$c->prepare();
-print $c->toSQL();
-die();*/
+
+if ($debug)
+{
+    $c->prepare();
+    return '<h2>getProductTerms</h2><pre>'.$c->toSQL().'</pre>';
+}
 
 
 
