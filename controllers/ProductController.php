@@ -134,7 +134,8 @@ Array
      */
     public function postEdit(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'API: '.print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
-        
+        //return '<pre>'.print_r($scriptProperties,true);
+        //$this->modx->log(\modX::LOG_LEVEL_ERROR,print_r($scriptProperties,true),'',__CLASS__,__FUNCTION__,__LINE__);
         // This doesn't work unless you add the namespace.
         // Oddly, if you write it out (w/o a var), it works. wtf?
         $classname = '\\Moxycart\\'.$this->model;

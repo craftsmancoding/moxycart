@@ -496,13 +496,15 @@ class Product extends BaseModel {
      *          'value'=>'something'        (optional)
      *          'seq' => 1                  (optional)
      *      ),
-     * )     
+     * )
      *
      * This will remove all fields not in the given $array, add any new relations from the $array,
      * it will order the relations based on the incoming $array order (seq will be set).
      * Exeptions are thrown if the product ids do not exist.
      *
      * @param array $data of records
+     *
+     * @return bool
      */
     public function dictateFields(array $data) {
         $this_product_id = $this->_verifyExisting();
@@ -545,7 +547,6 @@ class Product extends BaseModel {
     /**
      * Dictate variation-type ids for the current product.
      * This will remove all fields not in the given $array, add any new option_id's from the $array.
-
      * Exeptions are thrown if the product ids do not exist.
      * Data structure must be like so:
      *  Array(
@@ -553,6 +554,8 @@ class Product extends BaseModel {
      *  )
      *
      * @param array $data related data
+     *
+     * @return bool
      */
     public function dictateOptions(array $data) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating options: '.print_r($data,true),'',__CLASS__,__FILE__,__LINE__);
@@ -610,12 +613,33 @@ class Product extends BaseModel {
     /**
      * Dictate product option meta data
      *
+     * [Meta] => Array
+        (
+        [1] => Array
+        (
+            [option_id] => 1
+            [oterm_id] => 1
+            [checked] => 1
+            [asset_id] => 0
+            [is_override] => 1
+            [mod_price_type] => :
+            [mod_price] => 69
+            [mod_weight_type] => +
+            [mod_weight] => 0
+            [mod_code_type] => +
+            [mod_code] =>
+            [mod_category_type] => +
+            [mod_category] =>
+        )
+     * )
      * @param array $data related data
+     *
+     * @return bool
      */
     public function dictateMeta(array $data) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Dictating meta: '.print_r($data,true),'',__CLASS__,__FILE__,__LINE__);
         $this_product_id = $this->_verifyExisting();
-        
+        //$this->modx->log(\modX::LOG_LEVEL_ERROR,"META: ".$this_product_id,'',__CLASS__,__FUNCTION__,__LINE__);
         $props = array(
             'product_id'=> $this_product_id, 
         );
@@ -628,12 +652,13 @@ class Product extends BaseModel {
                 )) {
                 
                 $M = $this->modx->newObject('ProductOptionMeta', 
-                    array('product_id'=>$this_product_id,
-                        'option_id'=>$d['option_id'],
-                        'oterm_id'=>$d['oterm_id'])
+                    array(
+                        'product_id'    =>$this_product_id,
+                        'option_id' =>$d['option_id'],
+                        'oterm_id'  =>$d['oterm_id'])
                     );
             }
-            
+            //$this->modx->log(\modX::LOG_LEVEL_ERROR,print_r($d,true),'',__CLASS__,__FUNCTION__,__LINE__);
             if (!isset($d['checked']) || !$d['checked']) {
                 $M->remove();
                 continue;
@@ -641,7 +666,9 @@ class Product extends BaseModel {
             
             $M->fromArray($d);
             $M->set('product_id',$this_product_id);
-            $M->save();
+            if (!$M->save()) {
+                $this->modx->log(\modX::LOG_LEVEL_ERROR,'Problem saving option meta: '.print_r($d,true),'',__CLASS__,__FUNCTION__,__LINE__);
+            }
 
         }
 
@@ -764,6 +791,7 @@ class Product extends BaseModel {
      @return 
      */
     public function saveRelated($data) {
+        //$this->modx->log(\modX::LOG_LEVEL_ERROR,print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);
         $this->modx->log(\modX::LOG_LEVEL_DEBUG,'Save related data: '.print_r($data,true),'',__CLASS__,__FUNCTION__,__LINE__);
         // Extra stuff is ignored... it doesn't matter here whether we're creating or updating an object
         $this->fromArray($data);

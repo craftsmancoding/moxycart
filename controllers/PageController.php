@@ -443,9 +443,13 @@ class PageController extends BaseController {
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['checked'] = false;
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['is_override'] = false;
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_price'] = '';
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_price_type'] = '';
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_weight'] = '';
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_weight_type'] = '';
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_code'] = '';
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_code_type'] = '';
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_category'] = '';
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_category_type'] = '';
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['asset_id'] = ''; // future
 
             // Overrides for this product and this option
@@ -455,9 +459,13 @@ class PageController extends BaseController {
                 if ($m->get('is_override')) {
                     $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['is_override'] = $m->get('is_override');
                     $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_price'] = $m->get('mod_price');
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_price_type'] = $m->get('mod_price_type');
                     $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_weight'] = $m->get('mod_weight');
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_weight_type'] = $m->get('mod_weight_type');
                     $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_code'] = $m->get('mod_code');
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_code_type'] = $m->get('mod_code_type');
                     $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_category'] = $m->get('mod_category');
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_category_type'] = $m->get('mod_category_type');
                 }
                 $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['asset_id'] = $m->get('asset_id');
             }
