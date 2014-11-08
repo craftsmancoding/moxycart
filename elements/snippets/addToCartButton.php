@@ -19,7 +19,12 @@
  * @param string $cssClassOptionLabel optional class for the label around the option label
  * @param string $cssClassOptionSelect optional class for the option selects 
  * @param string $tpl name of formatting chunk. (default: BuyButton)
- * @param integer log_level -- you can set the logging level in your snippet to (temporarily) override the system default.
+ * @param string $selectBeforeTpl formatting string used for opening <select>,
+ *               for speed this uses str_replace (NOT MODX PARSER!!) and placeholders: [[+slug]], [[+cssClassOptionLabel]], [[+cssClassOptionSelect]]
+ *               Default: <label for="[[+slug]]" class="[[+cssClassOptionLabel]]">[[+name]]</label><select id="[[+slug]]" name="[[+slug]]" onchange="javascript:onchange_price(this);" class="cart-default-select [[+cssClassOptionSelect]]">
+ * @param string $selectAfterTpl string used for closing </select>.  NO PARSING! STRING ONLY! Default: </select>
+ * @param string $optionTpl formatting string. for <option>, uses placeholders: [[+slug]], [[+modifiers]], [[+name]]. Default: <option value="[[+slug]][[+modifiers]]">[[+name]]</option>
+ * @param integer $log_level -- you can set the logging level in your snippet to (temporarily) override the system default.
  *
  * @package moxycart
  */
@@ -39,6 +44,10 @@ $submit = $modx->getOption('submit', $scriptProperties, 'Add to Cart');
 $backorderSubmit = $modx->getOption('backorderSubmit', $scriptProperties, $submit);
 $soldout = $modx->getOption('soldout', $scriptProperties, 'Sold Out');
 $tpl = $modx->getOption('tpl', $scriptProperties, 'BuyButton');
+$selectBeforeTpl = $modx->getOption('selectBeforeTpl', $scriptProperties,'<label for="[[+slug]]" class="[[+cssClassOptionLabel]]">[[+name]]</label><select id="[[+slug]]" name="[[+slug]]" onchange="javascript:onchange_price(this);" class="cart-default-select [[+cssClassOptionSelect]]">');
+$selectAfterTpl = $modx->getOption('selectAfterTpl', $scriptProperties,'</select>');
+$optionTpl = $modx->getOption('optionTpl', $scriptProperties,'<option value="[[+slug]][[+modifiers]]">[[+name]]</option>');
+
 $cssClassSoldout = $modx->getOption('cssClassSoldout', $scriptProperties);
 $cssClassSubmit = $modx->getOption('cssClassSubmit', $scriptProperties);
 $cssClassOptionLabel = $modx->getOption('cssClassOptionLabel', $scriptProperties);
@@ -93,9 +102,14 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             $modx->log(modX::LOG_LEVEL_ERROR,'Product ID ('.$product_id.') tied to option ('.$o->get('option_id').') that does not exist?','','addToCartButton');
             continue;
         }
-        $opt = '<label for="'.$o->Option->get('slug').'" class="'.$cssClassOptionLabel.'">'.$o->Option->get('name').'</label>'
-            .'<select id="'.$o->Option->get('slug').'" name="'.$o->Option->get('slug').'" onchange="javascript:onchange_price(this);" class="cart-default-select '.$cssClassOptionSelect.'">';      
-      
+        //$opt = '<label for="'.$o->Option->get('slug').'" class="'.$cssClassOptionLabel.'">'.$o->Option->get('name').'</label>'
+        //    .'<select id="'.$o->Option->get('slug').'" name="'.$o->Option->get('slug').'" onchange="javascript:onchange_price(this);" class="cart-default-select '.$cssClassOptionSelect.'">';
+        // <label for="[[+slug]]" class="[[+cssClassOptionLabel]]">[[+name]]</label><select id="[[+slug]]" name="[[+slug]]" onchange="javascript:onchange_price(this);" class="cart-default-select [[+cssClassOptionSelect]]">
+        $opt = str_replace(
+            array('[[+slug]]','[[+cssClassOptionLabel]]','[[+name]]','[[+cssClassOptionSelect]]'),
+            array($o->Option->get('slug'), $cssClassOptionLabel,$o->Option->get('name'),$cssClassOptionSelect),
+            $selectBeforeTpl);
+
         // all_terms,omit_terms,explicit_terms
         if ($o->get('meta') == 'all_terms') {
             $c = $modx->newQuery('OptionTerm');
@@ -103,7 +117,11 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             $c->sortby('seq','ASC');
             $Terms = $modx->getCollection('OptionTerm', $c);
             foreach ($Terms as $t) {
-                $opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
+                $opt .= str_replace(
+                    array('[[+slug]]','[[+modifiers]]','[[+name]]'),
+                    array($t->get('slug'),$t->get('modifiers'),$t->get('name')),
+                    $optionTpl);
+                //$opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
             }
         }
         elseif ($o->get('meta') == 'omit_terms') {
@@ -118,7 +136,11 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             $Terms = $modx->getCollection('OptionTerm', $c);
             foreach ($Terms as $t) {
                 if (!in_array($t->get('oterm_id'), $omit)) {
-                    $opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
+                    //$opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
+                    $opt .= str_replace(
+                        array('[[+slug]]','[[+modifiers]]','[[+name]]'),
+                        array($t->get('slug'),$t->get('modifiers'),$t->get('name')),
+                        $optionTpl);
                 }
             }        
         }
@@ -138,12 +160,16 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
                     if ($explicit[ $t->get('oterm_id') ]['is_override']) {
                         $t->fromArray($explicit[ $t->get('oterm_id') ]);
                     }
-                    $opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
+                    //$opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
+                    $opt .= str_replace(
+                        array('[[+slug]]','[[+modifiers]]','[[+name]]'),
+                        array($t->get('slug'),$t->get('modifiers'),$t->get('name')),
+                        $optionTpl);
                 }
             }   
         }
 
-        $opt .= '</select>';
+        $opt .= $selectAfterTpl;
         $properties['options.'.$o->Option->get('slug')] = $opt;
         $properties['options'] = $properties['options'] . $opt;
     }
