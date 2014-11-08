@@ -102,9 +102,7 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             $modx->log(modX::LOG_LEVEL_ERROR,'Product ID ('.$product_id.') tied to option ('.$o->get('option_id').') that does not exist?','','addToCartButton');
             continue;
         }
-        //$opt = '<label for="'.$o->Option->get('slug').'" class="'.$cssClassOptionLabel.'">'.$o->Option->get('name').'</label>'
-        //    .'<select id="'.$o->Option->get('slug').'" name="'.$o->Option->get('slug').'" onchange="javascript:onchange_price(this);" class="cart-default-select '.$cssClassOptionSelect.'">';
-        // <label for="[[+slug]]" class="[[+cssClassOptionLabel]]">[[+name]]</label><select id="[[+slug]]" name="[[+slug]]" onchange="javascript:onchange_price(this);" class="cart-default-select [[+cssClassOptionSelect]]">
+
         $opt = str_replace(
             array('[[+slug]]','[[+cssClassOptionLabel]]','[[+name]]','[[+cssClassOptionSelect]]'),
             array($o->Option->get('slug'), $cssClassOptionLabel,$o->Option->get('name'),$cssClassOptionSelect),
@@ -118,10 +116,9 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             $Terms = $modx->getCollection('OptionTerm', $c);
             foreach ($Terms as $t) {
                 $opt .= str_replace(
-                    array('[[+slug]]','[[+modifiers]]','[[+name]]'),
-                    array($t->get('slug'),$t->get('modifiers'),$t->get('name')),
+                    array('[[+slug]]','[[!+slug]]', '[[+modifiers]]','[[!+modifiers]]','[[+name]]','[[!+name]]'),
+                    array($t->get('slug'),$t->get('slug'), $t->get('modifiers'),$t->get('modifiers'), $t->get('name'), $t->get('name')),
                     $optionTpl);
-                //$opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
             }
         }
         elseif ($o->get('meta') == 'omit_terms') {
@@ -136,10 +133,9 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             $Terms = $modx->getCollection('OptionTerm', $c);
             foreach ($Terms as $t) {
                 if (!in_array($t->get('oterm_id'), $omit)) {
-                    //$opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
                     $opt .= str_replace(
-                        array('[[+slug]]','[[+modifiers]]','[[+name]]'),
-                        array($t->get('slug'),$t->get('modifiers'),$t->get('name')),
+                        array('[[+slug]]','[[!+slug]]', '[[+modifiers]]','[[!+modifiers]]','[[+name]]','[[!+name]]'),
+                        array($t->get('slug'),$t->get('slug'), $t->get('modifiers'),$t->get('modifiers'), $t->get('name'), $t->get('name')),
                         $optionTpl);
                 }
             }        
@@ -160,10 +156,9 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
                     if ($explicit[ $t->get('oterm_id') ]['is_override']) {
                         $t->fromArray($explicit[ $t->get('oterm_id') ]);
                     }
-                    //$opt .= '<option value="'.$t->get('slug').$t->get('modifiers').'">'.$t->get('name').'</option>';
                     $opt .= str_replace(
-                        array('[[+slug]]','[[+modifiers]]','[[+name]]'),
-                        array($t->get('slug'),$t->get('modifiers'),$t->get('name')),
+                        array('[[+slug]]','[[!+slug]]', '[[+modifiers]]','[[!+modifiers]]','[[+name]]','[[!+name]]'),
+                        array($t->get('slug'),$t->get('slug'), $t->get('modifiers'),$t->get('modifiers'), $t->get('name'), $t->get('name')),
                         $optionTpl);
                 }
             }   
