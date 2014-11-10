@@ -103,7 +103,14 @@ You can use whatever plugins you like, just include it on your product template 
             <h1>[[+name]]</h1>
             <p class="product-code">Product Code: [[+sku]] ($[[+calculated_price]])</p>
 
-            [[!addToCartButton? &cssClassSubmit=`btn btn-danger`]]
+            [[!addToCartButton? 
+              &cssClassSubmit=`btn btn-danger`
+              &selectBeforeTpl = `<label for="[[+opt.slug]]" class="[[+cssClassOptionLabel]]">[[+opt.name]]</label><select id="[[+opt.slug]]" name="[[+opt.name]]" onchange="javascript:onchange_price(this);" class="cart-default-select [[+cssClassOptionSelect]]">`
+              &selectAfterTpl =`</select>`
+              &optionTpl =`<option value="[[+opt.name]][[+opt.modifiers]]">[[+opt.name]]</option>`
+            ]]
+
+
             <br>
             [[+content]]
 

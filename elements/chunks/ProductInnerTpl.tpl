@@ -11,9 +11,9 @@ Placeholders: product_id,alias,content,name,sku,type,track_inventory,qty_invento
        <p class="price">$[[+calculated_price]]</p>
 
         <form action="[[++moxycart.domain]]cart" method="post" accept-charset="utf-8">
-         <input type="hidden" name="name" value="[[+Product.name]]" />
-         <input type="hidden" name="price" value="[[+Product.price]]" />
-         <input type="hidden" name="code" value="[[+Product.sku_vendor]]" />
+         <input type="hidden" name="name" value="[[+name]]" />
+         <input type="hidden" name="price" value="[[+price]]" />
+         <input type="hidden" name="code" value="[[+sku_vendor]]" />
         
        
          <input type="submit" src="[[++assets_url]]/skin1/img/add-cart.gif" alt="Add to Cart" class="btn btn-danger" value="Add to Cart">  

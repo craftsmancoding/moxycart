@@ -20,10 +20,10 @@
  * @param string $cssClassOptionSelect optional class for the option selects 
  * @param string $tpl name of formatting chunk. (default: BuyButton)
  * @param string $selectBeforeTpl formatting string used for opening <select>,
- *               for speed this uses str_replace (NOT MODX PARSER!!) and placeholders: [[+slug]], [[+cssClassOptionLabel]], [[+cssClassOptionSelect]]
- *               Default: <label for="[[+slug]]" class="[[+cssClassOptionLabel]]">[[+name]]</label><select id="[[+slug]]" name="[[+slug]]" onchange="javascript:onchange_price(this);" class="cart-default-select [[+cssClassOptionSelect]]">
+ *               for speed this uses str_replace (NOT MODX PARSER!!) and placeholders: [[+opt.slug]], [[+cssClassOptionLabel]], [[+cssClassOptionSelect]]
+ *               Default: <label for="[[+opt.slug]]" class="[[+cssClassOptionLabel]]">[[+opt.name]]</label><select id="[[+opt.slug]]" name="[[+opt.slug]]" onchange="javascript:onchange_price(this);" class="cart-default-select [[+cssClassOptionSelect]]">
  * @param string $selectAfterTpl string used for closing </select>.  NO PARSING! STRING ONLY! Default: </select>
- * @param string $optionTpl formatting string. for <option>, uses placeholders: [[+slug]], [[+modifiers]], [[+name]]. Default: <option value="[[+slug]][[+modifiers]]">[[+name]]</option>
+ * @param string $optionTpl formatting string. for <option>, uses placeholders: [[+opt.slug]], [[+opt.modifiers]], [[+opt.name]]. Default: <option value="[[+opt.slug]][[+opt.modifiers]]">[[+opt.name]]</option>
  * @param integer $log_level -- you can set the logging level in your snippet to (temporarily) override the system default.
  *
  * @package moxycart
@@ -44,9 +44,9 @@ $submit = $modx->getOption('submit', $scriptProperties, 'Add to Cart');
 $backorderSubmit = $modx->getOption('backorderSubmit', $scriptProperties, $submit);
 $soldout = $modx->getOption('soldout', $scriptProperties, 'Sold Out');
 $tpl = $modx->getOption('tpl', $scriptProperties, 'BuyButton');
-$selectBeforeTpl = $modx->getOption('selectBeforeTpl', $scriptProperties,'<label for="[[+slug]]" class="[[+cssClassOptionLabel]]">[[+name]]</label><select id="[[+slug]]" name="[[+slug]]" onchange="javascript:onchange_price(this);" class="cart-default-select [[+cssClassOptionSelect]]">');
+$selectBeforeTpl = $modx->getOption('selectBeforeTpl', $scriptProperties,'<label for="[[+opt.slug]]" class="[[+cssClassOptionLabel]]">[[+opt.name]]</label><select id="[[+opt.slug]]" name="[[+opt.slug]]" onchange="javascript:onchange_price(this);" class="cart-default-select [[+cssClassOptionSelect]]">');
 $selectAfterTpl = $modx->getOption('selectAfterTpl', $scriptProperties,'</select>');
-$optionTpl = $modx->getOption('optionTpl', $scriptProperties,'<option value="[[+slug]][[+modifiers]]">[[+name]]</option>');
+$optionTpl = $modx->getOption('optionTpl', $scriptProperties,'<option value="[[+opt.slug]][[+opt.modifiers]]">[[+opt.name]]</option>');
 
 $cssClassSoldout = $modx->getOption('cssClassSoldout', $scriptProperties);
 $cssClassSubmit = $modx->getOption('cssClassSubmit', $scriptProperties);
@@ -104,7 +104,7 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
         }
 
         $opt = str_replace(
-            array('[[+slug]]','[[!+slug]]','[[+cssClassOptionLabel]]','[[+name]]','[[!+name]]','[[+cssClassOptionSelect]]'),
+            array('[[+opt.slug]]','[[!+opt.slug]]','[[+cssClassOptionLabel]]','[[+opt.name]]','[[!+opt.name]]','[[+cssClassOptionSelect]]'),
             array($o->Option->get('slug'),$o->Option->get('slug'), $cssClassOptionLabel,$o->Option->get('name'),$o->Option->get('name'),$cssClassOptionSelect),
             $selectBeforeTpl);
 
@@ -116,7 +116,7 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             $Terms = $modx->getCollection('OptionTerm', $c);
             foreach ($Terms as $t) {
                 $opt .= str_replace(
-                    array('[[+slug]]','[[!+slug]]', '[[+modifiers]]','[[!+modifiers]]','[[+name]]','[[!+name]]'),
+                    array('[[+opt.slug]]','[[!+opt.slug]]', '[[+opt.modifiers]]','[[!+opt.modifiers]]','[[+opt.name]]','[[!+opt.name]]'),
                     array($t->get('slug'),$t->get('slug'), $t->get('modifiers'),$t->get('modifiers'), $t->get('name'), $t->get('name')),
                     $optionTpl);
             }
@@ -134,7 +134,7 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             foreach ($Terms as $t) {
                 if (!in_array($t->get('oterm_id'), $omit)) {
                     $opt .= str_replace(
-                        array('[[+slug]]','[[!+slug]]', '[[+modifiers]]','[[!+modifiers]]','[[+name]]','[[!+name]]'),
+                        array('[[+opt.slug]]','[[!+opt.slug]]', '[[+opt.modifiers]]','[[!+opt.modifiers]]','[[+opt.name]]','[[!+opt.name]]'),
                         array($t->get('slug'),$t->get('slug'), $t->get('modifiers'),$t->get('modifiers'), $t->get('name'), $t->get('name')),
                         $optionTpl);
                 }
@@ -157,7 +157,7 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
                         $t->fromArray($explicit[ $t->get('oterm_id') ]);
                     }
                     $opt .= str_replace(
-                        array('[[+slug]]','[[!+slug]]', '[[+modifiers]]','[[!+modifiers]]','[[+name]]','[[!+name]]'),
+                        array('[[+opt.slug]]','[[!+opt.slug]]', '[[+opt.modifiers]]','[[!+opt.modifiers]]','[[+opt.name]]','[[!+opt.name]]'),
                         array($t->get('slug'),$t->get('slug'), $t->get('modifiers'),$t->get('modifiers'), $t->get('name'), $t->get('name')),
                         $optionTpl);
                 }
