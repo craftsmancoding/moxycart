@@ -44,8 +44,10 @@ $submit = $modx->getOption('submit', $scriptProperties, 'Add to Cart');
 $backorderSubmit = $modx->getOption('backorderSubmit', $scriptProperties, $submit);
 $soldout = $modx->getOption('soldout', $scriptProperties, 'Sold Out');
 $tpl = $modx->getOption('tpl', $scriptProperties, 'BuyButton');
-$selectBeforeTpl = $modx->getOption('selectBeforeTpl', $scriptProperties,'<label for="[[+opt.slug]]" class="[[+cssClassOptionLabel]]">[[+opt.name]]</label><select id="[[+opt.slug]]" name="[[+opt.slug]]" onchange="javascript:onchange_price(this);" class="cart-default-select [[+cssClassOptionSelect]]">');
-$selectAfterTpl = $modx->getOption('selectAfterTpl', $scriptProperties,'</select>');
+
+
+$selectTpl = $modx->getOption('selectTpl', $scriptProperties,'<label for="[[+opt.slug]]" class="[[+cssClassOptionLabel]]">[[+opt.name]]</label><select id="[[+opt.slug]]" name="[[+opt.name]]" onchange="javascript:onchange_price(this);" class="cart-default-select [[+cssClassOptionSelect]]">[[+opt.content]]</select>');
+
 $optionTpl = $modx->getOption('optionTpl', $scriptProperties,'<option value="[[+opt.slug]][[+opt.modifiers]]">[[+opt.name]]</option>');
 
 $cssClassSoldout = $modx->getOption('cssClassSoldout', $scriptProperties);
@@ -97,16 +99,20 @@ $properties['options'] = '';
 
 if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
 
+
     foreach ($Options as $o) {
         if (!is_object($o->Option)) {
             $modx->log(modX::LOG_LEVEL_ERROR,'Product ID ('.$product_id.') tied to option ('.$o->get('option_id').') that does not exist?','','addToCartButton');
             continue;
         }
 
-        $opt = str_replace(
-            array('[[+opt.slug]]','[[!+opt.slug]]','[[+cssClassOptionLabel]]','[[+opt.name]]','[[!+opt.name]]','[[+cssClassOptionSelect]]'),
-            array($o->Option->get('slug'),$o->Option->get('slug'), $cssClassOptionLabel,$o->Option->get('name'),$o->Option->get('name'),$cssClassOptionSelect),
-            $selectBeforeTpl);
+        $select_props = array(
+            'opt.slug' => $o->Option->get('slug'),
+            'cssClassOptionLabel' => $cssClassOptionLabel,
+            'opt.name'=> $o->Option->get('name'),
+            'cssClassOptionSelect' => $cssClassOptionSelect
+        );
+
 
         // all_terms,omit_terms,explicit_terms
         if ($o->get('meta') == 'all_terms') {
@@ -115,10 +121,24 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             $c->sortby('seq','ASC');
             $Terms = $modx->getCollection('OptionTerm', $c);
             foreach ($Terms as $t) {
-                $opt .= str_replace(
-                    array('[[+opt.slug]]','[[!+opt.slug]]', '[[+opt.modifiers]]','[[!+opt.modifiers]]','[[+opt.name]]','[[!+opt.name]]'),
-                    array($t->get('slug'),$t->get('slug'), $t->get('modifiers'),$t->get('modifiers'), $t->get('name'), $t->get('name')),
-                    $optionTpl);
+
+                $opt_props = array(
+                    'opt.slug' => $t->get('slug'),
+                    'opt.modifiers' => $t->get('modifiers'),
+                    'opt.name'  => $t->get('name')
+
+                );
+                if (!$optionchunk = $modx->getObject('modChunk', array('name' => $optionTpl))) {  
+                    $uniqid = uniqid();
+                    $optionchunk = $modx->newObject('modChunk', array('name' => "{tmp-outer}-{$uniqid}"));
+                    $optionchunk->setCacheable(false);    
+                    $option_out .= $optionchunk->process($opt_props, $optionTpl);
+                }
+                // Chunk Name
+                else {
+                    $option_out .= $modx->getChunk($optionTpl, $opt_props);
+                }
+
             }
         }
         elseif ($o->get('meta') == 'omit_terms') {
@@ -133,10 +153,25 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             $Terms = $modx->getCollection('OptionTerm', $c);
             foreach ($Terms as $t) {
                 if (!in_array($t->get('oterm_id'), $omit)) {
-                    $opt .= str_replace(
-                        array('[[+opt.slug]]','[[!+opt.slug]]', '[[+opt.modifiers]]','[[!+opt.modifiers]]','[[+opt.name]]','[[!+opt.name]]'),
-                        array($t->get('slug'),$t->get('slug'), $t->get('modifiers'),$t->get('modifiers'), $t->get('name'), $t->get('name')),
-                        $optionTpl);
+
+                    $opt_props = array(
+                        'opt.slug' => $t->get('slug'),
+                        'opt.modifiers' => $t->get('modifiers'),
+                        'opt.name'  => $t->get('name')
+
+                    );
+                    if (!$optionchunk = $modx->getObject('modChunk', array('name' => $optionTpl))) {  
+                        $uniqid = uniqid();
+                        $optionchunk = $modx->newObject('modChunk', array('name' => "{tmp-outer}-{$uniqid}"));
+                        $optionchunk->setCacheable(false);    
+                        $option_out .= $optionchunk->process($opt_props, $optionTpl);
+                    }
+                    // Chunk Name
+                    else {
+                        $option_out .= $modx->getChunk($optionTpl, $opt_props);
+                    }
+
+
                 }
             }        
         }
@@ -156,18 +191,53 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
                     if ($explicit[ $t->get('oterm_id') ]['is_override']) {
                         $t->fromArray($explicit[ $t->get('oterm_id') ]);
                     }
-                    $opt .= str_replace(
-                        array('[[+opt.slug]]','[[!+opt.slug]]', '[[+opt.modifiers]]','[[!+opt.modifiers]]','[[+opt.name]]','[[!+opt.name]]'),
-                        array($t->get('slug'),$t->get('slug'), $t->get('modifiers'),$t->get('modifiers'), $t->get('name'), $t->get('name')),
-                        $optionTpl);
+
+                    $opt_props = array(
+                        'opt.slug' => $t->get('slug'),
+                        'opt.modifiers' => $t->get('modifiers'),
+                        'opt.name'  => $t->get('name')
+
+                    );
+                    if (!$optionchunk = $modx->getObject('modChunk', array('name' => $optionTpl))) {  
+                        $uniqid = uniqid();
+                        $optionchunk = $modx->newObject('modChunk', array('name' => "{tmp-outer}-{$uniqid}"));
+                        $optionchunk->setCacheable(false);    
+                        $option_out .= $optionchunk->process($opt_props, $optionTpl);
+                    }
+                    // Chunk Name
+                    else {
+                        $option_out .= $modx->getChunk($optionTpl, $opt_props);
+                    }
+
                 }
             }   
         }
 
-        $opt .= $selectAfterTpl;
+        
+
+        // Format select Tpl
+        // option_out  = content from loop item
+        $select_props['opt.content'] = $option_out;
+        // Create the temporary chunk
+        if (!$outerchunk = $modx->getObject('modChunk', array('name' => $selectTpl))) {  
+            $uniqid = uniqid();
+            $outerchunk = $modx->newObject('modChunk', array('name' => "{tmp-outer}-{$uniqid}"));
+            $outerchunk->setCacheable(false);    
+            $opt = $outerchunk->process($select_props, $selectTpl);
+        }
+        // Chunk Name
+        else {
+             $opt .= $modx->getChunk($selectTpl, $select_props);
+        }
+
+
+        //$opt .= $selectAfterTpl;
         $properties['options.'.$o->Option->get('slug')] = $opt;
         $properties['options'] = $properties['options'] . $opt;
     }
+
+
+
 }
 
 return $modx->getChunk($tpl, $properties);
