@@ -54,5 +54,12 @@ return array(
 		'namespace' => 'moxycart',
 		'area' => 'moxycart:default'
     ),
+    array(
+        'key'  =>     'mgr_tree_icon_store',
+        'value'=>     'icon-store',
+        'xtype'=>     'textfield',
+        'namespace' => 'moxycart',
+        'area' => 'moxycart:default'
+    )
 );
 /*EOF*/

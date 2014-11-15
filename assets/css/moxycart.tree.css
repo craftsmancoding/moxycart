@@ -8,14 +8,12 @@
     color: #77963d;
 } 
  
-.icon-store .x-tree-node-icon {
-    background-image: url(../images/cart-icon.png) !important;
+.x-tree-node-collapsed .icon-store:before {
+content: "\f07a" !important;
 }
-.icon-taxonomy .x-tree-node-icon {
-    background-image: url(../images/taxonomy-icon.png) !important;
-}
-.icon-term .x-tree-node-icon {
-    background-image: url(../images/term-icon.png) !important;
+
+.x-tree-node .icon-store:before {
+content: "\f07a" !important;
 }
 
 .custom-close-btn {
