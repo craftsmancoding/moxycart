@@ -695,6 +695,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                 </table>
 	</div>
 
+ <?php if ($data['product_form_action'] == 'product_update'): ?>
     <div id="options_tab" class="content">
        <div class="product-option-wrap">
 
@@ -810,6 +811,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                     ?>
                                 </div>
     </div>
+<?php endif; ?>
 
     <?php if ($this->modx->getOption('moxycart.enable_variations')): ?>
     	<div id="variations_tab" class="content"><br>
