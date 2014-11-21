@@ -10,6 +10,7 @@
  * @param string $innerTpl Format the Inner Item of List
  * @param int $term_id (optional: defaults to the current page id)
  * @param int $limit Limit the result
+ * @param int $offset offset the result (e.g. for pagination)
  *
 
  * Variables
@@ -37,7 +38,9 @@ $term_id = $modx->getOption('term_id', $scriptProperties, $modx->resource->get('
 $exclude_id = $modx->getOption('exclude_id', $scriptProperties,0);
 $innerTpl = $modx->getOption('innerTpl', $scriptProperties, '<li><a href="[[+Product.uri]]">[[+Product.name]] ([[+Product.sku]])</a></li>'); 
 $outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</ul>'); 
-$noResult = $modx->getOption('noResult', $scriptProperties, 'No Products found for term_id.'); 
+$noResult = $modx->getOption('noResult', $scriptProperties, 'No Products found for term_id.');
+$limit = $modx->getOption('limit', $scriptProperties, null);
+$offset = $modx->getOption('offset', $scriptProperties, null);
 $scriptProperties['content_ph'] = $modx->getOption('content_ph',$scriptProperties, 'content');
 $c = $modx->newQuery('ProductTerm');
 $c->where(array(
@@ -46,6 +49,17 @@ $c->where(array(
     'Product.is_active'=>1,
     'Product.product_id:!='=>$exclude_id,
 ));
+// Limit
+if ($limit)
+{
+    if ($offset)
+    {
+        $c->limit($limit,$offset);
+    }
+    else{
+        $c->limit($limit);
+    }
+}
 $c->sortby('Product.seq','ASC');
 
 $Products = $modx->getCollectionGraph('ProductTerm', '{"Product":{"Image":{}},"Term":{}}',$c);
