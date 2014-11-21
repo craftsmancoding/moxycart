@@ -4235,8 +4235,14 @@ display: block;
   float: left !important;
   padding-top: 0px;
 }
-.store-track-inventory label,
+
 .store-custom-fields label {
+  margin-top: 5px;
+  margin-left: 10px;
+  display: block;
+}
+
+.store-track-inventory label {
   margin-top: 5px;
   float: left !important;
   margin-left: 10px;
