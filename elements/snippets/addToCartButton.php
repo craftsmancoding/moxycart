@@ -113,7 +113,8 @@ if ($Options = $modx->getCollectionGraph('ProductOption','{"Option":{}}',$c)) {
             'cssClassOptionSelect' => $cssClassOptionSelect
         );
 
-
+        $option_out = '';
+        
         // all_terms,omit_terms,explicit_terms
         if ($o->get('meta') == 'all_terms') {
             $c = $modx->newQuery('OptionTerm');
