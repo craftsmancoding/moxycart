@@ -107,6 +107,13 @@ $_lang['creating_product_container_content2'] = 'This explains how to do this.';
 //Name: setting_ + Key
 // Description: setting_ + Key + _desc
 
+$_lang['setting_moxycart.domain'] = 'Foxycart Domain';
+$_lang['setting_moxycart.domain_desc'] = 'e.g. https://yoursite.foxycart.com/ (include trailing slash).  Usually this is a foxycart sub-domain, but if you have configured one, you can enter in a custom domain here (see https://wiki.foxycart.com/v/1.1/custom_domain)';
+
+$_lang['setting_default_product_template'] = 'Default Product Template';
+$_lang['setting_default_product_template_desc'] = 'Default template used for new products.';
+
+
 $_lang['default_product_template'] = 'Default Product Template';
 
 $_lang['moxycart.default_product_template'] = 'Default Product Template';
@@ -140,6 +147,11 @@ $_lang['setting_moxycart.enable_variations_desc'] = 'Some shops require a more c
 
 
 $_lang['view_not_found'] = 'The view file you requested could not be found: [[+file]]';
+
+//OptionTerm
+$_lang['plus'] = '+';
+$_lang['minux'] = '-';
+$_lang['colon'] = ':';
 
 
 

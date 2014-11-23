@@ -253,8 +253,9 @@ class PageController extends BaseController {
         $Obj = new Product($this->modx);
         $this->setPlaceholder('pagetitle', 'Create Product');
         $Obj->getDefaultValues($store_id);
+        //print_r($Obj->toArray()); exit;
         $full_product_data = $Obj->complete($product_id); 
-        
+        //print_r($full_product_data); exit;
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($Obj->toArray());
         $this->setPlaceholder('result',$Obj);
@@ -292,7 +293,7 @@ class PageController extends BaseController {
             
         // thumbnail: Todo - write this via js
         $this->setPlaceholder('thumbnail_url','');
-                    
+
         // product_fields
         $this->setPlaceholder('product_fields',array());
 
@@ -642,7 +643,10 @@ class PageController extends BaseController {
     //------------------------------------------------------------------------------
     /**
      * Field Management main page
+     *
      * @param array $scriptProperties
+     *
+     * @return rendered
      */
     public function getFields(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
@@ -899,9 +903,11 @@ class PageController extends BaseController {
     //! Store
     //------------------------------------------------------------------------------
     /**
-     * Called from the Store CRC: controllers/store/update.class.php and create.class.php 
+     * Called from the Store CRC: controllers/store/update.class.php and create.class.php
      *
      * @param array $scriptProperties
+     *
+     * @return rendered
      */
     public function getStoreProducts(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);

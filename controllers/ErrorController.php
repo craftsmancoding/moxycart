@@ -15,10 +15,13 @@ class ErrorController extends BaseController {
         static::$x =& $modx;
         $this->modx->regClientCSS($this->config['assets_url'].'css/moxycart.css');        
     }
-    
+
     /**
      * Any specific processing we want to do here. Return a string of html.
+     *
      * @param array $scriptProperties
+     *
+     * @return rendered
      */
     public function get404(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));
@@ -30,7 +33,10 @@ class ErrorController extends BaseController {
     /**
      * Check important settings of moxycart moxycart.api_key and moxycart.domain
      * they must have value/valid value
+     *
      * @param array $scriptProperties
+     *
+     * @return rendered
      */
     public function getInstall(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_DEBUG, 'Controller: ' .__CLASS__.'::'.__FUNCTION__.' data: '.print_r($scriptProperties,true));  

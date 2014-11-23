@@ -1,5 +1,11 @@
 Changelog for Moxycart
 
-Moxycart 1.0.0
+Moxycart 0.9.1
 ---------------------------------
-Developing...
+First real beta release
+
+0.9.2
+---------------------------------
+
+- Moved default product template to system settings
+- Removed legacy MODX 2.2 manager controller classes

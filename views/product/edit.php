@@ -549,9 +549,9 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                 <input type="hidden" name="product_id" id="product_id" value="">
                                  <label for="title">Browser Title</label>
                                 <input type="text" style="width:94%;" id="title" name="title" value=""/>
-                                <label for="alias">Alias</label>
+                                <label for="alias">URL</label>
                                 <input type="text"  style="width:94%;" name="alias" id="alias" value="">
-                                <label for="content">Description</label>
+                                <label for="content">Search Engine Description</label>
                                 <textarea id="description" style="width:94%;" rows="3" name="description"></textarea>
 
                                 <label for="sku">SKU</label>
@@ -612,7 +612,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                         </tr>
                         <tr>
                           <td colspan="2">
-                              <legend>Content</legend>
+                              <legend>Description</legend>
                               <textarea id="content" style="width:95%;" class="modx-richtext" rows="7" name="content"></textarea>
                           </td>
                         </tr>
