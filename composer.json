@@ -33,7 +33,8 @@
         "php": ">=5.3",
         "ezyang/htmlpurifier": "dev-master",
         "craftsmancoding/formbuilder": "dev-master",
-        "craftsmancoding/pagination": "dev-master"
+        "craftsmancoding/pagination": "dev-master",
+        "cocur/slugify": "dev-master"
     },
     "repositories": [
         {

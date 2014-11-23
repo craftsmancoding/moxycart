@@ -42,7 +42,6 @@ jQuery(document).ready(function(){
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Template</th>
                 <th>Active</th>
                 <th>Price</th>
                 <th>Track</th>
@@ -58,11 +57,6 @@ jQuery(document).ready(function(){
                 <td>    
                     <input type="hidden" name="product_id[<?php print $r['product_id']; ?>]" value="<?php print $r['product_id']; ?>"/>
                     <input type="text" name="name[<?php print $r['product_id']; ?>]" class="row-field input-150" value="<?php print htmlentities($r['name']); ?>"/>
-                </td>
-                <td>
-                <?php
-                print \Formbuilder\Form::dropdown('template_id['.$r['product_id'].']', $data['templates'], $r['template_id'],array('class'=>'input-200'));
-                ?>
                 </td>
                 <td>
                 <?php

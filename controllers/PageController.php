@@ -892,6 +892,8 @@ class PageController extends BaseController {
     //------------------------------------------------------------------------------
     /**
      * @param array $scriptProperties
+     *
+     * @return rendered
      */
     public function getSettings(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
@@ -935,8 +937,12 @@ class PageController extends BaseController {
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('main/storeproducts.php');
     }
-    
-    
+
+    /**
+     * @param array $scriptProperties
+     *
+     * @return rendered
+     */
     public function getStoreSettings(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
 

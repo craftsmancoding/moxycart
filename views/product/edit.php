@@ -299,7 +299,11 @@ function save_product(method) {
 
     }
     else {
-        mapi('product',method,values);
+        mapi('product',method,values, function(response) {
+            // Dynamically update the alias with the filtered results
+            jQuery('#alias').val(response.data.alias);
+        });
+
     }
 }
 

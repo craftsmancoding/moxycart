@@ -1,4 +1,4 @@
-<?php
+<?php namespace Moxycart;
 /**
  * Model
  * This is a bit tricky because we already have an ORM layer: that Product class already
@@ -7,9 +7,10 @@
  * This model class should define a unified interface that define the graphs that represent
  * an object data in its entirety.
  */
-namespace Moxycart;
-class Product extends BaseModel
-{
+
+use Cocur\Slugify\Slugify;
+
+class Product extends BaseModel {
 
 
     public $xclass = 'Product';
@@ -272,6 +273,8 @@ class Product extends BaseModel
      *
      * @param array  $data
      * @param string $type name of the type of relation, used for grouping.
+     *
+     * @return bool
      */
     public function dictateRelations(array $data)
     {
@@ -327,6 +330,8 @@ class Product extends BaseModel
      *
      * @param array  $dictate 'd related_id's
      * @param string $type    name of the type of relation, used for grouping.
+     *
+     * @return bool
      */
     public function orderRelations(array $array, $type = 'related')
     {
@@ -356,6 +361,9 @@ class Product extends BaseModel
      * Add taxonomies to a product
      *
      * @param array $array of taxonomy page ids
+     *
+     * @throws \Exception
+     * @return bool
      */
     public function addTaxonomies(array $array)
     {
@@ -382,6 +390,8 @@ class Product extends BaseModel
      * Remove taxonomies from a product. We don't care here if the referenced taxonomy ids are valid or not.
      *
      * @param array $array of taxonomy page ids
+     *
+     * @return bool
      */
     public function removeTaxonomies(array $array)
     {
@@ -408,6 +418,8 @@ class Product extends BaseModel
      * Exeptions are thrown if the product ids do not exist.
      *
      * @param array $dictate 'd related_id's
+     *
+     * @return bool
      */
     public function dictateTaxonomies(array $dictate)
     {
@@ -438,6 +450,8 @@ class Product extends BaseModel
      * Adjust the seq into ascending order for the given taxonomy ids
      *
      * @param array $dictate 'd taxonomy id's
+     *
+     * @return bool
      */
     public function orderTaxonomies(array $array)
     {
@@ -470,6 +484,8 @@ class Product extends BaseModel
      * Exeptions are thrown if the product ids do not exist.
      *
      * @param array $dictate 'd related_id's
+     *
+     * @return bool
      */
     public function dictateTerms(array $dictate)
     {
@@ -673,8 +689,8 @@ class Product extends BaseModel
                 array('product_id' => $this_product_id,
                       'option_id'  => $d['option_id'],
                       'oterm_id'   => $d['oterm_id'])
-            )
-            ) {
+                ))
+            {
 
                 $M = $this->modx->newObject('ProductOptionMeta',
                     array(
@@ -857,11 +873,18 @@ class Product extends BaseModel
     public function save()
     {
         // /^[a-z0-9\-_\/]+$/i
+        // Set alias automatically if it is not set.
+        if (!$this->get('alias'))
+        {
+            $slugify = new Slugify();
+            $slug = $slugify->slugify($this->get('name'));
+            $this->set('alias', $slug);
+        }
 
         $result = true;
         if (!preg_match('/^[a-z0-9\-_\/]+$/i', $this->get('alias'))) {
             $this->errors['alias'] = 'Invalid alias characters';
-            $result                = false;
+            $result  = false;
         }
         /*
                 if (!$Store = $this->modx->getObject('Store', $this->get('store_id'))) {
