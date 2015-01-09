@@ -556,6 +556,14 @@ img.inactive {
   padding-top: 0px;
 }
 
+.dashboard-block-full .body {
+  max-height: none !important;
+}
+
+.dashboard-block-full .body #moxycart_buttons ul {
+  margin-left: -22px;
+}
+
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */
 .clear:before, .clear:after,

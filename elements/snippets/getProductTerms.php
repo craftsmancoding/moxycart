@@ -14,7 +14,9 @@
  * @param mixed $taxonomy_id if present, results will be restricted to this taxonomy(ies). Array, or comma-separated string
  * @param string $outerTpl Format the Outer Wrapper of List (Optional)
  * @param string $innerTpl Format the Inner Item of List
+ * @param string $separator optional output separator, e.g. when formatting comma-separated values. Default: null
  * @param int $limit Limit the result
+ * @param boolean $debug -- force raw Query to be returned
  *
  * Variables
  * ---------
@@ -32,12 +34,14 @@ $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'compon
 require_once $core_path .'vendor/autoload.php';
 $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('getProductTerms',$scriptProperties);
-
+$scriptProperties['content_ph'] = $modx->getOption('content_ph',$scriptProperties, 'content');
 $innerTpl = $modx->getOption('innerTpl', $scriptProperties, '<li>[[+term_id]]=[[+Term.pagetitle]]</li>'); 
 $outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</ul>'); 
+$separator = $modx->getOption('separator', $scriptProperties, '');
 
 $product_id = $modx->getOption('product_id',$scriptProperties, $modx->getPlaceholder('product_id'));
 $taxonomy_id_raw = trim($modx->getOption('taxonomy_id',$scriptProperties));
+$debug = $modx->getOption('debug',$scriptProperties, false);
 
 if (!$product_id) {
     return 'Missing Product ID';
@@ -55,13 +59,15 @@ if ($taxonomy_id_raw) {
 
 $c = $modx->newQuery('ProductTerm');
 $c->where(array(
-    'Term.publiched'=> true,
+    'Term.published'=> true,
     'product_id'=>$product_id
 ));
-print $c->toSQL();
-/*$c->prepare();
-print $c->toSQL();
-die();*/
+
+if ($debug)
+{
+    $c->prepare();
+    return '<h2>getProductTerms</h2><pre>'.$c->toSQL().'</pre>';
+}
 
 
 
@@ -77,17 +83,7 @@ if ($taxonomy_ids) {
 $c->sortby('Term.menuindex','ASC');
 
 
-
 $ProductTerms = $modx->getCollectionGraph('ProductTerm','{"Term":{}}',$c);
 if ($ProductTerms) {
-    return $Snippet->format($ProductTerms,$innerTpl,$outerTpl);    
+    return $Snippet->format($ProductTerms,$innerTpl,$outerTpl,$scriptProperties['content_ph'],$separator);
 }
-
-
-/*
-$scriptProperties['innerTpl'] = $modx->getOption('innerTpl',$scriptProperties, 'ProductTerm');
-
-$moxySnippet = new Moxycart\Snippet($modx);
-$out = $moxySnippet->execute('json_product_terms',$scriptProperties);
-return $out;
-*/

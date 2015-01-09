@@ -56,11 +56,12 @@ class PageController extends BaseController {
     }
 
     /**
-    * Load TinyMCE
-    * Add modx-richtext class on textarea
-    * @param
-    * @return
-    **/
+     * Load TinyMCE
+     * Add modx-richtext class on textarea
+     *
+     * @internal param $
+     * @return string
+     */
     private function _load_tinyMCE() 
     {
         $_REQUEST['a'] = '';  /* fixes E_NOTICE bug in TinyMCE */
@@ -201,6 +202,8 @@ class PageController extends BaseController {
     /**
      *
      * @param array $scriptProperties
+     *
+     * @return rendered
      */
     public function getProducts(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
@@ -250,8 +253,9 @@ class PageController extends BaseController {
         $Obj = new Product($this->modx);
         $this->setPlaceholder('pagetitle', 'Create Product');
         $Obj->getDefaultValues($store_id);
+        //print_r($Obj->toArray()); exit;
         $full_product_data = $Obj->complete($product_id); 
-        
+        //print_r($full_product_data); exit;
         $this->setPlaceholders($scriptProperties);
         $this->setPlaceholders($Obj->toArray());
         $this->setPlaceholder('result',$Obj);
@@ -267,7 +271,14 @@ class PageController extends BaseController {
             'use_editor' => $this->modx->getOption('use_editor'),
         );
         $this->client_config['product_save_method'] = 'create';
-        
+
+        //
+        $A = $this->modx->newObject('Asset');
+        $assman['Groups'] = $A->getAssetGroups();
+        $this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
+                var assman = '.json_encode($assman).';
+            </script>');
+
     	$this->modx->regClientStartupHTMLBlock('<script type="text/javascript">
     	   console.log("[moxycart] '.__FUNCTION__.'");
             // Document read stuff has to be in here
@@ -282,7 +293,7 @@ class PageController extends BaseController {
             
         // thumbnail: Todo - write this via js
         $this->setPlaceholder('thumbnail_url','');
-                    
+
         // product_fields
         $this->setPlaceholder('product_fields',array());
 
@@ -433,9 +444,13 @@ class PageController extends BaseController {
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['checked'] = false;
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['is_override'] = false;
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_price'] = '';
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_price_type'] = '';
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_weight'] = '';
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_weight_type'] = '';
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_code'] = '';
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_code_type'] = '';
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_category'] = '';
+            $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['mod_category_type'] = '';
             $meta[ $t->get('option_id') ]['Terms'][ $t->get('oterm_id') ]['asset_id'] = ''; // future
 
             // Overrides for this product and this option
@@ -445,16 +460,23 @@ class PageController extends BaseController {
                 if ($m->get('is_override')) {
                     $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['is_override'] = $m->get('is_override');
                     $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_price'] = $m->get('mod_price');
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_price_type'] = $m->get('mod_price_type');
                     $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_weight'] = $m->get('mod_weight');
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_weight_type'] = $m->get('mod_weight_type');
                     $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_code'] = $m->get('mod_code');
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_code_type'] = $m->get('mod_code_type');
                     $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_category'] = $m->get('mod_category');
+                    $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['mod_category_type'] = $m->get('mod_category_type');
                 }
                 $meta[ $t->get('option_id') ]['Terms'][ $m->get('oterm_id') ]['asset_id'] = $m->get('asset_id');
             }
         }
         //print '<pre>'; print_r($meta); print '</pre>'; exit;
         $this->setPlaceholder('product_option_meta',$meta);
-                
+    
+        $product_terms = $this->getForm($product_id);  
+        $this->setPlaceholder('product_terms',$product_terms);
+
         // ProductTaxonomy
         $product_taxonomies = array();
         if ($PTs = $this->modx->getCollection('ProductTaxonomy', array('product_id'=>$product_id))) {
@@ -463,20 +485,7 @@ class PageController extends BaseController {
             }
         }
         $this->setPlaceholder('product_taxonomies',$product_taxonomies);        
-        
-        // Terms
-        $T = new Taxonomy($this->modx);
-        $terms = $T->getTaxonomiesAndTerms();
-        $this->setPlaceholder('terms',$terms);
-        
-        // ProductTerm
-        $product_terms = array();
-        if ($PTs = $this->modx->getCollection('ProductTerm', array('product_id'=>$product_id))) {
-            foreach($PTs as $pt) {
-                $product_terms[] = $pt->get('term_id');
-            }
-        }
-        $this->setPlaceholder('product_terms',$product_terms);        
+
         
         // ProductOrder
         $product_orders = array();
@@ -494,6 +503,94 @@ class PageController extends BaseController {
         $this->setPlaceholder('product_orders',$product_orders);        
         
         return $this->fetchTemplate('product/edit.php');
+    }
+
+     /**
+     * getForm
+     *
+     * @param integer $product_id current MODX resource
+     * @return string HTML form.
+     */
+    public function getForm($product_id)
+    {
+        $current_values = $this->getProductTerms($product_id);
+        return $this->buildForm($current_values);
+    }
+
+    /**
+     * @param array $current_values
+     * @return string
+     */
+    public function buildForm($current_values)
+    {
+        $out = '';
+        $c = $this->modx->newQuery('Taxonomy');
+        $c->where(array('published' => true, 'class_key' => 'Taxonomy'));
+        $c->sortby('menuindex', 'ASC');
+
+        if ($Ts = $this->modx->getCollection('Taxonomy', $c))
+        {
+            foreach ($Ts as $t)
+            {
+                $out .= '<fieldset><legend>' . $t->get('pagetitle') . '</legend>';
+                $properties = $t->get('properties');
+                if ($children = $this->modx->getOption('children', $properties, array()))
+                {
+                    $out .= $this->getFieldItems($current_values, $children); // 1st time
+                }
+
+                $out .= '</fieldset>';
+            }
+        }
+        return $out;
+    }
+
+        /**
+     * Build the contents of the fieldset -- this is one of those wormhole functions
+     * @param $current_values array of term_ids
+     * @param $children
+     * @param $indent_multiplier integer
+     * @param $class
+     * @return mixed
+     */
+    public function getFieldItems($current_values,$children, $indent_multiplier = 0, $class = '')
+    {
+        $out = '';
+        foreach ($children as $page_id => $def) {
+            $indent = str_repeat('--', $indent_multiplier);
+            if (isset($def['published']) && $def['published'])
+            {
+                $checked = (in_array($page_id,$current_values)) ? ' checked="checked"' : '';
+                $out .= $indent . ' <input type="checkbox" name="Terms[]" id="terms' . $this->i . '" value="' . $page_id . '"
+                    class="multicheck' . $class . '" style=""  '.$checked.'/>
+                    <label for="terms' . $this->i . '" class="multichecklabel">' . $def['pagetitle'] . '</label><br/>';
+                $this->i = $this->i + 1;
+                if (!empty($def['children'])) {
+                    $class = $class . ' term' . $page_id;
+                    $out .= $this->getFieldItems($current_values,$def['children'], $indent_multiplier+1, $class);
+                }
+            }
+            //$indent_multiplier--;
+        }
+
+        return $out;
+    }
+
+    /**
+     * Get an array of term_ids for any associations with the given product_id
+     * @param integer $product_id
+     * @return array
+     */
+    public function getProductTerms($product_id)
+    {
+        $out = array();
+        if ($Terms =  $this->modx->getCollection('ProductTerm', array('product_id'=>$product_id))) {
+            foreach ($Terms as $t) {
+                $out[] = $t->get('term_id');
+            }
+        }
+        $this->modx->log(\modX::LOG_LEVEL_DEBUG, "productTerms for product " . $product_id . ': ' . print_r($out, true), '', __CLASS__);
+        return $out;
     }
 
      public function getProductInventory(array $scriptProperties = array()) {
@@ -546,7 +643,10 @@ class PageController extends BaseController {
     //------------------------------------------------------------------------------
     /**
      * Field Management main page
+     *
      * @param array $scriptProperties
+     *
+     * @return rendered
      */
     public function getFields(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
@@ -792,6 +892,8 @@ class PageController extends BaseController {
     //------------------------------------------------------------------------------
     /**
      * @param array $scriptProperties
+     *
+     * @return rendered
      */
     public function getSettings(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
@@ -803,9 +905,11 @@ class PageController extends BaseController {
     //! Store
     //------------------------------------------------------------------------------
     /**
-     * Called from the Store CRC: controllers/store/update.class.php and create.class.php 
+     * Called from the Store CRC: controllers/store/update.class.php and create.class.php
      *
      * @param array $scriptProperties
+     *
+     * @return rendered
      */
     public function getStoreProducts(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
@@ -833,8 +937,12 @@ class PageController extends BaseController {
         $this->setPlaceholders($scriptProperties);
         return $this->fetchTemplate('main/storeproducts.php');
     }
-    
-    
+
+    /**
+     * @param array $scriptProperties
+     *
+     * @return rendered
+     */
     public function getStoreSettings(array $scriptProperties = array()) {
         $this->modx->log(\modX::LOG_LEVEL_INFO, print_r($scriptProperties,true),'','Moxycart PageController:'.__FUNCTION__);
 

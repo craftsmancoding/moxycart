@@ -148,5 +148,13 @@ return array(
 		'namespace' => 'moxycart',
 		'area' => 'moxycart:default'
     ),
+
+	array(
+		'key'  =>     'moxycart.default_product_template',
+		'value'=>     null,
+		'xtype'=>     'modx-combo-template',
+		'namespace' => 'moxycart',
+		'area' => 'moxycart:default'
+	),
 );
 /*EOF*/

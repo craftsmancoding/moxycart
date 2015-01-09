@@ -33,7 +33,8 @@
         "php": ">=5.3",
         "ezyang/htmlpurifier": "dev-master",
         "craftsmancoding/formbuilder": "dev-master",
-        "craftsmancoding/pagination": "dev-master"
+        "craftsmancoding/pagination": "dev-master",
+        "cocur/slugify": "dev-master"
     },
     "repositories": [
         {
@@ -59,7 +60,7 @@
     "extra": {
         "package_name": "Moxycart",
         "namespace": "moxycart",
-        "version": "0.9.1",
+        "version": "0.9.2",
         "release": "dev",
         "category":"Moxycart",
         "core_path": "",

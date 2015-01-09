@@ -3,7 +3,10 @@ jQuery(function() {
     jQuery('#option_terms tbody').sortable();
     jQuery('#option_terms tbody').disableSelection();
 });
-  
+
+/**
+ * Dynamically adds a term to the list. See below for the tpl
+ */
 function add_term() {
     jQuery('#no_terms_found').hide();
     var data = jQuery('#term_tpl').html();
@@ -23,7 +26,10 @@ function remove_term(event) {
     </div>
 </div>
 
-<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Define which terms should appear in your option list.  Optionally, you can trigger modifications to the price, weight, SKU code, or Foxycart category when a specific term is selected.</p></div>
+<div class="x-panel-body panel-desc x-panel-body-noheader x-panel-body-noborder"><p>Define which terms should appear in your option list.
+        Optionally, you here is where you can set global modifications to the price, weight, SKU code, or the Foxycart category when a specific term is selected.
+        You can also set modifications on a per-product basis by editing the options on a product page.
+        <br/>See <a href="https://github.com/craftsmancoding/moxycart/wiki/Option-Terms">Option Terms</a> in the Wiki for more info.</p></div>
 
 <div class="moxycart_canvas_inner">
 
@@ -63,7 +69,10 @@ print \Formbuilder\Form::open($data['baseurl'])
         <tbody>
 
             <?php if(!empty($data['terms'])) : ?>
-                <?php foreach ($data['terms'] as $t): ?>
+                <?php
+                // TODO: iterate over the data in JS and use handlebars to repopulate
+                foreach ($data['terms'] as $t):
+                ?>
                     <tr>
                         <td>
                             <input type="hidden" name="oterm_id[]" value="<?php print $t->oterm_id; ?>" />
@@ -109,36 +118,40 @@ print \Formbuilder\Form::open($data['baseurl'])
 <?php
 /*
 This is here as a template for each row that gets added dynamically.
-By putting the html here in a hidden field, we don't need to make extra ajax
+By putting the html here in a script tag, we don't need to make extra ajax
 requests to get it.
+WARNING: this needs to match the tr used above EXACTLY.
 */
 ?>
 <script id="term_tpl" type="text/x-handlebars-template">
-<tr>
-    <td>
-        <input type="hidden" name="oterm_id[]" value="" />
-        <input type="text" name="name[]" placeholder="Name" value="" />        
-    </td>
-    <td>
-
-        <input type="text" name="slug[]" placeholder="slug" value="" />
-    </td>
-    <td>
-        <input type="text" name="mod_price[]" class="input-half" placeholder="0" value="" />
-    </td>
-    <td>
-        <input type="text" name="mod_weight[]" class="input-half" placeholder="0" value="" />
-    </td>    
-    <td>
-        <input type="text" name="mod_code[]" placeholder="SKU" value="" />
-    </td>
-    <td>
-        <input type="text" name="mod_category[]" placeholder="Default" value="" />
-    </td>        
-    <td>
-        <span class="btn" onclick="javascript:remove_term.call(this,event);">x</span>
-    </td>
-</tr>
+    <tr>
+        <td>
+            <input type="hidden" name="oterm_id[]" value="" />
+            <input type="hidden" name="seq[]" value="" />
+            <input type="text" name="name[]" placeholder="Name" style="width:100px;" value="" />
+        </td>
+        <td>
+            <input type="text" name="slug[]" placeholder="slug" style="width:100px;" value="" />
+        </td>
+        <td>
+            <?php print \Formbuilder\Form::dropdown('mod_price_type[]', \Moxycart\OptionTerm::types(), '',array('style'=>'width: 40px;')); ?>
+            <input type="text" name="mod_price[]"  class="input-half" style="width:60px;" placeholder="0" value="" />
+        </td>
+        <td>
+            <?php print \Formbuilder\Form::dropdown('mod_weight_type[]', \Moxycart\OptionTerm::types(), '',array('style'=>'width: 40px;')); ?>
+            <input type="text" name="mod_weight[]" class="input-half"  style="width:60px;" placeholder="0" value="" />
+        </td>
+        <td>
+            <?php print \Formbuilder\Form::dropdown('mod_code_type[]', \Moxycart\OptionTerm::types(), '',array('style'=>'width: 40px;')); ?>
+            <input type="text" name="mod_code[]" style="width:100px;" placeholder="SKU" value="" />
+        </td>
+        <td>
+            <?php print \Formbuilder\Form::dropdown('mod_category_type[]', \Moxycart\OptionTerm::types(), '',array('style'=>'width: 40px;')); ?>
+            <input type="text" name="mod_category[]" style="width:100px;" placeholder="Default" value="" />
+        </td>
+        <td>
+            <span class="btn btn-info btn-mini" onclick="javascript:remove_term.call(this,event);">x</span>
+        </td>
+    </tr>
 </script>
-
 </div>

@@ -1,6 +1,7 @@
 <!-- 
-@templatename Sample Store
-@description A sample Moxycart template for formatting the Product Container (Store).
+@templatename Sample Product Category
+@description A sample Moxycart Product Category Template for formatting the Product Category Container. Set the Sample Test term to this Template
+
 -->
 <!DOCTYPE html>
 <html>
@@ -12,7 +13,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
-  <title>[[*pagetitle]] - Moxycart Sample Store</title>
+  <title>[[*pagetitle]] - Moxycart Sample Product Category Template</title>
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="[[++moxycart.assets_url]]css/templates/stylesheet.css">
 
@@ -76,7 +77,7 @@
 
             <div class="left-content col-md-9 clearfix">
 
-              [[getProducts? &outerTpl=`[[+products]]` &sort=`Product.seq` &content_ph=`products` &innerTpl=`ProductInnerTpl` &store_id=`[[*id]]` &limit=`0`]]
+              [[!getProductsByTerm? &innerTpl=`ProductInnerTerm` &outerTpl=`[[+content]]`]]
 
             </div>
 

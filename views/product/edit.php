@@ -37,32 +37,6 @@ function product_init() {
     draw_assets();
 
 
-    // Dropzone for Assets 
-    var myDropzone = new Dropzone("div#image_upload", {url: moxycart.assets_url});    
-    // Refresh the list on success (append new tile to end)
-    myDropzone.on("success", function(file,response) {
-        console.log('Dropzone Response',response);
-        if (response.status == "success") {
-            console.log('Dropzone Success - response fields:',response.data.fields);
-            add_asset(response.data.fields);
-            /*
-moxycart.product.Assets.push({
-                asset_id: response.data.fields.asset_id,
-                is_active: 1,
-                Asset: response.data.fields 
-            });
-*/
-            draw_assets();
-            jQuery(".dz-preview").remove();
-            save_product(moxycart.product_save_method);
-       } 
-       else {                           
-            jQuery(".dz-success-mark").hide();
-            jQuery(".dz-error-mark").show();
-            show_error(response.data.msg);
-       }
-    });
-
     // ProductRelation Autocomplete
     // customizations here for compatibility 
     jQuery('#search_products').autocomplete({
@@ -274,7 +248,7 @@ moxycart.product.Assets.push({
     var arrayLength = assman.Groups.length;
     for (var i = 0; i < arrayLength; i++) {
         if (assman.Groups[i]) {
-            jQuery('#asset_category_filters').append( moxycart.tpls.category({"group": assman.Groups[i]}));        
+            jQuery('#asset_category_filters').append( moxycart.tpls.category({"group": assman.Groups[i]}) );
         }
     } 
 
@@ -325,7 +299,11 @@ function save_product(method) {
 
     }
     else {
-        mapi('product',method,values);
+        mapi('product',method,values, function(response) {
+            // Dynamically update the alias with the filtered results
+            jQuery('#alias').val(response.data.alias);
+        });
+
     }
 }
 
@@ -541,7 +519,9 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 	<ul id="moxytab" class="menu">
 		<li class="product-link active"><a href="#product">Product</a></li>
 		<li class="settings-link" ><a href="#settings_tab">Settings</a></li>
-        <li class="options-link" ><a href="#options_tab">Options</a></li>
+        <?php if ($data['product_form_action'] == 'product_update'): ?>
+            <li class="options-link" ><a href="#options_tab">Options</a></li>
+        <?php endif; ?>
 		<?php if($this->modx->getOption('moxycart.enable_variations')):?>
     		<li class="variations-link" ><a href="#variations_tab">Variations</a></li>
 		<?php endif; ?>
@@ -552,10 +532,14 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 		<?php if($this->modx->getOption('moxycart.enable_reviews')):?>
             <li class="reviews-link" ><a href="#reviews_tab">Reviews</a></li>
         <?php endif; ?>
-		<li class="assets-link" ><a href="#assets_tab">Assets</a></li>
-		<?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
-    		<li class="taxonomies-link" ><a href="#taxonomies_tab">Taxonomies</a></li>
-		<?php endif; ?>
+        <?php if ($data['product_form_action'] == 'product_update'): ?>
+		  <li class="assets-link" ><a href="#assets_tab">Assets</a></li>
+        <?php endif; ?>
+         <?php if ($data['product_form_action'] == 'product_update'): ?>
+    		<?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
+        		<li class="taxonomies-link" ><a href="#taxonomies_tab">Taxonomies</a></li>
+    		<?php endif; ?>
+         <?php  endif; ?> 
 		<li class="orders-link" ><a href="#orders_tab">View Orders</a></li>
 	</ul>
 
@@ -569,9 +553,9 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                 <input type="hidden" name="product_id" id="product_id" value="">
                                  <label for="title">Browser Title</label>
                                 <input type="text" style="width:94%;" id="title" name="title" value=""/>
-                                <label for="alias">Alias</label>
+                                <label for="alias">URL</label>
                                 <input type="text"  style="width:94%;" name="alias" id="alias" value="">
-                                <label for="content">Description</label>
+                                <label for="content">Search Engine Description</label>
                                 <textarea id="description" style="width:94%;" rows="3" name="description"></textarea>
 
                                 <label for="sku">SKU</label>
@@ -632,7 +616,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                         </tr>
                         <tr>
                           <td colspan="2">
-                              <legend>Content</legend>
+                              <legend>Description</legend>
                               <textarea id="content" style="width:95%;" class="modx-richtext" rows="7" name="content"></textarea>
                           </td>
                         </tr>
@@ -715,10 +699,12 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                 </table>
 	</div>
 
+ <?php if ($data['product_form_action'] == 'product_update'): ?>
     <div id="options_tab" class="content">
        <div class="product-option-wrap">
 
-                                     <p>Allow your visitors to select variations in your product.</p><br>
+                                     <p>Allow your visitors to select variations in your product. <a href="https://github.com/craftsmancoding/moxycart/wiki/Option-Terms">More info...</a></p><br>
+                                    <!--span onclick="javascript:open_option_modal();">Option Modal</span-->
                                     <?php
                                     //print '<pre>'; print_r($data['Options']); print '</pre>'; exit;
                                     // @#$%@#. Special stuff here: we gotta force the field names to ensure that arrays are in sync.
@@ -756,6 +742,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                 <tbody>
                                                 
                                             <?php
+                                            if(!empty($data['product_option_meta'][$option_id]['Terms'])) :
                                             // Option Meta Data
                                             foreach ($data['product_option_meta'][$option_id]['Terms'] as $oterm_id => $m):
                                                 // We gotta ref an arbitrary integer as a placeholder in the POST array to keep arrays in sync
@@ -817,6 +804,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                                 </tr>
                                             <?php
                                             endforeach;
+                                            endif;
                                             ?>
                                             </tbody>
                                             </table>
@@ -827,6 +815,7 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
                                     ?>
                                 </div>
     </div>
+<?php endif; ?>
 
     <?php if ($this->modx->getOption('moxycart.enable_variations')): ?>
     	<div id="variations_tab" class="content"><br>
@@ -961,6 +950,37 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
     </div>
     <?php endif; // moxycart.enable_reviews ?>
     
+
+    <?php if ($data['product_form_action'] == 'product_update'): ?>
+    <script>
+        jQuery(document).ready(function() {
+                // Dropzone for Assets 
+                var myDropzone = new Dropzone("div#image_upload", {url: moxycart.assets_url});    
+                // Refresh the list on success (append new tile to end)
+                myDropzone.on("success", function(file,response) {
+                    console.log('Dropzone Response',response);
+                    if (response.status == "success") {
+                        console.log('Dropzone Success - response fields:',response.data.fields);
+                        add_asset(response.data.fields);
+                        /*
+            moxycart.product.Assets.push({
+                            asset_id: response.data.fields.asset_id,
+                            is_active: 1,
+                            Asset: response.data.fields 
+                        });
+            */
+                        draw_assets();
+                        jQuery(".dz-preview").remove();
+                        save_product(moxycart.product_save_method);
+                   } 
+                   else {                           
+                        jQuery(".dz-success-mark").hide();
+                        jQuery(".dz-error-mark").show();
+                        show_error(response.data.msg);
+                   }
+                });
+        });
+    </script>
 	<div id="assets_tab" class="content">	
 
         <ul id="asset_category_filters"></ul>
@@ -987,27 +1007,30 @@ onclick="javascript:jQuery('#asset_edit_form').data('asset_id', '{{asset_id}}').
 		</div>
         
 	</div>
+    <?php endif; ?>
 
-    <?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
-    	<div id="taxonomies_tab" class="content"><br>
+    <?php if ($data['product_form_action'] == 'product_update'): ?>
+        <?php if($this->modx->getOption('moxycart.enable_taxonomies')):?>
+        	<div id="taxonomies_tab" class="content"><br>
 
-                <div id="taxonomy_terms">
-                    <?php print \Formbuilder\Form::multicheck('Terms',$data['terms'],$data['product_terms']); ?>
-                </div>    
+                    <div id="taxonomy_terms">
+                        <?php print $data['product_terms']; ?>
+                    </div>    
 
-                <br/>
-                
+                    <br/>
+                    
                 <span class="btn" onclick="javascript:jQuery('#taxonomy-modal').dialog('open');" id="taxonomy-btn">Show / Hide Taxonomies</span>
-        
-                <?php /* ======== MODAL DIALOG BOX ======*/ ?>
-                <div id="taxonomy-modal" style="display:none;" title="Select Taxonomy">
-                   <legend>Enable Taxonomies</legend>
-                    <div id="taxonomy_list">
-                        <?php print \Formbuilder\Form::multicheck('Taxonomies',$data['taxonomies'],$data['product_taxonomies']); ?>
-                    </div>
-                </div> 
-    	</div>
-    <?php endif; // moxycart.enable_taxonomies ?>
+            
+                    <?php /* ======== MODAL DIALOG BOX ======*/ ?>
+                    <div id="taxonomy-modal" style="display:none;" title="Select Taxonomy">
+                       <legend>Enable Taxonomies</legend>
+                        <div id="taxonomy_list">
+                            <?php print \Formbuilder\Form::multicheck('Taxonomies',$data['taxonomies'],$data['product_taxonomies']); ?>
+                        </div>
+                    </div> 
+        	</div>
+        <?php endif; // moxycart.enable_taxonomies ?>
+    <?php endif; ?>
 
     <div id="orders_tab" class="content">
         <table class="classy sub-terms">

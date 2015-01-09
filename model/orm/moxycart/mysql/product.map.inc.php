@@ -29,7 +29,7 @@ $xpdo_meta_map['Product']= array (
     'qty_max' => NULL,
     'qty_backorder_max' => NULL,
     'price' => 0,
-    'price_strike_thru' => 0,
+    'price_strike_thru' => '',
     'price_sale' => 0,
     'weight' => NULL,
     'sale_start' => NULL,
@@ -99,7 +99,7 @@ $xpdo_meta_map['Product']= array (
     'title' => 
     array (
       'dbtype' => 'varchar',
-      'precision' => '60',
+      'precision' => '150',
       'phptype' => 'string',
       'null' => false,
       'comment' => 'For the webpage',
@@ -234,12 +234,12 @@ $xpdo_meta_map['Product']= array (
     ),
     'price_strike_thru' => 
     array (
-      'dbtype' => 'decimal',
-      'precision' => '8,2',
-      'phptype' => 'float',
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
       'null' => false,
       'comment' => 'Eye candy only',
-      'default' => 0,
+      'default' => '',
     ),
     'price_sale' => 
     array (

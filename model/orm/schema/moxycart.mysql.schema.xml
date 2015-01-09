@@ -30,7 +30,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="template_id" dbtype="int" precision="11" phptype="integer" null="true" />
         <field key="asset_id" dbtype="int" precision="11" phptype="integer" null="true" comment="Primary thumbnail image"/>
         <field key="name" dbtype="varchar" precision="60" phptype="string" null="false" />
-        <field key="title" dbtype="varchar" precision="60" phptype="string" null="false" comment="For the webpage"/>
+        <field key="title" dbtype="varchar" precision="150" phptype="string" null="false" comment="For the webpage"/>
         <field key="meta_keywords" dbtype="varchar" precision="255" phptype="string" null="false" default="" comment="For plugging search terms"/>
         <field key="description" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="content" dbtype="mediumtext" phptype="string" null="false" default="" />
@@ -50,7 +50,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="qty_max" dbtype="int" precision="11" phptype="integer" null="false" comment="Maximum quantity that should be allowed per product, per cart."/>
         <field key="qty_backorder_max" dbtype="int" precision="11" phptype="integer" null="false" comment="Number of units you can oversell."/>
         <field key="price" dbtype="decimal" precision="8,2" phptype="float" null="false" default="0"/>
-        <field key="price_strike_thru" dbtype="decimal" precision="8,2" phptype="float" null="false" comment="Eye candy only" default="0"/>
+        <field key="price_strike_thru" dbtype="varchar" precision="255" phptype="string" null="false" comment="Eye candy only" default=""/>
         <field key="price_sale" dbtype="decimal" precision="8,2" phptype="float" null="false" comment="Used when on sale" default="0"/>
         <field key="weight" dbtype="decimal" precision="8,2" phptype="float" null="false" comment="FYI: Units (kgs/lbs) are defined by Foxycart category"/>
         <field key="sale_start" dbtype="datetime" phptype="datetime" />
@@ -318,7 +318,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
         <field key="mod_category_type" dbtype="varchar" precision="3" phptype="string" null="false" default="+" comment="control the modification type: +,-,:"/>
         <field key="mod_category" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
 		
-		<field key="asset_id" dbtype="int" precision="11" phptype="integer" null="false"/>
+		<!--field key="asset_id" dbtype="int" precision="11" phptype="integer" null="false"/-->
 		
 		<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
 			<column key="id" length="" collation="A" null="false" />
@@ -333,7 +333,7 @@ See http://forums.modx.com/thread/91009/xpdo-validation-rules-executing-prematur
 		<aggregate alias="Product" class="Product" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
 		<aggregate alias="Option" class="Option" local="option_id" foreign="option_id" cardinality="one" owner="foreign" />
         <aggregate alias="Term" class="OptionTerm" local="oterm_id" foreign="oterm_id" cardinality="one" owner="foreign" />
-        <aggregate alias="Asset" class="Asset" local="asset_id" foreign="asset_id" cardinality="one" owner="foreign" />        
+        <!--aggregate alias="Asset" class="Asset" local="asset_id" foreign="asset_id" cardinality="one" owner="foreign" /-->
 	</object>
 	
     <!-- ! ProductTaxonomy -->

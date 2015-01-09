@@ -75,17 +75,20 @@ require_once dirname(dirname(dirname(__FILE__))) .'/vendor/autoload.php';
 class IndexManagerController extends \Moxycart\BaseController {
 
     public static $errors = array();
-    
+
     /**
      * This acts as a class loader.  Beware the difficulties with testing with the "new" keyword!!!
      * See composer.json's autoload section: Controller classes should be found in the controllers/ directory
-     * We ignore the incoming $className here and instead fallback to our own mapping which follows the 
+     * We ignore the incoming $className here and instead fallback to our own mapping which follows the
      * pattern : \Moxycart\{$Controller_Class_Slug}Controller
      * We can't override the Base controller constructor because this loops back onto it.
      *
-     * @param object \modX instance
+     * @param modX   $modx
      * @param string $className (ignored, instead we look to $_REQUEST['class'])
-     * @param array array config
+     * @param        array      array config
+     *
+     * @throws Exception
+     * @internal param \object \modX $instance
      * @return instance of a controller object
      */
     public static function getInstanceDeprecated(\modX &$modx, $className, array $config = array()) {

@@ -3,10 +3,7 @@
         <p>Here you can set the default attributes for all products created in this store.  These settings only affect <em>new</em> products. They have no effect on existing products.</p>
     </div>
     <div style="padding:20px;">
-        <?php
-        print \Formbuilder\Form::dropdown('StoreSettings[template_id]',$data['templates'],$data['default.template_id'],array('label'=>'Template'));
-        ?>
-    
+
         <?php
         print \Formbuilder\Form::dropdown('StoreSettings[type]',$data['types'],$data['default.type'],array('label'=>'Product Type'));
         ?>

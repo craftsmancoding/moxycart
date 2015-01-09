@@ -33,6 +33,7 @@ $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('getProductFields',$scriptProperties);
 
 $product_id = $modx->getOption('product_id',$scriptProperties, $modx->getPlaceholder('product_id'));
+$scriptProperties['content_ph'] = $modx->getOption('content_ph',$scriptProperties, 'content');
 
 if (!$product_id) {
     return 'Missing Product ID';
@@ -52,7 +53,7 @@ $c->sortby('Field.seq','ASC');
 $results = $modx->getCollectionGraph('ProductField','{"Field":{}}',$c);
 
 if ($results) {
-    return $Snippet->format($results,$innerTpl,$outerTpl);    
+    return $Snippet->format($results,$innerTpl,$outerTpl,$scriptProperties['content_ph']);    
 }
 
 $modx->log(\modX::LOG_LEVEL_DEBUG, "No results found",'','getProductFields');
