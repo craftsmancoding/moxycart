@@ -10,8 +10,8 @@
  * @param string $innerTpl Format the Inner Item of List
  * @param int $term_id (optional: defaults to the current page id)
  * @param int $limit Limit the result
+ * @param int $offset offset the result (e.g. for pagination)
  *
-
  * Variables
  * ---------
  * @var $modx modX
@@ -27,18 +27,18 @@
  *
  * @package taxonomies
  **/
-
 $core_path = $modx->getOption('moxycart.core_path', null, MODX_CORE_PATH.'components/moxycart/');
 require_once $core_path .'vendor/autoload.php';
 $Snippet = new \Moxycart\Snippet($modx);
 $Snippet->log('getByTerm',$scriptProperties);
-
 $term_id = $modx->getOption('term_id', $scriptProperties, $modx->resource->get('id'));
 $exclude_id = $modx->getOption('exclude_id', $scriptProperties,0);
 $innerTpl = $modx->getOption('innerTpl', $scriptProperties, '<li><a href="[[+Product.uri]]">[[+Product.name]] ([[+Product.sku]])</a></li>'); 
 $outerTpl = $modx->getOption('outerTpl', $scriptProperties, '<ul>[[+content]]</ul>'); 
-$noResult = $modx->getOption('noResult', $scriptProperties, 'No Products found for term_id.'); 
-
+$noResult = $modx->getOption('noResult', $scriptProperties, 'No Products found for term_id.');
+$limit = $modx->getOption('limit', $scriptProperties, null);
+$offset = $modx->getOption('offset', $scriptProperties, null);
+$scriptProperties['content_ph'] = $modx->getOption('content_ph',$scriptProperties, 'content');
 $c = $modx->newQuery('ProductTerm');
 $c->where(array(
     'Term.published'=>true,
@@ -46,10 +46,19 @@ $c->where(array(
     'Product.is_active'=>1,
     'Product.product_id:!='=>$exclude_id,
 ));
+// Limit
+if ($limit)
+{
+    if ($offset)
+    {
+        $c->limit($limit,$offset);
+    }
+    else{
+        $c->limit($limit);
+    }
+}
 $c->sortby('Product.seq','ASC');
-
 $Products = $modx->getCollectionGraph('ProductTerm', '{"Product":{"Image":{}},"Term":{}}',$c);
-
 //return $c->toSQL();
 if ($Products) {
     // Get Custom Fields
@@ -68,8 +77,6 @@ if ($Products) {
             }
         }
     }
-    return $Snippet->format($Products,$innerTpl,$outerTpl);
+    return $Snippet->format($Products,$innerTpl,$outerTpl,$scriptProperties['content_ph']);
 }
-
-
 return $noResult;

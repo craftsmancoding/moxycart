@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4f23aeb2cf8ff17d3f4d2f76431f86b7",
+    "hash": "c53d232e0312f2f7cac8059307afea36",
     "packages": [
         {
             "name": "craftsmancoding/formbuilder",
