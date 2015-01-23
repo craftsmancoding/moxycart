@@ -78,15 +78,17 @@ class BaseModel {
         'duration_unit','duration_interval','user_group_id','role_id','author_id','timestamp_created','timestamp_modified',
         'seq', 'calculated_price','cache_lifetime'
     );
-    
-    /** 
+
+    /**
      * We set $this->modelObj here instead of extending the base xpdoObject class because
-     * xpdo abstracts the database at run-time and the exact class instantiated depends on 
+     * xpdo abstracts the database at run-time and the exact class instantiated depends on
      * the type of database used.
      *
-     * @param object $modx
-     * @param object $xpdo (optional: pass this class an existing xpdo object to endow it with special methods) 
+     * @param \modX|object $modx
+     * @param null         $obj
      *
+     * @throws \Exception
+     * @internal param object $xpdo (optional: pass this class an existing xpdo object to endow it with special methods)
      */
     public function __construct(\modX &$modx, &$obj=null) {
         $this->modx =& $modx;
@@ -157,7 +159,7 @@ class BaseModel {
      * it will not return an empty array if it has no results. See
      * https://github.com/modxcms/revolution/issues/11373
      *
-     * @param array $arguments (including filters)
+     * @param array $args (including filters)
      * @param boolean $debug
      * @return mixed xPDO iterator (i.e. a collection, but memory efficient) or SQL query string
      */
@@ -312,7 +314,7 @@ class BaseModel {
     /**
      * Delete an object by its primary key
      */    
-    public static function delete(int $id) {
+    public function delete(int $id) {
         if ($Obj = $this->find($id)) {
             return $Obj->remove();
         }
@@ -360,17 +362,54 @@ class BaseModel {
         
         foreach ($array as $k => $v) {
             // For convenience, we add in the %'s
-            if (strtoupper(substr($k,-5)) == ':LIKE') $array[$k] = '%'.$v.'%';
-            if (strtoupper(substr($k,-9)) == ':NOT LIKE') $array[$k] = '%'.$v.'%';
-            if (strtoupper(substr($k,-12)) == ':STARTS WITH') {
+            if (strtoupper(substr($k,-5)) == ':LIKE')
+            {
+                $array[$k] = '%'.$v.'%';
+            }
+            elseif (strtoupper(substr($k,-9)) == ':NOT LIKE' || strtoupper(substr($k,-9)) == ':NOT_LIKE')
+            {
+                $array[$k] = '%'.$v.'%';
+            }
+            elseif (strtoupper(substr($k,-12)) == ':STARTS WITH' || strtoupper(substr($k,-12)) == ':STARTS_WITH')
+            {
                 unset($array[$k]);
                 $array[substr($k,0,-12).':LIKE'] = $v.'%';
             }
-            if (strtoupper(substr($k,-10)) == ':ENDS WITH') {
+            elseif (strtoupper(substr($k,-10)) == ':ENDS WITH' || strtoupper(substr($k,-10)) == ':ENDS_WITH')
+            {
                 unset($array[$k]);
                 $array[substr($k,0,-10).':LIKE'] = '%'.$v;
             }
-
+            elseif (strtoupper(substr($k,-3))==':NE')
+            {
+                unset($array[$k]);
+                $array[substr($k,0,-3).':!='] = $v;
+            }
+            elseif (strtoupper(substr($k,-2))==':E')
+            {
+                unset($array[$k]);
+                $array[substr($k,0,-2).':='] = $v;
+            }
+            elseif (strtoupper(substr($k,-3))==':GT')
+            {
+                unset($array[$k]);
+                $array[substr($k,0,-3).':>'] = $v;
+            }
+            elseif (strtoupper(substr($k,-3))==':LT')
+            {
+                unset($array[$k]);
+                $array[substr($k,0,-3).':<'] = $v;
+            }
+            elseif (strtoupper(substr($k,-4))==':GTE')
+            {
+                unset($array[$k]);
+                $array[substr($k,0,-4).':>='] = $v;
+            }
+            elseif (strtoupper(substr($k,-4))==':LTE')
+            {
+                unset($array[$k]);
+                $array[substr($k,0,-4).':<='] = $v;
+            }
             // Remove any simple array stuff
             if (is_integer($k)) unset($array[$k]);
         }
@@ -438,6 +477,10 @@ class BaseModel {
     public function quoteSort($str) {
         if (!is_scalar($str)) {
             throw new \Exception('quoteSort expects string');
+        }
+        if (strtoupper($str) == 'RAND()')
+        {
+            return $str;
         }
         $parts = explode('.',$str);
         $parts = array_map(function($v){ return '`'.trim($v,'`').'`'; }, $parts);

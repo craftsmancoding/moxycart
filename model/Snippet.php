@@ -69,8 +69,8 @@ class Snippet {
      * See http://rtfm.modx.com/revolution/2.x/developing-in-modx/other-development-resources/class-reference/modx/modx.getchunk
      *
      * @param array of arrays (a simple record set), or an array of objects (an xPDO Collection)
-     * @param string formatting $innerTpl formatting string OR chunk name
-     * @param string formatting $outerTpl formatting string OR chunk name (optional)
+     * @param string $innerTpl formatting string OR chunk name
+     * @param string $outerTpl formatting string OR chunk name (optional)
      * @return string
      */
     public function format($records,$innerTpl,$outerTpl=null,$content_ph) {

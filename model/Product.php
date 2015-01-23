@@ -62,7 +62,9 @@ class Product extends BaseModel {
         // If you get this error: "Call to a member function getOption() on a non-object", it could mean:
         // 1) you tried to call this method statically, e.g. Product::all()
         // 2) you forgot to initialize the class and pass a modx instance to the contructor (dependency injection!)
-        $limit       = (int)$this->modx->getOption('limit', $args, $this->modx->getOption('moxycart.default_per_page', '', $this->modx->getOption('default_per_page')));
+        $limit       = (int)$this->modx->getOption('limit', $args,
+            $this->modx->getOption('moxycart.default_per_page', '', $this->modx->getOption('default_per_page'))
+        );
         $offset      = (int)$this->modx->getOption('offset', $args, 0);
         $sort        = $this->quoteSort($this->modx->getOption('sort', $args, $this->default_sort_col));
         $dir         = $this->modx->getOption('dir', $args, $this->default_sort_dir);
@@ -70,7 +72,7 @@ class Product extends BaseModel {
         $select_cols = $this->modx->getOption('select', $args);
 
         // Clear out non-filter criteria
-        $args = self::getFilters($args);
+        $args = $this->getFilters($args);
 //        return '<pre>'.print_r($args,true).'</pre>';
         $criteria = $this->modx->newQuery($this->xclass);
 

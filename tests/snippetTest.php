@@ -246,95 +246,95 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         }        
 
         // Color
-        if (!self::$Option['color'] = self::$modx->getObject('OptionType', array('slug'=>'color'))) {
-            self::$Option['color'] = self::$modx->newObject('OptionType');
-        }
-        self::$Option['color']->fromArray(array(
-            'slug' => 'color',
-            'name' => 'Color',
-        ));
-        self::$Option['color']->save();       
-
-        if (!self::$Term['red'] = self::$modx->getObject('OptionTerm', array('slug'=>'size'))) {
-            self::$Term['red'] = self::$modx->newObject('OptionTerm');       
-        }
-        self::$Term['red']->fromArray(array(
-            'slug' => 'red',
-            'name' => 'Red',
-            'otype_id' => self::$Option['color']->get('otype_id')
-        ));
-        self::$Term['red']->save();        
-
-        if (!self::$Term['black'] = self::$modx->getObject('OptionTerm', array('slug'=>'black'))) {
-            self::$Term['black'] = self::$modx->newObject('OptionTerm');
-        }
-        self::$Term['black']->fromArray(array(
-            'slug' => 'black',
-            'name' => 'Black',
-            'otype_id' => self::$Option['color']->get('otype_id'),
-        ));
-        self::$Term['black']->save();
-
-        if (!self::$Term['white'] = self::$modx->getObject('OptionTerm', array('slug'=>'white'))) {
-            self::$Term['white'] = self::$modx->newObject('OptionTerm');
-        }
-        self::$Term['white']->fromArray(array(
-            'slug' => 'white',
-            'name' => 'White',
-            'otype_id' => self::$Option['color']->get('otype_id'),
-        ));
-        self::$Term['white']->save();
-        
-        // Size
-        if (!self::$Option['size'] = self::$modx->getObject('OptionType', array('slug'=>'size'))) {
-            self::$Option['size'] = self::$modx->newObject('OptionType');
-        }
-        self::$Option['size']->fromArray(array(
-            'slug' => 'size',
-            'name' => 'Size',
-        ));
-        self::$Option['size']->save();       
-
-        
-        if (!self::$Term['small'] = self::$modx->getObject('OptionTerm', array('slug'=>'small'))) {
-            self::$Term['small'] = self::$modx->newObject('OptionTerm');       
-        }
-        self::$Term['small']->fromArray(array(
-            'slug' => 'small',
-            'name' => 'Small',
-            'otype_id' => self::$Option['size']->get('otype_id')
-        ));
-        self::$Term['small']->save();        
-
-        if (!self::$Term['med'] = self::$modx->getObject('OptionTerm', array('slug'=>'med'))) {
-            self::$Term['med'] = self::$modx->newObject('OptionTerm');
-        }
-        self::$Term['med']->fromArray(array(
-            'slug' => 'med',
-            'name' => 'Medium',
-            'otype_id' => self::$Option['size']->get('otype_id'),
-        ));
-        self::$Term['med']->save();
-
-        if (!self::$Term['large'] = self::$modx->getObject('OptionTerm', array('slug'=>'large'))) {
-            self::$Term['large'] = self::$modx->newObject('OptionTerm');
-        }
-        self::$Term['large']->fromArray(array(
-            'slug' => 'large',
-            'name' => 'Large',
-            'mod_price' => '12',
-            'otype_id' => self::$Option['size']->get('otype_id'),
-        ));
-        self::$Term['large']->save();        
-
-       if (!$ProductOption = self::$modx->getObject('ProductOptionType', array('product_id'=> self::$product_id, 'otype_id'=> self::$Option['size']->get('otype_id')))) {        
-            $ProductOption = self::$modx->newObject('ProductOptionType');
-            $ProductOption->fromArray(array(
-                'product_id' => self::$product_id,
-                'otype_id' =>  self::$Option['size']->get('otype_id'),
-            ));
-            $ProductOption->save();
-        }  
+//        if (!self::$Option['color'] = self::$modx->getObject('OptionType', array('slug'=>'color'))) {
+//            self::$Option['color'] = self::$modx->newObject('OptionType');
+//        }
+//        self::$Option['color']->fromArray(array(
+//            'slug' => 'color',
+//            'name' => 'Color',
+//        ));
+//        self::$Option['color']->save();
+//
+//        if (!self::$Term['red'] = self::$modx->getObject('OptionTerm', array('slug'=>'size'))) {
+//            self::$Term['red'] = self::$modx->newObject('OptionTerm');
+//        }
+//        self::$Term['red']->fromArray(array(
+//            'slug' => 'red',
+//            'name' => 'Red',
+//            'otype_id' => self::$Option['color']->get('otype_id')
+//        ));
+//        self::$Term['red']->save();
+//
+//        if (!self::$Term['black'] = self::$modx->getObject('OptionTerm', array('slug'=>'black'))) {
+//            self::$Term['black'] = self::$modx->newObject('OptionTerm');
+//        }
+//        self::$Term['black']->fromArray(array(
+//            'slug' => 'black',
+//            'name' => 'Black',
+//            'otype_id' => self::$Option['color']->get('otype_id'),
+//        ));
+//        self::$Term['black']->save();
+//
+//        if (!self::$Term['white'] = self::$modx->getObject('OptionTerm', array('slug'=>'white'))) {
+//            self::$Term['white'] = self::$modx->newObject('OptionTerm');
+//        }
+//        self::$Term['white']->fromArray(array(
+//            'slug' => 'white',
+//            'name' => 'White',
+//            'otype_id' => self::$Option['color']->get('otype_id'),
+//        ));
+//        self::$Term['white']->save();
+//
+//        // Size
+//        if (!self::$Option['size'] = self::$modx->getObject('OptionType', array('slug'=>'size'))) {
+//            self::$Option['size'] = self::$modx->newObject('OptionType');
+//        }
+//        self::$Option['size']->fromArray(array(
+//            'slug' => 'size',
+//            'name' => 'Size',
+//        ));
+//        self::$Option['size']->save();
+//
+//
+//        if (!self::$Term['small'] = self::$modx->getObject('OptionTerm', array('slug'=>'small'))) {
+//            self::$Term['small'] = self::$modx->newObject('OptionTerm');
+//        }
+//        self::$Term['small']->fromArray(array(
+//            'slug' => 'small',
+//            'name' => 'Small',
+//            'otype_id' => self::$Option['size']->get('otype_id')
+//        ));
+//        self::$Term['small']->save();
+//
+//        if (!self::$Term['med'] = self::$modx->getObject('OptionTerm', array('slug'=>'med'))) {
+//            self::$Term['med'] = self::$modx->newObject('OptionTerm');
+//        }
+//        self::$Term['med']->fromArray(array(
+//            'slug' => 'med',
+//            'name' => 'Medium',
+//            'otype_id' => self::$Option['size']->get('otype_id'),
+//        ));
+//        self::$Term['med']->save();
+//
+//        if (!self::$Term['large'] = self::$modx->getObject('OptionTerm', array('slug'=>'large'))) {
+//            self::$Term['large'] = self::$modx->newObject('OptionTerm');
+//        }
+//        self::$Term['large']->fromArray(array(
+//            'slug' => 'large',
+//            'name' => 'Large',
+//            'mod_price' => '12',
+//            'otype_id' => self::$Option['size']->get('otype_id'),
+//        ));
+//        self::$Term['large']->save();
+//
+//       if (!$ProductOption = self::$modx->getObject('ProductOptionType', array('product_id'=> self::$product_id, 'otype_id'=> self::$Option['size']->get('otype_id')))) {
+//            $ProductOption = self::$modx->newObject('ProductOptionType');
+//            $ProductOption->fromArray(array(
+//                'product_id' => self::$product_id,
+//                'otype_id' =>  self::$Option['size']->get('otype_id'),
+//            ));
+//            $ProductOption->save();
+//        }
 
     }
 
@@ -347,8 +347,8 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         self::$Tax['A']->remove();
         self::$Tax['B']->remove();
         self::$Tax['C']->remove(); 
-        self::$Option['size']->remove();
-        self::$Option['color']->remove();        
+        //self::$Option['size']->remove();
+        //self::$Option['color']->remove();
     }
 
 
@@ -438,6 +438,7 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         // You have to do this for EACH test function when you are testing a Snippet!
         global $modx;
         $modx = self::$modx;
+
         $props = array();
         $props['store_id'] = self::$Store->get('id');
         $props['log_level'] = 4;
@@ -446,6 +447,27 @@ class snippetTest extends \PHPUnit_Framework_TestCase {
         $props['sort'] = 'price';
         $actual = self::$modx->runSnippet('getProducts', $props);
         $expected = '<ul><li>Southpark Tshirt: 19</li><li>Family Guy Tshirt: 20</li><li>Simpsons Tshirt: 21</li></ul>';
+        $this->assertEquals(normalize_string($expected), normalize_string($actual));
+
+
+        $props = array();
+        $props['store_id'] = self::$Store->get('id');
+        $props['log_level'] = 4;
+        $props['innerTpl'] = '<li>[[+name]]: [[+price]]</li>';
+        $props['outerTpl'] = '<ul>[[+content]]</ul>';
+        $props['sort'] = 'RAND()';
+        $actual = self::$modx->runSnippet('getProducts', $props);
+        $this->assertEquals(3, substr_count(normalize_string($actual),'<li>'));
+
+        $props = array();
+        $props['store_id'] = self::$Store->get('id');
+        $props['log_level'] = 4;
+        $props['sku:ne'] = 'FAMILYGUY-TSHIRT';
+        $props['innerTpl'] = '<li>[[+name]]: [[+price]]</li>';
+        $props['outerTpl'] = '<ul>[[+content]]</ul>';
+        $props['sort'] = 'price';
+        $actual = self::$modx->runSnippet('getProducts', $props);
+        $expected = '<ul><li>Southpark Tshirt: 19</li><li>Simpsons Tshirt: 21</li></ul>';
         $this->assertEquals(normalize_string($expected), normalize_string($actual));
         
     }
