@@ -67,7 +67,8 @@ if ($help) {
     foreach ($vals as $v => $tmp) {
         $out .= '&#91;&#91;&#43;'.$v.'&#93;&#93;'."\n";
     }
-    return $out.'</pre></div>';
+    return $out.'</pre>
+    <h2>Script Properties</h2><pre>'.print_r($scriptProperties,true).'</pre></div>';
 }
 $results = $P->all($scriptProperties);
 
