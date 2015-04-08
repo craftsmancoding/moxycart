@@ -11,12 +11,12 @@
  * 
  * Parameters
  * -----------------------------
- * @param string $outerTpl Format the Outer Wrapper of List (Optional)
- * @param string $innerTpl Format the Inner Item of List
- * @param boolean $is_active Get all active records only
- * @param integer $log_level 4 = debug. Defaults to system setting
- * @param mixed $log_target Defaults to system setting.
- * @param int $limit Limit the records to be shown (if set to 0, all records will be pulled)
+ * @param string $outerTpl Format the Outer Wrapper of List (Optional) [default: ProductOuterTpl]
+ * @param string $innerTpl Format the Inner Item of List [default: ProductOuterTpl]
+ * @param boolean $is_active Get all active records only [default: 1]
+ * @arg integer $log_level 4 = debug. Defaults to system setting
+ * @arg mixed $log_target Defaults to system setting.
+ * @arg int $limit Limit the records to be shown (if set to 0, all records will be pulled)
  * @param int $firstClass set class name on the first item (Optional)
  *
  * Variables
@@ -71,9 +71,11 @@ if ($help) {
 }
 $results = $P->all($scriptProperties);
 
-if ($results) {
+if ($results)
+{
     // Get Custom Fields
-    foreach ($results as &$r) {
+    foreach ($results as &$r)
+    {
         $c = $modx->newQuery('ProductField');
         $c->where(array(
             'product_id' => $r['product_id'],
@@ -81,7 +83,8 @@ if ($results) {
         ));
         $c->sortby('Field.seq','ASC');    
         
-        if($fields = $modx->getCollectionGraph('ProductField','{"Field":{}}',$c)) {
+        if($fields = $modx->getCollectionGraph('ProductField','{"Field":{}}',$c))
+        {
             foreach ($fields as $f) {
                 $r[ $f->Field->get('slug') ] = $f->get('value');
             }
