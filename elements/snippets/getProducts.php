@@ -11,13 +11,13 @@
  * 
  * Parameters
  * -----------------------------
- * @param string $outerTpl Format the Outer Wrapper of List (Optional) [default: ProductOuterTpl]
- * @param string $innerTpl Format the Inner Item of List [default: ProductOuterTpl]
- * @param boolean $is_active Get all active records only [default: 1]
+ * @arg string $outerTpl Format the Outer Wrapper of List (Optional) [default: ProductOuterTpl]
+ * @arg string $innerTpl Format the Inner Item of List [default: ProductOuterTpl]
+ * @arg boolean $is_active Get all active records only [default: 1]
  * @arg integer $log_level 4 = debug. Defaults to system setting
  * @arg mixed $log_target Defaults to system setting.
  * @arg int $limit Limit the records to be shown (if set to 0, all records will be pulled)
- * @param int $firstClass set class name on the first item (Optional)
+ * @arg int $firstClass set class name on the first item (Optional)
  *
  * Variables
  * ---------
