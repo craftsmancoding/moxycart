@@ -342,8 +342,8 @@ table thead a:hover {
     text-decoration: underline;
 }
 
-tr:nth-child(even) {background: #f5f6f9}
-tr:nth-child(odd) {background: #fff}
+/* tr:nth-child(even) {background: #f5f6f9}
+tr:nth-child(odd) {background: #fff} */
 
 .unmodifier {
 
