@@ -39,7 +39,7 @@ $Snippet->log('addToCartButton',$scriptProperties);
 // price markup must have .price as its class like <div class="price"></div>
 $modx->regClientScript($assets_url.'js/AddToCartButton.js');
 
-$product_id = $modx->getOption('product_id', $scriptProperties, $modx->getPlaceholder('product_id'));
+$product_id = $modx->getOption('product_id', $scriptProperties, $modx->getPlaceholder('product_id'), true);
 $submit = $modx->getOption('submit', $scriptProperties, 'Add to Cart');
 $backorderSubmit = $modx->getOption('backorderSubmit', $scriptProperties, $submit);
 $soldout = $modx->getOption('soldout', $scriptProperties, 'Sold Out');
