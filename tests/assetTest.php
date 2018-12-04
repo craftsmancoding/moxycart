@@ -22,7 +22,10 @@
  *
  */
 namespace Moxycart;
-class assetTest extends \PHPUnit_Framework_TestCase {
+
+use PHPUnit\Framework\TestCase;
+
+class assetTest extends TestCase {
 
     // Must be static because we set it up inside a static function
     public static $modx;

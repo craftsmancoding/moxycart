@@ -15,8 +15,10 @@
  *  phpunit tests/autoloadTest.php
  *
  */
- 
-class datafeedTest extends \PHPUnit_Framework_TestCase {
+
+use PHPUnit\Framework\TestCase;
+
+class datafeedTest extends TestCase {
 
     public static $modx;
     public static $cnt = 0;
